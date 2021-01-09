@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="XUranus的个人博客">
+    <meta name="keyword" content="XUranus">
+    <meta name="theme-color" content="#600090">
+    <meta name="msapplication-navbutton-color" content="#600090">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+    <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-person-128.png">
+    <link rel="alternate" type="application/atom+xml" title="XUranus" href="/atom.xml">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+    <title>
+        
+        对React学习的一点深入｜真常应物,真常得性;常应常静,常清静矣
+        
+    </title>
+
+    <link rel="canonical" href="http://xuranus.github.io/2019/11/22/对react学习的一点深入/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/blog-style.css">
+
+
+    <!-- Pygments Github CSS -->
+    
+<link rel="stylesheet" href="/css/syntax.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<style>
+
+    header.intro-header {
+        background-image: url('https://timgsa.baidu.com/timg\?image\&amp;quality\=80\&amp;size\=b9999_10000\&amp;sec\=1539187381343\&amp;di\=2fa8911a94b7b5a904539a11c5192518\&amp;imgtype\=0\&amp;src\=http%3A%2F%2F1.im.guokr.com%2FXpmNucNdcod0EZA1xPbLj2Q1HkqyGs9xqvZUPkEf6YK8AgAAQAEAAFBO.png')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="" class="animated fadeIn">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "true" data-istags="false
+" data-ishome = "false" >
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand animated pulse" href="/">
+                <span class="brand-logo">
+                    XUranus
+                </span>
+                's Blog
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <!-- /.navbar-collapse -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+					
+                    
+                        
+							
+                        <li>
+                            <a href="/tags/">标签</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/works/">作品集</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/archives/">归档</a>
+                        </li>
+							
+						
+                    
+					
+					
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+//    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+<!-- Main Content -->
+
+<!--only post-->
+
+
+<img class="wechat-title-img"
+     src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822">
+
+
+<style>
+    
+    header.intro-header {
+        background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822')
+    }
+
+    
+</style>
+
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <div class="post-heading">
+                    <h1>对React学习的一点深入</h1>
+                    
+                    <span class="meta">
+                         作者 XUranus
+                        <span>
+                          日期 2019-11-22
+                         </span>
+                    </span>
+                    <div class="tags text-center">
+                        
+                        <a class="tag" href="/tags/#React"
+                           title="React">React</a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="post-title-haojen">
+        <span>
+            对React学习的一点深入
+        </span>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+                <p>之前在react官网上囫囵吞枣学了react的一点基础知识，就急不可耐的写了很多代码（人脸识别，云笔记，实训的医院管理系统前端。。。），结果遇到了很多坑。react是一门很复杂的技术，而我缺乏系统的学习，正好看到一本《深入浅出react和redux》的电子书，借此深入学习react。</p>
+<h2 id="props和state"><a href="#props和state" class="headerlink" title="props和state"></a>props和state</h2><p>react天然具有高内聚，低耦合的特征（样式，内容，交互内封装一个组件中）。<code>props</code>看作外部的接口，<code>state</code>看作自己的内部状态，两者改变都会导致组件的重新渲染。react组件开发应合理划分组件的边界，将高内聚（交互频繁）的部分合并为一个组件，组件和组件中间保证低耦合（低信息交换）</p>
+<h2 id="props类型约束与初始化"><a href="#props类型约束与初始化" class="headerlink" title="props类型约束与初始化"></a>props类型约束与初始化</h2><p>假设一个组件名字是Counter（计数器），有string类型的<code>caption</code>，number类型的<code>initValue</code>，其中<code>caption</code>必须被申明，且必须是string类型，<code>initValue</code>必须是number类型，需要有默认值。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Counter</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="comment">//.... Counter组建的定义</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* Counter的props类型约束 */</span></span><br><span class="line">Counter.propTypes = &#123;</span><br><span class="line">  caption: PropTypes.string.isRequired,</span><br><span class="line">  initValue: PropTypes.number,</span><br><span class="line">  onUpdate: PropTypes.func</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* Counter的props初始化 */</span></span><br><span class="line">Counter.defaultProps = &#123;</span><br><span class="line">  initValue: <span class="number">0</span> <span class="comment">//如果没有声明，初始化为0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果违背了约束条件，则会在console中产生warning，有效避免了调试找bug的困难。</p>
+<h2 id="显式调用setState"><a href="#显式调用setState" class="headerlink" title="显式调用setState"></a>显式调用setState</h2><p>如果直接对<code>state.variable</code>操作，不会重新渲染组件，但也会影响到<code>state</code>，并报warning，而<code>setState()</code>不仅会改变<code>state</code>的状态，还会驱动组件的重新渲染。</p>
+<h2 id="react组件类的装载过程"><a href="#react组件类的装载过程" class="headerlink" title="react组件类的装载过程"></a>react组件类的装载过程</h2><p><code>constructor()</code>-&gt;<code>getInitialState()</code>-&gt;<code>getDefaultProps()</code>-&gt;<code>componentWillMount()</code>-&gt;<code>render()</code>-&gt;<code>componentDidMount()</code></p>
+<h3 id="constructor-NaN"><a href="#constructor-NaN" class="headerlink" title="constructor"></a>constructor</h3><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Counter</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="title">constructor</span>(<span class="params">props</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>(props) <span class="comment">//如果有构造函数，第一行一定要是调用超类方法，否则无法访问props</span></span><br><span class="line">    <span class="built_in">this</span>.state.count = props.initValue </span><br><span class="line">    <span class="built_in">this</span>.onClickIncreaseButton = <span class="built_in">this</span>.onClickIncreaseButton.bind(<span class="built_in">this</span>)</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    bind操作符，另一种NB的写法：</span></span><br><span class="line"><span class="comment">    this.onClickIncreaseButton = ::this.onClickIncreaseButton</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>构造函数一般有两个目的：</p>
+<ul>
+<li>初始化<code>state</code>，没有状态的组件不需要<code>state</code>，也不需要重载构造函数，而有状态的组件，最好在构造函数中统一对<code>state</code>初始化</li>
+<li>绑定<code>this</code>，因为ES6下类的成员函数在执行时的<code>this</code>不是和类实例自动绑定的，构造函数中，<code>this</code>就是当前组建实例，所以为了方便将来的调用，往往在构造函数中对实例的函数绑定<code>this</code>为当前实例。</li>
+</ul>
+<h3 id="getInitialState-getDefaultProps"><a href="#getInitialState-getDefaultProps" class="headerlink" title="getInitialState/getDefaultProps"></a>getInitialState/getDefaultProps</h3><p>这是一种已经废弃的写法，只会执行一次，用于在使用<code>React.createClass()</code>时候初始化<code>state</code>和<code>props</code>。因为这种创建class的方法已经被废弃，所以这种方法也不会再使用。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> Counter = React.createClass(&#123;</span><br><span class="line">  getInitialState: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="attr">count</span>: <span class="number">0</span>&#125;;</span><br><span class="line">  &#125;,</span><br><span class="line">  getDefaultProps: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="attr">initValue</span>: <span class="number">0</span>&#125;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>这是等价的老式写法。</p>
+<h3 id="render"><a href="#render" class="headerlink" title="render"></a>render</h3><p><code>render()</code>是一个<strong>无副作用</strong>的<strong>纯函数</strong>，用于返回jsx，没有默认实现，且必须被实现，如果不想渲染任何DOM，可以返回<code>null</code>。因为无副作用，所以不能在这个函数中调用<code>setState()</code></p>
+<h3 id="componentWillMount-componentDidMount"><a href="#componentWillMount-componentDidMount" class="headerlink" title="componentWillMount/componentDidMount"></a>componentWillMount/componentDidMount</h3><p>装载过程中，<code>componentWillMount()</code>会在调用<code>render()</code>函数之前被调用，<code>componentDidMount()</code>会在调用<code>render()</code>函数之后被调用，这两个函数就像是<code>render()</code>函数的前哨和后卫，一前一后，把<code>render()</code>函数夹住，正好分别做<code>render</code>前后必要的工作。</p>
+<p>由于<code>componentWillMount()</code>执行时<code>render()</code>已经执行，所以调用<code>setState()</code>也没有意义，需要预处理的东西可以放到<code>constructor()</code>中，所以这个函数没有什么用。</p>
+<p><code>render()</code>只是个返回jsx对象的函数，不执行之际的渲染，所以<code>render()</code>执行后不会立刻执行该组件的<code>componentDidMount()</code>,等同级的组件<code>render()</code>都执行完了，react会分析DOM的改变，执行重新渲染，完毕后，才会依次执行<code>componentDidMount()</code>。</p>
+<p>因为这个方法执行的时候，DOM已经渲染完毕所以可以做两件事：</p>
+<ul>
+<li>此时可以进行和服务器的通信（ajax请求）。</li>
+<li>此时可以使用其他js库（jquery）</li>
+</ul>
+<p><code>componentWillMount()</code>可以在服务器端被调用，也可以在浏览器端被调用；而<code>componentDidMount()</code>只能在浏览器端被调用，在服务器端使用React的时候不会被调用。</p>
+<h2 id="react组件类的更新过程"><a href="#react组件类的更新过程" class="headerlink" title="react组件类的更新过程"></a>react组件类的更新过程</h2><p>当<code>props</code>或<code>state</code>更新时，就会触发react的更新过程。</p>
+<p><code>componentWillReceiveProps()</code>-&gt;<code>shouldComponentUpdate()</code>-&gt;<code>componentWillUpdate()</code>-&gt;<code>render()</code>-&gt;<code>componentDidUpdate()</code></p>
+<h3 id="componentWillReceiveProps-nextProps"><a href="#componentWillReceiveProps-nextProps" class="headerlink" title="componentWillReceiveProps(nextProps)"></a>componentWillReceiveProps(nextProps)</h3><p>只要是父组件的 <code>render()</code>函数被调用，在<code>render()</code>函数里面被渲染的子组件就会经历更新过程。通过<code>this.setState()</code>方法触发的更新过程不会调用这个函数（因为这个函数适合根据新的<code>props</code>值，也就是参数<code>nextProps</code>，来计算出是不是要更新内部状态<code>state</code>，父的<code>props</code>改变会触发子的<code>state</code>的隐式改变，而这会产生死循环）</p>
+<p>每个React组件都可以通过<code>this.forceUpdate()</code>强行引发一次重新绘制。</p>
+<h3 id="shouldComponentUpdate-nextProps-nextState"><a href="#shouldComponentUpdate-nextProps-nextState" class="headerlink" title="shouldComponentUpdate(nextProps,nextState)"></a>shouldComponentUpdate(nextProps,nextState)</h3><p><code>render()</code>函数决定了该渲染什么，而<code>shouldComponentUpdate()</code>决定了一个组件什么时候不需要渲染。这两个函数是唯二需要返回值的react生命周期函数。<code>shouldComponentUpdate()</code>返回boolean类型决定是否需要更新。这个函数和react性能息息相关，默认返回true，每次要重新渲染，但是想提高性能，则需要定制这个函数。<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="title">shouldComponentUpdate</span>(<span class="params">nextProps, nextState</span>)</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> (nextProps.caption !== <span class="built_in">this</span>.props.caption) ||(nextState.count !== <span class="built_in">this</span>.state.count);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>现在，只有当<code>caption</code>改变，或者<code>state</code>中的<code>count</code>值改变，<code>shouldComponent</code>才会返回true。</p>
+<p>如果组件的<code>shouldComponentUpdate()</code>函数返回true，React接下来就会依次<br>调用对应组件的<code>componentWillUpdate()</code>，<code>render()</code>和<code>componentDidUpdate()</code>函数。</p>
+<p>和装载过程不同的是，当在服务器端使用React渲染时，这一对函数中的Did函数，也就是<code>componentDidUpdate()</code>，并不是只在浏览器端才执行的，无论更新过程发生在服务器端还是浏览器端，该函数都会被调用。</p>
+<p>当React组件被更新时，原有的内容被重新绘制，这时候就需要在<code>componentDidUpdate()</code>再次调用jQuery代码。</p>
+<h2 id="react组件类的卸载过程"><a href="#react组件类的卸载过程" class="headerlink" title="react组件类的卸载过程"></a>react组件类的卸载过程</h2><h3 id="componentWillUnmount"><a href="#componentWillUnmount" class="headerlink" title="componentWillUnmount"></a>componentWillUnmount</h3><p>React组件的卸载过程只涉及一个函数<code>componentWillUnmount()</code>，当React组件要从DOM树上删除掉之前，对应的<code>componentWillUnmount()</code>函数会被调用，所以这个函数适合做一些清理性的工作。一般要把<code>componentWillMount()</code>中创建的一些DOM元素处理掉，防止内存泄露。</p>
+<h2 id="组件通信"><a href="#组件通信" class="headerlink" title="组件通信"></a>组件通信</h2><p>父组件改变子组件的状态，通过绑定子组件的<code>props</code>在自己的<code>state</code>上，改变自己的<code>state</code>。</p>
+<p>子组件向父组件传递信息，子组件调用父组件绑在其<code>props</code>上的父方法：<br><figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Counter</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  onUpdate = <span class="function">(<span class="params">newValue</span>)=&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.props.onUpdate(newValue)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CounterPanel</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  render = <span class="function">()=&gt;</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div&gt;</span><br><span class="line">        &lt;Counter onUpdate=&#123;<span class="built_in">this</span>.onUpdate&#125; caption=<span class="string">&quot;first&quot;</span>/&gt;</span><br><span class="line">        &lt;Counter onUpdate=&#123;<span class="built_in">this</span>.onUpdate&#125; caption=<span class="string">&quot;second&quot;</span>/&gt;</span><br><span class="line">        &lt;Counter onUpdate=&#123;<span class="built_in">this</span>.onUpdate&#125; caption=<span class="string">&quot;third&quot;</span>/&gt;</span><br><span class="line">      &lt;/div&gt;</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  onUpdate = (newValue)&#123;</span><br><span class="line">    <span class="comment">//收到子组件的调用</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>父组件向子组件传递信息，调用子组件的方法，通过绑定rel：<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Counter</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  <span class="title">constructor</span>(<span class="params">props</span>)=&gt;&#123;</span><br><span class="line">    <span class="built_in">super</span>(props)</span><br><span class="line">    <span class="built_in">this</span>.props.bind(<span class="built_in">this</span>)<span class="comment">//绑定子组件的引用到父组件的成员变量中</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">invokedMethod</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="comment">//...子组件 被调用的方法</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CounterPanel</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  counter1 = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">  render = <span class="function">()=&gt;</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      &lt;div&gt;</span><br><span class="line">        &lt;Counter bind=&#123;<span class="function">(<span class="params">rel</span>)=&gt;</span>&#123;<span class="built_in">this</span>.counter1 = rel&#125;&#125;/&gt;</span><br><span class="line">      &lt;/div&gt;</span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  invokerMethod = <span class="function">()=&gt;</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">this</span>.counter1) &#123;</span><br><span class="line">      <span class="built_in">this</span>.counter1.invokedMethod()<span class="comment">//父组件通过子组件的句柄调用子组件</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>同级组件通信可以通过公共父组件通信（状态提升）。</p>
+<p>当组件都有<code>state</code>，会造成数据的冗余，例如三个计数器Counter各自保有<code>num</code>，CounterPanel有三者的<code>num</code>的和，一旦有个组建有bug，就会出现数据的不一致。所以，需要有一个领头羊作为标准，其他的组件和他保持一致（不保有<code>state</code>）。为了解决这种“多个领头羊”的问题，把数据放到全局空间统一管理，这就是redux和flux的store的概念。</p>
+<p>同时多层组件要通信则需要借助中间层传递<code>props</code>，这造成了数据的冗余，违反了低耦合的要求。</p>
+<h2 id="单向数据流框架的始祖Flux和一个更强实现Redux"><a href="#单向数据流框架的始祖Flux和一个更强实现Redux" class="headerlink" title="单向数据流框架的始祖Flux和一个更强实现Redux"></a>单向数据流框架的始祖Flux和一个更强实现Redux</h2><p>Redux是管理应用状态的框架，</p>
+<p>////////////////<br>redux:<br>store只能有一个，存状态<br>reducer必须是纯函数，深拷贝，不能执行ajax<br>ActionType单独管理Action的类型<br>ActionCreator（工厂模式）单独管理Action<br>XXX中import XXXUI 写事件<br>XXXUI中export const 直接返回一个无状态的render函数：(props)=&gt;(&lt;&gt;..&lt;&gt;)，便于ui<br>逻辑分离，而且无状态组件性能更优</p>
+<p>redux中间件，和redux、 devtools同步使用（增强函数）<br>redux-thunk<br>redux-saga</p>
+<p>react-redux:<br>react-redux!=redux,redux是一个相对独立的数据管理框架，redux和react-redux是两个独立的npm包，react-redux要依赖redux，使用时两个都需要手动安装？yarn似乎可以直接关联依赖。</p>
+<p>import {Provider , connect} from ‘react-redux’<br>提供器，包裹要使用的组件；连接器，需要定义状态影射函数stateToProps，可以将UI模块的全部state改变为props，从而去状态化,定义事件影射函数dispatchToProps,不需要再组建内bind方法的this，所有的事件为OnXXX = this.props.xxx。最后export  default connect(stateToProps,dispatchToProps)(XXUI)</p>
+<p>好习惯：<br>解构函数和属性数据<br>在render的第一行<br>const {xxx} = this.props;//方法和数据</p>
+<p>react router</p>
+<p>react hooks</p>
+<h2 id="ReactRouter"><a href="#ReactRouter" class="headerlink" title="ReactRouter"></a>ReactRouter</h2><figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line">  </span><br><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; BrowserRouter, Route, Link&#125; <span class="keyword">from</span> <span class="string">&#x27;react-router-dom&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123;Page1,Page2,Page3&#125; <span class="keyword">from</span> <span class="string">&#x27;../page/&#x27;</span><span class="string">&#x27;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">class GlobalRouter extends React.Component &#123;</span></span><br><span class="line"><span class="string">  render() &#123;</span></span><br><span class="line"><span class="string">      return (</span></span><br><span class="line"><span class="string">        &lt;BrowserRouter&gt;</span></span><br><span class="line"><span class="string">            &lt;ul&gt;</span></span><br><span class="line"><span class="string">                &lt;li&gt;&lt;Link to=&quot;/page1&quot;&gt;Page1&lt;/Link&gt;&lt;/li&gt;</span></span><br><span class="line"><span class="string">                &lt;li&gt;&lt;Link to=&quot;/page2&quot;&gt;Page2&lt;/Link&gt;&lt;/li&gt;</span></span><br><span class="line"><span class="string">                &lt;li&gt;&lt;Link to=&quot;/page3&quot;&gt;Page3&lt;/Link&gt;&lt;/li&gt;</span></span><br><span class="line"><span class="string">            &lt;/ul&gt;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">            &lt;Route exact path=&quot;/page1&quot; component=&#123;Page1&#125;/&gt;</span></span><br><span class="line"><span class="string">            &lt;Route path=&quot;/page2&quot; component=&#123;Page2&#125;/&gt;</span></span><br><span class="line"><span class="string">            &lt;Route path=&quot;/page3&quot; component=&#123;Page3&#125;/&gt;</span></span><br><span class="line"><span class="string">        &lt;/BrowserRouter&gt;);</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">export default GlobalRouter;</span></span><br></pre></td></tr></table></figure>
+<p>路由可以嵌套多层，但是子路由需要完整路径</p>
+<p>精确匹配：<code>&lt;Route exact path=&quot;/&quot; component=&#123;Page&#125;/&gt;</code></p>
+<p>动态传值：<code>&lt;Route path=&quot;/page/:id&quot; component=&#123;Page&#125;/&gt;</code>，Page中<code>let id = this.props.match.params.id</code>获取<code>id</code></p>
+<p>重定向：<br>标签式：<br><figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; Redirect&#125; <span class="keyword">from</span> <span class="string">&#x27;react-router-dom&#x27;</span>;</span><br><span class="line"><span class="function"><span class="title">render</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> (<span class="xml"><span class="tag">&lt;<span class="name">Redirect</span> <span class="attr">to</span>=<span class="string">&quot;/page1&quot;</span>/&gt;</span></span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>编程式：<br><code>this.props.history.push(&quot;/page1&quot;)</code></p>
+<p>动态路由：<br><figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> routeConfig = [</span><br><span class="line">    &#123;<span class="attr">path</span>:<span class="string">&quot;/page1&quot;</span>,<span class="attr">title</span>:<span class="string">&quot;page1&quot;</span>,<span class="attr">exact</span>:<span class="literal">true</span>,<span class="attr">component</span>:Page1&#125;,</span><br><span class="line">    &#123;<span class="attr">path</span>:<span class="string">&quot;/page2&quot;</span>,<span class="attr">title</span>:<span class="string">&quot;page2&quot;</span>,<span class="attr">exact</span>:<span class="literal">true</span>,<span class="attr">component</span>:Page2&#125;,</span><br><span class="line">    &#123;<span class="attr">path</span>:<span class="string">&quot;/page3&quot;</span>,<span class="attr">title</span>:<span class="string">&quot;page3&quot;</span>,<span class="attr">exact</span>:<span class="literal">true</span>,<span class="attr">component</span>:Page3&#125;,</span><br><span class="line">]</span><br></pre></td></tr></table></figure><br>依据数据生成Router标签</p>
+<h1 id="React-hooks"><a href="#React-hooks" class="headerlink" title="React-hooks"></a>React-hooks</h1><h2 id="useState"><a href="#useState" class="headerlink" title="useState"></a>useState</h2><figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Example</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="title">constructor</span>(<span class="params">props</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(props)</span><br><span class="line">        <span class="built_in">this</span>.state = &#123;<span class="attr">count</span>:<span class="number">0</span>&#125;</span><br><span class="line">        <span class="built_in">this</span>.addCount = <span class="built_in">this</span>.addCount.bind(<span class="built_in">this</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            &lt;div&gt;</span><br><span class="line">                &lt;p&gt;Count:&#123;<span class="built_in">this</span>.state.count&#125;&lt;/p&gt;</span><br><span class="line">                &lt;button onClick=&#123;<span class="built_in">this</span>.addCount&#125;&gt;click&lt;/button&gt;</span><br><span class="line">            &lt;/div&gt;</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="title">addCount</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.setState(&#123;<span class="attr">count</span>:<span class="built_in">this</span>.state.count+<span class="number">1</span>&#125;)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React,&#123; useState &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Example</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> [count,setCount] = useState(<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        &lt;div&gt;</span><br><span class="line">            &lt;p&gt;Count:&#123;count&#125;&lt;/p&gt;</span><br><span class="line">            &lt;button onClick=&#123;<span class="function">()=&gt;</span>&#123;setCount(count+<span class="number">1</span>)&#125;&#125;&gt;click&lt;/button&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>hooks使用了useState，定义了一个count和setCount方法，提供了一个getter和setter。于是可以避免写class，直接用function就可以定义一个有状态的组件。</p>
+<p>useState必须顺序申明，不能存在于条件判断句子中。</p>
+<h2 id="useEffect"><a href="#useEffect" class="headerlink" title="useEffect"></a>useEffect</h2><p>useEffect替代了生命周期函数：<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React,&#123; useState, useEffect &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Example</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">    useEffect(<span class="function">()=&gt;</span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;componentDidMount&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="function">()=&gt;</span>&#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&#x27;componentWillUmount&#x27;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,[count])</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>第二个参数，监听数据的状态改变，当数组中的数据改变，才执行return返回的解绑前函数，当数组为<code>[]</code>，则当组件卸载时，才执行解绑函数。</p>
+<h2 id="useContext"><a href="#useContext" class="headerlink" title="useContext"></a>useContext</h2><p>解决父子组件传值的问题<br><figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React,&#123; useContext, createContext, useState&#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> CounterContext = createContext(&#123;&#125;)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Counter</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> count = useContext(CounterContext)</span><br><span class="line">    <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">p</span>&gt;</span>&#123;count&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Example</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> [count,setCount] = useState(<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        &lt;div&gt;</span><br><span class="line">            &lt;p&gt;Count:&#123;count&#125;&lt;/p&gt;</span><br><span class="line">            &lt;button onClick=&#123;<span class="function">()=&gt;</span>&#123;setCount(count+<span class="number">1</span>)&#125;&#125;&gt;click&lt;/button&gt;</span><br><span class="line">            &lt;CountContext.Provider value=&#123;count&#125;&gt;</span><br><span class="line">                &lt;Counter&gt;</span><br><span class="line">            &lt;/CounterProvider.Provider&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="useReducer"><a href="#useReducer" class="headerlink" title="useReducer"></a>useReducer</h2><figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React,&#123; useReducer, useState&#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Example</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> [count,dispatch] = useReducer(<span class="function">(<span class="params">state,action</span>)=&gt;</span>&#123;</span><br><span class="line">        <span class="keyword">switch</span>(action.type) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;add&#x27;</span>:</span><br><span class="line">                <span class="keyword">return</span> state+<span class="number">1</span></span><br><span class="line">            <span class="keyword">case</span> <span class="string">&#x27;sub&#x27;</span>:</span><br><span class="line">                <span class="keyword">return</span> state-<span class="number">1</span></span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="keyword">return</span> state</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,<span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        &lt;div&gt;</span><br><span class="line">            &lt;h1&gt;now count is:&#123;count&#125;&lt;/h1&gt;</span><br><span class="line">            &lt;button onClick=&#123;<span class="function">()=&gt;</span>&#123;dispatch(<span class="string">&#x27;add&#x27;</span>&#125;&#125;&gt;increase&lt;/button&gt;</span><br><span class="line">            &lt;button onClick=&#123;<span class="function">()=&gt;</span>&#123;dispatch(<span class="string">&#x27;sub&#x27;</span>&#125;&#125;&gt;decrease&lt;/button&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>和useContext使用，达到代替redux的效果</p>
+<figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React,&#123; useContext, createContext, useState&#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> ColorContext = createContext(&#123;&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> reducer = <span class="function">(<span class="params">state,action</span>)=&gt;</span>&#123;</span><br><span class="line">    <span class="keyword">switch</span>(action.type)&#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&#x27;update_color&#x27;</span>:</span><br><span class="line">            <span class="keyword">return</span> action.color;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">return</span> state;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Color</span>(<span class="params">props</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> [color,dispatch] = useReducer(reducer,<span class="string">&#x27;blue&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        &lt;ColorContext.Provider value=&#123;&#123;<span class="attr">color</span>:<span class="string">&#x27;blue&#x27;</span>&#125;&#125;&gt;</span><br><span class="line">            &#123;props.children&#125;</span><br><span class="line">        &lt;/ColorProvider.Provider&gt;</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ShowArea</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> &#123;color&#125; = useContext(ColorContext)</span><br><span class="line">    <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">&#123;&#123;color:color&#125;&#125;</span>&gt;</span>font color is &#123;color&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Buttons</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> &#123;dispatch&#125; = useContext(ColorContext) </span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">    (&lt;div&gt;</span><br><span class="line">        &lt;button onClick=&#123;<span class="function">()=&gt;</span>&#123;dispatch(type:<span class="string">&#x27;update_color&#x27;</span>,<span class="attr">color</span>:<span class="string">&#x27;red&#x27;</span>)&#125;&gt;red&lt;/button&gt;</span><br><span class="line">        &lt;button onClick=&#123;<span class="function">()=&gt;</span>&#123;dispatch(type:<span class="string">&#x27;update_color&#x27;</span>,<span class="attr">color</span>:<span class="string">&#x27;yellow&#x27;</span>)&#125;&gt;yellow&lt;/button&gt;</span><br><span class="line">    &lt;/&gt;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Example</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        &lt;Color&gt;</span><br><span class="line">            &lt;ShowArea/&gt;</span><br><span class="line">            &lt;Buttons/&gt;</span><br><span class="line">        &lt;/Color&gt;</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="useMemo"><a href="#useMemo" class="headerlink" title="useMemo"></a>useMemo</h2><p>useMemo解决hooks性能问题，解决生命周期中shouldComponentUpdate的更新问题。</p>
+<h2 id="useRef"><a href="#useRef" class="headerlink" title="useRef"></a>useRef</h2><p>useRef用于获取DOM和保存变量</p>
+<h2 id="自定义hooks函数"><a href="#自定义hooks函数" class="headerlink" title="自定义hooks函数"></a>自定义hooks函数</h2><p></p>
+
+                <hr>
+                
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2019/11/26/flutter学习笔记/" data-toggle="tooltip" data-placement="top"
+                           title="Flutter学习笔记">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2019/06/26/守护全世界最好的烤箱-systemd学习/" data-toggle="tooltip" data-placement="top"
+                           title="守护全世界最好的烤箱--systemd学习">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+
+                <!--加入新的评论系统-->
+                
+
+                
+
+            </div>
+
+            <div class="hidden-xs col-sm-3 toc-col">
+                <div class="toc-wrap">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#props%E5%92%8Cstate"><span class="toc-text">props和state</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#props%E7%B1%BB%E5%9E%8B%E7%BA%A6%E6%9D%9F%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">props类型约束与初始化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%98%BE%E5%BC%8F%E8%B0%83%E7%94%A8setState"><span class="toc-text">显式调用setState</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#react%E7%BB%84%E4%BB%B6%E7%B1%BB%E7%9A%84%E8%A3%85%E8%BD%BD%E8%BF%87%E7%A8%8B"><span class="toc-text">react组件类的装载过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#constructor-NaN"><span class="toc-text">constructor</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#getInitialState-getDefaultProps"><span class="toc-text">getInitialState&#x2F;getDefaultProps</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#render"><span class="toc-text">render</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#componentWillMount-componentDidMount"><span class="toc-text">componentWillMount&#x2F;componentDidMount</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#react%E7%BB%84%E4%BB%B6%E7%B1%BB%E7%9A%84%E6%9B%B4%E6%96%B0%E8%BF%87%E7%A8%8B"><span class="toc-text">react组件类的更新过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#componentWillReceiveProps-nextProps"><span class="toc-text">componentWillReceiveProps(nextProps)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shouldComponentUpdate-nextProps-nextState"><span class="toc-text">shouldComponentUpdate(nextProps,nextState)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#react%E7%BB%84%E4%BB%B6%E7%B1%BB%E7%9A%84%E5%8D%B8%E8%BD%BD%E8%BF%87%E7%A8%8B"><span class="toc-text">react组件类的卸载过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#componentWillUnmount"><span class="toc-text">componentWillUnmount</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%84%E4%BB%B6%E9%80%9A%E4%BF%A1"><span class="toc-text">组件通信</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E5%90%91%E6%95%B0%E6%8D%AE%E6%B5%81%E6%A1%86%E6%9E%B6%E7%9A%84%E5%A7%8B%E7%A5%96Flux%E5%92%8C%E4%B8%80%E4%B8%AA%E6%9B%B4%E5%BC%BA%E5%AE%9E%E7%8E%B0Redux"><span class="toc-text">单向数据流框架的始祖Flux和一个更强实现Redux</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ReactRouter"><span class="toc-text">ReactRouter</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#React-hooks"><span class="toc-text">React-hooks</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#useState"><span class="toc-text">useState</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#useEffect"><span class="toc-text">useEffect</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#useContext"><span class="toc-text">useContext</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#useReducer"><span class="toc-text">useReducer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#useMemo"><span class="toc-text">useMemo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#useRef"><span class="toc-text">useRef</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89hooks%E5%87%BD%E6%95%B0"><span class="toc-text">自定义hooks函数</span></a></li></ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5 class="text-center">
+                        <a href="/tags/">FEATURED TAGS</a>
+                    </h5>
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#React"
+                           title="React">React</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <div style="margin-top: 20px;">
+                    <h5 class="text-center">FRIENDS</h5>
+                    <ul class="list-inline text-center">
+                        
+                        <li><a target="_blank" rel="noopener" href="https://whoisnian.com">Whoisnian</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://thankod.github.io/">thankod</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://void-shana.moe/">VOID001</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://haizs.com/">Haizs</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://backgulf.com/">Backgulf</a></li>
+                        
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+</article>
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "XUranus";
+    var disqus_identifier = "http://xuranus.github.io/2019/11/22/%E5%AF%B9react%E5%AD%A6%E4%B9%A0%E7%9A%84%E4%B8%80%E7%82%B9%E6%B7%B1%E5%85%A5/";
+    var disqus_url = "http://xuranus.github.io/2019/11/22/%E5%AF%B9react%E5%AD%A6%E4%B9%A0%E7%9A%84%E4%B8%80%E7%82%B9%E6%B7%B1%E5%85%A5/";
+
+    (function () {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+
+<!-- Footer -->
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <br>
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/wang-xing-xiao-99">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/WXingxiao">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/XUranus">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; XUranus 2021
+                    <br>
+                    <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+                    <br>
+                    Theme by <a target="_blank" rel="noopener" href="https://haojen.github.io/">Haojen Ma</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/blog.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://xuranus.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- swiftype -->
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','','2.0.0');
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!--wechat title img-->
+<img class="wechat-title-img" src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1539187847049&amp;di=1446fff8f41c349c7cd72af34d44c2ab&amp;imgtype=0&amp;src=http%3A%2F%2Fwww.ewell.com.cn%2Feditor%2Fattached%2Fimage%2F20171225%2F20171225110887508750.jpg">
+</body>
+
+</html>

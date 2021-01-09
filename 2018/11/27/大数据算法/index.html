@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="XUranus的个人博客">
+    <meta name="keyword" content="XUranus">
+    <meta name="theme-color" content="#600090">
+    <meta name="msapplication-navbutton-color" content="#600090">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+    <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-person-128.png">
+    <link rel="alternate" type="application/atom+xml" title="XUranus" href="/atom.xml">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+    <title>
+        
+        大数据算法｜真常应物,真常得性;常应常静,常清静矣
+        
+    </title>
+
+    <link rel="canonical" href="http://xuranus.github.io/2018/11/27/大数据算法/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/blog-style.css">
+
+
+    <!-- Pygments Github CSS -->
+    
+<link rel="stylesheet" href="/css/syntax.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<style>
+
+    header.intro-header {
+        background-image: url('https://timgsa.baidu.com/timg\?image\&amp;quality\=80\&amp;size\=b9999_10000\&amp;sec\=1539187381343\&amp;di\=2fa8911a94b7b5a904539a11c5192518\&amp;imgtype\=0\&amp;src\=http%3A%2F%2F1.im.guokr.com%2FXpmNucNdcod0EZA1xPbLj2Q1HkqyGs9xqvZUPkEf6YK8AgAAQAEAAFBO.png')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="" class="animated fadeIn">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "true" data-istags="false
+" data-ishome = "false" >
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand animated pulse" href="/">
+                <span class="brand-logo">
+                    XUranus
+                </span>
+                's Blog
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <!-- /.navbar-collapse -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+					
+                    
+                        
+							
+                        <li>
+                            <a href="/tags/">标签</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/works/">作品集</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/archives/">归档</a>
+                        </li>
+							
+						
+                    
+					
+					
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+//    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+<!-- Main Content -->
+
+<!--only post-->
+
+
+<img class="wechat-title-img"
+     src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822">
+
+
+<style>
+    
+    header.intro-header {
+        background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822')
+    }
+
+    
+</style>
+
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <div class="post-heading">
+                    <h1>大数据算法</h1>
+                    
+                    <span class="meta">
+                         作者 XUranus
+                        <span>
+                          日期 2018-11-27
+                         </span>
+                    </span>
+                    <div class="tags text-center">
+                        
+                        <a class="tag" href="/tags/#大数据"
+                           title="大数据">大数据</a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="post-title-haojen">
+        <span>
+            大数据算法
+        </span>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+                <blockquote>
+<p>本文为icourse哈工大课程《大数据算法》笔记</p>
+</blockquote>
+<h1 id="大数据算法概述"><a href="#大数据算法概述" class="headerlink" title="大数据算法概述"></a>大数据算法概述</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>大数据算法指的是，在给定的<strong>资源约束</strong>下，以大数据为输入，在给定<strong>时间约束</strong>内可以生成满足给定<strong>约束结果</strong>的计算。</p>
+<p>大数据算法可以不是</p>
+<ul>
+<li>精确算法</li>
+<li>内存算法</li>
+<li>串行算法</li>
+<li>仅在电子计算机上运行的算法（可以有人来参与到程序的执行）</li>
+</ul>
+<p>大数据不仅仅是：</p>
+<ul>
+<li>云计算</li>
+<li>MapReduce</li>
+<li>大数据分析与挖掘的算法</li>
+</ul>
+<h2 id="难度"><a href="#难度" class="headerlink" title="难度"></a>难度</h2><ul>
+<li>访问全部数据时间过长 <ul>
+<li>读取部分数据 -&gt; 时间亚线性算法</li>
+</ul>
+</li>
+<li>数据难于放入内存计算 <ul>
+<li>将数据存储到磁盘上 -&gt; 外存算法 </li>
+<li>仅基于少量数据计算 -&gt; 空间亚线性算法</li>
+</ul>
+</li>
+<li>单个计算机难以保存全部数据，计算需要整体数据<ul>
+<li>并行处理 -&gt; 并行算法</li>
+</ul>
+</li>
+<li>计算机知识不足<ul>
+<li>人来参与 -&gt; 众包算法 </li>
+</ul>
+</li>
+</ul>
+<p>算法设计</p>
+<ul>
+<li>精确算法</li>
+<li>并行算法</li>
+<li>近似算法</li>
+<li>随机算法</li>
+<li>在线算法/数据流算法</li>
+<li>外存算法</li>
+<li>面向新型体系结构的算法</li>
+<li>现代优化算法</li>
+</ul>
+<h1 id="亚线性算法"><a href="#亚线性算法" class="headerlink" title="亚线性算法"></a>亚线性算法</h1><p>时间/空间/能量/通讯/IO消耗是O(输入规模)</p>
+<ol>
+<li><p>亚线性时间算法</p>
+<ul>
+<li>亚线性时间近似算法：例：给一个社交网络，能否在不访问所有节点的情况下，求平均每个节点的度数</li>
+<li>性质检测算法</li>
+</ul>
+</li>
+<li><p>亚线性空间算法</p>
+<ul>
+<li>例：有限的内存空间，面对一个无限数据流，求中位数（如何不保存所有数字，求中位数）</li>
+</ul>
+</li>
+</ol>
+<h2 id="水库抽样—-一个亚线性空间算法"><a href="#水库抽样—-一个亚线性空间算法" class="headerlink" title="水库抽样—-一个亚线性空间算法"></a>水库抽样—-一个亚线性空间算法</h2><p>输入：一组数据，大小未知<br>输出：这组数据的k个均匀抽样<br>要求：</p>
+<ol>
+<li>仅扫描一次</li>
+<li>空间复杂度O(k)</li>
+<li>扫描到数据前n个数字时候(n&gt;k),保存当前已扫描数据的k个均匀抽样</li>
+</ol>
+<p>算法：</p>
+<ol>
+<li>申请一个长度为k的数组A保存抽样</li>
+<li>保存首先接收到的k个元素</li>
+<li>当接收到第i个新元素的t时，以k/i的概率随机替换A中的元素(即生成[1,i]间的随机数j,若j&lt;=k,则以t替换A[j])</li>
+</ol>
+<p>性质</p>
+<ol>
+<li>采样是均匀的</li>
+<li>空间复杂度O(k)</li>
+</ol>
+<h2 id="平面图直径计算—-时间亚线性算法"><a href="#平面图直径计算—-时间亚线性算法" class="headerlink" title="平面图直径计算—-时间亚线性算法"></a>平面图直径计算—-时间亚线性算法</h2><p>输入：m个顶点的平面图，任意两点之间的距离存储在矩阵D中，即点到点的距离是D[i,j]</p>
+<ul>
+<li><p>输入大小是:</p>
+<script type="math/tex; mode=display">n=m^2</script></li>
+<li>最大的D[i,j]是图的直径</li>
+<li>点之间的距离对称且满足三角不等式</li>
+</ul>
+<p>输出：图的直径<br>要求：运行时间为O(n)</p>
+<p>无法在要求的时间内得到精确解，寻找近似算法</p>
+<p>近似算法：</p>
+<ol>
+<li>任意选择k&lt;=m</li>
+<li>选择似的D[k,l]最大的l</li>
+<li>输出D[k,l]和(k,l)</li>
+</ol>
+<p>精确解D<em>,D[k,l]&lt;=D</em>&lt;=2*D[k,l]</p>
+<p>运行时间</p>
+<script type="math/tex; mode=display">O(m)=O(\sqrt{n})=O(n)</script><h3 id="近似算法"><a href="#近似算法" class="headerlink" title="近似算法"></a>近似算法</h3><ul>
+<li>近似算法是用来解决优化问题</li>
+<li>能够给出优化问题的一个近似优化解方案</li>
+</ul>
+<p>我们需要分许近似解代价和优化解代价的差距:</p>
+<ul>
+<li>Radio Bound<br>设A是一个优化问题的近似算法，A具有Radio Bound p(n)，如果</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$$max\left\&#123;&#123;\frac&#123;C&#125;&#123;C^*&#125;&#125;,&#123;\frac&#123;C^*&#125;&#123;C&#125;&#125;\right\&#125;\leq P(n)$$</span><br></pre></td></tr></table></figure>
+<p>其中n是输入大小，C是A产生的解的代价，C*是优化解的代价。取max是为了应对最大化和最小化问题。Radio&gt;=1,越小越好（近似比是一直大于等于1的）</p>
+<ul>
+<li>相对误差/相对误差界（数值分析中的概念）</li>
+</ul>
+<h2 id="全0数组判定—-亚线性时间判定算法"><a href="#全0数组判定—-亚线性时间判定算法" class="headerlink" title="全0数组判定—-亚线性时间判定算法"></a>全0数组判定—-亚线性时间判定算法</h2><p>输入：包含n个元素的0,1数组A<br>输出：A中的元素是否全是0</p>
+<p>要求：运行时间为O(n)</p>
+<p>判定问题的近似解的定义：输入满足某种性质或者远非满足此性质</p>
+<p>ξ远离：对于输入x，如果从x到L中任意字符串的汉明距离至少为ξ|x|,则x是ξ-远离L的</p>
+<p>算法：</p>
+<ol>
+<li>在A中随机独立抽取s=2/ξ个位置上的元素</li>
+<li>检查抽样，若不包含1，则输出是，否则输出否</li>
+</ol>
+<p>精确性分析：</p>
+<ul>
+<li>如果哦A是全0数组，始终输出是</li>
+<li>如果A是ξ-远离的</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$$&#123;Pr[error]&#x3D;Pr[抽样中没有1] \leq(1-\epsilon)^s\approx e^&#123;-\epsilon s&#125;&#x3D;e^&#123;-2&#125;\leq \frac 1 3 &#125;$$</span><br></pre></td></tr></table></figure>
+<p>即这种情况下出错的概率小雨1/3</p>
+<p>运行时间O(s)</p>
+<p>证据引理：<br>如果一次测试以大于等于p的概率获得一个证据，那么s=2/p轮测试得到的证据概率大于等于2/3</p>
+<p>对于一个判定问题L,其查询复杂性q(n)和近似参数ξ的性质测试算法是一个随机算法，其满足对于给定L的是一个实例x，最多进行q(|x|)次查询，并满足下述性质：</p>
+<ul>
+<li>如果x在L中，该算法最少2/3的概率返回“是”</li>
+<li>如果x是ξ远离L的，该算法以最少2/3的概率返回“否”</li>
+</ul>
+<h1 id="亚线性算法例析"><a href="#亚线性算法例析" class="headerlink" title="亚线性算法例析"></a>亚线性算法例析</h1><h2 id="数据流中频繁元素—空间亚线性"><a href="#数据流中频繁元素—空间亚线性" class="headerlink" title="数据流中频繁元素—空间亚线性"></a>数据流中频繁元素—空间亚线性</h2><p>大数据的数据流模型：</p>
+<ul>
+<li>数据是流动的，只能顺序的扫描一次或几次，复杂度不超过O(n)，需要能快速处理新到来的元素</li>
+<li>数据可能是无限的，内存有限的。大数据中内存规模 &lt;&lt; 数据规模</li>
+<li>希望维护一个内存结果（概要）来给出相关性质的一个有效估计</li>
+</ul>
+<p>数据流中可以计算什么？<br>例子：32,112,14,9,37,115,2<br>容易计算min,max,sum…使用单个寄存器s，直接更新  </p>
+<ul>
+<li>max:初始化s &lt;- 0,对于每一个到来的新元素x, s &lt;- max{x,s}</li>
+<li>sum:初始化s &lt;- 0,对于每一个到来的新元素x, s &lt;- s+x<br>s是可以合并的，多个流放到不同的s里，最后可以合并  </li>
+</ul>
+<p>频繁元素：元素出现多次，希望找到出现最频繁的元素(n表示不同元素的数量，m表示数据流当前接收到的元素的个数)<br>精确解：每个元素设置计数器，当内存只能提供k个计数器，k &lt;&lt; n，问题就来了<br>近似算法(MG算法)：<br>对于元素x，如果已经给x分配计数器，计数器值自增；如果没有分配计数器，且计数器 &lt; k，增加一个值为1的计数器；如果没有计数器，且计数器&gt;=k，所有计数器减1，删除值为0的计数器。最后如果有x的计数器，返回其值，否则返回0,这种算法最后能输出最频繁的若干元素，但是输出值绝对低估了原本的重复值。</p>
+<p>一个计数器x减少了几次？  </p>
+<ul>
+<li>整个结构的权重（计数器的和）记作m’</li>
+<li>整个数据流的权重（全部元素的数量）是m</li>
+<li>每一个计数器降低的步骤减少k个计数，但是并未计，输入元素的此次出现，即k+1次未计入的元素出现。</li>
+</ul>
+<p>最多有减少步骤（即估计值和真实值相差最多）：</p>
+<script type="math/tex; mode=display">\frac{m-m'}{k+1}</script><p>当数据流的元素总数远大于这个值，x会是一个好的估计，错误的界限和k成反比，该算法有效的原因（zipf原则）</p>
+<h2 id="最小生成树—时间亚线性计算"><a href="#最小生成树—时间亚线性计算" class="headerlink" title="最小生成树—时间亚线性计算"></a>最小生成树—时间亚线性计算</h2><p>·视频3,3</p>
+<h2 id="序列有序的判定—时间亚线性算法的判定问题"><a href="#序列有序的判定—时间亚线性算法的判定问题" class="headerlink" title="序列有序的判定—时间亚线性算法的判定问题"></a>序列有序的判定—时间亚线性算法的判定问题</h2>
+                <hr>
+                
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2018/11/27/自己写个shadowsocks/" data-toggle="tooltip" data-placement="top"
+                           title="自己写个shadowsocks">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2018/11/26/hexo中开启对Mathjax的支持/" data-toggle="tooltip" data-placement="top"
+                           title="hexo中开启对Mathjax的支持">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+
+                <!--加入新的评论系统-->
+                
+
+                
+
+            </div>
+
+            <div class="hidden-xs col-sm-3 toc-col">
+                <div class="toc-wrap">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%E6%A6%82%E8%BF%B0"><span class="toc-text">大数据算法概述</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89"><span class="toc-text">定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9A%BE%E5%BA%A6"><span class="toc-text">难度</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95"><span class="toc-text">亚线性算法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B0%B4%E5%BA%93%E6%8A%BD%E6%A0%B7%E2%80%94-%E4%B8%80%E4%B8%AA%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%A9%BA%E9%97%B4%E7%AE%97%E6%B3%95"><span class="toc-text">水库抽样—-一个亚线性空间算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%B3%E9%9D%A2%E5%9B%BE%E7%9B%B4%E5%BE%84%E8%AE%A1%E7%AE%97%E2%80%94-%E6%97%B6%E9%97%B4%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95"><span class="toc-text">平面图直径计算—-时间亚线性算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%91%E4%BC%BC%E7%AE%97%E6%B3%95"><span class="toc-text">近似算法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%A80%E6%95%B0%E7%BB%84%E5%88%A4%E5%AE%9A%E2%80%94-%E4%BA%9A%E7%BA%BF%E6%80%A7%E6%97%B6%E9%97%B4%E5%88%A4%E5%AE%9A%E7%AE%97%E6%B3%95"><span class="toc-text">全0数组判定—-亚线性时间判定算法</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95%E4%BE%8B%E6%9E%90"><span class="toc-text">亚线性算法例析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%B5%81%E4%B8%AD%E9%A2%91%E7%B9%81%E5%85%83%E7%B4%A0%E2%80%94%E7%A9%BA%E9%97%B4%E4%BA%9A%E7%BA%BF%E6%80%A7"><span class="toc-text">数据流中频繁元素—空间亚线性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91%E2%80%94%E6%97%B6%E9%97%B4%E4%BA%9A%E7%BA%BF%E6%80%A7%E8%AE%A1%E7%AE%97"><span class="toc-text">最小生成树—时间亚线性计算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E6%9C%89%E5%BA%8F%E7%9A%84%E5%88%A4%E5%AE%9A%E2%80%94%E6%97%B6%E9%97%B4%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95%E7%9A%84%E5%88%A4%E5%AE%9A%E9%97%AE%E9%A2%98"><span class="toc-text">序列有序的判定—时间亚线性算法的判定问题</span></a></li></ol></li></ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5 class="text-center">
+                        <a href="/tags/">FEATURED TAGS</a>
+                    </h5>
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#大数据"
+                           title="大数据">大数据</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <div style="margin-top: 20px;">
+                    <h5 class="text-center">FRIENDS</h5>
+                    <ul class="list-inline text-center">
+                        
+                        <li><a target="_blank" rel="noopener" href="https://whoisnian.com">Whoisnian</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://thankod.github.io/">thankod</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://void-shana.moe/">VOID001</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://haizs.com/">Haizs</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://backgulf.com/">Backgulf</a></li>
+                        
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+</article>
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "XUranus";
+    var disqus_identifier = "http://xuranus.github.io/2018/11/27/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95/";
+    var disqus_url = "http://xuranus.github.io/2018/11/27/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95/";
+
+    (function () {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+
+<!-- Footer -->
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <br>
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/wang-xing-xiao-99">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/WXingxiao">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/XUranus">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; XUranus 2021
+                    <br>
+                    <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+                    <br>
+                    Theme by <a target="_blank" rel="noopener" href="https://haojen.github.io/">Haojen Ma</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/blog.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://xuranus.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- mathjax -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        processEscapes: true
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    }});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- swiftype -->
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','','2.0.0');
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!--wechat title img-->
+<img class="wechat-title-img" src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1539187847049&amp;di=1446fff8f41c349c7cd72af34d44c2ab&amp;imgtype=0&amp;src=http%3A%2F%2Fwww.ewell.com.cn%2Feditor%2Fattached%2Fimage%2F20171225%2F20171225110887508750.jpg">
+</body>
+
+</html>

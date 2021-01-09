@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="XUranus的个人博客">
+    <meta name="keyword" content="XUranus">
+    <meta name="theme-color" content="#600090">
+    <meta name="msapplication-navbutton-color" content="#600090">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+    <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-person-128.png">
+    <link rel="alternate" type="application/atom+xml" title="XUranus" href="/atom.xml">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+    <title>
+        
+        js异步函数同步｜真常应物,真常得性;常应常静,常清静矣
+        
+    </title>
+
+    <link rel="canonical" href="http://xuranus.github.io/2018/12/01/js异步函数同步/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/blog-style.css">
+
+
+    <!-- Pygments Github CSS -->
+    
+<link rel="stylesheet" href="/css/syntax.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<style>
+
+    header.intro-header {
+        background-image: url('https://timgsa.baidu.com/timg\?image\&amp;quality\=80\&amp;size\=b9999_10000\&amp;sec\=1539187381343\&amp;di\=2fa8911a94b7b5a904539a11c5192518\&amp;imgtype\=0\&amp;src\=http%3A%2F%2F1.im.guokr.com%2FXpmNucNdcod0EZA1xPbLj2Q1HkqyGs9xqvZUPkEf6YK8AgAAQAEAAFBO.png')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="" class="animated fadeIn">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "true" data-istags="false
+" data-ishome = "false" >
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand animated pulse" href="/">
+                <span class="brand-logo">
+                    XUranus
+                </span>
+                's Blog
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <!-- /.navbar-collapse -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+					
+                    
+                        
+							
+                        <li>
+                            <a href="/tags/">标签</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/works/">作品集</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/archives/">归档</a>
+                        </li>
+							
+						
+                    
+					
+					
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+//    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+<!-- Main Content -->
+
+<!--only post-->
+
+
+<img class="wechat-title-img"
+     src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822">
+
+
+<style>
+    
+    header.intro-header {
+        background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822')
+    }
+
+    
+</style>
+
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <div class="post-heading">
+                    <h1>js异步函数同步</h1>
+                    
+                    <span class="meta">
+                         作者 XUranus
+                        <span>
+                          日期 2018-12-01
+                         </span>
+                    </span>
+                    <div class="tags text-center">
+                        
+                        <a class="tag" href="/tags/#javascript"
+                           title="javascript">javascript</a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="post-title-haojen">
+        <span>
+            js异步函数同步
+        </span>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+                <p>先看一段程序<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> path = <span class="string">&#x27;/home/xuranus//&#x27;</span>;</span><br><span class="line"><span class="keyword">var</span> file_list = [</span><br><span class="line">    <span class="string">&#x27;A.json&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;B.json&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;C.json&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;D.json&#x27;</span>,</span><br><span class="line">];</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> arr = [];</span><br><span class="line">file_list.forEach(<span class="function"><span class="params">file</span>=&gt;</span>&#123;</span><br><span class="line">    fs.readFile(path+file,<span class="function">(<span class="params">err,data</span>)=&gt;</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(err) <span class="built_in">console</span>.log(file,err);</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">&#x27;reading &#x27;</span>,file)</span><br><span class="line">            <span class="keyword">var</span> stu = data.toString(); <span class="comment">//data从bin-&gt;string</span></span><br><span class="line">            stu = <span class="built_in">JSON</span>.parse(stu);<span class="comment">//string -&gt; json</span></span><br><span class="line">            rows = stu.rows;</span><br><span class="line">            rows.forEach(<span class="function"><span class="params">element</span> =&gt;</span> &#123;</span><br><span class="line">                <span class="keyword">if</span>(element.pwd!=<span class="literal">undefined</span>)</span><br><span class="line">                    arr.push(element.pwd);<span class="comment">//pass</span></span><br><span class="line">                <span class="keyword">if</span>(element.phome!=<span class="literal">undefined</span>)</span><br><span class="line">                    arr.push(element.phone);<span class="comment">//phone</span></span><br><span class="line">                <span class="keyword">if</span>(element.email!=<span class="literal">undefined</span>)</span><br><span class="line">                    arr.push(element.email.split(<span class="string">&#x27;@&#x27;</span>)[<span class="number">0</span>]);<span class="comment">//qq</span></span><br><span class="line">                <span class="keyword">if</span>(element.code!=<span class="literal">undefined</span>)</span><br><span class="line">                    arr.push(element.code);<span class="comment">//id\</span></span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(arr.length)</span><br></pre></td></tr></table></figure><br>该程序实现了这样一个操作：从四个json文件中读取json数组，把每个json对象的若干对象放入一个数组。为了追求性(zhuang)能(bi)，没有老老实实用下标迭代，而是用了<code>forEach</code>,而且js的读文件IO提供的api也是回调的，众所周知js的回调函数执行是异步的，于是出现了这样一个问题：当我最后想操作arr（这里为打印出arr的长度）始终为0，因为上面的<code>forEach</code>函数是异步的，所以<code>console.log()</code>在函数执行完之前就被执行。</p>
+<p>换句话说：无法使用异步操作处理后的数据，即Arr不知在何时被处理完。此时需要强制使这块同步：使用async模块，首先<code>npm install async --save</code>，然后导入，代码如下：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">async</span> = <span class="built_in">require</span>(<span class="string">&#x27;async&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> path = <span class="string">&#x27;/home/xuranus//&#x27;</span>;</span><br><span class="line"><span class="keyword">var</span> file_list = [</span><br><span class="line">    <span class="string">&#x27;A.json&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;B.json&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;C.json&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;D.json&#x27;</span>,</span><br><span class="line">]</span><br><span class="line"><span class="keyword">var</span> arr = [];</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">unique</span>(<span class="params">arr</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> hash=[];</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; arr.length; i++) &#123;</span><br><span class="line">       <span class="keyword">if</span>(hash.indexOf(arr[i])==-<span class="number">1</span>)&#123;</span><br><span class="line">        hash.push(arr[i]);</span><br><span class="line">       &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> hash;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">async</span>.each(</span><br><span class="line">    file_list,</span><br><span class="line">    (file, callback) =&gt; &#123;</span><br><span class="line">        fs.readFile(path+file,<span class="function">(<span class="params">err,data</span>)=&gt;</span>&#123;</span><br><span class="line">            <span class="keyword">if</span>(err) <span class="built_in">console</span>.log(file,err);</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">&#x27;reading &#x27;</span>,file)</span><br><span class="line">                <span class="keyword">var</span> stu = data.toString(); <span class="comment">//data从bin-&gt;string</span></span><br><span class="line">                stu = <span class="built_in">JSON</span>.parse(stu);<span class="comment">//string -&gt; json</span></span><br><span class="line">                rows = stu.rows;</span><br><span class="line">                rows.forEach(<span class="function"><span class="params">element</span> =&gt;</span> &#123;</span><br><span class="line">                    <span class="keyword">if</span>(element.pwd!=<span class="literal">undefined</span>)</span><br><span class="line">                        arr.push(element.pwd);<span class="comment">//pass</span></span><br><span class="line">                    <span class="keyword">if</span>(element.phome!=<span class="literal">undefined</span>)</span><br><span class="line">                        arr.push(element.phone);<span class="comment">//phone</span></span><br><span class="line">                    <span class="keyword">if</span>(element.email!=<span class="literal">undefined</span>)</span><br><span class="line">                        arr.push(element.email.split(<span class="string">&#x27;@&#x27;</span>)[<span class="number">0</span>]);<span class="comment">//qq</span></span><br><span class="line">                    <span class="keyword">if</span>(element.code!=<span class="literal">undefined</span>)</span><br><span class="line">                        arr.push(element.code);<span class="comment">//id\</span></span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">            callback(<span class="literal">null</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;,</span><br><span class="line">    () =&gt; &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;arr len&#x27;</span>,arr.length);</span><br><span class="line">        <span class="keyword">var</span> outArr = unique(arr);</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;unique arr len&#x27;</span>,outArr.length);</span><br><span class="line">        <span class="keyword">var</span> str = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">        <span class="keyword">async</span>.each(</span><br><span class="line">            outArr,</span><br><span class="line">            (element,callback) =&gt; &#123;</span><br><span class="line">                str += (element+<span class="string">&#x27;\n&#x27;</span>);</span><br><span class="line">                callback(<span class="literal">null</span>);</span><br><span class="line">            &#125;,</span><br><span class="line">            () =&gt; &#123;</span><br><span class="line">                fs.writeFile(<span class="string">&#x27;dic.txt&#x27;</span>,str, &#123; <span class="string">&#x27;flag&#x27;</span>: <span class="string">&#x27;a&#x27;</span> &#125;, <span class="function">(<span class="params">err</span>)=&gt;</span>&#123;</span><br><span class="line">                    <span class="keyword">if</span>(err) <span class="built_in">console</span>.log(err);</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line">);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+                <hr>
+                
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2018/12/23/hbase实现搜索引擎/" data-toggle="tooltip" data-placement="top"
+                           title="HBase实现搜索引擎">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2018/11/27/自己写个shadowsocks/" data-toggle="tooltip" data-placement="top"
+                           title="自己写个shadowsocks">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+
+                <!--加入新的评论系统-->
+                
+
+                
+
+            </div>
+
+            <div class="hidden-xs col-sm-3 toc-col">
+                <div class="toc-wrap">
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5 class="text-center">
+                        <a href="/tags/">FEATURED TAGS</a>
+                    </h5>
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#javascript"
+                           title="javascript">javascript</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <div style="margin-top: 20px;">
+                    <h5 class="text-center">FRIENDS</h5>
+                    <ul class="list-inline text-center">
+                        
+                        <li><a target="_blank" rel="noopener" href="https://whoisnian.com">Whoisnian</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://thankod.github.io/">thankod</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://void-shana.moe/">VOID001</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://haizs.com/">Haizs</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://backgulf.com/">Backgulf</a></li>
+                        
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+</article>
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "XUranus";
+    var disqus_identifier = "http://xuranus.github.io/2018/12/01/js%E5%BC%82%E6%AD%A5%E5%87%BD%E6%95%B0%E5%90%8C%E6%AD%A5/";
+    var disqus_url = "http://xuranus.github.io/2018/12/01/js%E5%BC%82%E6%AD%A5%E5%87%BD%E6%95%B0%E5%90%8C%E6%AD%A5/";
+
+    (function () {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+
+<!-- Footer -->
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <br>
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/wang-xing-xiao-99">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/WXingxiao">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/XUranus">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; XUranus 2021
+                    <br>
+                    <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+                    <br>
+                    Theme by <a target="_blank" rel="noopener" href="https://haojen.github.io/">Haojen Ma</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/blog.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://xuranus.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- swiftype -->
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','','2.0.0');
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!--wechat title img-->
+<img class="wechat-title-img" src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1539187847049&amp;di=1446fff8f41c349c7cd72af34d44c2ab&amp;imgtype=0&amp;src=http%3A%2F%2Fwww.ewell.com.cn%2Feditor%2Fattached%2Fimage%2F20171225%2F20171225110887508750.jpg">
+</body>
+
+</html>

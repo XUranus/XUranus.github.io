@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="XUranus的个人博客">
+    <meta name="keyword" content="XUranus">
+    <meta name="theme-color" content="#600090">
+    <meta name="msapplication-navbutton-color" content="#600090">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+    <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-person-128.png">
+    <link rel="alternate" type="application/atom+xml" title="XUranus" href="/atom.xml">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+    <title>
+        
+        Nginx安装与配置｜真常应物,真常得性;常应常静,常清静矣
+        
+    </title>
+
+    <link rel="canonical" href="http://xuranus.github.io/2019/05/01/Nginx安装与配置/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/blog-style.css">
+
+
+    <!-- Pygments Github CSS -->
+    
+<link rel="stylesheet" href="/css/syntax.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<style>
+
+    header.intro-header {
+        background-image: url('https://timgsa.baidu.com/timg\?image\&amp;quality\=80\&amp;size\=b9999_10000\&amp;sec\=1539187381343\&amp;di\=2fa8911a94b7b5a904539a11c5192518\&amp;imgtype\=0\&amp;src\=http%3A%2F%2F1.im.guokr.com%2FXpmNucNdcod0EZA1xPbLj2Q1HkqyGs9xqvZUPkEf6YK8AgAAQAEAAFBO.png')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="" class="animated fadeIn">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "true" data-istags="false
+" data-ishome = "false" >
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand animated pulse" href="/">
+                <span class="brand-logo">
+                    XUranus
+                </span>
+                's Blog
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <!-- /.navbar-collapse -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+					
+                    
+                        
+							
+                        <li>
+                            <a href="/tags/">标签</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/works/">作品集</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/archives/">归档</a>
+                        </li>
+							
+						
+                    
+					
+					
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+//    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+<!-- Main Content -->
+
+<!--only post-->
+
+
+<img class="wechat-title-img"
+     src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822">
+
+
+<style>
+    
+    header.intro-header {
+        background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822')
+    }
+
+    
+</style>
+
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <div class="post-heading">
+                    <h1>Nginx安装与配置</h1>
+                    
+                    <span class="meta">
+                         作者 XUranus
+                        <span>
+                          日期 2019-05-01
+                         </span>
+                    </span>
+                    <div class="tags text-center">
+                        
+                        <a class="tag" href="/tags/#Nginx"
+                           title="Nginx">Nginx</a>
+                        
+                        <a class="tag" href="/tags/#运维"
+                           title="运维">运维</a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="post-title-haojen">
+        <span>
+            Nginx安装与配置
+        </span>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+                <blockquote>
+<p>实验楼nginx课程练习地址：<a target="_blank" rel="noopener" href="https://www.shiyanlou.com/courses/95">Nginx实战</a></p>
+</blockquote>
+<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>Nnginx 是一款高性能的 HTTP 和反向代理服务器软件，第一个开源版本诞生于 2004 年,虽然诞生较晚但经过十多年的发展,已经成为非常流行的 web 服务器软件。</p>
+<h2 id="为什么选择-Nginx"><a href="#为什么选择-Nginx" class="headerlink" title="为什么选择 Nginx"></a>为什么选择 Nginx</h2><h3 id="Nginx-和-Apache-相同点"><a href="#Nginx-和-Apache-相同点" class="headerlink" title="Nginx 和 Apache 相同点"></a>Nginx 和 Apache 相同点</h3><ul>
+<li>同是 HTTP 服务器软件，都采用<strong>模块化</strong>结构设计</li>
+<li>支持通用语言接口，如 PHP、Python 等</li>
+<li>支持正向代理和反向代理</li>
+<li>支持虚拟主机及 ssl 加密传输</li>
+<li>支持缓存及压缩传输</li>
+<li>支持 URL 重写</li>
+<li>模块多,扩展性强</li>
+<li>多平台支持</li>
+</ul>
+<h3 id="优势与劣势"><a href="#优势与劣势" class="headerlink" title="优势与劣势"></a>优势与劣势</h3><h4 id="Nginx的优势"><a href="#Nginx的优势" class="headerlink" title="Nginx的优势"></a>Nginx的优势</h4><ul>
+<li>轻量级 安装文件小 运行时 CPU 内存使用率低</li>
+<li>性能强 支持多核,处理静态文件效率高,内核采用的 poll 模型最大可以支持 50K 并发连接</li>
+<li>支持热部署 同时启动速度快,可以在不间断服务的情况下对软件和配置进行升级</li>
+<li>负载均衡 支持容错和健康检查</li>
+<li>代理功能强大 支持无缓存的反向代理,同时支持 IMAP/POP3/SMTP 的代理</li>
+</ul>
+<h4 id="Nginx的劣势"><a href="#Nginx的劣势" class="headerlink" title="Nginx的劣势"></a>Nginx的劣势</h4><ul>
+<li>相比 Apache 模块要少一些，常用模块都有了，而且支持 LUA 语言扩展功能<br>对动态请求支持不如 apache</li>
+<li>Windows 版本功能有限，受限于 windows 的特性,支持最好的还是 Unix 系统</li>
+</ul>
+<h2 id="Nginx-工作原理"><a href="#Nginx-工作原理" class="headerlink" title="Nginx 工作原理"></a>Nginx 工作原理</h2><p>Nginx 由内核和一系列模块组成，内核提供 web 服务的基本功能，如启用网络协议，创建运行环境，接收和分配客户端请求，处理模块之间的交互。Nginx 的各种功能和操作都由模块来实现。Nginx 的模块从结构上分为核心模块、基础模块和第三方模块。</p>
+<p>核心模块： HTTP 模块、EVENT 模块和 MAIL 模块</p>
+<p>基础模块： HTTP Access 模块、HTTP FastCGI 模块、HTTP Proxy 模块和 HTTP Rewrite 模块</p>
+<p>第三方模块： HTTP Upstream Request Hash 模块、Notice 模块和 HTTP Access Key 模块及用户自己开发的模块</p>
+<p>这样的设计使 Nginx 方便开发和扩展，也正因此才使得 Nginx 功能如此强大。Nginx 的模块默认编译进 nginx 中，<strong>如果需要增加或删除模块，需要重新编译 Nginx</strong>,这一点不如 Apache 的动态加载模块方便。如果有需要动态加载模块，可以使用由淘宝网发起的 web 服务器 Tengine，在 nginx 的基础上增加了很多高级特性，完全兼容 Nginx，已被国内很多网站采用。</p>
+<h2 id="Nginx-的常用架构"><a href="#Nginx-的常用架构" class="headerlink" title="Nginx 的常用架构"></a>Nginx 的常用架构</h2><p>web 历史上最流行最经典的环境是 LAMP（Linux + Apache + Mysql + PHP）,至今仍有大量网站采用此架构，Apache 默认配置在未优化的情况下比较占用 CPU 和内存。借助于 Nginx 的轻量和高性能，LNMP 架构只是将 LAMP 环境中的 Apache 换成 Nginx，于是另一经典 LNMP 架构就诞生了。LNMP 在服务器硬件配置相同时，相对于 LAMP 会使用更少的 CPU 和内存，是小型网站，低配服务器，和 VPS 的福音。</p>
+<h1 id="安装与启动"><a href="#安装与启动" class="headerlink" title="安装与启动"></a>安装与启动</h1><ul>
+<li>环境：ubuntu 20.04</li>
+</ul>
+<h2 id="使用apt安装："><a href="#使用apt安装：" class="headerlink" title="使用apt安装："></a>使用apt安装：</h2><p><code>sudo apt-get install nginx</code><br>启动/关闭/状态查看/重新启动<br><code>sudo /etc/init.d/nginx [start|stop|status|restart]</code><br>也可以用systemctl工具<br><code>sudo systemctl [start|stop|status|restart] nginx</code><br>旧版的service<br><code>sudo service nginx [start|stop|status|reload]</code></p>
+<h2 id="手动编译"><a href="#手动编译" class="headerlink" title="手动编译"></a>手动编译</h2><p>使用包管理器安装固然方便，单后续重新编译模块将会很麻烦，手动编译安装可以避免这一问题，还有助于我们更好理解nginx：<br><code>cd /usr/local</code>，下载源码：<code>sudo wget http://nginx.org/download/nginx-1.18.0.tar.gz</code><br>解压：<code>sudo tar -zxvf nginx-1.18.0.tar.gz</code><br>删除压缩包：<code>sudo rm nginx-1.18.0.tar.gz</code><br><code>sudo mv nginx-1.18.0 nginx &amp;&amp; cd nginx</code>  </p>
+<p>nginx编译需要依赖<code>zlib</code>,<code>pcre</code>,<code>openssl</code>，ubuntu下安装这些包：<code>sudo apt install openssl libssl-dev libpcre3 libpcre3-dev zlib1g-dev</code></p>
+<p>执行配置：<code>sudo ./configure</code>进行编译前的参数设置（可以用<code>./configure --help</code>查看具体配置参数），配置完后显示相关目标路径：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">nginx path prefix: &quot;&#x2F;usr&#x2F;local&#x2F;nginx&quot; #安装目录</span><br><span class="line">nginx binary file: &quot;&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;sbin&#x2F;nginx&quot; #二进制文件位置</span><br><span class="line">nginx modules path: &quot;&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;modules&quot;</span><br><span class="line">nginx configuration prefix: &quot;&#x2F;usr&#x2F;local&#x2F;nginx&quot;</span><br><span class="line">nginx configuration file: &quot;&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;nginx.conf&quot; 配置文件</span><br><span class="line">nginx pid file: &quot;&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;nginx.pid&quot;</span><br><span class="line">nginx error log file: &quot;&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;error.log&quot;</span><br><span class="line">nginx http access log file: &quot;&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;access.log&quot;</span><br><span class="line">nginx http client request body temporary files: &quot;client_body_temp&quot;</span><br><span class="line">nginx http proxy temporary files: &quot;proxy_temp&quot;</span><br><span class="line">nginx http fastcgi temporary files: &quot;fastcgi_temp&quot;</span><br><span class="line">nginx http uwsgi temporary files: &quot;uwsgi_temp&quot;</span><br><span class="line">nginx http scgi temporary files: &quot;scgi_temp&quot;</span><br></pre></td></tr></table></figure><br>配置完后，目录下会生成Makefile，编译安装：<code>sudo make &amp;&amp; sudo make install</code></p>
+<p>添加<code>/usr/local/nginx/sbin</code>到<code>$PATH</code>，输入<code>nginx -v</code>：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">nginx version: nginx&#x2F;1.18.0</span><br></pre></td></tr></table></figure><br>打印出版本信息，说明安装成功。</p>
+<p>用<code>nginx -t</code>检测<code>nginx.conf</code>配置文件是否合法，然后<code>sudo nginx</code>启动，可通过浏览器输入<code>http://localhost</code>查看启动情况。</p>
+<h1 id="基础配置"><a href="#基础配置" class="headerlink" title="基础配置"></a>基础配置</h1><p><code>sudo vim /etc/nginx/sites-available/default</code><br>取消php模块的注释：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">location ~ \.php$ &#123;</span><br><span class="line">        include snippets&#x2F;fastcgi-php.conf;</span><br><span class="line"></span><br><span class="line">        # With php7.0-cgi alone:</span><br><span class="line">#        fastcgi_pass 127.0.0.1:9000;</span><br><span class="line">        # With php7.0-fpm:</span><br><span class="line">        fastcgi_pass unix:&#x2F;run&#x2F;php&#x2F;php7.0-fpm.sock;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>测试配置：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo nginx -t</span><br></pre></td></tr></table></figure><br>显示如下则表示成功：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">nginx: the configuration file &#x2F;etc&#x2F;nginx&#x2F;nginx.conf syntax is ok</span><br><span class="line">nginx: configuration file &#x2F;etc&#x2F;nginx&#x2F;nginx.conf test is successful</span><br></pre></td></tr></table></figure><br>使配置文件生效：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo systemctl restart nginx</span><br></pre></td></tr></table></figure><br>在 LNMP 中的作用或角色：nginx 本身不能处理 PHP，它只是个 web 服务器，当接收到请求后，如果是 php 请求，则发给 php 解释器处理，并把结果返回给客户端.php-fpm 是一个守护进程（FastCGI 进程管理器）用于替换 PHP FastCGI 的大部分附加功能，对于高负载网站是非常有用的。安装php,并启动:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt-get install -y php7.0-fpm</span><br><span class="line">sudo systemctl start php7.0-fpm</span><br></pre></td></tr></table></figure><br>此时在webRoot（笔者为<code>/var/www/html</code>）下新建一个php测试文件<code>test.php</code>,输入：<br><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">        <span class="keyword">echo</span>(<span class="string">&#x27;&lt;h1&gt;It works!&lt;/h1&gt;&#x27;</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure><br>保存，输入域名地址<code>http://your-server-domain/test.php</code>,显示<code>It works</code>说明成功了。</p>
+<p>如果是安装LNMP，还差一个mysql，首先安装mysql，然后还需要php和mysql的连接器，安装完成后还需要重启php-fpm<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo apt-get install -y php7.0-mysql</span><br><span class="line">sudo systemctl restart php7.0-fpm</span><br></pre></td></tr></table></figure><br>有时候需要改变nginx监听的端口（虽然我觉得不太用得上。。。）<code>sudo vim /etc/nginx/sites-available/default</code>，原配置一般是这样：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">        listen 80 default_server;</span><br><span class="line">        listen [::]:80 default_server;</span><br><span class="line">        .....</span><br></pre></td></tr></table></figure><br>修改两个listen的端口，这里应该是对应的ipv4和ipv6监听的端口<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">        listen 9000 default_server;</span><br><span class="line">        listen [::]:9000 default_server ipv6only&#x3D;on;</span><br></pre></td></tr></table></figure><br>如果哦nginx启动不了，先看<code>sudo systemctl status nginx</code> 中的错误信息，然后查看日志 <code>tail /var/log/nginx/error.log</code></p>
+<h1 id="Nginx进程和模块"><a href="#Nginx进程和模块" class="headerlink" title="Nginx进程和模块"></a>Nginx进程和模块</h1>
+                <hr>
+                
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2019/05/04/Nginx学习笔记/" data-toggle="tooltip" data-placement="top"
+                           title="Nginx学习笔记">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2019/03/07/Archlinux安装docker/" data-toggle="tooltip" data-placement="top"
+                           title="Archlinux安装docker">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+
+                <!--加入新的评论系统-->
+                
+
+                
+
+            </div>
+
+            <div class="hidden-xs col-sm-3 toc-col">
+                <div class="toc-wrap">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-text">简介</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9-Nginx"><span class="toc-text">为什么选择 Nginx</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Nginx-%E5%92%8C-Apache-%E7%9B%B8%E5%90%8C%E7%82%B9"><span class="toc-text">Nginx 和 Apache 相同点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E5%8A%BF%E4%B8%8E%E5%8A%A3%E5%8A%BF"><span class="toc-text">优势与劣势</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Nginx%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-text">Nginx的优势</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Nginx%E7%9A%84%E5%8A%A3%E5%8A%BF"><span class="toc-text">Nginx的劣势</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx-%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-text">Nginx 工作原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx-%E7%9A%84%E5%B8%B8%E7%94%A8%E6%9E%B6%E6%9E%84"><span class="toc-text">Nginx 的常用架构</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E4%B8%8E%E5%90%AF%E5%8A%A8"><span class="toc-text">安装与启动</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8apt%E5%AE%89%E8%A3%85%EF%BC%9A"><span class="toc-text">使用apt安装：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%8B%E5%8A%A8%E7%BC%96%E8%AF%91"><span class="toc-text">手动编译</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E9%85%8D%E7%BD%AE"><span class="toc-text">基础配置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Nginx%E8%BF%9B%E7%A8%8B%E5%92%8C%E6%A8%A1%E5%9D%97"><span class="toc-text">Nginx进程和模块</span></a></li></ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5 class="text-center">
+                        <a href="/tags/">FEATURED TAGS</a>
+                    </h5>
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#Nginx"
+                           title="Nginx">Nginx</a>
+                        
+                        <a class="tag" href="/tags/#运维"
+                           title="运维">运维</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <div style="margin-top: 20px;">
+                    <h5 class="text-center">FRIENDS</h5>
+                    <ul class="list-inline text-center">
+                        
+                        <li><a target="_blank" rel="noopener" href="https://whoisnian.com">Whoisnian</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://thankod.github.io/">thankod</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://void-shana.moe/">VOID001</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://haizs.com/">Haizs</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://backgulf.com/">Backgulf</a></li>
+                        
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+</article>
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "XUranus";
+    var disqus_identifier = "http://xuranus.github.io/2019/05/01/Nginx%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/";
+    var disqus_url = "http://xuranus.github.io/2019/05/01/Nginx%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/";
+
+    (function () {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+
+<!-- Footer -->
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <br>
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/wang-xing-xiao-99">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/WXingxiao">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/XUranus">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; XUranus 2021
+                    <br>
+                    <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+                    <br>
+                    Theme by <a target="_blank" rel="noopener" href="https://haojen.github.io/">Haojen Ma</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/blog.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://xuranus.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- swiftype -->
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','','2.0.0');
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!--wechat title img-->
+<img class="wechat-title-img" src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1539187847049&amp;di=1446fff8f41c349c7cd72af34d44c2ab&amp;imgtype=0&amp;src=http%3A%2F%2Fwww.ewell.com.cn%2Feditor%2Fattached%2Fimage%2F20171225%2F20171225110887508750.jpg">
+</body>
+
+</html>

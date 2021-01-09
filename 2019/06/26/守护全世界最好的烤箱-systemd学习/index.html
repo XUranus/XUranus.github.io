@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="XUranus的个人博客">
+    <meta name="keyword" content="XUranus">
+    <meta name="theme-color" content="#600090">
+    <meta name="msapplication-navbutton-color" content="#600090">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+    <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-person-128.png">
+    <link rel="alternate" type="application/atom+xml" title="XUranus" href="/atom.xml">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+    <title>
+        
+        守护全世界最好的烤箱--systemd学习｜真常应物,真常得性;常应常静,常清静矣
+        
+    </title>
+
+    <link rel="canonical" href="http://xuranus.github.io/2019/06/26/守护全世界最好的烤箱-systemd学习/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/blog-style.css">
+
+
+    <!-- Pygments Github CSS -->
+    
+<link rel="stylesheet" href="/css/syntax.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<style>
+
+    header.intro-header {
+        background-image: url('https://timgsa.baidu.com/timg\?image\&amp;quality\=80\&amp;size\=b9999_10000\&amp;sec\=1539187381343\&amp;di\=2fa8911a94b7b5a904539a11c5192518\&amp;imgtype\=0\&amp;src\=http%3A%2F%2F1.im.guokr.com%2FXpmNucNdcod0EZA1xPbLj2Q1HkqyGs9xqvZUPkEf6YK8AgAAQAEAAFBO.png')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="" class="animated fadeIn">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "true" data-istags="false
+" data-ishome = "false" >
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand animated pulse" href="/">
+                <span class="brand-logo">
+                    XUranus
+                </span>
+                's Blog
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <!-- /.navbar-collapse -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+					
+                    
+                        
+							
+                        <li>
+                            <a href="/tags/">标签</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/works/">作品集</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/archives/">归档</a>
+                        </li>
+							
+						
+                    
+					
+					
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+//    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+<!-- Main Content -->
+
+<!--only post-->
+
+
+<img class="wechat-title-img"
+     src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822">
+
+
+<style>
+    
+    header.intro-header {
+        background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822')
+    }
+
+    
+</style>
+
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <div class="post-heading">
+                    <h1>守护全世界最好的烤箱--systemd学习</h1>
+                    
+                    <span class="meta">
+                         作者 XUranus
+                        <span>
+                          日期 2019-06-26
+                         </span>
+                    </span>
+                    <div class="tags text-center">
+                        
+                        <a class="tag" href="/tags/#Linux"
+                           title="Linux">Linux</a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="post-title-haojen">
+        <span>
+            守护全世界最好的烤箱--systemd学习
+        </span>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+                <blockquote>
+<p>不想开斗鱼APP推送，如何在pc端收到hanser直播的通知呢？本人是linux的深度使用者，这就需要写一个守护进程在后台监测了。</p>
+</blockquote>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>平时常用的mysql，httpd，nginx都是守护进程（daemon），可以被systemctl命令管理，例如<code>sudo systemctl start XXX</code>可以启动一个守护进程，<code>sudo systemctl stop XXX</code>则是关闭。</p>
+<p>本人环境Archlinux，arch已经从service迁移到了systemd，关于systemd资料如下</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/Systemd/User#Writing_user_units">ArchWiki的官方讲解</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.centos.bz/2018/03/systemd-%E7%BC%96%E5%86%99%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86%E8%84%9A%E6%9C%AC/">systemd 编写服务管理脚本</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.centosdoc.com/system/201.html">SYSTEMD启动脚本详解</a></li>
+</ul>
+<h2 id="编写脚本"><a href="#编写脚本" class="headerlink" title="编写脚本"></a>编写脚本</h2><p>首先需要写一个脚本，监听直播间的状态，因为刚刚学ruby，这里我选择ruby。<br>第一步就是找到包含直播间的状态api，但是网上关于斗鱼的api的介绍实在是太少了，我也没能分析出上百条xhr里哪个包含直播间状态，但是我发现斗鱼的友邻是可以看到在线状态的！于是迫不得已下只能用这个“骚”操作。</p>
+<p><img src="Screenshot_20190626_153719.png" alt=""></p>
+<p>这里用王菠萝的直播间做测试，房间号52004,这里的对应的api是<code>https://www.douyu.com/japi/anchorfriend/api/getAnchorFriends?rid=52004</code>，可以拿到友邻列表，其中hanser的数据如下：<br><figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;hot&quot;</span>:<span class="number">0</span>,</span><br><span class="line">  <span class="attr">&quot;icon&quot;</span>:<span class="string">&quot;https://apic.douyucdn.cn/upload/avanew/face/201707/13/12/060902aa06187ba0d0017fe6a25f8337_middle.jpg&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;isLive&quot;</span>:<span class="number">0</span>,</span><br><span class="line">  <span class="attr">&quot;isMutual&quot;</span>:<span class="number">0</span>,</span><br><span class="line">  <span class="attr">&quot;nickname&quot;</span>:<span class="string">&quot;hanserLIVE&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;rid&quot;</span>:<span class="number">2550505</span>,</span><br><span class="line">  <span class="attr">&quot;roomTitle&quot;</span>:<span class="string">&quot;hanser】礼拜一！&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;roomType&quot;</span>:<span class="number">0</span>,</span><br><span class="line">  <span class="attr">&quot;visit&quot;</span>:<span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>可以看出,isLive就是在线状态，所以只要让脚本监听这个字段就行了。</p>
+<p>Ruby代码：<br><figure class="highlight ruby"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/usr/bin/ruby</span></span><br><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="keyword">require</span> <span class="string">&#x27;net/https&#x27;</span></span><br><span class="line"><span class="keyword">require</span> <span class="string">&#x27;uri&#x27;</span></span><br><span class="line"><span class="keyword">require</span> <span class="string">&#x27;json&#x27;</span></span><br><span class="line"><span class="keyword">require</span> <span class="string">&#x27;gir_ffi&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">=begin</span></span><br><span class="line"><span class="comment">斗鱼api的资料太少了，只能用友邻看状态这个骚操作来替代一下啦</span></span><br><span class="line"><span class="comment">=end</span></span><br><span class="line"></span><br><span class="line">GirFFI.setup <span class="symbol">:Notify</span></span><br><span class="line">Notify.init(<span class="string">&quot;小天使开播了！&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">#默认当前不在直播</span></span><br><span class="line">curStatus = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">puts <span class="string">&#x27;starting...&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">true</span> <span class="keyword">do</span></span><br><span class="line">  uri = URI.parse(<span class="string">&#x27;https://www.douyu.com/japi/anchorfriend/api/getAnchorFriends?rid=52004&#x27;</span>)</span><br><span class="line">  res = Net::HTTP.post_form(uri,&#123;&#125;)</span><br><span class="line"></span><br><span class="line">  resbody = JSON.parse(res.body)</span><br><span class="line">  list = resbody[<span class="string">&quot;data&quot;</span>][<span class="string">&quot;list&quot;</span>]</span><br><span class="line">  hanser = list.filter&#123;<span class="params">|zb|</span>zb[<span class="string">&quot;rid&quot;</span>]==<span class="number">2550505</span>&#125;[<span class="number">0</span>]</span><br><span class="line">  isLive = hanser[<span class="string">&quot;isLive&quot;</span>]==<span class="number">1</span></span><br><span class="line">  roomTitle = hanser[<span class="string">&quot;roomTitle&quot;</span>]</span><br><span class="line">  puts <span class="string">&#x27;hanser is live&#x27;</span> <span class="keyword">if</span> isLive</span><br><span class="line">  puts <span class="string">&#x27;hanser is not live&#x27;</span> <span class="keyword">if</span> !isLive</span><br><span class="line">  <span class="keyword">if</span> isLive!=curStatus <span class="keyword">then</span> </span><br><span class="line">    <span class="keyword">if</span> isLive <span class="keyword">then</span></span><br><span class="line">      message = Notify::Notification.new(<span class="string">&quot;小天使开播了！&quot;</span>, hanser[<span class="string">&quot;roomTitle&quot;</span>], <span class="string">&quot;dialog-information&quot;</span>)</span><br><span class="line">      message.show</span><br><span class="line">      curStatus = !curStatus</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      message = Notify::Notification.new(<span class="string">&quot;小天使关播了&quot;</span>, hanser[<span class="string">&quot;roomTitle&quot;</span>], <span class="string">&quot;dialog-information&quot;</span>)</span><br><span class="line">      message.show</span><br><span class="line">      curStatus = !curStatus</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line">  sleep(<span class="number">10</span>)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure><br>这里用到了<code>gir_ffi</code>库，用来操作KDE的通知推送，要先安装<code>gem install gir_ffi</code>。每隔10s就请求一次，默认为非直播状态，检测到直播后/关播改变当前状态，防止不断的发送通知。</p>
+<p>ruby文件存为<code>main.rb</code>，编写启动脚本<code>wait-for-hanser.sh</code>,我们最后把文件放到/usr/share/hanser下，所以脚本如下：<br><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">/etc/X11/xinit/xinitrc.d/50-systemd-user.sh</span><br><span class="line">ruby -w /usr/share/hanser/main.rb</span><br></pre></td></tr></table></figure><br>其中<code>/etc/X11/xinit/xinitrc.d/50-systemd-user.sh</code>据说是archwiki上说用来设置X11环境的，我用了并没有什么用，但还是加上了。</p>
+<h2 id="编写systemd服务"><a href="#编写systemd服务" class="headerlink" title="编写systemd服务"></a>编写systemd服务</h2><p>接下来就是让该脚本作为一个守护进程持续运行了。</p>
+<p>创建<code>hanser.service</code>文件：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description&#x3D;Hanser</span><br><span class="line">After&#x3D;network.target</span><br><span class="line">PartOf&#x3D;graphical-session.target</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">User&#x3D;xuranus</span><br><span class="line">ExecStart&#x3D;&#x2F;usr&#x2F;share&#x2F;hanser&#x2F;wait-for-hanser.sh</span><br><span class="line">Environment&#x3D;&quot;DISPLAY&#x3D;:0&quot;</span><br><span class="line">#Environment&#x3D;&quot;XAUTHORITY&#x3D;&#x2F;tmp&#x2F;xauth-1000-_0&quot;</span><br><span class="line">Environment&#x3D;&quot;DBUS_SESSION_BUS_ADDRESS&#x3D;unix:path&#x3D;&#x2F;run&#x2F;user&#x2F;1000&#x2F;bus&quot;</span><br><span class="line">Restart&#x3D;always</span><br></pre></td></tr></table></figure><br><code>Description</code>填写服务介绍，因为该服务需要network.service，所以写在After后面。<code>ExecStart</code>写启动脚本，因为我在root不知道为何找不到gem环境，于是用我的用户xuranus运行，由于该进程要在X11环境先运行，所以要设置<code>$DISPLAY</code>和<code>$DBUS_SESSION_BUS_ADDRESS</code>环境变量。<code>Restart</code>设置为always因为脚本的脆弱性，容易崩，崩后可以迅速重启</p>
+<h2 id="安装和卸载"><a href="#安装和卸载" class="headerlink" title="安装和卸载"></a>安装和卸载</h2><p>INSTALL:<br><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="comment">#echo &#x27;install ruby&#x27;</span></span><br><span class="line"><span class="comment">#sudo pacman -S ruby</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#echo &#x27;install gir_ffi&#x27;</span></span><br><span class="line"><span class="comment">#sudo gem install gir_ffi</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;make directory /usr/share/hanser&#x27;</span></span><br><span class="line">sudo mkdir /usr/share/hanser</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;create /usr/lib/systemed/system/hanser.service&#x27;</span></span><br><span class="line">sudo cp hanser.service /usr/lib/systemd/system</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;create /usr/share/hanser/wait-for-hanser.sh&#x27;</span></span><br><span class="line">sudo cp wait-for-hanser.sh /usr/share/hanser/wait-for-hanser.sh</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;create /usr/share/hanser/main.rb&#x27;</span></span><br><span class="line">sudo cp main.rb /usr/share/hanser/main.rb</span><br><span class="line"></span><br><span class="line">sudo chmod +x /usr/share/hanser/main.rb</span><br><span class="line">sudo chmod +x /usr/share/hanser/wait-for-hanser.sh</span><br><span class="line"></span><br><span class="line">sudo systemctl daemon-reload</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;Done.&#x27;</span></span><br></pre></td></tr></table></figure><br>UNINSTALL:<br><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;uninstalling...&#x27;</span></span><br><span class="line">sudo rm -rf /usr/share/hanser</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;stoping...&#x27;</span></span><br><span class="line">sudo systemctl stop hanser</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;disabling....&#x27;</span></span><br><span class="line">sudo systemctl <span class="built_in">disable</span> hanser</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;removing service...&#x27;</span></span><br><span class="line">sudo rm -rf /usr/lib/systemd/system/hanser.service</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;Done.&#x27;</span></span><br></pre></td></tr></table></figure><br>只需要执行<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo .&#x2F;INSTALL</span><br><span class="line">sudo systemctl start hanser</span><br></pre></td></tr></table></figure><br><code>sudo systemctl status hanser</code> 可以看到服务已经成功跑起来了<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">● hanser.service - Hanser</span><br><span class="line">   Loaded: loaded (&#x2F;usr&#x2F;lib&#x2F;systemd&#x2F;system&#x2F;hanser.service; disabled; vendor preset: disabled)</span><br><span class="line">   Active: active (running) since Wed 2019-06-26 11:37:47 CST; 4h 25min ago</span><br><span class="line"> Main PID: 27735 (wait-for-hanser)</span><br><span class="line">    Tasks: 4 (limit: 4915)</span><br><span class="line">   Memory: 20.8M</span><br><span class="line">   CGroup: &#x2F;system.slice&#x2F;hanser.service</span><br><span class="line">           ├─27735 &#x2F;bin&#x2F;sh &#x2F;usr&#x2F;share&#x2F;hanser&#x2F;wait-for-hanser.sh</span><br><span class="line">           └─27750 ruby -w &#x2F;usr&#x2F;share&#x2F;hanser&#x2F;main.rb</span><br><span class="line"></span><br><span class="line">Jun 26 14:08:11 Thanos wait-for-hanser.sh[27735]: hanser is not live</span><br></pre></td></tr></table></figure><br>设置成开机启动：<code>sudo systemctl enable hanser</code><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Created symlink &#x2F;etc&#x2F;systemd&#x2F;system&#x2F;multi-user.target.wants&#x2F;hanser.service → &#x2F;usr&#x2F;lib&#x2F;systemd&#x2F;system&#x2F;hanser.service.</span><br><span class="line">Created symlink &#x2F;etc&#x2F;systemd&#x2F;system&#x2F;xsession.target.wants&#x2F;hanser.service → &#x2F;usr&#x2F;lib&#x2F;systemd&#x2F;system&#x2F;hanser.service.</span><br></pre></td></tr></table></figure><br>到9点了，看看效果</p>
+<p><img src="Screenshot_20190626_211037.png" alt=""></p>
+<p>再也不用担心错过小天使的直播辣！</p>
+
+                <hr>
+                
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2019/11/22/对react学习的一点深入/" data-toggle="tooltip" data-placement="top"
+                           title="对React学习的一点深入">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2019/06/22/docker代理配置/" data-toggle="tooltip" data-placement="top"
+                           title="Docker代理配置">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+
+                <!--加入新的评论系统-->
+                
+
+                
+
+            </div>
+
+            <div class="hidden-xs col-sm-3 toc-col">
+                <div class="toc-wrap">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E5%86%99%E8%84%9A%E6%9C%AC"><span class="toc-text">编写脚本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E5%86%99systemd%E6%9C%8D%E5%8A%A1"><span class="toc-text">编写systemd服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E5%92%8C%E5%8D%B8%E8%BD%BD"><span class="toc-text">安装和卸载</span></a></li></ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5 class="text-center">
+                        <a href="/tags/">FEATURED TAGS</a>
+                    </h5>
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#Linux"
+                           title="Linux">Linux</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <div style="margin-top: 20px;">
+                    <h5 class="text-center">FRIENDS</h5>
+                    <ul class="list-inline text-center">
+                        
+                        <li><a target="_blank" rel="noopener" href="https://whoisnian.com">Whoisnian</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://thankod.github.io/">thankod</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://void-shana.moe/">VOID001</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://haizs.com/">Haizs</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://backgulf.com/">Backgulf</a></li>
+                        
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+</article>
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "XUranus";
+    var disqus_identifier = "http://xuranus.github.io/2019/06/26/%E5%AE%88%E6%8A%A4%E5%85%A8%E4%B8%96%E7%95%8C%E6%9C%80%E5%A5%BD%E7%9A%84%E7%83%A4%E7%AE%B1-systemd%E5%AD%A6%E4%B9%A0/";
+    var disqus_url = "http://xuranus.github.io/2019/06/26/%E5%AE%88%E6%8A%A4%E5%85%A8%E4%B8%96%E7%95%8C%E6%9C%80%E5%A5%BD%E7%9A%84%E7%83%A4%E7%AE%B1-systemd%E5%AD%A6%E4%B9%A0/";
+
+    (function () {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+
+<!-- Footer -->
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <br>
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/wang-xing-xiao-99">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/WXingxiao">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/XUranus">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; XUranus 2021
+                    <br>
+                    <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+                    <br>
+                    Theme by <a target="_blank" rel="noopener" href="https://haojen.github.io/">Haojen Ma</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/blog.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://xuranus.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- swiftype -->
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','','2.0.0');
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!--wechat title img-->
+<img class="wechat-title-img" src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1539187847049&amp;di=1446fff8f41c349c7cd72af34d44c2ab&amp;imgtype=0&amp;src=http%3A%2F%2Fwww.ewell.com.cn%2Feditor%2Fattached%2Fimage%2F20171225%2F20171225110887508750.jpg">
+</body>
+
+</html>

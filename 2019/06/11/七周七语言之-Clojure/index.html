@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="XUranus的个人博客">
+    <meta name="keyword" content="XUranus">
+    <meta name="theme-color" content="#600090">
+    <meta name="msapplication-navbutton-color" content="#600090">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+    <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-person-128.png">
+    <link rel="alternate" type="application/atom+xml" title="XUranus" href="/atom.xml">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+    <title>
+        
+        七周七语言之-Clojure｜真常应物,真常得性;常应常静,常清静矣
+        
+    </title>
+
+    <link rel="canonical" href="http://xuranus.github.io/2019/06/11/七周七语言之-Clojure/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/blog-style.css">
+
+
+    <!-- Pygments Github CSS -->
+    
+<link rel="stylesheet" href="/css/syntax.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<style>
+
+    header.intro-header {
+        background-image: url('https://timgsa.baidu.com/timg\?image\&amp;quality\=80\&amp;size\=b9999_10000\&amp;sec\=1539187381343\&amp;di\=2fa8911a94b7b5a904539a11c5192518\&amp;imgtype\=0\&amp;src\=http%3A%2F%2F1.im.guokr.com%2FXpmNucNdcod0EZA1xPbLj2Q1HkqyGs9xqvZUPkEf6YK8AgAAQAEAAFBO.png')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="" class="animated fadeIn">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "true" data-istags="false
+" data-ishome = "false" >
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand animated pulse" href="/">
+                <span class="brand-logo">
+                    XUranus
+                </span>
+                's Blog
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <!-- /.navbar-collapse -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+					
+                    
+                        
+							
+                        <li>
+                            <a href="/tags/">标签</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/works/">作品集</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/archives/">归档</a>
+                        </li>
+							
+						
+                    
+					
+					
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+//    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+<!-- Main Content -->
+
+<!--only post-->
+
+
+<img class="wechat-title-img"
+     src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822">
+
+
+<style>
+    
+    header.intro-header {
+        background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822')
+    }
+
+    
+</style>
+
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <div class="post-heading">
+                    <h1>七周七语言之-Clojure</h1>
+                    
+                    <span class="meta">
+                         作者 XUranus
+                        <span>
+                          日期 2019-06-11
+                         </span>
+                    </span>
+                    <div class="tags text-center">
+                        
+                        <a class="tag" href="/tags/#Clojure"
+                           title="Clojure">Clojure</a>
+                        
+                        <a class="tag" href="/tags/#《七周七语言》"
+                           title="《七周七语言》">《七周七语言》</a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="post-title-haojen">
+        <span>
+            七周七语言之-Clojure
+        </span>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+                <blockquote>
+<p>Clojure是一门运行在JVM上的lisp方言。</p>
+</blockquote>
+<h2 id="Common-Lisp"><a href="#Common-Lisp" class="headerlink" title="Common Lisp"></a>Common Lisp</h2><p>common lisp安装<code>sudo pacman -S common-lisp</code>,选择[1]的<code>clisp</code>实现，输入<code>clisp</code>进入交互shell环境。</p>
+<h2 id="Clojure安装"><a href="#Clojure安装" class="headerlink" title="Clojure安装"></a>Clojure安装</h2><ul>
+<li>环境：Archlinux </li>
+<li>jdk: 12<br>首先安装clojure语言，使用pacman安装会找不到类途径，于是我还是手动安装了。官网提供的<a target="_blank" rel="noopener" href="https://www.clojure.org/guides/getting_started">安装方式</a><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -O https://download.clojure.org/install/linux-install-1.10.1.447.sh</span><br><span class="line">sudo chmod +x linux-install-1.10.1.447.sh </span><br><span class="line">sudo ./linux-install-1.10.1.447.sh </span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</span><br><span class="line">                                 Dload  Upload   Total   Spent    Left  Speed</span><br><span class="line">100 18.8M  100 18.8M    0     0   717k      0  0:00:26  0:00:26 --:--:--  961k</span><br><span class="line">Installing libs into &#x2F;usr&#x2F;local&#x2F;lib&#x2F;clojure</span><br><span class="line">Installing clojure and clj into &#x2F;usr&#x2F;local&#x2F;bin</span><br><span class="line">Installing man pages into &#x2F;usr&#x2F;local&#x2F;share&#x2F;man&#x2F;man1</span><br><span class="line">Removing download</span><br><span class="line">Use clj -h for help.</span><br></pre></td></tr></table></figure>
+此时在<code>/usr/local/lib/clojure/libexec</code>下出<code>clojure-tools-1.10.1.447.jar</code>，clojure本质上就是一个jar包，完全可以用java直接启动：<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">java -cp clojure-tools-1.10.1.447.jar clojure.main</span><br><span class="line">Clojure 1.10.1</span><br><span class="line">user=&gt; </span><br></pre></td></tr></table></figure>
+然后安装clojure的构建管理工具<a target="_blank" rel="noopener" href="https://leiningen.org">leiningen</a><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cd &#x2F;usr&#x2F;bin</span><br><span class="line">sudo wget https:&#x2F;&#x2F;raw.githubusercontent.com&#x2F;technomancy&#x2F;leiningen&#x2F;stable&#x2F;bin&#x2F;lein</span><br><span class="line">sudo chmod a+x lein</span><br><span class="line">lein</span><br></pre></td></tr></table></figure>
+此时会执行自安装脚本，挂梯子https代理，可能会出现如下的错误：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">https:&#x2F;&#x2F;github.com&#x2F;technomancy&#x2F;leiningen&#x2F;releases&#x2F;download&#x2F;2.5.0&#x2F;leiningen-2.5.0-standalone.jar  (exit code 7) It‘s possible your HTTP client‘s certificate store does not have the correct certificate authority needed. This is often caused by an out-of-date version of libssl. It‘s also possible that you‘re behind a firewall and haven‘t set HTTP_PROXY and HTTPS_PROXY.“</span><br></pre></td></tr></table></figure>
+解决方法：<code>export HTTP_CLIENT=&quot;wget --no-check-certificate -O&quot;</code>。官网是这么说的，不过我这里行不通，报错如下，提示找不到Clojure的类：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Error: Could not find or load main class clojure.main</span><br><span class="line">Caused by: java.lang.ClassNotFoundException: clojure.main</span><br></pre></td></tr></table></figure>
+解决办法，手动下载leiningen的jar包，去leiningen的<a target="_blank" rel="noopener" href="https://github.com/technomancy/leiningen/releases">release</a>下载最新的standlone包，大概20M。下载后改名zip为jar,配置环境变量<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> LEIN_HOME=<span class="variable">$HOME</span>/.lein</span><br><span class="line"><span class="built_in">export</span> LEIN_JAR=<span class="variable">$LEIN_HOME</span>/self-installs/leiningen-2.9.1-standalone.jar</span><br></pre></td></tr></table></figure>
+然后移到下载的jar包对应目录下。</li>
+</ul>
+<p>此时<code>clojure -V</code>下载maven依赖，然后<code>lein repl</code>，若干秒后，启动repl。<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ lein repl</span><br><span class="line">nREPL server started on port 39511 on host 127.0.0.1 - nrepl://127.0.0.1:39511</span><br><span class="line">REPL-y 0.4.3, nREPL 0.6.0</span><br><span class="line">Clojure 1.10.0</span><br><span class="line">Java HotSpot(TM) 64-Bit Server VM 12.0.1+12</span><br><span class="line">    Docs: (doc function-name-here)</span><br><span class="line">          (find-doc <span class="string">&quot;part-of-name-here&quot;</span>)</span><br><span class="line">  Source: (<span class="built_in">source</span> function-name-here)</span><br><span class="line"> Javadoc: (javadoc java-object-or-class-here)</span><br><span class="line">    Exit: Control+D or (<span class="built_in">exit</span>) or (quit)</span><br><span class="line"> Results: Stored <span class="keyword">in</span> vars *1, *2, *3, an exception <span class="keyword">in</span> *e</span><br></pre></td></tr></table></figure></p>
+<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><h3 id="基本运算"><a href="#基本运算" class="headerlink" title="基本运算"></a>基本运算</h3><p>clojure作为一门lisp方言，每个语句都是一个表，用括号表示，这是一种<strong>前缀表达式</strong>，即运算符（函数）写在最前面，之后是参数。<br>简单的逻辑运算<br><figure class="highlight"><table><tr><td class="code"><pre><span class="line">user=&gt; (- 1)</span><br><span class="line"><span class="number">-1</span></span><br><span class="line">user=&gt; (+ 1 2)</span><br><span class="line"><span class="number">3</span></span><br><span class="line">user=&gt; (* 1 3)</span><br><span class="line"><span class="number">3</span></span><br><span class="line">user=&gt; (/ 1 3)</span><br><span class="line">1/3</span><br><span class="line">user=&gt; (class(/ 1 3))</span><br><span class="line">clojure.lang.Ratio</span><br></pre></td></tr></table></figure><br>clojure支持变长的参数列表，会顺序执行：<br><figure class="highlight clojure"><table><tr><td class="code"><pre><span class="line">user=&gt; (+ 1 1)</span><br><span class="line"><span class="number">2</span></span><br><span class="line">user=&gt; (+ 1 1 3)</span><br><span class="line"><span class="number">5</span></span><br><span class="line">user=&gt; (+ 1 1 3 4 5)</span><br><span class="line"><span class="number">14</span></span><br></pre></td></tr></table></figure><br>clojure或根据括号的嵌套顺序，依次执行运算<br><figure class="highlight"><table><tr><td class="code"><pre><span class="line">user=&gt; (+ (+ 1 1) (/ 3 4))</span><br><span class="line">11/4</span><br></pre></td></tr></table></figure><br>这在判断一个列表是否排序时，可以写的很精妙：<br><figure class="highlight clojure"><table><tr><td class="code"><pre><span class="line">user=&gt; (&lt; 1 2 3 4)</span><br><span class="line"><span class="literal">true</span></span><br><span class="line">user=&gt; (&lt; 1 2 4 3)</span><br><span class="line"><span class="literal">false</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="类型系统"><a href="#类型系统" class="headerlink" title="类型系统"></a>类型系统</h3><p>clojure支持强类型，也支持动态类型。clojure中的基本构成是<strong>形式（Form）</strong>，形式可以看成是语法的一部分，clojure解析代码时，会将程序编译成多份叫做形式的片段，然后编译或者解释。clojure中。<strong>不区分代码和数据</strong>，在lisp中，这两者是一种东西，是等价的。一类类型和内嵌容器（布尔，字符，字符串，集合，映射，向量）这些东西都是形式。</p>
+<ol>
+<li><p>字符串/字符</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">user=&gt; (print &quot;hello\nI&#x27;am XUranus&quot;)</span><br><span class="line">hello</span><br><span class="line">I&#x27;am XUranusnil</span><br><span class="line">user=&gt; (println &quot;hello\nI&#x27;am XUranus&quot;)</span><br><span class="line">hello</span><br><span class="line">I&#x27;am XUranus</span><br><span class="line"><span class="literal">nil</span></span><br><span class="line">user=&gt; (println \H\e\l\l\o)</span><br><span class="line">Hello</span><br><span class="line"><span class="literal">nil</span></span><br><span class="line">user=&gt; (str \H \e \l \l \o)</span><br><span class="line"><span class="string">&quot;Hello&quot;</span></span><br><span class="line">user=&gt; </span><br></pre></td></tr></table></figure>
+<p>字符串和其他语言没有什么两样，但是字符的表示方法是<code>\c</code>，<code>print</code>函数也和其他语言的输出函数无区别，<code>str</code>是用来连接字符成字符串的。</p>
+</li>
+<li><p>布尔值和逻辑表达式</p>
+<figure class="highlight clojure"><table><tr><td class="code"><pre><span class="line">user=&gt; (class (= 1 1))</span><br><span class="line">java.lang.Boolean</span><br><span class="line">user=&gt; (= 1 2)</span><br><span class="line"><span class="literal">false</span></span><br><span class="line">user=&gt; (= 1 1.0)</span><br><span class="line"><span class="literal">false</span></span><br><span class="line">user=&gt; (= 1 1)</span><br><span class="line"><span class="literal">true</span></span><br><span class="line">user=&gt; (if (= 1 1) (println &quot;one equals one&quot;))</span><br><span class="line">one equals one</span><br><span class="line"><span class="literal">nil</span></span><br><span class="line">user=&gt; (if (&lt; 1 1) (println &quot;one equals one&quot;) (print &quot;one don&#x27;t equals ones&quot;))</span><br><span class="line">one don&#x27;t equals onesnil</span><br><span class="line"><span class="literal">nil</span></span><br></pre></td></tr></table></figure>
+<p>支持已经可以发觉JVM在clojure中的体现，因为clojure底层实际上就是jvm，他的类型也和java是对应的。</p>
+</li>
+</ol>
+<p>clojure中的逻辑分支语句的格式就是<code>(if &lt;bool&gt; &lt;express1&gt; &lt;express2&gt;)</code>,根据bool判断执行分支,expression2默认是else分支，可以省略。</p>
+<ol>
+<li><p>列表（List）<br>列表是<strong>有序</strong>元素的的集合，元素可以是任何东西，但clojure中列表一般用做代码，向量用做数据</p>
+<figure class="highlight clojure"><table><tr><td class="code"><pre><span class="line">user=&gt; (class &#x27;(1 2 3))</span><br><span class="line">clojure.lang.PersistentList</span><br><span class="line">user=&gt; (class (list 1 2 3))</span><br><span class="line">clojure.lang.PersistentList</span><br><span class="line">user=&gt; (= (list 1 2 3) &#x27;(1 2 3) )</span><br><span class="line"><span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>虽然clojure的语句就是列表，比如<code>(+ 1 2)</code>就是一个列表，但是这种列表是用来代表函数要被执行求值的，所以创建一个一般的列表不能这么写。<br>上述展示了两种表的创建方法，前者方式为引用(quoting),可以看到他们底层类型一致，值也完全相当等，这两种创建是等价的。<br>表支持几种基本算子，<code>first</code>,<code>last</code>,<code>rest</code>,<code>cons</code>,分别表示第一个数据，最后一个数据除了第一个数据之后的数据，链接构造新表。</p>
+<figure class="highlight clojure"><table><tr><td class="code"><pre><span class="line">user=&gt; (first &#x27;(:one :two :three :four))</span><br><span class="line"><span class="symbol">:one</span></span><br><span class="line">user=&gt; (last &#x27;(:one :two :three :four))</span><br><span class="line"><span class="symbol">:four</span></span><br><span class="line">user=&gt; (rest &#x27;(:one :two :three :four))</span><br><span class="line">(<span class="symbol">:two</span> <span class="symbol">:three</span> <span class="symbol">:four</span>)</span><br><span class="line">user=&gt; (cons :zero &#x27;(:one :two :three :four))</span><br><span class="line">(<span class="symbol">:zero</span> <span class="symbol">:one</span> <span class="symbol">:two</span> <span class="symbol">:three</span> <span class="symbol">:four</span>)</span><br></pre></td></tr></table></figure>
+<p>注意:<strong>clojure中的动态类型中，0和””都可以被映射为true，而nil映射为false</strong></p>
+</li>
+<li><p>向量（Vector）<br>向量是<strong>有序</strong>的可以循秩访问的元素集合，支持了随机访问的优化，用方括号扩起来表示。作为i表的兄弟，向量也支持表的基本算子，向量额外支持了随机访问算子：<code>nth</code></p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">user=&gt; [:one :two :three :four]</span><br><span class="line">[<span class="symbol">:one</span> <span class="symbol">:two</span> <span class="symbol">:three</span> <span class="symbol">:four</span>]</span><br><span class="line">user=&gt; (class [:one :two :three :four])</span><br><span class="line">clojure.lang.PersistentVector</span><br><span class="line">user=&gt; (first [:one :two :three :four])</span><br><span class="line"><span class="symbol">:one</span></span><br><span class="line">user=&gt; (last [:one :two :three :four])</span><br><span class="line"><span class="symbol">:four</span></span><br><span class="line">user=&gt; (rest [:one :two :three :four])</span><br><span class="line">(<span class="symbol">:two</span> <span class="symbol">:three</span> <span class="symbol">:four</span>)</span><br><span class="line">user=&gt; (cons :zero [:one :two :three :four])</span><br><span class="line">(<span class="symbol">:zero</span> <span class="symbol">:one</span> <span class="symbol">:two</span> <span class="symbol">:three</span> <span class="symbol">:four</span>)</span><br><span class="line">user=&gt; (nth [:one :two :three :four] 3)</span><br><span class="line"><span class="symbol">:four</span></span><br><span class="line">user=&gt; (nth [:one :two :three :four] 4)</span><br><span class="line">Execution error (IndexOutOfBoundsException) at user/eval2173 (REPL:1).</span><br><span class="line">null</span><br></pre></td></tr></table></figure>
+<p>向量还支持合并两个向量：</p>
+<figure class="highlight clojure"><table><tr><td class="code"><pre><span class="line">user=&gt; (concat [1 2 3 4] [:one :two :three :four])</span><br><span class="line">(<span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="symbol">:one</span> <span class="symbol">:two</span> <span class="symbol">:three</span> <span class="symbol">:four</span>)</span><br></pre></td></tr></table></figure></li>
+<li>集合（Set）</li>
+</ol>
+<h2 id="特性-1"><a href="#特性-1" class="headerlink" title="特性"></a>特性</h2><h3 id="延迟执行"><a href="#延迟执行" class="headerlink" title="延迟执行"></a>延迟执行</h3><figure class="highlight"><table><tr><td class="code"><pre><span class="line">user=&gt; (/ 1 3)</span><br><span class="line">1/3</span><br><span class="line">user=&gt; (class(/ 1 3))</span><br><span class="line">clojure.lang.Ratio</span><br></pre></td></tr></table></figure>
+<p>可以看到在执行不能除尽的整数除法计算时，clojure不会立即计算结果，而是会通分化简，这在执行计算时可以保留精度。</p>
+
+                <hr>
+                
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2019/06/11/Rust入门/" data-toggle="tooltip" data-placement="top"
+                           title="Rust入门">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2019/06/09/校园网下的ipv6代理/" data-toggle="tooltip" data-placement="top"
+                           title="校园网下的ipv6代理">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+
+                <!--加入新的评论系统-->
+                
+
+                
+
+            </div>
+
+            <div class="hidden-xs col-sm-3 toc-col">
+                <div class="toc-wrap">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Common-Lisp"><span class="toc-text">Common Lisp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Clojure%E5%AE%89%E8%A3%85"><span class="toc-text">Clojure安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E6%80%A7"><span class="toc-text">特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E8%BF%90%E7%AE%97"><span class="toc-text">基本运算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B1%BB%E5%9E%8B%E7%B3%BB%E7%BB%9F"><span class="toc-text">类型系统</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E6%80%A7-1"><span class="toc-text">特性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BB%B6%E8%BF%9F%E6%89%A7%E8%A1%8C"><span class="toc-text">延迟执行</span></a></li></ol></li></ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5 class="text-center">
+                        <a href="/tags/">FEATURED TAGS</a>
+                    </h5>
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#Clojure"
+                           title="Clojure">Clojure</a>
+                        
+                        <a class="tag" href="/tags/#《七周七语言》"
+                           title="《七周七语言》">《七周七语言》</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <div style="margin-top: 20px;">
+                    <h5 class="text-center">FRIENDS</h5>
+                    <ul class="list-inline text-center">
+                        
+                        <li><a target="_blank" rel="noopener" href="https://whoisnian.com">Whoisnian</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://thankod.github.io/">thankod</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://void-shana.moe/">VOID001</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://haizs.com/">Haizs</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://backgulf.com/">Backgulf</a></li>
+                        
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+</article>
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "XUranus";
+    var disqus_identifier = "http://xuranus.github.io/2019/06/11/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Clojure/";
+    var disqus_url = "http://xuranus.github.io/2019/06/11/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Clojure/";
+
+    (function () {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+
+<!-- Footer -->
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <br>
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/wang-xing-xiao-99">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/WXingxiao">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/XUranus">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; XUranus 2021
+                    <br>
+                    <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+                    <br>
+                    Theme by <a target="_blank" rel="noopener" href="https://haojen.github.io/">Haojen Ma</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/blog.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://xuranus.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- swiftype -->
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','','2.0.0');
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!--wechat title img-->
+<img class="wechat-title-img" src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1539187847049&amp;di=1446fff8f41c349c7cd72af34d44c2ab&amp;imgtype=0&amp;src=http%3A%2F%2Fwww.ewell.com.cn%2Feditor%2Fattached%2Fimage%2F20171225%2F20171225110887508750.jpg">
+</body>
+
+</html>

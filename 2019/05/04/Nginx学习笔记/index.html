@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="XUranus的个人博客">
+    <meta name="keyword" content="XUranus">
+    <meta name="theme-color" content="#600090">
+    <meta name="msapplication-navbutton-color" content="#600090">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+    <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-person-128.png">
+    <link rel="alternate" type="application/atom+xml" title="XUranus" href="/atom.xml">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+    <title>
+        
+        Nginx学习笔记｜真常应物,真常得性;常应常静,常清静矣
+        
+    </title>
+
+    <link rel="canonical" href="http://xuranus.github.io/2019/05/04/Nginx学习笔记/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/blog-style.css">
+
+
+    <!-- Pygments Github CSS -->
+    
+<link rel="stylesheet" href="/css/syntax.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<style>
+
+    header.intro-header {
+        background-image: url('https://timgsa.baidu.com/timg\?image\&amp;quality\=80\&amp;size\=b9999_10000\&amp;sec\=1539187381343\&amp;di\=2fa8911a94b7b5a904539a11c5192518\&amp;imgtype\=0\&amp;src\=http%3A%2F%2F1.im.guokr.com%2FXpmNucNdcod0EZA1xPbLj2Q1HkqyGs9xqvZUPkEf6YK8AgAAQAEAAFBO.png')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="" class="animated fadeIn">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "true" data-istags="false
+" data-ishome = "false" >
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand animated pulse" href="/">
+                <span class="brand-logo">
+                    XUranus
+                </span>
+                's Blog
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <!-- /.navbar-collapse -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+					
+                    
+                        
+							
+                        <li>
+                            <a href="/tags/">标签</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/works/">作品集</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/archives/">归档</a>
+                        </li>
+							
+						
+                    
+					
+					
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+//    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+<!-- Main Content -->
+
+<!--only post-->
+
+
+<img class="wechat-title-img"
+     src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822">
+
+
+<style>
+    
+    header.intro-header {
+        background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822')
+    }
+
+    
+</style>
+
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <div class="post-heading">
+                    <h1>Nginx学习笔记</h1>
+                    
+                    <span class="meta">
+                         作者 XUranus
+                        <span>
+                          日期 2019-05-04
+                         </span>
+                    </span>
+                    <div class="tags text-center">
+                        
+                        <a class="tag" href="/tags/#Nginx"
+                           title="Nginx">Nginx</a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="post-title-haojen">
+        <span>
+            Nginx学习笔记
+        </span>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+                <h2 id="基本选项"><a href="#基本选项" class="headerlink" title="基本选项"></a>基本选项</h2><p><code>nginx -h</code>打印出的内容几乎已经告诉我们如何使用nginx：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Options:</span><br><span class="line">  -?,-h         : this help</span><br><span class="line">  -v            : show version and exit</span><br><span class="line">  -V            : show version and configure options then exit</span><br><span class="line">  -t            : test configuration and exit</span><br><span class="line">  -T            : test configuration, dump it and exit</span><br><span class="line">  -q            : suppress non-error messages during configuration testing</span><br><span class="line">  -s signal     : send signal to a master process: stop, quit, reopen, reload</span><br><span class="line">  -p prefix     : set prefix path (default: &#x2F;usr&#x2F;local&#x2F;nginx&#x2F;)</span><br><span class="line">  -c filename   : set configuration file (default: &#x2F;usr&#x2F;local&#x2F;nginx&#x2F;nginx.conf)</span><br><span class="line">  -g directives : set global directives out of configuration file</span><br></pre></td></tr></table></figure></p>
+<h2 id="工作模式"><a href="#工作模式" class="headerlink" title="工作模式"></a>工作模式</h2><p>使用<code>ps -ef | grep nginx</code>查看nginx的进程：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">root     19997     1  0 14:02 ?        00:00:00 nginx: mas</span><br><span class="line">nobody   19998 19997  0 14:02 ?        00:00:00 nginx: wor</span><br><span class="line">tedis    20195 19881  0 14:05 tty3     00:00:00 grep --color&#x3D;auto --exclude-dir&#x3D;.bzr --exclude-dir&#x3D;CVS --exclude-dir&#x3D;.git --exclude-dir&#x3D;.hg --exclude-dir&#x3D;.svn --exclude-dir&#x3D;.idea --exclude-dir&#x3D;.tox nginx</span><br></pre></td></tr></table></figure><br><code>m</code>和<code>w</code>分别是<code>master process</code>和<code>worker process</code>。nginx采用一主多从，主进程读取和评估配置，维护工作进程。工作进程处理请求。</p>
+<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><p>编译阶段用<code>./configure --conf-path=PATH</code>可以指定nginx的默认配置路径，如果编译后想指定用某个配置文件启动，可以用<code>nginx -t path/to/nginx.config</code>启动，不加改参数则使用默认的配置文件路径</p>
+<p>使用<code>nginx -t</code>可以检测配置文件的合法性，使用<code>nginx -c -t</code>可以检测某个特定配置文件的合法性，可以在启动nginx之前使用此命令测试一次。</p>
+<p><code>nginx.conf</code>是主配置文件，所有的时候启动都会被用到，而安装目录下的<code>conf</code>文件夹中还有辅助配置文件，他们只有在部分条件先被调用。</p>
+<h3 id="nginx-conf"><a href="#nginx-conf" class="headerlink" title="nginx.conf"></a>nginx.conf</h3><p><code>nginx.conf</code>中的命令分为<strong>简单命令</strong>和<strong>块命令</strong></p>
+<p>简单命令由构成为：<code>command args ... ;</code>，一个命令，多个参数，空格相隔，分号结尾。例如：<code>error_log logs/error.log info</code>中<code>error_log</code>是命令名称，参数1是<code>logs/error.log</code>指明日志位置，参数2<code>info</code>说明日志的级别。</p>
+<p>块命令是一个大括号，里面有多个简单命令。一个块中的其他命令称之为<strong>上下文</strong>。例如：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">location &#x2F; &#123;</span><br><span class="line">  root html;</span><br><span class="line">  index index.html index.htm;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br><img src="1.jpg" alt=""></p>
+<p>上下文可以相互嵌套并重复（如果配置了多个虚拟服务器，那么<code>http</code>中就会出现多个<code>server</code>）</p>
+<p>配置文件中用<code>#</code>作为注释。</p>
+<p>配置文件中使用<code>$</code>引用变量，用<code>set var_name value</code>来自定义变量。例如：<code>set $a &quot;hello world&quot;</code>。变量可以在字符串中被解引用，实现字符串拼接：<code>set $b = &quot;$a,$a&quot;</code>，此时<code>$b</code>就是”hello world,hello world”</p>
+<h2 id="启动与关闭"><a href="#启动与关闭" class="headerlink" title="启动与关闭"></a>启动与关闭</h2><h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><p>直接启动：<code>sudo nginx</code><br>指定文件启动：<code>sudo nginx -c /usr/local/nginx/conf/nginx.conf</code><br>使用service管理启动：<code>sudo service nginx start</code>  </p>
+<h3 id="停止"><a href="#停止" class="headerlink" title="停止"></a>停止</h3><p>nginx的停止分为3种，从容停止，快速停止和强制停止。用<code>ps -ef | grep nginx</code>可以查看nginx主进程号，接下来操作的进程都是针对主进程，通过不同的信号来关闭nginx：</p>
+<ul>
+<li>快速停止：<code>sudo kill -TERM &lt;pid&gt;</code>或<code>sudo kill -INT &lt;pid&gt;</code></li>
+<li>从容停止：<code>sudo kill -QUIT &lt;pid&gt;</code>，会处理完请求后关闭</li>
+<li>强制停止：<code>sudo kill -KILL &lt;pid&gt;</code></li>
+</ul>
+<p>也可以<code>sudo service nginx stop</code>或<code>sudo nginx -s stop</code></p>
+<h3 id="重启"><a href="#重启" class="headerlink" title="重启"></a>重启</h3><p><code>sudo kill -HUP &lt;pid&gt;</code>或<code>sudo nginx -s reload</code><br>主进程接收到重启信号后，会检测配置文件合法性，失败回滚，成功则创建新的工作进程，并通知旧的工作进程关闭。运行中的工作进程收到关闭的命令会停止接受新的链接，并继续处理当前已接受的请求，直到没有请求后再退出。</p>
+<h3 id="更新版本-与-恢复版本"><a href="#更新版本-与-恢复版本" class="headerlink" title="更新版本 与 恢复版本"></a>更新版本 与 恢复版本</h3><p>当nginx需要添加新的模块时，需要重新编译。</p>
+<ul>
+<li>对于手动安装的nginx，将新版本的nginx编译安装到旧版本的安装路径中，让新版本的可执行文件替换旧版本的可执行文件。</li>
+<li>执行<code>sudo kill -USR2 &lt;pid&gt;</code>，然后nginx会启动新的主进程，并重命名<code>nginx.pid</code>到<code>nginx.pid.oldbin</code>，原有的<code>nginx.pid</code>会被新的主进程占用。此时出现两个主进程同时运行的情况，并且存在两批新旧工作进程，他们会同时工作，共同处理请求。nginx热启动的详细原理可以看：<a target="_blank" rel="noopener" href="https://blog.csdn.net/yizhou35/article/details/103106225">nginx平滑启动原理：USR1和USR2型号的区别</a></li>
+<li>此时还需要停止旧的进程，就要发送<code>WINCH</code>信号给旧的主进程：<code>sudo kill -WINCH path/to/nginx.pid.oldbin</code>，他的进程会被从容关闭。当旧进程处理完已有的链接后会自动退出，仅剩新进程处理输入请求。</li>
+<li>当新的版本启动后，新版本有问题，可以恢复为旧版本：</li>
+<li>执行上述操作后，旧版本不会关闭其Listen Socket，并可以管理他，用<code>sudo kill -HUP &lt;old pid&gt;</code>将会不在重载入配置文件的情况下启动旧版的工作进程。</li>
+<li>用<code>sudo kill -QUIT &lt;new pid&gt;</code>杀掉新版本主进程号，如果出现了问题不能退出，则相继使用<code>TERM</code>和<code>KILL</code>信号强制退出。新版本退出后，旧版本主进程文件会被移除<code>.oldbin</code>后缀，回复<code>.pid</code>后缀，一切将恢复到升级前。</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>linux的信号机制对nginx的操作主要如下：<br>|  信号   | 说明  |<br>|  ——  | ——  |<br>| TERM/INT  | 快速关闭 |<br>| QUIT  | 优雅的关闭进程,即等请求结束后再关闭 |<br>| HUP | 改变配置文件,平滑的重读配置文件 |<br>| USR1 | 重读日志,在日志按月/日分割时有用 |<br>| USR2 | 平滑的升级 |<br>| WINCH | 优雅关闭旧的进程(配合USR2来进行升级) |</p>
+<h2 id="模块化"><a href="#模块化" class="headerlink" title="模块化"></a>模块化</h2><p>nginx将各个模块组织成一个链条吗，当有请求到达时经过链条上的部分或者全部模块，然后进行处理，每个模块实现特定功能。<br><img src="2.jpg" alt=""></p>
+<p>nginx core实现了底层的通信协议，为其他模块和nginx进程构建基本运行环境，并构建了其他模块的协作基础。http和mail模块位于中间层，实现HTTP和Mail协议(SMTP/IMAP/POP3)。</p>
+<p>nginx模块根据功能可以分为六类：、<br><img src="3.jpg" alt=""></p>
+
+                <hr>
+                
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2019/05/06/wifi网卡的坑/" data-toggle="tooltip" data-placement="top"
+                           title="ArchLinux下WiFi网卡的坑">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2019/05/01/Nginx安装与配置/" data-toggle="tooltip" data-placement="top"
+                           title="Nginx安装与配置">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+
+                <!--加入新的评论系统-->
+                
+
+                
+
+            </div>
+
+            <div class="hidden-xs col-sm-3 toc-col">
+                <div class="toc-wrap">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E9%80%89%E9%A1%B9"><span class="toc-text">基本选项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F"><span class="toc-text">工作模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-text">配置文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nginx-conf"><span class="toc-text">nginx.conf</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E4%B8%8E%E5%85%B3%E9%97%AD"><span class="toc-text">启动与关闭</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8"><span class="toc-text">启动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%81%9C%E6%AD%A2"><span class="toc-text">停止</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8D%E5%90%AF"><span class="toc-text">重启</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E7%89%88%E6%9C%AC-%E4%B8%8E-%E6%81%A2%E5%A4%8D%E7%89%88%E6%9C%AC"><span class="toc-text">更新版本 与 恢复版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9D%97%E5%8C%96"><span class="toc-text">模块化</span></a></li></ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5 class="text-center">
+                        <a href="/tags/">FEATURED TAGS</a>
+                    </h5>
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#Nginx"
+                           title="Nginx">Nginx</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <div style="margin-top: 20px;">
+                    <h5 class="text-center">FRIENDS</h5>
+                    <ul class="list-inline text-center">
+                        
+                        <li><a target="_blank" rel="noopener" href="https://whoisnian.com">Whoisnian</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://thankod.github.io/">thankod</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://void-shana.moe/">VOID001</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://haizs.com/">Haizs</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://backgulf.com/">Backgulf</a></li>
+                        
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+</article>
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "XUranus";
+    var disqus_identifier = "http://xuranus.github.io/2019/05/04/Nginx%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/";
+    var disqus_url = "http://xuranus.github.io/2019/05/04/Nginx%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/";
+
+    (function () {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+
+<!-- Footer -->
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <br>
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/wang-xing-xiao-99">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/WXingxiao">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/XUranus">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; XUranus 2021
+                    <br>
+                    <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+                    <br>
+                    Theme by <a target="_blank" rel="noopener" href="https://haojen.github.io/">Haojen Ma</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/blog.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://xuranus.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- swiftype -->
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','','2.0.0');
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!--wechat title img-->
+<img class="wechat-title-img" src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1539187847049&amp;di=1446fff8f41c349c7cd72af34d44c2ab&amp;imgtype=0&amp;src=http%3A%2F%2Fwww.ewell.com.cn%2Feditor%2Fattached%2Fimage%2F20171225%2F20171225110887508750.jpg">
+</body>
+
+</html>
