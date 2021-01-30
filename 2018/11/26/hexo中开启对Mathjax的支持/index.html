@@ -43,7 +43,7 @@
 <style>
 
     header.intro-header {
-        background-image: url('https://timgsa.baidu.com/timg\?image\&amp;quality\=80\&amp;size\=b9999_10000\&amp;sec\=1539187381343\&amp;di\=2fa8911a94b7b5a904539a11c5192518\&amp;imgtype\=0\&amp;src\=http%3A%2F%2F1.im.guokr.com%2FXpmNucNdcod0EZA1xPbLj2Q1HkqyGs9xqvZUPkEf6YK8AgAAQAEAAFBO.png')
+        background-image: url('https://image.baidu.com/search/detail?ct=503316480&amp;z=0&amp;tn=baiduimagedetail&amp;ipn=d&amp;word=%E5%B0%8F%E8%82%A5%E6%9F%B4&amp;step_word=&amp;ie=utf-8&amp;in=&amp;cl=2&amp;lm=-1&amp;st=-1&amp;hd=0&amp;latest=0&amp;copyright=0&amp;cs=1299688099,3416184073&amp;os=2798006634,1102722591&amp;simid=0,0&amp;pn=2&amp;rn=1&amp;di=54020&amp;ln=985&amp;fr=&amp;fmq=1611226669110_R&amp;ic=0&amp;s=undefined&amp;se=&amp;sme=&amp;tab=0&amp;width=&amp;height=&amp;face=undefined&amp;is=0,0&amp;istype=2&amp;ist=&amp;jit=&amp;bdtype=15&amp;spn=0&amp;pi=0&amp;gsm=0&amp;objurl=https%3A%2F%2Fgimg2.baidu.com%2Fimage_search%2Fsrc%3Dhttp%253A%252F%252Fwww.17qq.com%252Fimg_biaoqing%252F69393158.jpeg%26refer%3Dhttp%253A%252F%252Fwww.17qq.com%26app%3D2002%26size%3Df9999%2C10000%26q%3Da80%26n%3D0%26g%3D0n%26fmt%3Djpeg%3Fsec%3D1613818668%26t%3Db96ed097825c98c42ac1c1e138cdf658&amp;rpstart=0&amp;rpnum=0&amp;adpicid=0&amp;force=undefined')
     }
 </style>
 <!-- hack iOS CSS :active style -->
@@ -86,6 +86,14 @@
                         
 							
                         <li>
+                            <a href="/archives/">归档</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
                             <a href="/tags/">标签</a>
                         </li>
 							
@@ -95,14 +103,6 @@
 							
                         <li>
                             <a href="/works/">作品集</a>
-                        </li>
-							
-						
-                    
-                        
-							
-                        <li>
-                            <a href="/archives/">归档</a>
                         </li>
 							
 						
@@ -150,13 +150,13 @@
 
 
 <img class="wechat-title-img"
-     src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822">
+     src="https://i.loli.net/2021/01/26/P4dNuynTbYcrJwL.jpg">
 
 
 <style>
     
     header.intro-header {
-        background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822')
+        background-image: url('https://i.loli.net/2021/01/26/P4dNuynTbYcrJwL.jpg')
     }
 
     
@@ -199,15 +199,22 @@
             <!-- Post Container -->
             <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
                 <blockquote>
-<p>转载自：<a target="_blank" rel="noopener" href="https://blog.csdn.net/u014630987/article/details/78670258">https://blog.csdn.net/u014630987/article/details/78670258</a></p>
+<p>转载自：<a target="_blank" rel="noopener" href="https://murphypei.github.io/blog/2019/03/hexo-render-mathjax.html">https://murphypei.github.io/blog/2019/03/hexo-render-mathjax.html</a></p>
 </blockquote>
-<p>hexo的markdown解释器默认不支持latex等数学格式，但是我们可以通过安装第三方库来解决这一问题。</p>
-<h2 id="使用Kramed代替-Marked"><a href="#使用Kramed代替-Marked" class="headerlink" title="使用Kramed代替 Marked"></a>使用Kramed代替 Marked</h2><p>hexo 默认的渲染引擎是marked，但是marked不支持mathjax。kramed是在 marked的基础上进行修改。我们在工程目录下执行以下命令来安装 kramed<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">npm uninstall hexo-renderer-marked --save</span><br><span class="line">npm install hexo-renderer-kramed --save</span><br></pre></td></tr></table></figure><br>然后，更改<code>/node_modules/hexo-renderer-kramed/lib/renderer.js</code>，更改：<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Change inline math rule</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">formatText</span>(<span class="params">text</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// Fit kramed&#x27;s rule: $$ + \1 + $$</span></span><br><span class="line">    <span class="keyword">return</span> text.replace(<span class="regexp">/`\$(.*?)\$`/g</span>, <span class="string">&#x27;$$$$$1$$$$&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>为<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Change inline math rule</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">formatText</span>(<span class="params">text</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> text;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h2 id="停止使用-hexo-math"><a href="#停止使用-hexo-math" class="headerlink" title="停止使用 hexo-math"></a>停止使用 hexo-math</h2><p>首先，如果你已经安装 hexo-math, 请卸载它,然后安装 hexo-renderer-mathjax 包：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">npm uninstall hexo-math --save</span><br><span class="line">npm install hexo-renderer-mathjax --save</span><br></pre></td></tr></table></figure></p>
-<h2 id="更新-Mathjax-的-CDN-链接"><a href="#更新-Mathjax-的-CDN-链接" class="headerlink" title="更新 Mathjax 的 CDN 链接"></a>更新 Mathjax 的 CDN 链接</h2><p>打开<code>/node_modules/hexo-renderer-mathjax/mathjax.html</code>，<code>script</code>改为:<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>hexo的markdown解释器默认不支持Latex等数学格式，但是我们可以通过安装第三方库来解决这一问题。</p>
+<h2 id="使用Kramed代替-Marked"><a href="#使用Kramed代替-Marked" class="headerlink" title="使用Kramed代替 Marked"></a>使用Kramed代替 Marked</h2><p>hexo 默认的渲染引擎是marked，但是marked不支持mathjax。kramed是在 marked的基础上进行修改。我们在工程目录下执行以下命令来安装 kramed<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">npm uninstall hexo-renderer-marked --save</span><br><span class="line">npm install hexo-renderer-kramed --save</span><br></pre></td></tr></table></figure></p>
+<h2 id="解决冲突"><a href="#解决冲突" class="headerlink" title="解决冲突"></a>解决冲突</h2><p>当安装完成后，部分mathjax代码渲染依然可能有问题，原因是和markdown语法有冲突。例如<code>*</code>可能会被识别成加粗标记，解决办法是采用mathjax的转义符<code>\ast</code>。而<code>|</code>会和表格符冲突，应使用过<code>\vert</code>。</p>
+<p>但是下标符<code>_</code>和markdown的斜体标记冲突，需要手动修改解析规则。修改：<code>node_modules/kramed/lib/rules/inline.js</code>。</p>
+<p>替换11行和20行<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// escape: /^\\([\\`*&#123;&#125;\[\]()#$+\-.!_&gt;])/,</span></span><br><span class="line"><span class="built_in">escape</span>: <span class="regexp">/^\\([`*\[\]()#$+\-.!_&gt;])/</span>,</span><br><span class="line">...</span><br><span class="line"><span class="comment">// em: /^\b_((?:__|[\s\S])+?)_\b|^\*((?:\*\*|[\s\S])+?)\*(?!\*)/,</span></span><br><span class="line">em: <span class="regexp">/^\*((?:\*\*|[\s\S])+?)\*(?!\*)/</span>,</span><br></pre></td></tr></table></figure><br>重启：<code>hexo clean &amp;&amp; hexo g</code></p>
 <h2 id="博文中开启mathjax"><a href="#博文中开启mathjax" class="headerlink" title="博文中开启mathjax"></a>博文中开启mathjax</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">---</span><br><span class="line">title: Testing Mathjax</span><br><span class="line">category: Uncategorized</span><br><span class="line">date: 2017&#x2F;05&#x2F;03</span><br><span class="line">mathjax: true</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
 <p>此时已经可以在hexo中使用mathJax编写数学公式了,测试：</p>
-<script type="math/tex; mode=display">E = mc^2</script>
+<script type="math/tex; mode=display">
+E = mc^2</script><script type="math/tex; mode=display">
+\xrightarrow[A]{B}</script><script type="math/tex; mode=display">
+\underset{0\leq j \leq k-1}{\arg\min}</script><script type="math/tex; mode=display">
+A \underset{G}{\Rightarrow} B</script><script type="math/tex; mode=display">
+A \stackrel{i}{\Rightarrow} B</script><script type="math/tex; mode=display">
+A \underset{G}{\stackrel{i}{\Longrightarrow}} B</script>
                 <hr>
                 
 
@@ -246,7 +253,7 @@
 
             <div class="hidden-xs col-sm-3 toc-col">
                 <div class="toc-wrap">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Kramed%E4%BB%A3%E6%9B%BF-Marked"><span class="toc-text">使用Kramed代替 Marked</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%81%9C%E6%AD%A2%E4%BD%BF%E7%94%A8-hexo-math"><span class="toc-text">停止使用 hexo-math</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0-Mathjax-%E7%9A%84-CDN-%E9%93%BE%E6%8E%A5"><span class="toc-text">更新 Mathjax 的 CDN 链接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%9A%E6%96%87%E4%B8%AD%E5%BC%80%E5%90%AFmathjax"><span class="toc-text">博文中开启mathjax</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Kramed%E4%BB%A3%E6%9B%BF-Marked"><span class="toc-text">使用Kramed代替 Marked</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E5%86%B2%E7%AA%81"><span class="toc-text">解决冲突</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%9A%E6%96%87%E4%B8%AD%E5%BC%80%E5%90%AFmathjax"><span class="toc-text">博文中开启mathjax</span></a></li></ol>
                 </div>
             </div>
         </div>
@@ -289,7 +296,7 @@
                         
                         <li><a target="_blank" rel="noopener" href="https://haizs.com/">Haizs</a></li>
                         
-                        <li><a target="_blank" rel="noopener" href="https://backgulf.com/">Backgulf</a></li>
+                        <li><a target="_blank" rel="noopener" href="https://murphypei.github.io/">murphypei</a></li>
                         
                     </ul>
                 </div>
@@ -485,6 +492,21 @@
 
 <!--wechat title img-->
 <img class="wechat-title-img" src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1539187847049&amp;di=1446fff8f41c349c7cd72af34d44c2ab&amp;imgtype=0&amp;src=http%3A%2F%2Fwww.ewell.com.cn%2Feditor%2Fattached%2Fimage%2F20171225%2F20171225110887508750.jpg">
-</body>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400},"mobile":{"show":false},"rect":{"opacity":0.7},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
 
 </html>

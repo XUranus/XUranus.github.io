@@ -43,7 +43,7 @@
 <style>
 
     header.intro-header {
-        background-image: url('https://timgsa.baidu.com/timg\?image\&amp;quality\=80\&amp;size\=b9999_10000\&amp;sec\=1539187381343\&amp;di\=2fa8911a94b7b5a904539a11c5192518\&amp;imgtype\=0\&amp;src\=http%3A%2F%2F1.im.guokr.com%2FXpmNucNdcod0EZA1xPbLj2Q1HkqyGs9xqvZUPkEf6YK8AgAAQAEAAFBO.png')
+        background-image: url('https://image.baidu.com/search/detail?ct=503316480&amp;z=0&amp;tn=baiduimagedetail&amp;ipn=d&amp;word=%E5%B0%8F%E8%82%A5%E6%9F%B4&amp;step_word=&amp;ie=utf-8&amp;in=&amp;cl=2&amp;lm=-1&amp;st=-1&amp;hd=0&amp;latest=0&amp;copyright=0&amp;cs=1299688099,3416184073&amp;os=2798006634,1102722591&amp;simid=0,0&amp;pn=2&amp;rn=1&amp;di=54020&amp;ln=985&amp;fr=&amp;fmq=1611226669110_R&amp;ic=0&amp;s=undefined&amp;se=&amp;sme=&amp;tab=0&amp;width=&amp;height=&amp;face=undefined&amp;is=0,0&amp;istype=2&amp;ist=&amp;jit=&amp;bdtype=15&amp;spn=0&amp;pi=0&amp;gsm=0&amp;objurl=https%3A%2F%2Fgimg2.baidu.com%2Fimage_search%2Fsrc%3Dhttp%253A%252F%252Fwww.17qq.com%252Fimg_biaoqing%252F69393158.jpeg%26refer%3Dhttp%253A%252F%252Fwww.17qq.com%26app%3D2002%26size%3Df9999%2C10000%26q%3Da80%26n%3D0%26g%3D0n%26fmt%3Djpeg%3Fsec%3D1613818668%26t%3Db96ed097825c98c42ac1c1e138cdf658&amp;rpstart=0&amp;rpnum=0&amp;adpicid=0&amp;force=undefined')
     }
 </style>
 <!-- hack iOS CSS :active style -->
@@ -86,6 +86,14 @@
                         
 							
                         <li>
+                            <a href="/archives/">归档</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
                             <a href="/tags/">标签</a>
                         </li>
 							
@@ -95,14 +103,6 @@
 							
                         <li>
                             <a href="/works/">作品集</a>
-                        </li>
-							
-						
-                    
-                        
-							
-                        <li>
-                            <a href="/archives/">归档</a>
                         </li>
 							
 						
@@ -174,7 +174,114 @@
 
 
 <div class="post-preview "
-     style="background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822')">
+     style="background-image: url('https://i.loli.net/2021/01/26/P4dNuynTbYcrJwL.jpg')">
+    <a href="/2019/05/15/树莓派3B-安装Raspbian/">
+        <h2 class="post-title">
+            树莓派3B+安装Raspbian
+        </h2>
+        <p class="post-meta">
+            <i class="fa fa-calendar" aria-hidden="true"></i> 2019-05-15
+        </p>
+        
+        <div class="post-content-preview">
+            <p>
+                由于树莓派3B+至今为止官方没有发布可用的第三方镜像，经测试只有Noob和raspbian可以直接使用。
+环境：ArchLinux
+刻录
+首先去官网下载raspbian镜像:下载连接
+准备一张SD卡，lsblk(假设盘符是/dev/sdc)。
+插入并格式化sudo wipefs --all /d..
+            </p>
+        </div>
+    </a>
+
+</div>
+
+<hr>
+
+
+
+<div class="post-preview "
+     style="background-image: url('https://i.loli.net/2021/01/26/P4dNuynTbYcrJwL.jpg')">
+    <a href="/2019/05/13/SpringBoot基本配置/">
+        <h2 class="post-title">
+            SpringBoot基本配置
+        </h2>
+        <p class="post-meta">
+            <i class="fa fa-calendar" aria-hidden="true"></i> 2019-05-13
+        </p>
+        
+        <div class="post-content-preview">
+            <p>
+                
+需要IDEA,jdk8以上
+
+创建项目SpringBoot需要IDEA Ultimate,新建项目，选择Spring Initializer
+
+Next
+选择Web
+Next ,输入项目名，完成，等待依赖自动下载。
+配置热更新
+在pom.xml中添加依赖&lt;!-- devtools可以实现..
+            </p>
+        </div>
+    </a>
+
+</div>
+
+<hr>
+
+
+
+<div class="post-preview "
+     style="background-image: url('https://i.loli.net/2021/01/26/P4dNuynTbYcrJwL.jpg')">
+    <a href="/2019/05/06/wifi网卡的坑/">
+        <h2 class="post-title">
+            ArchLinux下WiFi网卡的坑
+        </h2>
+        <p class="post-meta">
+            <i class="fa fa-calendar" aria-hidden="true"></i> 2019-05-06
+        </p>
+        
+        <div class="post-content-preview">
+            <p>
+                Archlinux下笔记本wifi用着用着忽然失效了，但插入外置网卡可以使用，原以为是网卡坏了，但换成windows发现可以使用。
+输入ifconfig发现没有网卡，输入ip link :wlp2s0: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc mq ..
+            </p>
+        </div>
+    </a>
+
+</div>
+
+<hr>
+
+
+
+<div class="post-preview "
+     style="background-image: url('https://i.loli.net/2021/01/26/P4dNuynTbYcrJwL.jpg')">
+    <a href="/2019/05/04/Nginx学习笔记/">
+        <h2 class="post-title">
+            Nginx学习笔记
+        </h2>
+        <p class="post-meta">
+            <i class="fa fa-calendar" aria-hidden="true"></i> 2019-05-04
+        </p>
+        
+        <div class="post-content-preview">
+            <p>
+                基本选项nginx -h打印出的内容几乎已经告诉我们如何使用nginx：Options:  -?,-h         : this help  -v            : show version and exit  -V            : show version and con..
+            </p>
+        </div>
+    </a>
+
+</div>
+
+<hr>
+
+
+
+<div class="post-preview "
+     style="background-image: url('https://i.loli.net/2021/01/26/P4dNuynTbYcrJwL.jpg')">
     <a href="/2019/05/01/Nginx安装与配置/">
         <h2 class="post-title">
             Nginx安装与配置
@@ -202,7 +309,7 @@
 
 
 <div class="post-preview "
-     style="background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822')">
+     style="background-image: url('https://i.loli.net/2021/01/26/P4dNuynTbYcrJwL.jpg')">
     <a href="/2019/03/07/Archlinux安装docker/">
         <h2 class="post-title">
             Archlinux安装docker
@@ -229,7 +336,7 @@
 
 
 <div class="post-preview "
-     style="background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822')">
+     style="background-image: url('https://i.loli.net/2021/01/26/P4dNuynTbYcrJwL.jpg')">
     <a href="/2019/03/02/自己写个JVM/">
         <h2 class="post-title">
             自己写个JVM
@@ -253,7 +360,7 @@
 
 
 <div class="post-preview "
-     style="background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822')">
+     style="background-image: url('https://i.loli.net/2021/01/26/P4dNuynTbYcrJwL.jpg')">
     <a href="/2018/12/23/hbase实现搜索引擎/">
         <h2 class="post-title">
             HBase实现搜索引擎
@@ -266,114 +373,6 @@
             <p>
                 静态搜索引擎上一节已经配置了一个hadoop+spark集群，xuranus@172.17.11.40 为本机，在本机NAT下六个节点：
 集群说明xuranusMaster@172.16.173.136xuranusSlave1@172.16.173.137xuranusSlave2@172.1..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822')">
-    <a href="/2018/12/01/js异步函数同步/">
-        <h2 class="post-title">
-            js异步函数同步
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2018-12-01
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                先看一段程序const fs = require(&#x27;fs&#x27;);var path = &#x27;/home/xuranus//&#x27;;var file_list = [    &#x27;A.json&#x27;,    &#x27;B.json&#x27;,    &..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822')">
-    <a href="/2018/11/27/自己写个shadowsocks/">
-        <h2 class="post-title">
-            自己写个shadowsocks
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2018-11-27
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                看到你也能写个shadowsocks这篇文章，对ss代理豁然开朗，忽然发现ss也不是一个特别高大上的项目，加上最近学习设计模式，不想写业务逻辑，就想用java实现个低配的shadowsocks。仓库：lightsocks-java
-基本原理基本原理上面提到的那篇文章《你也能写个shadowsoc..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822')">
-    <a href="/2018/11/27/大数据算法/">
-        <h2 class="post-title">
-            大数据算法
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2018-11-27
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                
-本文为icourse哈工大课程《大数据算法》笔记
-
-大数据算法概述定义大数据算法指的是，在给定的资源约束下，以大数据为输入，在给定时间约束内可以生成满足给定约束结果的计算。
-大数据算法可以不是
-
-精确算法
-内存算法
-串行算法
-仅在电子计算机上运行的算法（可以有人来参与到程序的执行）
-
-大数据不..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1603556028937&di=04f612199725ae5f775ae5cb456f9ae7&imgtype=0&src=http%3A%2F%2Fpix10.agoda.net%2Fgeo%2Fcity%2F17196%2F1_17196_02.jpg%3Fs%3D1920x822')">
-    <a href="/2018/11/26/hexo中开启对Mathjax的支持/">
-        <h2 class="post-title">
-            hexo中开启对Mathjax的支持
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2018-11-26
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                
-转载自：https://blog.csdn.net/u014630987/article/details/78670258
-
-hexo的markdown解释器默认不支持latex等数学格式，但是我们可以通过安装第三方库来解决这一问题。
-使用Kramed代替 Markedhexo 默认的渲染引擎..
             </p>
         </div>
     </a>
@@ -496,10 +495,10 @@ hexo的markdown解释器默认不支持latex等数学格式，但是我们可以
                     
                     
                     
-                    
-                    
                     <a href="/tags/#Nginx" title="Nginx"
                        rel="2">Nginx</a>
+                    
+                    
                     
                     
                     
@@ -581,6 +580,11 @@ hexo的markdown解释器默认不支持latex等数学格式，但是我们可以
                     
                     
                     
+                    <a href="/tags/#形式语言与自动机理论" title="形式语言与自动机理论"
+                       rel="3">形式语言与自动机理论</a>
+                    
+                    
+                    
                     <a href="/tags/#树莓派" title="树莓派"
                        rel="2">树莓派</a>
                     
@@ -608,7 +612,7 @@ hexo的markdown解释器默认不支持latex等数学格式，但是我们可以
                 
                 <li><a href="https://haizs.com/" target="_blank">Haizs</a></li>
                 
-                <li><a href="https://backgulf.com/" target="_blank">Backgulf</a></li>
+                <li><a href="https://murphypei.github.io/" target="_blank">murphypei</a></li>
                 
             </ul>
             
@@ -750,6 +754,21 @@ hexo的markdown解释器默认不支持latex等数学格式，但是我们可以
 
 <!--wechat title img-->
 <img class="wechat-title-img" src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1539187847049&amp;di=1446fff8f41c349c7cd72af34d44c2ab&amp;imgtype=0&amp;src=http%3A%2F%2Fwww.ewell.com.cn%2Feditor%2Fattached%2Fimage%2F20171225%2F20171225110887508750.jpg">
-</body>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400},"mobile":{"show":false},"rect":{"opacity":0.7},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
 
 </html>

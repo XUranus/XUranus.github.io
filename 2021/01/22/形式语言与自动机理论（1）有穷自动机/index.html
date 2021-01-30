@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="XUranus的个人博客">
+    <meta name="keyword" content="XUranus">
+    <meta name="theme-color" content="#600090">
+    <meta name="msapplication-navbutton-color" content="#600090">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+    <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-person-128.png">
+    <link rel="alternate" type="application/atom+xml" title="XUranus" href="/atom.xml">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+    <title>
+        
+        形式语言与自动机理论（1）有穷自动机｜真常应物,真常得性;常应常静,常清静矣
+        
+    </title>
+
+    <link rel="canonical" href="http://xuranus.github.io/2021/01/22/形式语言与自动机理论（1）有穷自动机/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/blog-style.css">
+
+
+    <!-- Pygments Github CSS -->
+    
+<link rel="stylesheet" href="/css/syntax.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<style>
+
+    header.intro-header {
+        background-image: url('https://image.baidu.com/search/detail?ct=503316480&amp;z=0&amp;tn=baiduimagedetail&amp;ipn=d&amp;word=%E5%B0%8F%E8%82%A5%E6%9F%B4&amp;step_word=&amp;ie=utf-8&amp;in=&amp;cl=2&amp;lm=-1&amp;st=-1&amp;hd=0&amp;latest=0&amp;copyright=0&amp;cs=1299688099,3416184073&amp;os=2798006634,1102722591&amp;simid=0,0&amp;pn=2&amp;rn=1&amp;di=54020&amp;ln=985&amp;fr=&amp;fmq=1611226669110_R&amp;ic=0&amp;s=undefined&amp;se=&amp;sme=&amp;tab=0&amp;width=&amp;height=&amp;face=undefined&amp;is=0,0&amp;istype=2&amp;ist=&amp;jit=&amp;bdtype=15&amp;spn=0&amp;pi=0&amp;gsm=0&amp;objurl=https%3A%2F%2Fgimg2.baidu.com%2Fimage_search%2Fsrc%3Dhttp%253A%252F%252Fwww.17qq.com%252Fimg_biaoqing%252F69393158.jpeg%26refer%3Dhttp%253A%252F%252Fwww.17qq.com%26app%3D2002%26size%3Df9999%2C10000%26q%3Da80%26n%3D0%26g%3D0n%26fmt%3Djpeg%3Fsec%3D1613818668%26t%3Db96ed097825c98c42ac1c1e138cdf658&amp;rpstart=0&amp;rpnum=0&amp;adpicid=0&amp;force=undefined')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="" class="animated fadeIn">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "true" data-istags="false
+" data-ishome = "false" >
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand animated pulse" href="/">
+                <span class="brand-logo">
+                    XUranus
+                </span>
+                's Blog
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <!-- /.navbar-collapse -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+					
+                    
+                        
+							
+                        <li>
+                            <a href="/archives/">归档</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/tags/">标签</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/works/">作品集</a>
+                        </li>
+							
+						
+                    
+					
+					
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+//    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+<!-- Main Content -->
+
+<!--only post-->
+
+
+<img class="wechat-title-img"
+     src="https://i.loli.net/2021/01/26/P4dNuynTbYcrJwL.jpg">
+
+
+<style>
+    
+    header.intro-header {
+        background-image: url('https://i.loli.net/2021/01/26/P4dNuynTbYcrJwL.jpg')
+    }
+
+    
+</style>
+
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <div class="post-heading">
+                    <h1>形式语言与自动机理论（1）有穷自动机</h1>
+                    
+                    <span class="meta">
+                         作者 XUranus
+                        <span>
+                          日期 2021-01-22
+                         </span>
+                    </span>
+                    <div class="tags text-center">
+                        
+                        <a class="tag" href="/tags/#形式语言与自动机理论"
+                           title="形式语言与自动机理论">形式语言与自动机理论</a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="post-title-haojen">
+        <span>
+            形式语言与自动机理论（1）有穷自动机
+        </span>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+                <h1 id="课程介绍"><a href="#课程介绍" class="headerlink" title="课程介绍"></a>课程介绍</h1><p>计算理论</p>
+<ul>
+<li>对计算本质的探索</li>
+<li>计算：非纯粹的算数，是一种以计算为有效的方式，获取答案的过程</li>
+<li>计算理论促进了计算机的发展，并随着计算机的诞生将重心转移到计算科学</li>
+</ul>
+<p>核心问题：<strong>计算机的<em>基本能力</em>和<em>限制</em>是什么？</strong><br>包含了两个方面：</p>
+<ul>
+<li>可计算性理论：有哪些问题可以通过计算来解决？计算这种能力是否有边界？如果不是，为什么不是？对于严谨的机械而有效的过程的研究，我们需要严格定义的概念（算法）去描述它，需要严谨的模型（自动机理论）去分析它。</li>
+<li>计算复杂性理论：利用计算去解决可计算的问题，需要消耗多少资源</li>
+</ul>
+<p>自动机理论：研究抽象机器及其所能解决的问题的理论，主要包括：</p>
+<ul>
+<li>图灵机</li>
+<li>有限状态机</li>
+<li>文法，下推自动机</li>
+</ul>
+<p>自动机是研究语言的模型，语言则是具体的实例。自动机以语言为处理对象，语言以自动机为形式定义，两者密不可分。</p>
+<p>形式语言：经数学定义的语言<br>语言：字符，单词，句子，语法</p>
+<p>课程内容：</p>
+<ul>
+<li>正则语言<ul>
+<li>有穷自动机</li>
+<li>正则表达式</li>
+<li>正则语言的性质</li>
+</ul>
+</li>
+<li>上下文无关语言<ul>
+<li>上下文无关文法</li>
+<li>下推自动机</li>
+<li>上下文无关语言的性质</li>
+</ul>
+</li>
+<li>计算导论<ul>
+<li>图灵机及其扩展</li>
+<li>不可判定性</li>
+</ul>
+</li>
+</ul>
+<h1 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h1><p>字母表：字符的<strong>非空有穷</strong>集<br>$\Sigma_1=\lbrace 0,1 \rbrace $可以构建全部的二进制数，$\Sigma_2=\lbrace a,b,…,z \rbrace$可以构建出各种英语字母组成的语言，$\Sigma_3= \lbrace x|x是汉字 \rbrace$可以定义汉语。</p>
+<p>字符串：由字母表中某些符号组成的<strong>有穷</strong>序列</p>
+<p>空串：记为$\epsilon$，有0个字符的字符串，对任何字母表，$\epsilon\notin\Sigma$<br>$0,1,00,110100,…$称为字母表$\Sigma_1=\lbrace 0,1 \rbrace $上的字符串</p>
+<p>符号约定：</p>
+<ul>
+<li>字母表：$\Sigma,\Gamma,…$</li>
+<li>字符：$a,b,c…$</li>
+<li>字符串：$…,w,x,y,z$</li>
+<li>集合：$A,B,C,…$</li>
+</ul>
+<p>字符串的长度：字符串$w$中符号所占位置的个数，计为$|w|$，递归定义：</p>
+<script type="math/tex; mode=display">
+|w|=
+\begin{cases}
+0 & \text{$w=\epsilon$}\\
+|x|+1 & \text{$w=xa$}\\
+\end{cases}</script><p>例：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+|0010| & = |001|+1\\
+ & =|00|+1+1\\
+ & =|0|+1+1+1\\
+ & =|\epsilon|+1+1+1+1\\
+ & =0+1+1+1+1\\
+ & =4
+\end{aligned}</script><p>字符串的连接：将首尾相接得到新字符串的运算，记为$x·y$或$xy$，递归定义：</p>
+<script type="math/tex; mode=display">
+x.y = 
+\begin{cases}
+x & \text{$y=\epsilon$}\\
+(x·z)a & \text{$y=za$}\\
+\end{cases}</script><p>其中</p>
+<script type="math/tex; mode=display">
+a\in\Sigma</script><p>，且$x,y,z$都是字符串<br>例：$x=01,y=ab$</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+xy & = 01·ab\\
+ & = (01·a)b\\
+ & = (01·\epsilon)ab\\
+ & = 01ab
+\end{aligned}</script><p>满足结合律：$x·y·z=(x·y)·z=x·(y·z)$，不满足交换律：$x·y\not=y·x$</p>
+<p>字符串$x$的$n$次幂$(n\ge0)$，递归定义：</p>
+<script type="math/tex; mode=display">
+x^n = 
+\begin{cases}
+\epsilon & \text{$n=0$}\\
+x^{n-1}x & \text{$n\gt0$}\\
+\end{cases}</script><p>例1：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+(ab)^2 & = (ab)^1·(ab)\\
+ & = (ab)^0·abab\\
+ & = \epsilon abab\\
+ & = abab
+\end{aligned}</script><p>例2：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+ab^2 & = ab^1·b\\
+ & = ab^0bb\\
+ & = a\epsilon bb\\
+ & = abb
+\end{aligned}</script><p>集合$A$和集合$B$的连接，计为$A·B$或$AB$，定义为：$A·B=\lbrace w | w = x·y, x \in A \text{且} y \in B \rbrace$<br>例：$A = \lbrace 0,11 \rbrace, B = \lbrace ab,ba \rbrace$</p>
+<script type="math/tex; mode=display">
+AB = \lbrace 0ab,0ba, 11ab, 11ba \rbrace</script><p>集合运算不满足交换律$AB\not=BA$</p>
+<p>集合$A$的$n$次幂$(n\ge0)$，递归定义：</p>
+<script type="math/tex; mode=display">
+A^n = 
+\begin{cases}
+\lbrace\epsilon\rbrace & \text{$n=0$}\\
+A^{n-1}A & \text{$n\ge1$}\\
+\end{cases}</script><p>例：$A=\lbrace \epsilon \rbrace$，</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+A^3 & = AAA\\
+ & = \lbrace a \rbrace \lbrace a \rbrace \lbrace a \rbrace \\
+ & = \lbrace a^3 \rbrace \\
+ & = \lbrace aaa \rbrace
+\end{aligned}</script><p>即：若$\Sigma$为字母表，则$\Sigma^n$为$\Sigma$上长度为$n$的字符串集合。<br>若$\Sigma=\lbrace 0,1 \rbrace$，有：</p>
+<script type="math/tex; mode=display">
+\Sigma^0 = \lbrace \epsilon \rbrace, \Sigma^1 = \lbrace 0,1 \rbrace, \Sigma^2 = \lbrace 00,01,10,11 \rbrace, \\
+\Sigma^3 = \lbrace 000,001,010,011,100,101,110,111 \rbrace</script><p>克林闭包（Kleene Closure）</p>
+<script type="math/tex; mode=display">
+\Sigma^{\ast} = \bigcup_{\text{$i=0$}}^\infty \Sigma^i</script><script type="math/tex; mode=display">
+A^{\ast} = \bigcup_{\text{$i=0$}}^\infty A^i</script><p>正闭包（Positive Closure）</p>
+<script type="math/tex; mode=display">
+\Sigma^+ = \bigcup_{\text{$i=0$}}^\infty \Sigma^i</script><script type="math/tex; mode=display">
+A^+ = \bigcup_{\text{$i=0$}}^\infty A^i</script><p>显然：</p>
+<script type="math/tex; mode=display">
+\Sigma^{\ast} = \Sigma^+ \cup \lbrace \epsilon \rbrace</script><p>语言：<br>定义：若$\Sigma$为字母表且$\forall L \subseteq \Sigma^{\ast}$，则$L$称为字母表$\Sigma$上的语言。</p>
+<ul>
+<li>自然语言，程序设计语言等</li>
+<li>二进制01语言：$\lbrace 0^n 1^n | n \le 0 \rbrace = \lbrace \epsilon,0,1,00,11,0101,… \rbrace$</li>
+<li>$\emptyset$, $\lbrace \epsilon \rbrace$, 和$\Sigma^{\ast}$分别都是任意字母表$\Sigma$上的语言，但是注意！：$\emptyset \not = \lbrace \epsilon \rbrace$</li>
+</ul>
+<p>语言的唯一要求是：字母表是有穷的</p>
+<p>自动机器理论中的典型问题：判断给定的字符串$w$是否属于某个具体语言$L$，($w \in L?$)</p>
+<p>语言和问题是相同的东西，任何问题可以转化为语言成员性问题，例如：“判断一个数是否是素数”中，素数是语言，参数是串。又如“判断一个C程序是否能被编译”，C语言是语言，程序是串。一部分问题是可以证明的，而一部分问题是无法证明的，如“图灵停机问题”</p>
+<p>形式化证明：<br>演绎法，归纳法和反证法<br>例1：若$x$和$y$是$\Sigma$是$\Sigma$上的字符串，请证明$|xy|=|x|+|y|$<br>证明：通过对$|y|$的归纳来证明（从$y$的长度归纳）：<br>基础：当$|y|=0$时，即$y=\epsilon$,$|xy|=|x\epsilon|=|x|=|x|+|\epsilon|=|x|+|y|$<br>递推：假设$|y|=n (n \ge 0)$时命题成立，那么当$|y|=n+1$时，即$y=wa$，$|xy|=|x(wa)|=|(xw)a|=|xw|+1=|x|+|w|+1=|x|+|wa|=|x|+|y|$</p>
+<p>也可通过对$y$的归纳来证明（从$y$的结构归纳）：<br>基础：当$y=\epsilon$时，$|x\epsilon|=|x|=|x|+|\epsilon|=|x|+|y|$<br>地推：假设$y=w(w \in \Sigma^{\ast})$时命题成立，那么当$y=wa$时，$|xy|=|x(wa)|=|xw|+1=|x|+|w|+1=|x|+|y|$</p>
+<h1 id="有穷自动机"><a href="#有穷自动机" class="headerlink" title="有穷自动机"></a>有穷自动机</h1><ul>
+<li>确定的有穷自动机<ul>
+<li>形式定义</li>
+<li>DFA的设计举例</li>
+<li>扩展转移函数与DFA的语言</li>
+</ul>
+</li>
+<li>非确定的有穷自动机</li>
+<li>带有空转移的非确定的有穷自动机</li>
+</ul>
+<p>有限状态机器（FSM，Finite State Machine），常见两种变形：Moore Machine，Mealy Machine，应用于数字电路设计，AI设计，通讯协议设计，文本搜索与识别</p>
+<p>确定的有穷自动机：</p>
+<ul>
+<li>一条输入带：每个空格存储一个字符</li>
+<li>一个读头：左右移动，每次移动读取一格</li>
+<li>一个有穷控制器：有限个状态，能存储当前状态，能根据当前的状态和读头读数进行状态的改变</li>
+</ul>
+<p>起初读头在输入带第一个字符，从左向右读，并改变自己的状态，不断循环这一过程，直到读完最后一个字符串，完成这一过程。根据有穷控制器自身的状态对这个字符串判断，得到两种结果：接受或拒绝</p>
+<p>例子：用有穷自动机识别$\lbrace w \in \lbrace 0,1 \rbrace^{\ast} | w \text{的长度} |w| \text{是偶数.} \rbrace$</p>
+<p>确定的有穷自动机的形式（DFA，Deterministic Finite Automation）定义：<br>A为五元组：</p>
+<script type="math/tex; mode=display">
+A=(Q,\Sigma,\delta,q_0,F)</script><ul>
+<li>$Q$：有穷状态集</li>
+<li>$\Sigma$：有穷输入符号集/字母表</li>
+<li>$\delta:Q × \Sigma → Q$，状态转移函数</li>
+<li>$q_0 \in Q$：初始状态</li>
+<li>$F \subseteq Q$：终结状态集或接受状态集<br>对于某一状态$q$，此刻读头读取字符为$a$，下一刻跳转的状态$p$是确定的：$p=\delta(q,a)$</li>
+</ul>
+<p>例：设计一个DFA，在任何由0和1构成从串中，接受含有01字串的全部串。</p>
+<ul>
+<li>$q_1$：未发现01，即使0都没出现过</li>
+<li>$q_2$：未发现01，但上一次读入字符是0</li>
+<li>$q_3$：已经发现了01<br>该DFA可以定义为：</li>
+</ul>
+<script type="math/tex; mode=display">
+= (\lbrace q_1,q_2,q_3 \rbrace, \lbrace 0,1 \rbrace, \delta, q_1, \lbrace q_3 \rbrace)</script><p>其中$\delta$为：</p>
+<script type="math/tex; mode=display">
+\delta(q_1,1)=q_1 \ \ \delta(q_1,0)=q_2</script><script type="math/tex; mode=display">
+\delta(q_2,1)=q_3 \ \ \delta(q_2,0)=q_2</script><script type="math/tex; mode=display">
+\delta(q_3,1)=q_3 \ \ \delta(q_3,0)=q_3</script><p>状态转移图：</p>
+<ul>
+<li>每个状态$q$对应一个节点，用圆圈表示</li>
+<li>状态转移函数$\delta(q,a)=p$为一条从$q$到$p$且标记为字符$a$的有向边</li>
+<li>开始状态$q_0$用一个标有start的箭头表示</li>
+<li>接受状态的节点，用双圆圈表示<img src="1.png" alt=""></li>
+</ul>
+<p>状态转移表：</p>
+<ul>
+<li>每个状态$q$对应一行，每个字符$a$对应一列</li>
+<li>若有$\delta(q,a)=p$，用第$q$行第$a$列中填入的$p$表示</li>
+<li>开始状态$q_0$前，标记箭头 → 表示</li>
+<li>接受状态$q \in F$前，标记星号*表示</li>
+</ul>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>0</th>
+<th>1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$→q_1$</td>
+<td>$q_2$</td>
+<td>$q_1$</td>
+</tr>
+<tr>
+<td>$q_2$</td>
+<td>$q_2$</td>
+<td>$q_3$</td>
+</tr>
+<tr>
+<td>$*q_3$</td>
+<td>$q_3$</td>
+<td>$q_3$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>例2：若$\Sigma=\lbrace 0,1 \rbrace$,给出接受全部含有奇数个1的串DFA。</p>
+<p>有两个状态：偶数个1和奇数个1，首先画出状态转移图：<br><img src="2.png" alt=""><br>对应的形式化定义为：</p>
+<script type="math/tex; mode=display">
+A = (\lbrace q_1,q_2 \rbrace, \lbrace 0,1 \rbrace, \delta, q_1, \lbrace q_2 \rbrace)</script><p>其中$\delta$为：</p>
+<script type="math/tex; mode=display">
+\delta(q_1,1)=q_2 \ \ \delta(q_1,0)=q_1</script><script type="math/tex; mode=display">
+\delta(q_2,1)=q_1 \ \ \delta(q_2,0)=q_2</script><p>例3：若$\Sigma=\lbrace 0,1 \rbrace$,给出接受全部含有偶数个0和偶数个1的串的DFA</p>
+<p>首先画出“接受偶数个0的状态转移图”<br><img src="3.png" alt=""></p>
+<p>再画出“接受偶数个1的状态转移图”<br><img src="4.png" alt=""></p>
+<p>将两个DFA的两种状态分别记为$a,b$和$m,n$，然后做笛卡尔积<br><img src="5.png" alt=""></p>
+<p>两个状态的DFA与两个状态的DFA做笛卡尔积，有四个状态，新的DFA如下<br><img src="6.png" alt=""><br>其中$q_0=am$，$q_1=bm$，$q_2=an$，$q_3=bn$</p>
+<p>扩展转移函数：<br>扩展$\delta$到字符串，定义扩展转移函数：$\hat \delta : Q × \Sigma^{\ast} → Q $为：</p>
+<script type="math/tex; mode=display">
+\hat \delta (q,w) = 
+\begin{cases}
+q & \text{$w=\epsilon$}\\
+\delta (\hat \delta(q,x) , a) & \text{$w=xa$}\\
+\end{cases}</script><p>其中$a \in \Sigma, \ w,x \in \Sigma^{\ast}$，那么，当$w=a_0 a_1 … a_n$，则有：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+\hat \delta(q,w) & = \delta( \hat \delta (q,a_0a_1,...a_n),a) \\
+ & = \delta(\delta(\hat\delta (q,a_0a_1...a_{n-1}),a_n),a) \\
+ & = \delta(\delta(...\delta(\hat\delta(q,\epsilon),a_0)...,a_{n-1}),a_n) \\
+ & = \delta(\delta(...\delta(q,a_0)...,a_{n-1}),a_n)
+\end{align}</script><p>例：接受全部含有01子串的DFA，$\hat\delta$处理串0101的过程：<br>状态转移图如下：<br><img src="7.png" alt=""></p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\hat\delta(q_0,0101) & = \delta( \hat \delta (q_0,010),1) \\
+ & = \delta(\delta(\hat\delta (q_0,01),0),1) \\
+ & = \delta(\delta(\delta(\hat\delta(q_0,0),1),0),1) \\
+ & = \delta(\delta(\delta(\delta(\hat\delta(q_0,\epsilon),0),1),0),1) \\
+ & = \delta(\delta(\delta(\delta(q_0,0),1),0),1) \\
+ & = q_2
+\end{aligned}</script><p>DFA的扩展转移函数$\hat\delta$在任意特定状态$q$接受特定字符串$w$结束状态都是<strong>确定</strong>的</p>
+<p>例：对任何状态$q$及字符串$x$和$y$，证明$\hat\delta(q,xy)=\hat\delta(\hat\delta(q,x),y)$<br>证明：对$y$使用归纳法：<br>当$y=\epsilon$，$\hat\delta(\hat\delta(q,x),\epsilon) = \hat\delta(q,x) = \hat\delta(q,x\epsilon)$<br>当$y=wa$时，$\hat\delta(q,xwa)=\delta(\hat\delta(q,xw),a)=\delta(\hat\delta(\hat\delta(q,x),w),a) = \hat\delta(\hat\delta(q,x),wa)$</p>
+<p>若$D = (Q, \Sigma, \delta, q_0, F)$是一个DFA，则$D$接受的语言为：</p>
+<script type="math/tex; mode=display">
+L(D) = \lbrace w \in \Sigma^{\ast} | \hat\delta(q_0,w) \in F \rbrace</script><p>DFA可以作为语言的识别器，也可以用来定义语言。如果语言$L$是某个DFA $D$的语言，即$L = L(D)$，则称$L$是正则语言。</p>
+<ul>
+<li>$\emptyset$和$\lbrace \epsilon \rbrace$都是正则语言</li>
+<li>若$\Sigma$是字母表，$\Sigma^n$，$\Sigma^{\ast}$都是$\Sigma$上的正则语言。</li>
+</ul>
+<p>例：设计DFA接受$\lbrace 0,1 \rbrace$上的字符串$w$,且$w$是3的倍数的二进制数<br>分析：读入一个0，相当于乘2；读入一个1，相当于乘2加1。根据除3取余结果有三种状态：$q_0=3k,q_1=3k+1,q_2=2k+2 (k \in N)$，根据此画出状态转移表：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>0</th>
+<th>1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$q_0$</td>
+<td>$q_0$</td>
+<td>$q_1$</td>
+</tr>
+<tr>
+<td>$q_1$</td>
+<td>$q_2$</td>
+<td>$q_0$</td>
+</tr>
+<tr>
+<td>$q_2$</td>
+<td>$q_1$</td>
+<td>$q_2$</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>如果把开始状态设为$q_0$，终结状态也是$q_0$，那么该DFA会接受$\epsilon$，而且该DFA还会接受0开头的非零二进制数。为了防止这两种情况，引入开始状态$q_s$和为串以0开头的状态，一旦串以0开头，在接受字符，它将被“stuck”。对应的状态转移图如下：<br><img src="8.png" alt=""></p>
+<p>非确定的有穷自动机</p>
+<ul>
+<li>确定的有穷自动机</li>
+<li>非确定的有穷自动机</li>
+<li>形式语言</li>
+<li>扩展转移函数与NFA的语言</li>
+<li>DFA与NFA的等价性</li>
+<li>带有空转移的非确定的有穷自动机</li>
+</ul>
+<p>例：由0和1构成的串中，接受全部以01结尾的串，如何设计DFA<br>DFA如下<br><img src="9.png" alt=""></p>
+<p>但是，这样的设计，实际上过于繁琐。</p>
+<p>状态的非确定性转移：<br><img src="10.png" alt=""></p>
+<ul>
+<li>同一个状态在相同输入下，可以有多个转移状态</li>
+<li>自动机可以处在多个当前状态</li>
+<li>使得自动机的设计更容易</li>
+</ul>
+<p>上述问题对应的非确定性状态转移图如下:<br><img src="11.png" alt=""></p>
+<p>非确定性有穷自动机（Nondeterministic Finite Automation，NFA）A为五元组：</p>
+<script type="math/tex; mode=display">
+A=(Q,\Sigma,\delta,q_0,F)</script><ul>
+<li>$Q$：有穷状态集</li>
+<li>$\Sigma$：有穷输入符号集/字母表</li>
+<li>$\delta:Q × \Sigma → 2^Q$，状态转移函数  $(2^Q=\lbrace S | S \subseteq Q \rbrace)$ 从一个状态可以跳转到多个状态</li>
+<li>$q_0 \in Q$：初始状态</li>
+<li>$F \subseteq Q$：终结状态集或接受状态集</li>
+</ul>
+<p>例：由0和1构成的串中，接受全部以01结尾的串，设计NFA</p>
+<p><img src="11.png" alt=""></p>
+<p>五元组为$A=(\lbrace q_0,q_1,q_2 \rbrace. \lbrace 0,1 \rbrace. \epsilon. q_0, \lbrace q_2 \rbrace)$,转移函数</p>
+<script type="math/tex; mode=display">
+\delta(q_0,0)=\lbrace q_0,q_1 \rbrace  \ \ \delta(q_1,0)=\emptyset \ \ \delta(q_2,0)=\emptyset \\
+\delta(q_0,1)=\lbrace q_0 \rbrace  \ \ \delta(q_1,1)=\lbrace q_2 \rbrace \ \ \delta(q_2,1)=\emptyset</script><p>在DFA中，$\delta$函数 的返回值不再是一个状态，而是一个集合:$\delta(q_1,0)=\lbrace q_2 \rbrace $</p>
+<p>当一个未定义的动作发送，返回也不再是$\epsilon$而是$\emptyset$:$\delta(q_2,0)=\emptyset$</p>
+<p>对于NFA，只要有一条路径可以接受串，就可以接受该串：<img src="11.png" alt=""></p>
+<p>也可将NFA的执行过程理解成操作系统中的 <code>fork()</code></p>
+<p>NFA的状态转移表：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>0</th>
+<th>1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\to q_0$</td>
+<td>$\lbrace q_0,q_1 \rbrace$</td>
+<td>$\lbrace q_0 \rbrace$</td>
+</tr>
+<tr>
+<td>$q_1$</td>
+<td>$\emptyset$</td>
+<td>$\lbrace q_2 \rbrace $</td>
+</tr>
+<tr>
+<td>$* q_2$</td>
+<td>$\emptyset$</td>
+<td>$\emptyset$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>NFA的扩展转移函数：</p>
+<p>定义：扩展$\delta$到字符串，定义扩展转移函数$\hat\delta : Q × \Sigma^{\ast} → 2^Q$为：</p>
+<script type="math/tex; mode=display">
+\hat\delta(q,w) =
+\begin{cases}
+\lbrace q \rbrace & w = \epsilon \\
+\bigcup_{p \in \hat\delta(q,x)} \delta(p,a) & w = xa
+\end{cases}</script><p>其中$a \in \Sigma, \ w,x \in \Sigma^{\ast}$</p>
+<p>NFA接受的语言：</p>
+<p>定义：若$N = (Q, \Sigma, \delta, q_0, F)$是一个NFA，那么$N$接受的语言为</p>
+<script type="math/tex; mode=display">
+L(N) = \lbrace w \in \Sigma^{\ast} | \hat\delta(q_0,w) \cup F \rbrace \not= \emptyset \rbrace</script><p>例：$L=\lbrace w \in \lbrace 0,1 \rbrace^{\ast} | w \text{的首尾字符相同} \rbrace$的NFA</p>
+<p>开头为0则结尾是0，开头是1则结尾也是1。特殊考虑空串的情况下，接受$\epsilon$，可以轻易的画出对应的NFA状态转移图：</p>
+<p><img src="12.png" alt=""></p>
+<p>例：$L=\lbrace w \in \lbrace 0,1 \rbrace^{\ast} | w \text{ either begin or ends with 01} \rbrace $的NFA</p>
+<p><img src="13.png" alt=""></p>
+<p>DFA与NFA的等价性：</p>
+<p>定理1：如果语言$L$被NFA接受，当且仅当$L$被DFA接受</p>
+<p>一个DFA的语言，构造识别他的NFA，把转移函数改为返回单值集合的对应DFA转移函数即可；</p>
+<p>一个NFA语言，要构造识别他的DFA，使用子集构造法：</p>
+<p>如果NFA $N = (Q_N, \Sigma, \delta_N, q_0, F_N)$，构造DFA：$D = (Q_D, \Sigma, \delta_D, \lbrace q_0 \rbrace, F_D)$：</p>
+<ul>
+<li>$Q_D = 2^{Q_N}$，即$\lbrace S | S \in Q_N \rbrace $</li>
+<li>$F_D = \lbrace S | S \subseteq Q_N, S \cap F_N \not= \emptyset \rbrace$</li>
+<li>$\forall S \subseteq Q_N, \ \forall a \in \Sigma$：</li>
+</ul>
+<script type="math/tex; mode=display">
+\delta_D(S,a) = \bigcup_{p \in S} \delta_N(p,a)</script><p>那么有$L(D)= L(N)$</p>
+<p>证明：对$|w|$用归纳法，往证：$\hat\delta_D( \lbrace q_0 \rbrace,w) = \hat\delta_N(q_0,w)$</p>
+<ul>
+<li>归纳基础：当$|w|=0$，即$w=\epsilon$：</li>
+</ul>
+<script type="math/tex; mode=display">
+\hat\delta_D(\lbrace q_0 \rbrace, \epsilon) = \lbrace q_0 \rbrace = \hat\delta_N(q_0, \epsilon)</script><ul>
+<li>归纳假设：假设$|w|=n$，命题成立</li>
+<li>归纳地推：当$|w|=n+1$则$w=xa (a \in \Sigma)$</li>
+</ul>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\hat\delta_N(q_0,xa) & = \bigcup_{p \in \hat\delta_N(q_0,x)} \delta_N(p,a) \\
+ & = \bigcup_{p \in \hat\delta_D(\lbrace q_0 \rbrace, x)} \delta_N(p,a) \\
+ & = \delta_D( \hat\delta_D(\lbrace q_0 \rbrace,x), a) \\
+ & = \hat\delta_D(\lbrace q_0 \rbrace, xa)
+\end{aligned}</script><p>因为$\hat\delta_D(\lbrace q_0 \rbrace, w) = \hat\delta_N(q_0, w)$，所以：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+w \in L(N) & \iff \hat\delta_N(q_0,w) \cap F_N \not = \emptyset \\
+ & \iff \hat\delta_D(\lbrace q_0 \rbrace, w) \cap F_N \not = \emptyset \\
+ & \iff w \in L(D)
+\end{aligned}</script><p>所以$L(D) = L(N)$</p>
+<p>NFA和DFA的读头只能向一侧移动，如果读头可以向两侧移动，那就是一个图灵机。DFA和NFA在识别语言的<strong>能力上是等价</strong>的，在识别语言的效率上是否一致还是位置的（$P=NP$)</p>
+<p>子集构造法：</p>
+<p>例：接受全部以01结尾的串的NFA</p>
+<p>状态转移图和状态转移表如下：</p>
+<p><img src="11.png" alt=""></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>0</th>
+<th>1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\to q_0$</td>
+<td>$\lbrace q_0,q_1 \rbrace$</td>
+<td>$\lbrace q_0 \rbrace$</td>
+</tr>
+<tr>
+<td>$q_1$</td>
+<td>$\emptyset$</td>
+<td>$\lbrace q_2 \rbrace $</td>
+</tr>
+<tr>
+<td>$* q_2$</td>
+<td>$\emptyset$</td>
+<td>$\emptyset$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>转化为DFA，先构造对应DFA状态转移表，过程如下：首先把第一行初始状态$\q_0$写成集合$\lbrace q_0 \rbrace$，对应右侧状态不变。此时DFA的状态集为：$\lbrace \lbrace q_0 \rbrace, \lbrace q_0,q_1 \rbrace \rbrace$，此时产生了新的状态$\lbrace q_0,q_1 \rbrace$。把新状态$\lbrace q_0,q_1 \rbrace$对应的转移规则写入第二列，分别为$\lbrace q_0,q_1 \rbrace$和$\lbrace q_0,q_2 \rbrace $，此时产生了新的状态$\lbrace q_0,q_2 \rbrace $。把新的状态$\lbrace q_0,q_2 \rbrace $写入第三行，对应的转移状态是$\lbrace q_0,q_1 \rbrace$和$\lbrace q_0 \rbrace$，此时不再出现新的状态，完成。完整转移状态表如下：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>0</th>
+<th>1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\to \lbrace q_0 \rbrace$</td>
+<td>$\lbrace q_0,q_1 \rbrace$</td>
+<td>$\lbrace q_0 \rbrace$</td>
+</tr>
+<tr>
+<td>$\lbrace q_0, q_1 \rbrace$</td>
+<td>$\lbrace q_0,q_1 \rbrace$</td>
+<td>$\lbrace q_0,q_2 \rbrace $</td>
+</tr>
+<tr>
+<td>$* \lbrace q_0,q_2 \rbrace$</td>
+<td>$\lbrace q_0,q_1 \rbrace$</td>
+<td>$\lbrace q_0 \rbrace$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>画出对应的状态转移图如下：</p>
+<p><img src="14.png" alt=""></p>
+<p>例：设计DFA识别$L=\lbrace w \in \lbrace 0,1 \rbrace ^ * | w \text{倒数第3个字符是1} \rbrace$</p>
+<p>要写出对应的DFA很困难，但是先写出对应的NFA则很简单，NFA的确可以起到简化有限状态机的设计的作用。先画出的NFA状态如下：<br><img src="15.png" alt=""></p>
+<p>再写出对应的NFA状态转移表</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>0</th>
+<th>1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\to q_0 $</td>
+<td>$\lbrace q_0 \rbrace$</td>
+<td>$\lbrace q_0,q_1 \rbrace$</td>
+</tr>
+<tr>
+<td>$ q_1 $</td>
+<td>$\lbrace q_2 \rbrace$</td>
+<td>$\lbrace q_2 \rbrace $</td>
+</tr>
+<tr>
+<td>$ q_2 $</td>
+<td>$\lbrace q_3 \rbrace$</td>
+<td>$\lbrace q_3 \rbrace$</td>
+</tr>
+<tr>
+<td>$* q_3 $</td>
+<td>$\emptyset$</td>
+<td>$\emptyset$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>然后写出NFA转DFA的状态转移图</p>
+<ul>
+<li>带有空转移的非确定有穷自动机</li>
+<li>$\epsilon-$闭包</li>
+<li>扩展转移函数与$\epsilon-$NFA的语言</li>
+<li>$\epsilon-$NFA与DFA等价性</li>
+</ul>
+<p><img src="18.png" alt=""></p>
+<ul>
+<li>允许状态因空串$\epsilon$而转移，即不消耗输入字符串就发生状态的改变</li>
+<li>进一步简化自动机的设w计</li>
+</ul>
+<p>定义：带空转移非确定有穷自动机($\epsilon$-NFA)，A为五元组：</p>
+<script type="math/tex; mode=display">
+A = (Q,\Sigma,\delta,q_0,F)</script><ul>
+<li>$Q$：有穷状态集</li>
+<li>$\Sigma$：有穷输入符号集/字母表</li>
+<li>$\delta:Q × (\Sigma \cup \lbrace \epsilon \rbrace)\to 2^Q$，状态转移函数</li>
+<li>$q_0 \in Q$：初始状态</li>
+<li>$F \subseteq Q$：终结状态集或接受状态集</li>
+</ul>
+<p>例：设计$L=\lbrace w \in \lbrace 0,1 \rbrace^{\ast} | \text{$w$倒数3个字符至少有一个是1} \rbrace$的NFA</p>
+<p>可以利用之前的例子，增加几个接收状态即可：<br><img src="16.png" alt=""><br>也可以利用NFA多转移的特性，画出这样的转移状态图：<br><img src="17.png" alt=""><br>使用空转移可以进一步简化设计：<br><img src="19.png" alt=""><br>对应的状态转移表：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>0</th>
+<th>1</th>
+<th>$\epsilon$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\to q_0$</td>
+<td>$\lbrace q_0 \rbrace$</td>
+<td>$\lbrace q_0,q_1 \rbrace$</td>
+<td>$\emptyset$</td>
+</tr>
+<tr>
+<td>$q_1$</td>
+<td>$\lbrace q_2 \rbrace$</td>
+<td>$\lbrace q_2 \rbrace$</td>
+<td>$\lbrace q_2 \rbrace$</td>
+</tr>
+<tr>
+<td>$q_2$</td>
+<td>$\lbrace q_3 \rbrace$</td>
+<td>$\lbrace q_3 \rbrace$</td>
+<td>$\lbrace q_3 \rbrace$</td>
+</tr>
+<tr>
+<td>$*q_3$</td>
+<td>$\emptyset$</td>
+<td>$\emptyset$</td>
+<td>$\emptyset$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>自动机在某个状态，当读入某个字符，NFA和$\epsilon$-NFA可能有多个转移，NFA，$\epsilon$-NFA，DFA也可能都没有转移；当不读入字符时候就发生了转移，就一定是$\epsilon$-NFA。</p>
+<blockquote>
+<p>$\epsilon$-NFA是一种特殊的NFA，后续的NFA，一般指的都是$\epsilon$-NFA</p>
+</blockquote>
+<p>当输入字符串是011时，$\epsilon$-NFA的状态变化如下：<br><img src="21.png" alt=""><br>当某个状态有空转移的时候，需要考虑<em>通过空转移能到的所有状态</em>。这种对于当前状态，<strong>补充和扩展</strong>所有空转移到达的状态的，数学上定义就是<strong>闭包</strong>。</p>
+<p>状态的闭包<br>定义：状态$q$的$\epsilon-\text{闭包}$（$\epsilon-Closure$）记为：$E_{CLOSE}(q)$，表示从$q$经过$\epsilon\epsilon…\epsilon$序列可达的全部状态集合，递归定义为：</p>
+<ul>
+<li>$q \in E_{CLOSE}(q)$</li>
+<li>$\forall p \in E_{CLOSE}(q)$，若$r \in \delta(p,\epsilon)$，则$r \in E_{CLOSE}(q)$</li>
+</ul>
+<p>对与如下状态转移图，求闭包：<br><img src="20.png" alt=""></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>$E_{CLOSE}(p)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>$\lbrace 1,2,3,4,5 \rbrace $</td>
+</tr>
+<tr>
+<td>2</td>
+<td>$\lbrace 2,3,4 \rbrace $</td>
+</tr>
+<tr>
+<td>3</td>
+<td>$\lbrace 3,4 \rbrace $</td>
+</tr>
+<tr>
+<td>4</td>
+<td>$\lbrace 4 \rbrace $</td>
+</tr>
+<tr>
+<td>5</td>
+<td>$\lbrace 5 \rbrace $</td>
+</tr>
+<tr>
+<td>6</td>
+<td>$\lbrace 6,7 \rbrace $</td>
+</tr>
+<tr>
+<td>7</td>
+<td>$\lbrace 7 \rbrace $</td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<p>需要注意状态的闭包一定包含自身！</p>
+</blockquote>
+<p>集合的闭包：<br>定义：状态集$S$的$\epsilon$-闭包为：</p>
+<script type="math/tex; mode=display">
+E_{CLOSE}(S) = \bigcup_{q \in S}E_{CLOSE}(q)</script><p>即状态集中状态闭包的并集。</p>
+<p>$\epsilon$-NFA的扩展转移函数：<br>定义：扩展$\delta$到字符串，定义扩展转移函数$\hat\delta:Q × \Sigma^{\ast} → 2^Q$为：</p>
+<script type="math/tex; mode=display">
+\hat\delta(q,w) = 
+\begin{cases}
+E_{CLOSE}(q) & w = \epsilon \\
+E_{CLOSE}(\bigcup_{p \in \hat\delta(q,x)}\delta(p,a)) & w = xa \\
+\end{cases}</script><p>其中$a \in \Sigma$，$w,x \in \Sigma*$</p>
+<p>续例：例：$L=\lbrace w \in \lbrace 0,1 \rbrace^{\ast} | \text{$w$倒数3个字符至少有一个是1} \rbrace$的NFA下，求$\hat\delta(q_0,10)$=?<br><img src="19.png" alt=""><br>根据扩展转移函数的定义：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\hat\delta(q_0, \epsilon) & = E_{CLOSE}(q_0) = \lbrace q_0 \rbrace \\
+
+\hat\delta(q_0,1) & = E_{CLOSE}(\bigcup_{p \in \hat\delta(q_0,\epsilon)} \delta(p,1) \\
+ & = E_{CLOSE}(\hat\delta(q_0,1) = E_{CLOSE}(\lbrace q_0,q_1 \rbrace) = \lbrace q_0,q_1,q_2,q_3 \rbrace \\
+
+\hat\delta(q_0,10) & = E_{CLOSE}(\bigcup_{p \in \hat\delta(q_0,1)} \delta(p,0)) \\
+ & = E_{CLOSE}(\delta(q_0,0) \cup \delta(q_1,0) \cup \delta(q_2,0) \cup \delta(q_3,0)) \\
+ & = E_{CLOSE}(\lbrace q_0, q_2, q_3 \rbrace) = \lbrace q_0,q_2,q_3 \rbrace
+\end{aligned}</script><p>若$E = (Q, \Sigma, \delta, q_0, F)$是一个$\epsilon$-NFA，则$E$接受的语言为：</p>
+<script type="math/tex; mode=display">
+L(E) = \lbrace w \in \Sigma^{\ast} | \hat\delta(q_0,w) \cap F \not= \emptyset \rbrace</script><p>构造与$\epsilon-$NFA等价的DFA：<br>子集构造法（$\epsilon-$NFA消除空转移）<br>如果$\epsilon-$NFA $E = (Q_E, \Sigma, \delta_E, q_E, F_E)$，构造DFA</p>
+<script type="math/tex; mode=display">
+D = (Q_D, \Sigma, \delta_D, q_D, F_D)</script><ul>
+<li>$ Q_D = 2^{Q_E} $，或 $ Q_D = \lbrace S \vert S \subseteq Q_E | S = E_{CLOSE}(S) \rbrace $  </li>
+<li>$ q_D = E_{CLOSE}(q_E) $</li>
+<li>$ F_D = \lbrace S | S \in Q_D, S \cap F_E \not= \emptyset \rbrace$</li>
+<li>$ \forall S \in Q_D, \forall a \in \Sigma $</li>
+</ul>
+<script type="math/tex; mode=display">
+\delta_D(S,a) = E_{CLOSE}(\bigcup_{p \in S} \delta_E(p,a))</script><p>那么$L(D)=L(E)$</p>
+<p>求上例$\epsilon-$NFA对应的DFA，先列出NFA的状态转移表和闭包：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>0</th>
+<th>1</th>
+<th>$\epsilon$</th>
+<th>$E_{CLOSE}$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\to q_0$</td>
+<td>$\lbrace q_0 \rbrace $</td>
+<td>$\lbrace q_0,q_1 \rbrace $</td>
+<td>$\emptyset$</td>
+<td>$\lbrace q_0 \rbrace $</td>
+</tr>
+<tr>
+<td>$q_1$</td>
+<td>$\lbrace q_2 \rbrace $</td>
+<td>$\lbrace q_2 \rbrace $</td>
+<td>$\lbrace q_2 \rbrace$</td>
+<td>$\lbrace q_1,q_2,q_3 \rbrace $</td>
+</tr>
+<tr>
+<td>$q_2$</td>
+<td>$\lbrace q_3 \rbrace $</td>
+<td>$\lbrace q_3 \rbrace $</td>
+<td>$\lbrace q_3 \rbrace$</td>
+<td>$\lbrace q_2,q_3 \rbrace $</td>
+</tr>
+<tr>
+<td>$*q_3$</td>
+<td>$\emptyset$</td>
+<td>$\emptyset$</td>
+<td>$\emptyset$</td>
+<td>$\lbrace q_3 \rbrace$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>求对应$\epsilon$-NFA状态转移表过程和求NFA的状态转移表过程类似。从开始状态起，把$q_0$写成|$\lbrace q_0 \rbrace$，区别的是，对于返回状态还需求一次闭包。从上至下，从左至右求，最后因为$q_3$是接受状态，所以把带有$q_3$的都标记为接收状态。结果如下：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>0</th>
+<th>1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\to \lbrace q_0 \rbrace$</td>
+<td>$\lbrace q_0 \rbrace $</td>
+<td>$\lbrace q_0,q_1,q_2,q_3 \rbrace $</td>
+</tr>
+<tr>
+<td>$*\lbrace q_0,q_1,q_2,q_3 \rbrace $</td>
+<td>$\lbrace q_0,q_2,q_3 \rbrace $</td>
+<td>$\lbrace q_0,q_1,q_2,q_3 \rbrace $</td>
+</tr>
+<tr>
+<td>$*\lbrace q_0,q_2,q_3 \rbrace $</td>
+<td>$\lbrace q_0,q_3 \rbrace $</td>
+<td>$\lbrace q_0,q_1,q_2,q_3q_2,q_3 \rbrace $</td>
+</tr>
+<tr>
+<td>$*\lbrace q_0,q_3 \rbrace $</td>
+<td>$\lbrace q_0 \rbrace $</td>
+<td>$\lbrace q_0,q_1,q_2,q_3 \rbrace $</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>定理：如果语言$L$被$\epsilon$-NFA接受，当且仅当$L$被DFA接受。<br>证明：必要性显然成立，因为任何DFA都是$\epsilon-$NFA。下面证明充分性，对$w$归纳，往证$\hat\delta_E(q_E,w) = \hat\delta_D(q_D,w)$</p>
+<ul>
+<li>当$w = \epsilon$时<script type="math/tex; mode=display">
+\hat\delta_E(q_E,\epsilon) = E_{CLOSE}(q_E) = q_D = \hat\delta_D(q_D,\epsilon)</script></li>
+<li>当$w = xa$时<script type="math/tex; mode=display">
+\begin{aligned}
+\delta_E(q_E,xa) & = E_{CLOSE}(\bigcup_{p \in \hat\delta_E(q_E,x)} \delta_E(p,a)) 
+= E_{CLOSE}(\bigcup_{p \in \hat\delta_D(q_D,x)}\delta_E(p,a)）\\
+& = \delta_D(\hat\delta_D(q_D,x),a) = \hat\delta_D(q_D,xa)
+\end{aligned}</script></li>
+</ul>
+<p>例：设计一个$\epsilon-$NFA，接受语言：$\lbrace 0^k | k是2或3的倍数$</p>
+<p>即设计一个$\epsilon-$NFA接受长度为2或3的倍数的’0’串，对于这种两个或条件的，可以分别设计接受2的倍数0串的$\epsilon-$NFA和接受3的倍数0串的$\epsilon-$NFA，再用空转移的特性把他们合并起来：<br><img src="22.png" alt=""></p>
+
+                <hr>
+                
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2021/01/22/形式语言与自动机理论（2）正则表达式/" data-toggle="tooltip" data-placement="top"
+                           title="形式语言与自动机理论（2）正则表达式">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2021/01/22/给Hexo博客添加Live2D看板娘/" data-toggle="tooltip" data-placement="top"
+                           title="给Hexo博客添加Live2D看板娘">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+
+                <!--加入新的评论系统-->
+                
+
+                
+
+            </div>
+
+            <div class="hidden-xs col-sm-3 toc-col">
+                <div class="toc-wrap">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AF%BE%E7%A8%8B%E4%BB%8B%E7%BB%8D"><span class="toc-text">课程介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text">基本概念</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%89%E7%A9%B7%E8%87%AA%E5%8A%A8%E6%9C%BA"><span class="toc-text">有穷自动机</span></a></li></ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5 class="text-center">
+                        <a href="/tags/">FEATURED TAGS</a>
+                    </h5>
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#形式语言与自动机理论"
+                           title="形式语言与自动机理论">形式语言与自动机理论</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <div style="margin-top: 20px;">
+                    <h5 class="text-center">FRIENDS</h5>
+                    <ul class="list-inline text-center">
+                        
+                        <li><a target="_blank" rel="noopener" href="https://whoisnian.com">Whoisnian</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://thankod.github.io/">thankod</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://void-shana.moe/">VOID001</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://haizs.com/">Haizs</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://murphypei.github.io/">murphypei</a></li>
+                        
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+</article>
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "XUranus";
+    var disqus_identifier = "http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%881%EF%BC%89%E6%9C%89%E7%A9%B7%E8%87%AA%E5%8A%A8%E6%9C%BA/";
+    var disqus_url = "http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%881%EF%BC%89%E6%9C%89%E7%A9%B7%E8%87%AA%E5%8A%A8%E6%9C%BA/";
+
+    (function () {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+
+<!-- Footer -->
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <br>
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/wang-xing-xiao-99">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/WXingxiao">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/XUranus">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; XUranus 2021
+                    <br>
+                    <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+                    <br>
+                    Theme by <a target="_blank" rel="noopener" href="https://haojen.github.io/">Haojen Ma</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/blog.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://xuranus.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- mathjax -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        processEscapes: true
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    }});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- swiftype -->
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','','2.0.0');
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!--wechat title img-->
+<img class="wechat-title-img" src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1539187847049&amp;di=1446fff8f41c349c7cd72af34d44c2ab&amp;imgtype=0&amp;src=http%3A%2F%2Fwww.ewell.com.cn%2Feditor%2Fattached%2Fimage%2F20171225%2F20171225110887508750.jpg">
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400},"mobile":{"show":false},"rect":{"opacity":0.7},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+
+</html>

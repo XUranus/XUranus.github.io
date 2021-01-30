@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="XUranus的个人博客">
+    <meta name="keyword" content="XUranus">
+    <meta name="theme-color" content="#600090">
+    <meta name="msapplication-navbutton-color" content="#600090">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
+    <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-person-128.png">
+    <link rel="alternate" type="application/atom+xml" title="XUranus" href="/atom.xml">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+    <title>
+        
+        形式语言与自动机理论（3）上下文无关文法｜真常应物,真常得性;常应常静,常清静矣
+        
+    </title>
+
+    <link rel="canonical" href="http://xuranus.github.io/2021/01/27/形式语言与自动机理论（3）上下文无关文法/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/blog-style.css">
+
+
+    <!-- Pygments Github CSS -->
+    
+<link rel="stylesheet" href="/css/syntax.css">
+
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+<style>
+
+    header.intro-header {
+        background-image: url('https://image.baidu.com/search/detail?ct=503316480&amp;z=0&amp;tn=baiduimagedetail&amp;ipn=d&amp;word=%E5%B0%8F%E8%82%A5%E6%9F%B4&amp;step_word=&amp;ie=utf-8&amp;in=&amp;cl=2&amp;lm=-1&amp;st=-1&amp;hd=0&amp;latest=0&amp;copyright=0&amp;cs=1299688099,3416184073&amp;os=2798006634,1102722591&amp;simid=0,0&amp;pn=2&amp;rn=1&amp;di=54020&amp;ln=985&amp;fr=&amp;fmq=1611226669110_R&amp;ic=0&amp;s=undefined&amp;se=&amp;sme=&amp;tab=0&amp;width=&amp;height=&amp;face=undefined&amp;is=0,0&amp;istype=2&amp;ist=&amp;jit=&amp;bdtype=15&amp;spn=0&amp;pi=0&amp;gsm=0&amp;objurl=https%3A%2F%2Fgimg2.baidu.com%2Fimage_search%2Fsrc%3Dhttp%253A%252F%252Fwww.17qq.com%252Fimg_biaoqing%252F69393158.jpeg%26refer%3Dhttp%253A%252F%252Fwww.17qq.com%26app%3D2002%26size%3Df9999%2C10000%26q%3Da80%26n%3D0%26g%3D0n%26fmt%3Djpeg%3Fsec%3D1613818668%26t%3Db96ed097825c98c42ac1c1e138cdf658&amp;rpstart=0&amp;rpnum=0&amp;adpicid=0&amp;force=undefined')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="" class="animated fadeIn">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "true" data-istags="false
+" data-ishome = "false" >
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand animated pulse" href="/">
+                <span class="brand-logo">
+                    XUranus
+                </span>
+                's Blog
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <!-- /.navbar-collapse -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+					
+                    
+                        
+							
+                        <li>
+                            <a href="/archives/">归档</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/tags/">标签</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/works/">作品集</a>
+                        </li>
+							
+						
+                    
+					
+					
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+//    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+<!-- Main Content -->
+
+<!--only post-->
+
+
+<img class="wechat-title-img"
+     src="https://i.loli.net/2021/01/26/P4dNuynTbYcrJwL.jpg">
+
+
+<style>
+    
+    header.intro-header {
+        background-image: url('https://i.loli.net/2021/01/26/P4dNuynTbYcrJwL.jpg')
+    }
+
+    
+</style>
+
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <div class="post-heading">
+                    <h1>形式语言与自动机理论（3）上下文无关文法</h1>
+                    
+                    <span class="meta">
+                         作者 XUranus
+                        <span>
+                          日期 2021-01-27
+                         </span>
+                    </span>
+                    <div class="tags text-center">
+                        
+                        <a class="tag" href="/tags/#形式语言与自动机理论"
+                           title="形式语言与自动机理论">形式语言与自动机理论</a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="post-title-haojen">
+        <span>
+            形式语言与自动机理论（3）上下文无关文法
+        </span>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+                <h2 id="上下文无关文法"><a href="#上下文无关文法" class="headerlink" title="上下文无关文法"></a>上下文无关文法</h2><h3 id="自然语言文法"><a href="#自然语言文法" class="headerlink" title="自然语言文法"></a>自然语言文法</h3><p>一个英语语法的例子：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\langle sentense \rangle &\to \langle noun-phrase \rangle \langle verb-phrase \rangle \\
+\langle noun-phrase \rangle &\to \langle article \rangle \langle noun \rangle  | \langle article \rangle \langle adjective \rangle \langle noun \rangle  \\
+\langle verb-phrase \rangle &\to \langle verb \rangle  | \langle verb \rangle \langle none-phrase \rangle \\
+\langle article \rangle &\to \boldsymbol{a} \vert \boldsymbol{the} \\
+\langle noun \rangle &\to \boldsymbol{boy} \vert\boldsymbol{girl} \vert \boldsymbol{cat} \\
+\langle verb \rangle &\to \boldsymbol{sees} \vert \boldsymbol{likes} \\
+\dots \\
+\end{aligned}</script><p>根据语法结构，可以从$ \langle sentense \rangle$推出一个句子：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+ \langle sentense \rangle  &\Rightarrow  \langle noun-phrase \rangle  \langle verb-phrase \rangle  \\
+&\Rightarrow  \langle article \rangle  \langle noun \rangle  \langle verb-phrase \rangle  \\
+&\Rightarrow  \langle article \rangle  \langle noun \rangle  \langle verb \rangle  \langle noun-phrase \rangle  \\
+&\Rightarrow  \langle article \rangle  \langle noun \rangle  \langle verb \rangle  \langle article \rangle  \langle adjective \rangle  \langle noun \rangle  \\
+&\Rightarrow \boldsymbol{the}  \langle noun \rangle  \langle verb \rangle  \langle article \rangle  \langle adjective \rangle  \langle noun \rangle  \\
+&\Rightarrow \boldsymbol{the girl}  \langle verb \rangle   \langle article \rangle   \langle adjective \rangle   \langle noun \rangle  \\
+&\Rightarrow \dots \\
+&\Rightarrow \boldsymbol{the girl sees a blue cat}
+\end{aligned}</script><p>很显然，这个句子是符合$\langle sentense \rangle$的句子结构的。从$ \langle sentense \rangle$到句子这一过程，使用的过程就是文法。</p>
+<h3 id="形式定义"><a href="#形式定义" class="headerlink" title="形式定义"></a>形式定义</h3><p>接下来，由一个回文字符串的定义引出上下文无关文法的形式定义。<br><strong>定义</strong>：如果字符串$w \in \Sigma^{\ast}$满足$w = w^R$，则称字符串$w$为回文（palindrome）。如果语言$L$中的字符串都是回文，则称$L$为回文语言。</p>
+<script type="math/tex; mode=display">
+L = \lbrace w \in \Sigma^{\ast} \vert w = w^R \rbrace</script><p>例：$\Sigma = \lbrace 0,1 \rbrace$上的回文语言：</p>
+<script type="math/tex; mode=display">
+L_{pal} = \lbrace w \in \lbrace 0,1 \rbrace^{\ast} \vert w = w^R</script><p>易证明$L_{pal}$是非正则的。可以用递归的形式来定义这种语言：</p>
+<ul>
+<li>$\epsilon,0,1$都是回文</li>
+<li>如果$w$是回文，$0w0$,$1w1$也是回文</li>
+</ul>
+<p>使用嵌套定义表示这种递归结构：</p>
+<script type="math/tex; mode=display">
+A \to \epsilon \\
+A \to 0A0 \\
+A \to 0 \\
+A \to 1A1 \\
+A \to 1 \\</script><p>文法可以定义，表示，产生目标字符串。</p>
+<p><strong>定义</strong>：上下文无关文法（CFG，Context-Free Grammer），简称文法，$G$是一个四元组</p>
+<script type="math/tex; mode=display">
+G = (V,T,P,S)</script><ul>
+<li>$V$：变元的有穷集，变元也成为非终结符或者语法范畴</li>
+<li>$T$：终结符的有穷集，且$V \cap T = \emptyset$</li>
+<li>$P$：产生式的有穷集，每个产生式包括<ul>
+<li>一个变元，称为产生式的头或左部</li>
+<li>一个产生式符号$\to$，读作“定义为”</li>
+<li>一个$(V \cup T)^{\ast}$中的符号串，称为体，或者右部</li>
+</ul>
+</li>
+<li><p>$S \in V$：初始符号，文法开始的地方</p>
+</li>
+<li><p>产生式$A \to \alpha$，读作$A$定义为$\alpha$</p>
+</li>
+<li>如果有多个$A$的产生式：<script type="math/tex; mode=display">
+A \to \alpha_1, \ A \to \alpha_2, \dots, \ A \to \alpha_n \</script>可简写为：$A \to \alpha_1 \vert \alpha_2 \vert \dots \vert \alpha_n$</li>
+<li>文法中变元$A$的全体产生式，称为$A$产生式</li>
+</ul>
+<p>例：回文语言$L_{pal} = \lbrace w \in \lbrace 0,1\rbrace^{\ast} \vert w = w^R \rbrace$的文法可设计为：</p>
+<script type="math/tex; mode=display">
+G = (\lbrace A \rbrace,\lbrace 0,1 \rbrace, \lbrace A \to \epsilon \vert 0 \vert 1 \vert 0A0 \vert 1A1 \rbrace, A)</script><p>字符使用的一般约定：</p>
+<ul>
+<li>终结符：$0,1,\dots,a,b, \dots \rbrace$</li>
+<li>终结符串：$\dots, w,x,y,z \dots$</li>
+<li>非终结符：$S,A,B, \dots$</li>
+<li>终结符或非终结符：$\dots,X,Y,Z$</li>
+<li>终结符或非终结符组成的串：$\alpha,\beta,\gamma,\dots$</li>
+</ul>
+<p>例：简化版的算术表达式：</p>
+<ul>
+<li>运算只有加和乘(+/*)，参数仅为标识符</li>
+<li>标识符：以$\lbrace a,b \rbrace$开头由$\lbrace a,b,0,1 \rbrace$组成的字符串，这样的表达式集合可用文法$G_{exp}$表示<script type="math/tex; mode=display">
+G_{exp} = (\lbrace E,I \rbrace, \lbrace a,b,0,1,+,\ast, (,) \rbrace,P,E)</script>其中产生式$P$有10条产生式：<script type="math/tex; mode=display">
+\begin{aligned}
+E &\to I \\
+E &\to E + E \\
+E &\to E \ast E \\
+E &\to (E) \\
+I &\to a \\
+I &\to b \\
+I &\to Ia \\
+I &\to Ib \\
+I &\to I0 \\
+I &\to I1 \\
+\end{aligned}</script></li>
+</ul>
+<h3 id="规约和派生"><a href="#规约和派生" class="headerlink" title="规约和派生"></a>规约和派生</h3><p>非形式定义：从字符串到文法变元的分析过程，称为递推推理或规约。从文法变元到字符串的分析过程，称为推导或派生。<br><img src="65.png" alt=""></p>
+<ul>
+<li>规约：自底向上，由产生式的体向头的分析</li>
+<li>派生：自顶向下，由产生式的头向体的分析</li>
+</ul>
+<p>例：用算术表达式文法$G_{exp}$，将$a \ast (a+b00)$规约的过程</p>
+<p>给产生式标号：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+1.& \ E \to I \\
+2.& \ E \to E + E \\
+3.& \ E \to E \ast E \\
+4.& \ E \to (E) \\
+5.& \ I \to a \\
+6.& \ I \to b \\
+7.& \ I \to Ia \\
+8.& \ I \to Ib \\
+9.& \ I \to I0 \\
+10.& \ I \to I1 \\
+\end{aligned}</script><script type="math/tex; mode=display">
+\begin{aligned}
+a \ast (a+b00) &= I \ast (I + I00) \ (5,6) \\
+&= I \ast (I + I0) \ (9) \\
+&= I \ast (I + I) \ (9) \\
+&= E \ast (E + E) \ (1) \\
+&= E \ast E \ (2) \\
+&= E \ (3) \\
+\end{aligned}</script><p><strong>定义</strong>：若CFG $G = (V,T,P,S)$，设$\alpha,\beta,\gamma \in (V \cup T)^{\ast}$，$A \in V$，$A \to \gamma \in P$，那么称在$G$中由$\alpha A \beta$可派生出$\alpha \gamma \beta$，记为</p>
+<script type="math/tex; mode=display">
+\alpha A \beta \underset{G}{\Rightarrow} \alpha \gamma \beta</script><p>相应的，称$\alpha \gamma \beta$可规约为$\alpha A \beta$.</p>
+<ul>
+<li>$\alpha A \beta \underset{G}{\Rightarrow} \alpha \gamma \beta$，即$A \to \gamma$的右部$\gamma$替换串$\alpha A \beta$中变元$A$得到串$\alpha \gamma \beta$</li>
+<li><p>如果语境中$G$是已知的，可省略，记为$\alpha A \beta \Rightarrow \alpha \gamma \beta$</p>
+</li>
+<li><p>设$a_1,\dots,a_m \in (V \cup T)^{\ast}, m \geq 1$，对$i = 1,\dots,m-1$如果有$a_i \underset{G}{\Rightarrow} a_{i+1}$成立，即$a_1$经过0步或者多步派生可得到$a_m$，</p>
+<script type="math/tex; mode=display">
+a_1 \underset{G}{\Rightarrow} a_2 \underset{G}{\Rightarrow} \dots \underset{G}{\Rightarrow} a_{m-1} \underset{G}{\Rightarrow} a_m</script><p>，那么记为$a_1 \underset{G}{\Rightarrow} a_m$</p>
+</li>
+<li><p>若$\alpha$派生出$\beta$刚好经过了$i$步，可记为$\alpha \underset{G}{\stackrel{i}{\Longrightarrow}} \beta$</p>
+</li>
+</ul>
+<p>例：算术表达式$a \ast (b+ b00)$在文法$G_{exp}$中派生过程：</p>
+<script type="math/tex; mode=display">
+E \Rightarrow E \ast E \Rightarrow E \ast (E) \Rightarrow I \ast (E) \\ 
+\Rightarrow I \ast (I+I) \Rightarrow I \ast (a+I) \Rightarrow a \ast (a+I) \\
+\Rightarrow a \ast (a + I0) \Rightarrow a \ast (a + I00) \Rightarrow a \ast (a + b00)</script><h3 id="最左派生和最右派生"><a href="#最左派生和最右派生" class="headerlink" title="最左派生和最右派生"></a>最左派生和最右派生</h3><p><strong>定义</strong>：为了限制派生的随意性，要求只替换符号串中最左边变元的派生过程，称为最左派生，记为</p>
+<script type="math/tex; mode=display">
+\underset{lm}{\stackrel{}{\Longrightarrow}},\underset{lm}{\stackrel{\ast}{\Longrightarrow}},</script><p>只替换最右的，称为最右派生，记为</p>
+<script type="math/tex; mode=display">
+\underset{rm}{\stackrel{}{\Longrightarrow}},\underset{rm}{\stackrel{\ast}{\Longrightarrow}},</script><ul>
+<li>任何派生都有等价的最左派生和最右派生<script type="math/tex; mode=display">
+A \underset{}{\stackrel{\ast}{\Rightarrow}} w \text{当且仅当} \  A \underset{lm}{\stackrel{\ast}{\Rightarrow}} w , \text{当且仅当}  A \underset{rm}{\stackrel{\ast}{\Rightarrow}} w</script></li>
+</ul>
+<p>续例：<br>表达式$a \ast (b+ a)$在$G_{exp}$中的最左派生和最右派生分别是？<br>产生式集合</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+1.& \ E \to I \\
+2.& \ E \to E + E \\
+3.& \ E \to E \ast E \\
+4.& \ E \to (E) \\
+5.& \ I \to a \\
+6.& \ I \to b \\
+7.& \ I \to Ia \\
+8.& \ I \to Ib \\
+9.& \ I \to I0 \\
+10.& \ I \to I1 \\
+\end{aligned}</script><p>最左派生：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+E \underset{lm}{\stackrel{}{\Longrightarrow}}& E \ast E \\
+\underset{lm}{\stackrel{}{\Longrightarrow}}& I \ast E \\
+\underset{lm}{\stackrel{}{\Longrightarrow}}& a \ast E \\
+\underset{lm}{\stackrel{}{\Longrightarrow}}& a \ast (E) \\
+\underset{lm}{\stackrel{}{\Longrightarrow}}& a \ast (E+E) \\
+\underset{lm}{\stackrel{}{\Longrightarrow}}& a \ast (I+E) \\
+\underset{lm}{\stackrel{}{\Longrightarrow}}& a \ast (a+E) \\
+\underset{lm}{\stackrel{}{\Longrightarrow}}& a \ast (a+I) \\
+\underset{lm}{\stackrel{}{\Longrightarrow}}& a \ast (a+a)
+\end{aligned}</script><p>最右派生：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+E \underset{lm}{\stackrel{}{\Longrightarrow}}& E \ast E \\
+\underset{lm}{\stackrel{}{\Longrightarrow}}& E \ast (E) \\
+\underset{lm}{\stackrel{}{\Longrightarrow}}& E \ast (E+E) \\
+\underset{lm}{\stackrel{}{\Longrightarrow}}& E \ast (E+I) \\
+\underset{lm}{\stackrel{}{\Longrightarrow}}& E \ast (E+a) \\
+\underset{lm}{\stackrel{}{\Longrightarrow}}& E \ast (I+a) \\
+\underset{lm}{\stackrel{}{\Longrightarrow}}& E \ast (a+a) \\
+\underset{lm}{\stackrel{}{\Longrightarrow}}& I \ast (a+a) \\
+\underset{lm}{\stackrel{}{\Longrightarrow}}& a \ast (a+a) \\
+\end{aligned}</script><h3 id="文法的语言"><a href="#文法的语言" class="headerlink" title="文法的语言"></a>文法的语言</h3><p><strong>定义</strong>：CFG $G=(V,T,P,S)$的语言定义为：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{L}(G) = \lbrace w \vert w \in T^{\ast},S \underset{G}{\stackrel{\ast}{\Longrightarrow}} w \rbrace</script><p>那么符号串$w$在$\boldsymbol{L}(G)$中，要满足：</p>
+<ul>
+<li>$w$仅由终结符组成</li>
+<li>初始符号$S$能派生出$w$</li>
+</ul>
+<p><strong>定义</strong>：如果$L$是某个CFG $G$定义的语言，即$L=\boldsymbol{L}(G)$，则称$L$为上下文无关语言（CFL，Context-Free Language）</p>
+<ul>
+<li>上下文无关是值在文法派生的每一步<script type="math/tex; mode=display">
+\alpha A \beta \Rightarrow \alpha \gamma \beta</script>符号串$\gamma$仅根据$A$的产生式派生，而无需依赖$A$的上下文$\alpha,\beta$</li>
+</ul>
+<p><strong>定义</strong>：若CFG $G = (V,T,P,S)$，初始符号$S$派生出来的符号串，称为$G$的句型。即：</p>
+<script type="math/tex; mode=display">
+\alpha \in (V \cup T)^{\ast} \ \text{且} \ S \underset{}{\stackrel{\ast}{\Rightarrow}} \alpha</script><ul>
+<li>如果$S \underset{lm}{\stackrel{\ast}{\Longrightarrow}} \alpha$，$\alpha$为左句型</li>
+<li>如果$S \underset{rm}{\stackrel{\ast}{\Longrightarrow}} \alpha$，$\alpha$为右句型</li>
+<li>只含终结符的句型，也称为$G$的句子。而$\boldsymbol{L}(G)$也就是文法$G$的全部句子，即语言。</li>
+</ul>
+<p>例：给出语言$L = \lbrace w \in \lbrace 0,1 \rbrace^{\ast} \vert w \text{包含至少3个1} \rbrace$的文法：</p>
+<p>定义产生式：</p>
+<script type="math/tex; mode=display">
+S \to A1A1A1A \\
+A \to 0A \vert 1A \vert \epsilon</script><p>例：描述CFG $G=(\lbrace S \rbrace,\lbrace a,b \rbrace, \lbrace S \to aSb,S \to ab \rbrace,S)$定义的语言</p>
+<script type="math/tex; mode=display">
+S \Rightarrow aSb  \Rightarrow a^2Sb^2  \Rightarrow \dots  \Rightarrow a^iSb^i  \Rightarrow a^nb^n</script><p>所以$\boldsymbol{L}(G) = \lbrace a^nb^n \vert n \geq 1 \rbrace$</p>
+<p>例：请为语言$L=\lbrace 0^n1^m \vert n \not= m \rbrace$设计文法</p>
+<p>处理这种不相等的情况，往往分类讨论：</p>
+<ul>
+<li>$n \gt m$，0多1少，用$C$表示01相等的部分，A表示头部多处的0：<script type="math/tex; mode=display">
+S \to AC \\
+A \to A0 \vert 0 \\
+C \to 0C1 \vert \epsilon</script></li>
+<li>$n \lt m$，0少1多，用$C$表示01相等的部分，B表示尾部多处的1：<script type="math/tex; mode=display">
+S \to CB \\
+B \to B1 \vert 1 \\
+C \to 0C1 \vert \epsilon</script></li>
+</ul>
+<p>例：设计$L_{eq}=\lbrace 0,1 \rbrace^{\ast} \vert w \text{中0和1个数相等} \rbrace$的文法</p>
+<p>设计的产生式，必须每次递推都产生相等的0和1，$S \to 0S1 \vert 1S0 \vert \epsilon$，还要保证所有产生的0和1相等的串都能被递推（0或1同时作为首尾的情况），这里将他们相连即可。最终结果：</p>
+<script type="math/tex; mode=display">
+S \to 0S1 \vert 1S0 \vert \epsilon \vert SS</script><p>另外一种思路，所有出现0和1的串，要么0在前，要么1在前：</p>
+<script type="math/tex; mode=display">
+S \to S0S1S \vert S1S0S \vert \epsilon</script><h2 id="语法分析树"><a href="#语法分析树" class="headerlink" title="语法分析树"></a>语法分析树</h2><p>前例中$G_{exp}$推导算术表达式$a \ast (a+a)$的过程可以描述成一个树形结构，在分析字符串和文法语言表示的关系中非常有用。<br><img src="66.png" alt=""></p>
+<h3 id="形式定义-1"><a href="#形式定义-1" class="headerlink" title="形式定义"></a>形式定义</h3><p><strong>定义</strong>：<br>CFG $G = (V,T,P,S)$的语法分析树（语法树或派生树）为：</p>
+<ul>
+<li>每个内节点标记为$V$中的变元符号</li>
+<li>每个叶节点标记为$V \cup T \cup \lbrace \epsilon \rbrace$中的符号</li>
+<li>如果某内节点标记是$A$，其子节点从左至右分别为：<script type="math/tex; mode=display">
+X_1,X_2,\dots,X_n</script>那么<script type="math/tex; mode=display">
+A \to X_1X_2 \dots X_n \in P</script>若由$X_i = \epsilon$，则$\epsilon$是$A$的唯一子节点，且$A \to \epsilon \in P$</li>
+</ul>
+<p><strong>定义</strong>：语法树的全部叶节点从左至右连接起来，称为该数的产物或结果，如果根节点是初始符号$S$，叶节点是终结符或$\epsilon$，那么改树的产物属于$\boldsymbol{L}(G)$</p>
+<p><strong>定义</strong>：语法树中标记为$A$的内节点及其全部子孙节点构成的子树，称为$A$子树。</p>
+<h3 id="语法树和派生的等价性"><a href="#语法树和派生的等价性" class="headerlink" title="语法树和派生的等价性"></a>语法树和派生的等价性</h3><p><strong>定理</strong>：CFG $G = (V,T,P,S)$，且$A \in V$，那么文法$G$中</p>
+<script type="math/tex; mode=display">
+A \underset{}{\stackrel{\ast}{\Longrightarrow}}\alpha</script><p>当且仅当$G$中存在以$A$为根节点产物为$\alpha$的语法树。</p>
+<p><strong>证明</strong>：<br>【充分性】对$A \underset{}{\stackrel{j}{\Longrightarrow}}\alpha$的步骤数$j$归纳证明：</p>
+<ul>
+<li><p>归纳基础：$j=1$时，$A \Rightarrow \alpha$，有$A \to \alpha \in P$，可构造：<img src="67.png" alt=""></p>
+</li>
+<li><p>归纳递推：假设$j \leq n$时命题成立，当$j=n+1$时，$A \underset{}{\stackrel{n+1}{\Longrightarrow}} \alpha$的派生过程为：</p>
+<script type="math/tex; mode=display">
+A \Rightarrow X_1 \dots X_m \underset{}{\stackrel{n}{\Longrightarrow}}\alpha_1 \dots \alpha_m = \alpha</script><p>其中$A \to X_1 \dots X_m \in P$，而$X_i$若非终结符，一定有$X_i \underset{}{\stackrel{\ast}{\Longrightarrow}} \alpha_i$且不超过$n$步，由归纳假设存在：<br><img src="68.png" alt=""> 因此可以构造以$A$为跟，以$X_i$为子树（或叶子）的语法树，其产物刚好为$\alpha$<br><img src="69.png" alt=""> </p>
+</li>
+</ul>
+<p>【必要性】对语法分析树的内节点数$j$归纳证明：</p>
+<ul>
+<li>归纳基础：$j=1$时，唯一的内节点是根节点<br><img src="67.png" alt=""> 有$A \to \alpha \in P$，那么$A \underset{}{\stackrel{\ast}{\Longrightarrow}} \alpha$</li>
+<li>归纳递推：假设$j \leq n$时命题成立。当$j=n+1$，跟节点$A$儿子为$X_1,X_2,\dots,X_m$，则 <script type="math/tex; mode=display">
+A \to X_1 \dots X_m \in P, \text{且} A \Rightarrow X_1,\dots X_m</script>而$X_i$子树（或叶子）内节点数都不超过$n$，由归纳假设由<script type="math/tex; mode=display">
+X_i \underset{}{\stackrel{\ast}{\Longrightarrow}} \alpha_i</script>从左至右连接$\alpha_i$刚好为树的产物$\alpha$，所以有<script type="math/tex; mode=display">
+X_1X_2 \dots X_m \underset{}{\stackrel{\ast}{\Longrightarrow}} \alpha_1 X_2 \dots X_m \underset{}{\stackrel{\ast}{\Longrightarrow}} \dots \underset{}{\stackrel{\ast}{\Longrightarrow}} \alpha_1 \alpha_2 \dots \alpha_m = \alpha</script><img src="69.png" alt=""></li>
+</ul>
+<p>由于每个CFG派生都有最左派生和最右派生，所以每棵语法分析树都有唯一的最左和最右派生。</p>
+<p>给定CFG $G = (V,T,P,S),A \in V$，以下命题等价</p>
+<ul>
+<li>通过递归推理，确定串$w$在变元$A$的语言中</li>
+<li>存在以$A$为根节点，产物为$w$的语法分析树</li>
+<li>$A \underset{}{\stackrel{\ast}{\Rightarrow}} w$</li>
+<li>$A \underset{lm}{\stackrel{\ast}{\Rightarrow}} w$</li>
+<li>$A \underset{rm}{\stackrel{\ast}{\Rightarrow}} w$</li>
+</ul>
+<h2 id="语法和语言的歧义性"><a href="#语法和语言的歧义性" class="headerlink" title="语法和语言的歧义性"></a>语法和语言的歧义性</h2><p><strong>定义</strong>：如果CFG G使某些符号串中有两棵不同的语法分析树，则称该文法$G$是歧义的</p>
+<p>例：算术表达式的文法$G_{exp}$中，对句型$a + a \ast a$有下面两棵语法树<br><img src="70.png" alt=""><br>由于实际运算要先乘除，后加减，所以左侧的文法是正确的表示。</p>
+<p>有些文法的歧义性，可以通过重新设计文法消除歧义性</p>
+<p>续例：文法$G_{exp}$重新设计为$G_{exp^{\prime}}$可消除歧义。<br><img src="71.png" alt=""></p>
+<p><strong>定义</strong>：定义同样的语言可以有多个文法，如果CFL L的所有文法都是歧义的，那么称语言$L$是固有歧义的。</p>
+<ul>
+<li>固有歧义的语言存在，例如：<script type="math/tex; mode=display">
+ L = \lbrace a^ib^jc^k \vert i=j \ or \ j=k \rbrace</script> 任何形如$a^nb^nc^n$的串，无论如何设计，都会有两棵语法树。</li>
+<li>判定“任何给定CFG G是否有歧义”是一个不可判定问题</li>
+</ul>
+<h2 id="文法的化简和范式"><a href="#文法的化简和范式" class="headerlink" title="文法的化简和范式"></a>文法的化简和范式</h2>
+                <hr>
+                
+
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/2021/01/22/形式语言与自动机理论（2）正则表达式/" data-toggle="tooltip" data-placement="top"
+                           title="形式语言与自动机理论（2）正则表达式">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+
+                <!--加入新的评论系统-->
+                
+
+                
+
+            </div>
+
+            <div class="hidden-xs col-sm-3 toc-col">
+                <div class="toc-wrap">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E6%96%87%E6%B3%95"><span class="toc-text">上下文无关文法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E6%96%87%E6%B3%95"><span class="toc-text">自然语言文法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BD%A2%E5%BC%8F%E5%AE%9A%E4%B9%89"><span class="toc-text">形式定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%84%E7%BA%A6%E5%92%8C%E6%B4%BE%E7%94%9F"><span class="toc-text">规约和派生</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%B7%A6%E6%B4%BE%E7%94%9F%E5%92%8C%E6%9C%80%E5%8F%B3%E6%B4%BE%E7%94%9F"><span class="toc-text">最左派生和最右派生</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E6%B3%95%E7%9A%84%E8%AF%AD%E8%A8%80"><span class="toc-text">文法的语言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95%E5%88%86%E6%9E%90%E6%A0%91"><span class="toc-text">语法分析树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BD%A2%E5%BC%8F%E5%AE%9A%E4%B9%89-1"><span class="toc-text">形式定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95%E6%A0%91%E5%92%8C%E6%B4%BE%E7%94%9F%E7%9A%84%E7%AD%89%E4%BB%B7%E6%80%A7"><span class="toc-text">语法树和派生的等价性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95%E5%92%8C%E8%AF%AD%E8%A8%80%E7%9A%84%E6%AD%A7%E4%B9%89%E6%80%A7"><span class="toc-text">语法和语言的歧义性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E6%B3%95%E7%9A%84%E5%8C%96%E7%AE%80%E5%92%8C%E8%8C%83%E5%BC%8F"><span class="toc-text">文法的化简和范式</span></a></li></ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5 class="text-center">
+                        <a href="/tags/">FEATURED TAGS</a>
+                    </h5>
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/#形式语言与自动机理论"
+                           title="形式语言与自动机理论">形式语言与自动机理论</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <div style="margin-top: 20px;">
+                    <h5 class="text-center">FRIENDS</h5>
+                    <ul class="list-inline text-center">
+                        
+                        <li><a target="_blank" rel="noopener" href="https://whoisnian.com">Whoisnian</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://thankod.github.io/">thankod</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://void-shana.moe/">VOID001</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://haizs.com/">Haizs</a></li>
+                        
+                        <li><a target="_blank" rel="noopener" href="https://murphypei.github.io/">murphypei</a></li>
+                        
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+</article>
+
+
+
+<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = "XUranus";
+    var disqus_identifier = "http://xuranus.github.io/2021/01/27/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%883%EF%BC%89%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E6%96%87%E6%B3%95/";
+    var disqus_url = "http://xuranus.github.io/2021/01/27/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%883%EF%BC%89%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E6%96%87%E6%B3%95/";
+
+    (function () {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<!-- disqus 公共JS代码 end -->
+
+
+
+
+
+<!-- Footer -->
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <br>
+                <ul class="list-inline text-center">
+                
+                
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/wang-xing-xiao-99">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/WXingxiao">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/XUranus">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; XUranus 2021
+                    <br>
+                    <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
+                    <br>
+                    Theme by <a target="_blank" rel="noopener" href="https://haojen.github.io/">Haojen Ma</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/blog.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://xuranus.github.io/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- mathjax -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        processEscapes: true
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    }});
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- swiftype -->
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','','2.0.0');
+</script>
+
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!--wechat title img-->
+<img class="wechat-title-img" src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1539187847049&amp;di=1446fff8f41c349c7cd72af34d44c2ab&amp;imgtype=0&amp;src=http%3A%2F%2Fwww.ewell.com.cn%2Feditor%2Fattached%2Fimage%2F20171225%2F20171225110887508750.jpg">
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400},"mobile":{"show":false},"rect":{"opacity":0.7},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+
+</html>
