@@ -1,484 +1,520 @@
 <!DOCTYPE html>
-<html lang="en">
-
-<!-- Head tag -->
+<html lang="zh-CN">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="XUranus的个人博客">
-    <meta name="keyword" content="XUranus">
-    <meta name="theme-color" content="#600090">
-    <meta name="msapplication-navbutton-color" content="#600090">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="#600090">
-    <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-person-128.png">
-    <link rel="alternate" type="application/atom+xml" title="XUranus" href="/atom.xml">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
-    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
-    <title>
-        
-        ArchLinux配置｜真常应物,真常得性;常应常静,常清静矣
-        
-    </title>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-    <link rel="canonical" href="http://xuranus.github.io/2019/05/21/ArchLinux配置/">
-
-    <!-- Bootstrap Core CSS -->
-    
-<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/main.css">
 
 
-    <!-- Custom CSS -->
-    
-<link rel="stylesheet" href="/css/blog-style.css">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="换了个硬盘，要重装系统了，这次记录一下我的Arch的配置，谁知道下次还要不要再装呢。。  安装见 ArchLinix Installation Guide Konsole启动后，第一步就是配置konsole了，安装zsh后，安装oh-my-zshsudo pacman -S gitsh -c &quot;$(curl -fsSL https:&#x2F;&#x2F;raw.github.com&#x2F;robbyrusse">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ArchLinux配置">
+<meta property="og:url" content="http://xuranus.github.io/2019/05/21/ArchLinux%E9%85%8D%E7%BD%AE/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="换了个硬盘，要重装系统了，这次记录一下我的Arch的配置，谁知道下次还要不要再装呢。。  安装见 ArchLinix Installation Guide Konsole启动后，第一步就是配置konsole了，安装zsh后，安装oh-my-zshsudo pacman -S gitsh -c &quot;$(curl -fsSL https:&#x2F;&#x2F;raw.github.com&#x2F;robbyrusse">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-05-20T19:53:20.000Z">
+<meta property="article:modified_time" content="2021-06-18T09:02:14.533Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://xuranus.github.io/2019/05/21/ArchLinux%E9%85%8D%E7%BD%AE/">
 
 
-    <!-- Pygments Github CSS -->
-    
-<link rel="stylesheet" href="/css/syntax.css">
-
-<meta name="generator" content="Hexo 5.3.0"></head>
-
-<style>
-
-    header.intro-header {
-        background-image: url('https://image.baidu.com/search/detail?ct=503316480&amp;z=0&amp;tn=baiduimagedetail&amp;ipn=d&amp;word=%E5%B0%8F%E8%82%A5%E6%9F%B4&amp;step_word=&amp;ie=utf-8&amp;in=&amp;cl=2&amp;lm=-1&amp;st=-1&amp;hd=0&amp;latest=0&amp;copyright=0&amp;cs=1299688099,3416184073&amp;os=2798006634,1102722591&amp;simid=0,0&amp;pn=2&amp;rn=1&amp;di=54020&amp;ln=985&amp;fr=&amp;fmq=1611226669110_R&amp;ic=0&amp;s=undefined&amp;se=&amp;sme=&amp;tab=0&amp;width=&amp;height=&amp;face=undefined&amp;is=0,0&amp;istype=2&amp;ist=&amp;jit=&amp;bdtype=15&amp;spn=0&amp;pi=0&amp;gsm=0&amp;objurl=https%3A%2F%2Fgimg2.baidu.com%2Fimage_search%2Fsrc%3Dhttp%253A%252F%252Fwww.17qq.com%252Fimg_biaoqing%252F69393158.jpeg%26refer%3Dhttp%253A%252F%252Fwww.17qq.com%26app%3D2002%26size%3Df9999%2C10000%26q%3Da80%26n%3D0%26g%3D0n%26fmt%3Djpeg%3Fsec%3D1613818668%26t%3Db96ed097825c98c42ac1c1e138cdf658&amp;rpstart=0&amp;rpnum=0&amp;adpicid=0&amp;force=undefined')
-    }
-</style>
-<!-- hack iOS CSS :active style -->
-<body ontouchstart="" class="animated fadeIn">
-<!-- Navigation -->
-<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "true" data-istags="false
-" data-ishome = "false" >
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header page-scroll">
-            <button type="button" class="navbar-toggle">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand animated pulse" href="/">
-                <span class="brand-logo">
-                    XUranus
-                </span>
-                's Blog
-            </a>
-        </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <!-- Known Issue, found by Hux:
-            <nav>'s height woule be hold on by its content.
-            so, when navbar scale out, the <nav> will cover tags.
-            also mask any touch event of tags, unfortunately.
-        -->
-        <!-- /.navbar-collapse -->
-        <div id="huxblog_navbar">
-            <div class="navbar-collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="/">Home</a>
-                    </li>
-					
-                    
-                        
-							
-                        <li>
-                            <a href="/archives/">归档</a>
-                        </li>
-							
-						
-                    
-                        
-							
-                        <li>
-                            <a href="/tags/">标签</a>
-                        </li>
-							
-						
-                    
-                        
-							
-                        <li>
-                            <a href="/works/">作品集</a>
-                        </li>
-							
-						
-                    
-					
-					
-                </ul>
-            </div>
-        </div>
-    </div>
-    <!-- /.container -->
-</nav>
-<script>
-    // Drop Bootstarp low-performance Navbar
-    // Use customize navbar with high-quality material design animation
-    // in high-perf jank-free CSS3 implementation
-//    var $body   = document.body;
-    var $toggle = document.querySelector('.navbar-toggle');
-    var $navbar = document.querySelector('#huxblog_navbar');
-    var $collapse = document.querySelector('.navbar-collapse');
-
-    $toggle.addEventListener('click', handleMagic)
-    function handleMagic(e){
-        if ($navbar.className.indexOf('in') > 0) {
-        // CLOSE
-            $navbar.className = " ";
-            // wait until animation end.
-            setTimeout(function(){
-                // prevent frequently toggle
-                if($navbar.className.indexOf('in') < 0) {
-                    $collapse.style.height = "0px"
-                }
-            },400)
-        }else{
-        // OPEN
-            $collapse.style.height = "auto"
-            $navbar.className += " in";
-        }
-    }
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
 </script>
 
-<!-- Main Content -->
-
-<!--only post-->
-
-
-<img class="wechat-title-img"
-     src="https://i.loli.net/2021/01/26/P4dNuynTbYcrJwL.jpg">
+  <title>ArchLinux配置 | XUranus</title>
+  
 
 
-<style>
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静 常清静矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
     
-    header.intro-header {
-        background-image: url('https://i.loli.net/2021/01/26/P4dNuynTbYcrJwL.jpg')
-    }
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
 
     
-</style>
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/05/21/ArchLinux%E9%85%8D%E7%BD%AE/">
 
-<header class="intro-header">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
-                <div class="post-heading">
-                    <h1>ArchLinux配置</h1>
-                    
-                    <span class="meta">
-                         作者 XUranus
-                        <span>
-                          日期 2019-05-21
-                         </span>
-                    </span>
-                    <div class="tags text-center">
-                        
-                        <a class="tag" href="/tags/#Linux"
-                           title="Linux">Linux</a>
-                        
-                    </div>
-                </div>
-            </div>
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://ae01.alicdn.com/kf/Ud001b2d971d04a0799b0a929e119778c4.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="XUranus的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ArchLinux配置
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-20 19:53:20" itemprop="dateCreated datePublished" datetime="2019-05-20T19:53:20Z">2019-05-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-18 09:02:14" itemprop="dateModified" datetime="2021-06-18T09:02:14Z">2021-06-18</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/05/21/ArchLinux%E9%85%8D%E7%BD%AE/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/05/21/ArchLinux配置/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
         </div>
-    </div>
-    <div class="post-title-haojen">
-        <span>
-            ArchLinux配置
-        </span>
-    </div>
-</header>
+      </header>
 
-<!-- Post Content -->
-<article>
-    <div class="container">
-        <div class="row">
-            <!-- Post Container -->
-            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
-                <blockquote>
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
 <p>换了个硬盘，要重装系统了，这次记录一下我的Arch的配置，谁知道下次还要不要再装呢。。</p>
 </blockquote>
 <h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>见 <a target="_blank" rel="noopener" href="https://whoisnian.com/2017/04/02/ArchLinux-Installation-Guide/">ArchLinix Installation Guide</a></p>
-<h2 id="Konsole"><a href="#Konsole" class="headerlink" title="Konsole"></a>Konsole</h2><p>启动后，第一步就是配置konsole了，安装zsh后，安装oh-my-zsh<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo pacman -S git</span><br><span class="line">sh -c &quot;$(curl -fsSL https:&#x2F;&#x2F;raw.github.com&#x2F;robbyrussell&#x2F;oh-my-zsh&#x2F;master&#x2F;tools&#x2F;install.sh)&quot;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Konsole"><a href="#Konsole" class="headerlink" title="Konsole"></a>Konsole</h2><p>启动后，第一步就是配置konsole了，安装zsh后，安装oh-my-zsh<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo pacman -S git</span><br><span class="line">sh -c &quot;$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)&quot;</span><br></pre></td></tr></table></figure></p>
+<span id="more"></span>
 <h2 id="VSCode"><a href="#VSCode" class="headerlink" title="VSCode"></a>VSCode</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo pacman -S visual-studio-code-bin</span><br></pre></td></tr></table></figure>
 <h2 id="基本工具"><a href="#基本工具" class="headerlink" title="基本工具"></a>基本工具</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#ntfs工具</span></span><br><span class="line">sudo pacman -S ntfs-3g</span><br><span class="line"><span class="comment">#双显卡驱动</span></span><br><span class="line">sudo pacman -S bumblebee</span><br><span class="line"><span class="comment">#网络状态</span></span><br><span class="line">sudo pacman -S net-tools</span><br><span class="line"><span class="comment">#解压工具</span></span><br><span class="line">sudo pacman -S unzip unrar</span><br><span class="line"><span class="comment">#ssh</span></span><br><span class="line">sudo pacman -S openssh</span><br><span class="line"><span class="comment">#热点</span></span><br><span class="line">sudo pacman -S create_ap</span><br><span class="line"><span class="comment">#装逼用</span></span><br><span class="line">sudo pacman -S cmatrix</span><br><span class="line"><span class="comment">#打印系统基本信息</span></span><br><span class="line">sudo pacman -S neofetch</span><br><span class="line">neofetch</span><br></pre></td></tr></table></figure>
 <h2 id="Grub优化"><a href="#Grub优化" class="headerlink" title="Grub优化"></a>Grub优化</h2><p><a target="_blank" rel="noopener" href="https://www.gnome-look.org/p/1009236/">https://www.gnome-look.org/p/1009236/</a></p>
-<h2 id="输入法"><a href="#输入法" class="headerlink" title="输入法"></a>输入法</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo pacman -S fcitx</span><br><span class="line">sudo pacman -S fcitx-sunpinyin</span><br><span class="line">sudo pacman -S fcitx-configtool</span><br><span class="line">sudo pacman -S fcitx-im fcitx-googlepinyin</span><br></pre></td></tr></table></figure>
-<p><code>vim ~/.zshrc</code> 添加：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">GTK_IM_MODULE&#x3D;fcitx</span><br><span class="line">QT_IM_MODULE&#x3D;fcitx </span><br><span class="line">XMODIFIERS&#x3D;@im&#x3D;fcitx </span><br></pre></td></tr></table></figure></p>
-<h2 id="ArchCN常用软件"><a href="#ArchCN常用软件" class="headerlink" title="ArchCN常用软件"></a>ArchCN常用软件</h2><p><code>sudo vim /etc/pacman.conf</code> 增加：<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[archlinuxcn]</span><br><span class="line">SigLevel &#x3D; Optional TrustAll</span><br><span class="line">Server &#x3D; https:&#x2F;&#x2F;mirrors.ustc.edu.cn&#x2F;archlinuxcn&#x2F;$arch</span><br></pre></td></tr></table></figure><br>或者使用清华的镜像源<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[archlinuxcn]</span><br><span class="line"># SigLevel &#x3D; Optional TrustAll</span><br><span class="line">Server &#x3D; https:&#x2F;&#x2F;mirrors.tuna.tsinghua.edu.cn&#x2F;archlinuxcn&#x2F;$arch</span><br></pre></td></tr></table></figure><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#更新</span></span><br><span class="line">sudo pacman -Sy</span><br><span class="line">sudo pacman -S archlinuxcn-keyring</span><br><span class="line"><span class="comment">#安装yaourt</span></span><br><span class="line">sudo pacman -S yaourt</span><br><span class="line"><span class="comment">#网易云音乐</span></span><br><span class="line">sudo pacman -S netease-cloud-music</span><br><span class="line"><span class="comment">#TIM</span></span><br><span class="line">sudo pacman -S wine wine_gecko wine-mono winetricks</span><br><span class="line">sudo yaourt -S deepin-wine-tim</span><br></pre></td></tr></table></figure></p>
+<h2 id="输入法"><a href="#输入法" class="headerlink" title="输入法"></a>输入法</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo pacman -S fcitx</span><br><span class="line">sudo pacman -S fcitx-sunpinyin</span><br><span class="line">sudo pacman -S fcitx-configtool</span><br><span class="line">sudo pacman -S fcitx-im fcitx-googlepinyin</span><br></pre></td></tr></table></figure>
+<p><code>vim ~/.zshrc</code> 添加：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GTK_IM_MODULE=fcitx</span><br><span class="line">QT_IM_MODULE=fcitx </span><br><span class="line">XMODIFIERS=@im=fcitx </span><br></pre></td></tr></table></figure></p>
+<h2 id="ArchCN常用软件"><a href="#ArchCN常用软件" class="headerlink" title="ArchCN常用软件"></a>ArchCN常用软件</h2><p><code>sudo vim /etc/pacman.conf</code> 增加：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[archlinuxcn]</span><br><span class="line">SigLevel = Optional TrustAll</span><br><span class="line">Server = https://mirrors.ustc.edu.cn/archlinuxcn/$arch</span><br></pre></td></tr></table></figure><br>或者使用清华的镜像源<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[archlinuxcn]</span><br><span class="line"># SigLevel = Optional TrustAll</span><br><span class="line">Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#更新</span></span><br><span class="line">sudo pacman -Sy</span><br><span class="line">sudo pacman -S archlinuxcn-keyring</span><br><span class="line"><span class="comment">#安装yaourt</span></span><br><span class="line">sudo pacman -S yaourt</span><br><span class="line"><span class="comment">#网易云音乐</span></span><br><span class="line">sudo pacman -S netease-cloud-music</span><br><span class="line"><span class="comment">#TIM</span></span><br><span class="line">sudo pacman -S wine wine_gecko wine-mono winetricks</span><br><span class="line">sudo yaourt -S deepin-wine-tim</span><br></pre></td></tr></table></figure>
 <h2 id="生产工具"><a href="#生产工具" class="headerlink" title="生产工具"></a>生产工具</h2><h3 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h3><p>系统已经安装了mariadb，初始化即可:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql</span><br><span class="line">sudo systemctl start mysqld</span><br></pre></td></tr></table></figure></p>
 <h3 id="常用语言"><a href="#常用语言" class="headerlink" title="常用语言"></a>常用语言</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo pacman -S jdk</span><br><span class="line">sudo pacman -S sbt</span><br><span class="line">sudo pacman -S scala</span><br><span class="line">sudo pacman -S go</span><br></pre></td></tr></table></figure>
 <h3 id="Cmake"><a href="#Cmake" class="headerlink" title="Cmake"></a>Cmake</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo pacman -S cmake</span><br></pre></td></tr></table></figure>
 <h3 id="Node"><a href="#Node" class="headerlink" title="Node"></a>Node</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#npm</span></span><br><span class="line">sudo pacman -S npm</span><br><span class="line"><span class="comment">#npm源</span></span><br><span class="line">npm <span class="built_in">set</span> registry https://registry.npm.taobao.org/</span><br><span class="line"><span class="comment">#yarn</span></span><br><span class="line">sudo npm install -g yarn</span><br><span class="line"><span class="comment">#yarn源</span></span><br><span class="line">yarn config <span class="built_in">set</span> registry https://registry.npm.taobao.org/</span><br><span class="line"><span class="comment">#hexo</span></span><br><span class="line">sudo npm install -g hexo</span><br></pre></td></tr></table></figure>
 <h3 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#pip</span></span><br><span class="line">sudo pacman -S python-pip </span><br><span class="line">mkdir ~/.pip</span><br><span class="line">vim ~/.pip/pip.conf</span><br></pre></td></tr></table></figure>
-<p>pip.conf保存:<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[global]</span><br><span class="line">index-url &#x3D; https:&#x2F;&#x2F;pypi.tuna.tsinghua.edu.cn&#x2F;simple</span><br></pre></td></tr></table></figure></p>
+<p>pip.conf保存:<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[global]</span><br><span class="line">index-url = https://pypi.tuna.tsinghua.edu.cn/simple</span><br></pre></td></tr></table></figure></p>
 <h2 id="日常工具"><a href="#日常工具" class="headerlink" title="日常工具"></a>日常工具</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#浏览器</span></span><br><span class="line">sudo pacman -S chromium</span><br><span class="line"><span class="comment">#ss</span></span><br><span class="line">sudo pacman -S shadowsocks-qt5</span><br><span class="line"><span class="comment">#录屏</span></span><br><span class="line">sudo pacman -S simplescreenrecorder</span><br><span class="line"><span class="comment">#GIF录屏</span></span><br><span class="line">sudo pacman -S peek</span><br><span class="line"><span class="comment">#adb工具</span></span><br><span class="line">sudo pacman -S adb</span><br><span class="line"><span class="comment">#播放器</span></span><br><span class="line">sudo pacman -S vlc</span><br></pre></td></tr></table></figure>
-                <hr>
-                
-
-                <ul class="pager">
-                    
-                    <li class="previous">
-                        <a href="/2019/05/25/关于墙的若干问题/" data-toggle="tooltip" data-placement="top"
-                           title="关于墙的若干问题">&larr; Previous Post</a>
-                    </li>
-                    
-                    
-                    <li class="next">
-                        <a href="/2019/05/15/vue项目创建/" data-toggle="tooltip" data-placement="top"
-                           title="vue项目创建">Next Post &rarr;</a>
-                    </li>
-                    
-                </ul>
-
-                
-
-                
-                <!-- disqus 评论框 start -->
-                <div class="comment">
-                    <div id="disqus_thread" class="disqus-thread"></div>
-                </div>
-                <!-- disqus 评论框 end -->
-                
-
-
-                <!--加入新的评论系统-->
-                
-
-                
-
-            </div>
-
-            <div class="hidden-xs col-sm-3 toc-col">
-                <div class="toc-wrap">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-text">安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Konsole"><span class="toc-text">Konsole</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#VSCode"><span class="toc-text">VSCode</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%B7%A5%E5%85%B7"><span class="toc-text">基本工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Grub%E4%BC%98%E5%8C%96"><span class="toc-text">Grub优化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%93%E5%85%A5%E6%B3%95"><span class="toc-text">输入法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ArchCN%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6"><span class="toc-text">ArchCN常用软件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%9F%E4%BA%A7%E5%B7%A5%E5%85%B7"><span class="toc-text">生产工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MySQL"><span class="toc-text">MySQL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E8%AF%AD%E8%A8%80"><span class="toc-text">常用语言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cmake"><span class="toc-text">Cmake</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Node"><span class="toc-text">Node</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Python"><span class="toc-text">Python</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E5%B8%B8%E5%B7%A5%E5%85%B7"><span class="toc-text">日常工具</span></a></li></ol>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <!-- Sidebar Container -->
-
-            <div class="
-                col-lg-8 col-lg-offset-2
-                col-md-10 col-md-offset-1
-                sidebar-container">
-
-                <!-- Featured Tags -->
-                
-                <section>
-                    <!-- no hr -->
-                    <h5 class="text-center">
-                        <a href="/tags/">FEATURED TAGS</a>
-                    </h5>
-                    <div class="tags">
-                        
-                        <a class="tag" href="/tags/#Linux"
-                           title="Linux">Linux</a>
-                        
-                    </div>
-                </section>
-                
-
-                <!-- Friends Blog -->
-                
-                <div style="margin-top: 20px;">
-                    <h5 class="text-center">FRIENDS</h5>
-                    <ul class="list-inline text-center">
-                        
-                        <li><a target="_blank" rel="noopener" href="https://whoisnian.com">Whoisnian</a></li>
-                        
-                        <li><a target="_blank" rel="noopener" href="https://thankod.github.io/">thankod</a></li>
-                        
-                        <li><a target="_blank" rel="noopener" href="https://void-shana.moe/">VOID001</a></li>
-                        
-                        <li><a target="_blank" rel="noopener" href="https://haizs.com/">Haizs</a></li>
-                        
-                        <li><a target="_blank" rel="noopener" href="https://murphypei.github.io/">murphypei</a></li>
-                        
-                    </ul>
-                </div>
-                
-            </div>
-        </div>
 
     </div>
-</article>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
 
 
-
-<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
-<script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES * * */
-    var disqus_shortname = "XUranus";
-    var disqus_identifier = "http://xuranus.github.io/2019/05/21/ArchLinux%E9%85%8D%E7%BD%AE/";
-    var disqus_url = "http://xuranus.github.io/2019/05/21/ArchLinux%E9%85%8D%E7%BD%AE/";
-
-    (function () {
-        var dsq = document.createElement('script');
-        dsq.type = 'text/javascript';
-        dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<!-- disqus 公共JS代码 end -->
-
-
-
-
-
-<!-- Footer -->
-<!-- Footer -->
-<footer>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
-                <br>
-                <ul class="list-inline text-center">
-                
-                
-                
-                    <li>
-                        <a target="_blank" href="https://www.zhihu.com/people/wang-xing-xiao-99">
-                            <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa  fa-stack-1x fa-inverse">知</i>
-                            </span>
-                        </a>
-                    </li>
-                
-
-                
-                    <li>
-                        <a target="_blank" href="http://weibo.com/WXingxiao">
-                            <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
-                            </span>
-                        </a>
-                    </li>
-                
-
-                
-
-                
-                    <li>
-                        <a target="_blank"  href="https://github.com/XUranus">
-                            <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                            </span>
-                        </a>
-                    </li>
-                
-
-                
-
-                </ul>
-                <p class="copyright text-muted">
-                    Copyright &copy; XUranus 2021
-                    <br>
-                    <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> Times</span>
-                    <br>
-                    Theme by <a target="_blank" rel="noopener" href="https://haojen.github.io/">Haojen Ma</a>
-                </p>
-
-            </div>
-        </div>
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/05/15/vue%E9%A1%B9%E7%9B%AE%E5%88%9B%E5%BB%BA/" rel="prev" title="vue项目创建">
+      <i class="fa fa-chevron-left"></i> vue项目创建
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/05/25/%E5%85%B3%E4%BA%8E%E5%A2%99%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/" rel="next" title="关于墙的若干问题">
+      关于墙的若干问题 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
-</footer>
-
-<!-- jQuery -->
-
-<script src="/js/jquery.min.js"></script>
-
-
-<!-- Bootstrap Core JavaScript -->
-
-<script src="/js/bootstrap.min.js"></script>
+      </footer>
+    
+  </article>
+  
+  
+  
 
 
-<!-- Custom Theme JavaScript -->
 
-<script src="/js/blog.js"></script>
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
 
-
-<!-- async load function -->
 <script>
-    function async(u, c) {
-      var d = document, t = 'script',
-          o = d.createElement(t),
-          s = d.getElementsByTagName(t)[0];
-      o.src = u;
-      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
-      s.parentNode.insertBefore(o, s);
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
     }
-</script>
-
-<!-- jquery.tagcloud.js -->
-<script>
-    // only load tagcloud.js in tag.html
-    if($('#tag_cloud').length !== 0){
-        async("http://xuranus.github.io/js/jquery.tagcloud.js",function(){
-            $.fn.tagcloud.defaults = {
-                //size: {start: 1, end: 1, unit: 'em'},
-                color: {start: '#bbbbee', end: '#0085a1'},
-            };
-            $('#tag_cloud a').tagcloud();
-        })
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
     }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
 </script>
 
-<!--fastClick.js -->
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Konsole"><span class="nav-number">2.</span> <span class="nav-text">Konsole</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VSCode"><span class="nav-number">3.</span> <span class="nav-text">VSCode</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%B7%A5%E5%85%B7"><span class="nav-number">4.</span> <span class="nav-text">基本工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Grub%E4%BC%98%E5%8C%96"><span class="nav-number">5.</span> <span class="nav-text">Grub优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E6%B3%95"><span class="nav-number">6.</span> <span class="nav-text">输入法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ArchCN%E5%B8%B8%E7%94%A8%E8%BD%AF%E4%BB%B6"><span class="nav-number">7.</span> <span class="nav-text">ArchCN常用软件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E4%BA%A7%E5%B7%A5%E5%85%B7"><span class="nav-number">8.</span> <span class="nav-text">生产工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL"><span class="nav-number">8.1.</span> <span class="nav-text">MySQL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E8%AF%AD%E8%A8%80"><span class="nav-number">8.2.</span> <span class="nav-text">常用语言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cmake"><span class="nav-number">8.3.</span> <span class="nav-text">Cmake</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Node"><span class="nav-number">8.4.</span> <span class="nav-text">Node</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Python"><span class="nav-number">8.5.</span> <span class="nav-text">Python</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A5%E5%B8%B8%E5%B7%A5%E5%85%B7"><span class="nav-number">9.</span> <span class="nav-text">日常工具</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="https://ae01.alicdn.com/kf/Ud001b2d971d04a0799b0a929e119778c4.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">XUranus的个人博客</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">89</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">42</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
 <script>
-    async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
-        var $nav = document.querySelector("nav");
-        if($nav) FastClick.attach($nav);
-    })
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2019/05/21/ArchLinux%E9%85%8D%E7%BD%AE/";
+    this.page.identifier = "2019/05/21/ArchLinux配置/";
+    this.page.title = "ArchLinux配置";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
 </script>
 
-
-
-<!-- Google Analytics -->
-
-
-
-<!-- Baidu Tongji -->
-
-
-<!-- swiftype -->
-<script type="text/javascript">
-  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
-  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
-  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
-  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
-
-  _st('install','','2.0.0');
-</script>
-
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-<!--wechat title img-->
-<img class="wechat-title-img" src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1539187847049&amp;di=1446fff8f41c349c7cd72af34d44c2ab&amp;imgtype=0&amp;src=http%3A%2F%2Fwww.ewell.com.cn%2Feditor%2Fattached%2Fimage%2F20171225%2F20171225110887508750.jpg">
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400},"mobile":{"show":false},"rect":{"opacity":0.7},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
-
 </html>
