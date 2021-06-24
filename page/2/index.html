@@ -137,6 +137,11 @@
     <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档</a>
 
   </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule" rel="section"><i class="calendar fa-fw"></i>日程表</a>
+
+  </li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -187,6 +192,98 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/22/%E6%97%A5%E5%BF%97%E5%A4%84%E7%90%86%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%90%AD%E5%BB%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://ae01.alicdn.com/kf/Ud001b2d971d04a0799b0a929e119778c4.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="XUranus的个人博客">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/22/%E6%97%A5%E5%BF%97%E5%A4%84%E7%90%86%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%90%AD%E5%BB%BA/" class="post-title-link" itemprop="url">日志处理系统的搭建</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-22 15:24:27" itemprop="dateCreated datePublished" datetime="2021-04-22T15:24:27Z">2021-04-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-06-18 09:07:20" itemprop="dateModified" datetime="2021-06-18T09:07:20Z">2021-06-18</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/04/22/%E6%97%A5%E5%BF%97%E5%A4%84%E7%90%86%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%90%AD%E5%BB%BA/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/22/日志处理系统的搭建/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>服务运行的过程中就会不断产生日志，日志的常见用途有：</p>
+<ul>
+<li>查看某个时间段的错误原因</li>
+<li>分析某个接口的召回率</li>
+<li>记录接口的输入输出参数，在升级接口的时候做回归测试</li>
+</ul>
+<p>对于单点服务的日志只需要用<code>awk</code>，<code>grep</code>命令即可获取需要的信息，但在分布式系统中，管理分布在各个节点的日志就会变得很麻烦，需要有一个系统采集各个节点的日志几种储存。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/04/22/%E6%97%A5%E5%BF%97%E5%A4%84%E7%90%86%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%90%AD%E5%BB%BA/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -558,106 +655,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/07/Java%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://ae01.alicdn.com/kf/Ud001b2d971d04a0799b0a929e119778c4.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="XUranus的个人博客">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/07/Java%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">Java逃逸分析</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-06 19:52:56" itemprop="dateCreated datePublished" datetime="2021-04-06T19:52:56Z">2021-04-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-06-18 09:14:15" itemprop="dateModified" datetime="2021-06-18T09:14:15Z">2021-06-18</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2021/04/07/Java%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/07/Java逃逸分析/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>一般来说Java的对象都是在堆上生成，但是如果一个对象只在<strong>当前函数内</strong>被使用，那么它可以被分配在栈上。栈上的数据在函数返回时被回收，从而大大减轻了GC的压力。</p>
-<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p><strong>由Java Hotspot分析对象的使用范围是否只在当前函数内有效，然后控制其在堆分配空间的技术就叫逃逸分析（Escape Analysis）</strong>。</p>
-<p>逃逸分析的相关参数如下：</p>
-<ul>
-<li>开启逃逸分析：<code>-XX:+DoEscapeAnalysis</code></li>
-<li>关闭逃逸分析：<code>-XX:-DoEscapeAnalysis</code></li>
-<li>显示分析结果：<code>-XX:+PrintEscapeAnalysis</code></li>
-</ul>
-<h2 id="GC性能分析"><a href="#GC性能分析" class="headerlink" title="GC性能分析"></a>GC性能分析</h2><p>接下来就一个具体例子测试逃逸分析是否能优化GC的性能。在IDEA中设置<code>VM Option</code>。</p>
-<ul>
-<li>堆最大10m，最小也10m，来让其尽快进入GC状态：<code>-Xmx10m -Xms10m</code>。</li>
-<li>开启GC的打印<code>-XX:+PrintGC</code></li>
-<li>由于Java SE 6u23+之后默认开启了逃逸分析，这里需要先关掉它：<code>-XX:-DoEscapeAnalysis</code></li>
-</ul>
-<p>最终<code>VM Option</code>如下：<code>-Xmx10m -Xms10m -XX:+PrintGC -XX:-DoEscapeAnalysis</code></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/04/07/Java%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -729,7 +726,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
