@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="多年不再联系的朋友X偶然加了我微信，发了一条消息后又撤回了，很想知道她发了什么但又不好意思问，于是打算从微信的本地数据库找点线索。  手机是红米K30 Pro(MIUI 12.5)，微信版本8.0。由于手机没有Root，不能用ADB直接拿到数据，所以用MIUI的备份功能备份微信。  只单独备份微信一个APP，USB链接后在MIUI&#x2F;backup&#x2F;ALlBackup中拿到微信的备份包，可以用7zi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MIUI微信8.0数据导出">
+<meta property="og:url" content="http://xuranus.github.io/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="多年不再联系的朋友X偶然加了我微信，发了一条消息后又撤回了，很想知道她发了什么但又不好意思问，于是打算从微信的本地数据库找点线索。  手机是红米K30 Pro(MIUI 12.5)，微信版本8.0。由于手机没有Root，不能用ADB直接拿到数据，所以用MIUI的备份功能备份微信。  只单独备份微信一个APP，USB链接后在MIUI&#x2F;backup&#x2F;ALlBackup中拿到微信的备份包，可以用7zi">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/1.jpg">
+<meta property="og:image" content="http://xuranus.github.io/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/2.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/4.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/3.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/5.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/6.webp">
+<meta property="article:published_time" content="2021-10-06T17:13:08.000Z">
+<meta property="article:modified_time" content="2022-01-12T02:04:53.701Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="Andriod">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/1.jpg">
+
+<link rel="canonical" href="http://xuranus.github.io/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MIUI微信8.0数据导出 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MIUI微信8.0数据导出
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-10-06 17:13:08" itemprop="dateCreated datePublished" datetime="2021-10-06T17:13:08Z">2021-10-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-01-12 02:04:53" itemprop="dateModified" datetime="2022-01-12T02:04:53Z">2022-01-12</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/10/07/MIUI微信8-0数据导出/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>4.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>多年不再联系的朋友X偶然加了我微信，发了一条消息后又撤回了，很想知道她发了什么但又不好意思问，于是打算从微信的本地数据库找点线索。</p>
+</blockquote>
+<p>手机是红米K30 Pro(MIUI 12.5)，微信版本8.0。由于手机没有Root，不能用ADB直接拿到数据，所以用MIUI的备份功能备份微信。</p>
+<p><img src="1.jpg" alt=""></p>
+<p>只单独备份微信一个APP，USB链接后在<code>MIUI/backup/ALlBackup</code>中拿到微信的备份包，可以用7zip打开并导出<code>apps</code>文件夹。</p>
+<p>微信数据一般存放于SQlite的<code>db</code>文件中，搜索<code>*.db</code>文件可以发现<code>apps/com.tencent.mm/r/MicroMsg/ee1da3ae2100e09165c2e52382cfe79f</code>下有个挺大的<code>EnMicroMsg.db</code>文件，应该就是它了。对于有多个登录帐号的手机，每个账号对应一个<code>apps/com.tencent.mm/r/MicroMsg/&#123;你的帐号的hash&#125;</code>文件夹，里面存放数据库和一些资源文件。</p>
+<span id="more"></span>
+<p>拿到<code>EnMicroMsg.db</code>后用WinHex查看了一下，没有看到SQLite Header，果然是加密的。查阅资料得知<code>EnMicroMsg.db</code>的密钥生成规则是：<strong>对IMEI拼接uin再取32的MD5值，取前7个小写字符</strong></p>
+<p>部分手机IEMI可以通过在电话中输入<code>*#6#</code>获得（我的手机Android版本是11，APP不能获取到手机的IMEI，对于获取不到IMEI的情况，使用<code>1234567890ABCDEF</code>替代）</p>
+<p>uin可以在<code>apps/com.tencent.mm/sp/system_config_prefs.xml</code>中获得：<br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&#x27;1.0&#x27; encoding=&#x27;utf-8&#x27; standalone=&#x27;yes&#x27; ?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">map</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">boolean</span> <span class="attr">name</span>=<span class="string">&quot;set_service&quot;</span> <span class="attr">value</span>=<span class="string">&quot;true&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">boolean</span> <span class="attr">name</span>=<span class="string">&quot;first_launch_weixin&quot;</span> <span class="attr">value</span>=<span class="string">&quot;false&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;appbrand_video_player&quot;</span> <span class="attr">value</span>=<span class="string">&quot;-1&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;default_uin&quot;</span> <span class="attr">value</span>=<span class="string">&quot;1234323232&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;launch_last_status&quot;</span> <span class="attr">value</span>=<span class="string">&quot;2&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">string</span> <span class="attr">name</span>=<span class="string">&quot;support.weixin.qq.com&quot;</span>&gt;</span>support.weixin.qq.com<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">string</span> <span class="attr">name</span>=<span class="string">&quot;builtin_short_ips&quot;</span>&gt;</span>6,117.184.242.101,80,short.weixin.qq.com|6,117.184.242.100,80,short.weixin.qq.com|9,223.166.152.100,80,short.weixin.qq.com|9,223.166.152.101,80,short.weixin.qq.com|17,11.89.15.100,80,short.weixin.qq.com|17,101.89.15.101,80,short.weixin.qq.com|6,117.184.242.101,80,extshort.weixin.qq.com|5,117.184.242.100,80,extshort.weixin.qq.com|17,101.89.15.100,80,extshort.weixin.qq.com|17,101.89.15.101,80,extshort.weixin.qq.com|9,223.166.152.101,80,extshort.weixin.qq.com|9,223.16.152.100,80,extshort.weixin.qq.com|6,120.204.10.51,80,short.pay.weixin.qq.com|6,183.192.199.145,80,short.pay.weixin.qq.com|9,223.167.104.142,80,short.pay.weixin.qq.com|9,58.247.204.143,80,short.pay.weixin.qq.com|17,101.226.211.100,80,short.pay.weixin.qq.com|17,180.163.25.142,80,short.pay.weixin.qq.com|17,127.0.0.1,80,localhost|<span class="tag">&lt;/<span class="name">string</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">map</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>其中<code>default_uin</code>对应的<code>1234323232</code>就是uin。有了IMEI和uin就可以计算出解密的key了，Python代码表示如下：<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line">key = hashlib.md5(<span class="built_in">str</span>(imei).encode(<span class="string">&quot;utf8&quot;</span>) + <span class="built_in">str</span>(uin).encode(<span class="string">&quot;utf8&quot;</span>)).hexdigest()[<span class="number">0</span>:<span class="number">7</span>]</span><br></pre></td></tr></table></figure></p>
+<p>微信的db使用了<code>sqlcipher</code>加密，ubuntu下用<code>apt install sqlcipher</code>安装<code>sqlcipher</code>，之后命令行下<code>sqlcipher</code>进入交互shell，用刚才得到的key将数据库解密成<code>EnMicroMsg-decrypted.db</code>：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">PRAGMA key <span class="operator">=</span> <span class="string">&#x27;xxxxxxx&#x27;</span>;</span><br><span class="line">PRAGMA cipher_use_hmac <span class="operator">=</span> OFF;</span><br><span class="line">PRAGMA cipher_page_size <span class="operator">=</span> <span class="number">1024</span>;</span><br><span class="line">PRAGMA kdf_iter <span class="operator">=</span> <span class="number">4000</span>;</span><br><span class="line">ATTACH DATABASE <span class="string">&#x27;EnMicroMsg-decrypted.db&#x27;</span> <span class="keyword">AS</span> wechatdecrypted KEY <span class="string">&#x27;&#x27;</span>;</span><br><span class="line"><span class="keyword">SELECT</span> sqlcipher_export( <span class="string">&#x27;wechatdecrypted&#x27;</span> );</span><br><span class="line">DETACH DATABASE wechatdecrypted;</span><br></pre></td></tr></table></figure>
+<p>此时数据库已经能直接查看了：<img src="2.png" alt=""></p>
+<p>查看SQLite的工具可以是付费的navicat，也可用开源的SQLite Browser。在<code>rcontact</code>表中用昵称找到X的微信号<br><img src="4.png" alt=""></p>
+<p>再在<code>message</code>表中过滤，只查到两条相关记录：<br><img src="3.png" alt=""></p>
+<p>很可惜，微信的撤回功能直接用一串文字替换了原来的信息，并非我预想的改变了某个标记位。</p>
+<p>再次查阅了相关资料，据说<code>FTS5IndexMicroMsg_encrypt.db</code>中存放了索引，<code>EnMicroMsg.db</code>每产生一个聊天就会在<code>FTS5IndexMicroMsg_encrypt.db</code>中创建一个索引，可以尝试用它找到撤回前的内容。查阅资料得知<code>FTS5IndexMicroMsg_encrypt</code>的加密规则是：<strong>uin，IMEI，微信号拼接求32位md5值，取小写前7个字符</strong></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">key = hashlib.md5(<span class="built_in">str</span>(uin).encode(<span class="string">&quot;utf8&quot;</span>) + <span class="built_in">str</span>(imei).encode(<span class="string">&quot;utf8&quot;</span>) + <span class="built_in">str</span>(account).encode(<span class="string">&quot;utf8&quot;</span>)).hexdigest()[<span class="number">0</span>:<span class="number">7</span>]</span><br></pre></td></tr></table></figure>
+<p>对于<code>FTS5IndexMicroMsg_encrypt.db</code>的解密还需要需要修改之前几个参数：<br><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">PRAGMA key <span class="operator">=</span> <span class="string">&#x27;xxxxxxx&#x27;</span></span><br><span class="line">PRAGMA cipher <span class="operator">=</span> <span class="string">&#x27;aes-256-cbc&#x27;</span>;</span><br><span class="line">PRAGMA cipher_use_hmac <span class="operator">=</span> <span class="keyword">ON</span>;</span><br><span class="line">PRAGMA cipher_page_size <span class="operator">=</span> <span class="number">4096</span>;</span><br><span class="line">PRAGMA kdf_iter <span class="operator">=</span> <span class="number">64000</span>;</span><br><span class="line">ATTACH DATABASE <span class="string">&#x27;FTS5IndexMicroMsg_decrypt.db&#x27;</span> <span class="keyword">AS</span> fts5indexdecrypt KEY <span class="string">&#x27;&#x27;</span>;</span><br><span class="line"><span class="keyword">SELECT</span> sqlcipher_export( <span class="string">&#x27;fts5indexdecrypt&#x27;</span> );</span><br><span class="line">DETACH DATABASE fts5indexdecrypt;</span><br></pre></td></tr></table></figure></p>
+<p>打开解密后的索引数据库，可以看到聊天内容被单独存放在<code>FTSIndexMessage_content</code>中<br><img src="5.png" alt=""></p>
+<p>据说<code>FTSIndexMessage_content</code>中的数据会随着删除/消息撤回也同步删除，但不同于<code>EnMicroMsg.db</code>中的数据会写0覆盖，<code>FTS5IndexMicroMsg_encrypt.db</code>中的数据可以被恢复。<br>但用几个恢复SQLite数据的软件都没能找到疑似的信息，二进制编辑器中也没发现什么线索。</p>
+<p>大失败，折腾好久仍未知道X说了什么。</p>
+<p><img src="6.webp" alt=""></p>
+<p>或许是微信8.0后索引表也有了删除写0覆盖，总是先留着吧，万一有一天解出来了呢。</p>
+<p>最后说一下遇到的几个坑：</p>
+<ol>
+<li><p>之前在ArchLinux上用<code>pacman</code>安装<code>sqlcipher</code>版本是最新的4.4.3，但是该版本下无法解密任何微信db，在某个issue里看到4以上的版本似乎采用了新的加密方式。之后使用WSL Ubuntu 20.04的<code>apt</code>安装<code>sqlcipher</code>得到了3.16的版本，可以对两个db都成功解密。</p>
+</li>
+<li><p>一些教程提到的Windows下的<code>sqlcipher.exe</code>的GUI程序实际上是修改了几个<code>PRAGMA</code>的SQLBrowser，只能解密<code>EnMicroMsg.db</code>，而<code>FTS5IndexMicroMsg-encrypt</code>需要不同的参数，无法解密。</p>
+</li>
+</ol>
+<blockquote>
+<p>参考资料</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.forensicfocus.com/articles/decrypt-wechat-enmicromsgdb-database/">How To Decrypt WeChat EnMicroMsg.db Database?</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/cos0sin0/MicroMsgRecovery">MicroMsgRecovery</a></li>
+</ul>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Andriod/" rel="tag"># Andriod</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/08/15/%E5%B0%86Git%E8%BF%9C%E7%A8%8B%E9%93%BE%E6%8E%A5%E7%94%B1HTTPS%E5%88%87%E6%8D%A2%E5%88%B0SSH/" rel="prev" title="将Git远程链接由HTTPS切换到SSH">
+      <i class="fa fa-chevron-left"></i> 将Git远程链接由HTTPS切换到SSH
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/01/08/SpringBoot%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="next" title="SpringBoot学习笔记">
+      SpringBoot学习笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/";
+    this.page.identifier = "2021/10/07/MIUI微信8-0数据导出/";
+    this.page.title = "MIUI微信8.0数据导出";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

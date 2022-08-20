@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="静态搜索引擎上一节已经配置了一个hadoop+spark集群，xuranus@172.17.11.40 为本机，在本机NAT下六个节点： 集群说明xuranusMaster@172.16.173.136xuranusSlave1@172.16.173.137xuranusSlave2@172.16.173.138zookeeper001@172.16.173.139zookeeper002@172">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HBase实现搜索引擎">
+<meta property="og:url" content="http://xuranus.github.io/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="静态搜索引擎上一节已经配置了一个hadoop+spark集群，xuranus@172.17.11.40 为本机，在本机NAT下六个节点： 集群说明xuranusMaster@172.16.173.136xuranusSlave1@172.16.173.137xuranusSlave2@172.16.173.138zookeeper001@172.16.173.139zookeeper002@172">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/Screenshot_20190304_083725.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/Screenshot_20190304_085233.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/Screenshot_20190304_085312.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/Screenshot_20190304_085341.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/Screenshot_20190304_085414.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/Screenshot_20190304_085455.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/Screenshot_20190304_085531.png">
+<meta property="article:published_time" content="2018-12-22T16:40:16.000Z">
+<meta property="article:modified_time" content="2021-09-05T12:51:13.906Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="大数据">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/Screenshot_20190304_083725.png">
+
+<link rel="canonical" href="http://xuranus.github.io/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>HBase实现搜索引擎 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          HBase实现搜索引擎
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-22 16:40:16" itemprop="dateCreated datePublished" datetime="2018-12-22T16:40:16Z">2018-12-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/12/23/hbase实现搜索引擎/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>13k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>12 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="静态搜索引擎"><a href="#静态搜索引擎" class="headerlink" title="静态搜索引擎"></a>静态搜索引擎</h1><p>上一节已经配置了一个hadoop+spark集群，xuranus@172.17.11.40 为本机，在本机NAT下六个节点：</p>
+<h2 id="集群说明"><a href="#集群说明" class="headerlink" title="集群说明"></a>集群说明</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">xuranusMaster@172.16.173.136</span><br><span class="line">xuranusSlave1@172.16.173.137</span><br><span class="line">xuranusSlave2@172.16.173.138</span><br><span class="line">zookeeper001@172.16.173.139</span><br><span class="line">zookeeper002@172.16.173.140</span><br><span class="line">zookeeper003@172.16.173.141</span><br></pre></td></tr></table></figure>
+<p>Hbase部署在172.16.173.136～139上。</p>
+<span id="more"></span>
+<h2 id="建表"><a href="#建表" class="headerlink" title="建表"></a>建表</h2><p>Hbase Shell下创建新表：<code>create ‘school_tb’,’attr’</code></p>
+<p>用<a target="_blank" rel="noopener" href="https://github.com/s-top/Baike-KnowledgeGraph">https://github.com/s-top/Baike-KnowledgeGraph</a>提供的百科上爬来的部分大学名录构建表：列族atter包含<code>chinese_name</code>,<code>english_name</code>,<code>famous_alumni</code>,<code>found_time</code>,<code>location</code>,<code>major_department</code>这些属性，学校名字作为rowkey</p>
+<p>插入数据的java代码：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">buildSchoolData</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">    String path = <span class="string">&quot;/home/xuranus/Desktop/hadoop/homework/all.json&quot;</span>;  </span><br><span class="line">    Gson gson = <span class="keyword">new</span> Gson();  </span><br><span class="line">    JsonParser jsonParser = <span class="keyword">new</span> JsonParser();  </span><br><span class="line">    String jsonStr = <span class="string">&quot;&quot;</span>;  </span><br><span class="line">    String lineStr;  </span><br><span class="line">    <span class="keyword">try</span> &#123;  </span><br><span class="line">        BufferedReader in = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> FileReader(<span class="keyword">new</span> File(path)));  </span><br><span class="line">        <span class="keyword">while</span>((lineStr = in.readLine())!=<span class="keyword">null</span>) &#123;  </span><br><span class="line">            jsonStr = jsonStr.concat(lineStr);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;  </span><br><span class="line">        e.printStackTrace();  </span><br><span class="line">    &#125;  </span><br><span class="line">    JsonObject jsonObject = jsonParser.parse(jsonStr).getAsJsonObject();  </span><br><span class="line">  </span><br><span class="line">    JsonArray schools = jsonObject.get(<span class="string">&quot;data&quot;</span>).getAsJsonArray();  </span><br><span class="line">    <span class="keyword">for</span>(JsonElement school:schools) &#123;  </span><br><span class="line">        String chinese_name = school.getAsJsonObject().get(<span class="string">&quot;中文名&quot;</span>).getAsString();  </span><br><span class="line">        String location = school.getAsJsonObject().get(<span class="string">&quot;所属地区&quot;</span>).getAsString();  </span><br><span class="line">        String abbreviation = school.getAsJsonObject().get(<span class="string">&quot;简称&quot;</span>).getAsString();  </span><br><span class="line">        String major_department = school.getAsJsonObject().get(<span class="string">&quot;主要院系&quot;</span>).getAsString();  </span><br><span class="line">        String found_time = school.getAsJsonObject().get(<span class="string">&quot;创办时间&quot;</span>).getAsString();  </span><br><span class="line">        String english_name = school.getAsJsonObject().get(<span class="string">&quot;英文名&quot;</span>).getAsString();  </span><br><span class="line">        String famous_alumni = school.getAsJsonObject().get(<span class="string">&quot;知名校友&quot;</span>).getAsString();  </span><br><span class="line">  </span><br><span class="line">        <span class="keyword">try</span> &#123;  </span><br><span class="line">            put(<span class="string">&quot;school_tb&quot;</span>, chinese_name, <span class="string">&quot;attr&quot;</span>, <span class="string">&quot;chinese_name&quot;</span>, chinese_name);  </span><br><span class="line">            put(<span class="string">&quot;school_tb&quot;</span>, chinese_name, <span class="string">&quot;attr&quot;</span>, <span class="string">&quot;location&quot;</span>, location);  </span><br><span class="line">            put(<span class="string">&quot;school_tb&quot;</span>, chinese_name, <span class="string">&quot;attr&quot;</span>, <span class="string">&quot;abbreviation&quot;</span>, abbreviation);  </span><br><span class="line">            put(<span class="string">&quot;school_tb&quot;</span>, chinese_name, <span class="string">&quot;attr&quot;</span>, <span class="string">&quot;major_department&quot;</span>, major_department);  </span><br><span class="line">            put(<span class="string">&quot;school_tb&quot;</span>, chinese_name, <span class="string">&quot;attr&quot;</span>, <span class="string">&quot;found_time&quot;</span>, found_time);  </span><br><span class="line">            put(<span class="string">&quot;school_tb&quot;</span>, chinese_name, <span class="string">&quot;attr&quot;</span>, <span class="string">&quot;english_name&quot;</span>, english_name);  </span><br><span class="line">            put(<span class="string">&quot;school_tb&quot;</span>, chinese_name, <span class="string">&quot;attr&quot;</span>, <span class="string">&quot;famous_alumni&quot;</span>, famous_alumni);  </span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;  </span><br><span class="line">            e.printStackTrace();  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure></p>
+<h2 id="建立索引"><a href="#建立索引" class="headerlink" title="建立索引"></a>建立索引</h2><p>划分中文单词，统计词频建立索引：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test3</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Configuration conf;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(String tablename,String row, String columnFamily,String column,String data)</span> <span class="keyword">throws</span> Exception </span>&#123;  </span><br><span class="line">        HTable table = <span class="keyword">new</span> HTable(Test3.conf, tablename);  </span><br><span class="line">        Put p1=<span class="keyword">new</span> Put(Bytes.toBytes(row));  </span><br><span class="line">        p1.add(Bytes.toBytes(columnFamily), Bytes.toBytes(column), Bytes.toBytes(data));  </span><br><span class="line">        table.put(p1);  </span><br><span class="line">        System.out.println(<span class="string">&quot;put &#x27;&quot;</span>+row+<span class="string">&quot;&#x27;,&#x27;&quot;</span>+columnFamily+<span class="string">&quot;:&quot;</span>+column+<span class="string">&quot;&#x27;,&#x27;&quot;</span>+data+<span class="string">&quot;&#x27;&quot;</span>);  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">TokenizerMapper</span> <span class="keyword">extends</span> <span class="title">TableMapper</span>&lt;<span class="title">Text</span>, <span class="title">Text</span>&gt; </span>&#123;  </span><br><span class="line">        <span class="keyword">private</span> Text word = <span class="keyword">new</span> Text();  </span><br><span class="line">        <span class="keyword">private</span> Text valueInfo = <span class="keyword">new</span> Text(); <span class="comment">//存储词频  </span></span><br><span class="line">  </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">map</span><span class="params">(ImmutableBytesWritable key, Result value, Context context)</span> <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;  </span><br><span class="line">            List&lt;Cell&gt; cs = value.listCells();  </span><br><span class="line">            <span class="keyword">for</span> (Cell cell : cs) &#123;  </span><br><span class="line">                <span class="keyword">byte</span>[] bt = cell.getValue();  </span><br><span class="line">                InputStream ip = <span class="keyword">new</span> ByteArrayInputStream(bt);  </span><br><span class="line">                Reader read = <span class="keyword">new</span> InputStreamReader(ip);  </span><br><span class="line">                IKSegmenter iks = <span class="keyword">new</span> IKSegmenter(read, <span class="keyword">true</span>);  </span><br><span class="line">                Lexeme t;  </span><br><span class="line">  </span><br><span class="line">                <span class="keyword">while</span> ((t = iks.next()) != <span class="keyword">null</span>) &#123;  </span><br><span class="line">                    String rowkey = <span class="keyword">new</span> String(key.get());  </span><br><span class="line">                    word.set(t.getLexemeText().concat(<span class="string">&quot;:&quot;</span>).concat(rowkey));  </span><br><span class="line">                    valueInfo.set(<span class="string">&quot;1&quot;</span>);  </span><br><span class="line">                    context.write(word, valueInfo);  </span><br><span class="line">                &#125;  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">InvertedIndexCombiner</span> <span class="keyword">extends</span> <span class="title">Reducer</span>&lt;<span class="title">Text</span>, <span class="title">Text</span>, <span class="title">Text</span>, <span class="title">Text</span>&gt;</span>&#123;  </span><br><span class="line">        <span class="keyword">private</span> Text info = <span class="keyword">new</span> Text();  </span><br><span class="line">        <span class="meta">@Override</span>  </span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">reduce</span><span class="params">(Text key, Iterable&lt;Text&gt; values, Reducer&lt;Text, Text, Text, Text&gt;.Context context)</span>  </span></span><br><span class="line"><span class="function">                <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;  </span><br><span class="line">            <span class="keyword">int</span> sum = <span class="number">0</span>;  </span><br><span class="line">            <span class="keyword">for</span> (Text value : values) &#123;  </span><br><span class="line">                sum += Integer.parseInt(value.toString() );  </span><br><span class="line">            &#125;  </span><br><span class="line">            <span class="keyword">int</span> splitIndex = key.toString().indexOf(<span class="string">&quot;:&quot;</span>);  </span><br><span class="line">            info.set( key.toString().substring( splitIndex + <span class="number">1</span>) +<span class="string">&quot;:&quot;</span>+sum );  </span><br><span class="line">            key.set( key.toString().substring(<span class="number">0</span>,splitIndex));  </span><br><span class="line">            context.write(key, info);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">InvertedIndexReducer</span> <span class="keyword">extends</span> <span class="title">Reducer</span>&lt;<span class="title">Text</span>, <span class="title">Text</span>, <span class="title">Text</span>, <span class="title">Text</span>&gt;</span>&#123;  </span><br><span class="line">        <span class="keyword">private</span> Text result = <span class="keyword">new</span> Text();  </span><br><span class="line">        <span class="meta">@Override</span>  </span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">reduce</span><span class="params">(Text key, Iterable&lt;Text&gt; values, Reducer&lt;Text, Text, Text, Text&gt;.Context context)</span>  <span class="keyword">throws</span> IOException, InterruptedException </span>&#123;  </span><br><span class="line">            <span class="comment">//生成文档列表  </span></span><br><span class="line">            String fileList = <span class="keyword">new</span> String();  </span><br><span class="line">            <span class="keyword">for</span> (Text value : values) &#123;  </span><br><span class="line">                fileList += value.toString()+<span class="string">&quot;;&quot;</span>;  </span><br><span class="line">            &#125;  </span><br><span class="line">            result.set(fileList);  </span><br><span class="line">            context.write(key, result);  </span><br><span class="line">            <span class="keyword">try</span>&#123;  </span><br><span class="line">                System.out.println(<span class="string">&quot;-------InvertedIndexReducer-------&quot;</span>);  </span><br><span class="line">                System.out.println(<span class="string">&quot;key=&quot;</span>+key.toString());  </span><br><span class="line">                System.out.println(<span class="string">&quot;value=&quot;</span>+fileList);  </span><br><span class="line">                System.out.println(<span class="string">&quot;----------------------------------&quot;</span>);  </span><br><span class="line">                put(<span class="string">&quot;keyword_map&quot;</span>,key.toString(),<span class="string">&quot;cf&quot;</span>,<span class="string">&quot;data&quot;</span>,fileList);  </span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;  </span><br><span class="line">                e.printStackTrace();  </span><br><span class="line">            &#125;  </span><br><span class="line">  </span><br><span class="line">        &#125;  </span><br><span class="line">  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;  </span><br><span class="line">        System.setProperty(<span class="string">&quot;HADOOP_USER_NAME&quot;</span>, <span class="string">&quot;root&quot;</span>);  </span><br><span class="line">        System.setProperty(<span class="string">&quot;hadoop.home.dir&quot;</span>,<span class="string">&quot;/home/xuranus/Desktop/hadoop/hadoop-2.7.6&quot;</span>);  </span><br><span class="line">        conf = <span class="keyword">new</span> Configuration();  </span><br><span class="line">        String tablename=<span class="string">&quot;school_tb&quot;</span>;  </span><br><span class="line">        String columnFamily=<span class="string">&quot;attr&quot;</span>;  </span><br><span class="line">        conf.set(<span class="string">&quot;hbase.zookeeper.quorum&quot;</span>,<span class="string">&quot;zookeeper001,zookeeper002,zookeeper003&quot;</span>);  </span><br><span class="line">        conf.set(<span class="string">&quot;hbase.zookeeper.property.clientPort&quot;</span>, <span class="string">&quot;2181&quot;</span>);  </span><br><span class="line">        conf.set(<span class="string">&quot;hbase.master&quot;</span>, <span class="string">&quot;172.16.173.136:16000&quot;</span>);  </span><br><span class="line">  </span><br><span class="line">        conf.addResource(<span class="string">&quot;/home/xuranus/hdfs-site.xml&quot;</span>);  </span><br><span class="line">  </span><br><span class="line">        Job job = Job.getInstance(conf, <span class="string">&quot;word count&quot;</span>);  </span><br><span class="line">        job.setJarByClass(Test3.class);  </span><br><span class="line">  </span><br><span class="line">        Scan scan = <span class="keyword">new</span> Scan();  </span><br><span class="line">        scan.addColumn(Bytes.toBytes(columnFamily), Bytes.toBytes(<span class="string">&quot;chinese&quot;</span>));  </span><br><span class="line">        scan.addColumn(Bytes.toBytes(columnFamily), Bytes.toBytes(<span class="string">&quot;location&quot;</span>));  </span><br><span class="line">        scan.addColumn(Bytes.toBytes(columnFamily), Bytes.toBytes(<span class="string">&quot;abbreviation&quot;</span>));  </span><br><span class="line">        scan.addColumn(Bytes.toBytes(columnFamily), Bytes.toBytes(<span class="string">&quot;major_department&quot;</span>));  </span><br><span class="line">        scan.addColumn(Bytes.toBytes(columnFamily), Bytes.toBytes(<span class="string">&quot;found_time&quot;</span>));  </span><br><span class="line">        scan.addColumn(Bytes.toBytes(columnFamily), Bytes.toBytes(<span class="string">&quot;english_name&quot;</span>));  </span><br><span class="line">        scan.addColumn(Bytes.toBytes(columnFamily), Bytes.toBytes(<span class="string">&quot;famous_alumni&quot;</span>));  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">        TableMapReduceUtil.initTableMapperJob(tablename, scan, TokenizerMapper.class,Text.class,  Text.class, job);  </span><br><span class="line">  </span><br><span class="line">        job.setMapOutputKeyClass(Text.class);  </span><br><span class="line">        job.setMapOutputValueClass(Text.class);  </span><br><span class="line">  </span><br><span class="line">        job.setCombinerClass(InvertedIndexCombiner.class);  </span><br><span class="line">        job.setReducerClass(InvertedIndexReducer.class);  </span><br><span class="line">  </span><br><span class="line">        job.setOutputKeyClass(Text.class);  </span><br><span class="line">        job.setOutputValueClass(Text.class);  </span><br><span class="line">  </span><br><span class="line">        FileOutputFormat.setOutputPath(job, <span class="keyword">new</span> Path(<span class="string">&quot;hdfs://172.16.173.136:9000/output&quot;</span>));  </span><br><span class="line">        System.exit(job.waitForCompletion(<span class="keyword">true</span>) ? <span class="number">0</span> : <span class="number">1</span>);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure></p>
+<p>Ouput目录输出如下:<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1902年	东南大学:1;北京师范大学:1;南京大学:1;</span><br><span class="line">1903年	中南大学:1;湖南大学:1;</span><br><span class="line">1905年	中国农业大学:1;复旦大学:1;</span><br><span class="line">1907年	同济大学:1;</span><br><span class="line">....</span><br></pre></td></tr></table></figure></p>
+<h2 id="界面和查询"><a href="#界面和查询" class="headerlink" title="界面和查询"></a>界面和查询</h2><p>查询做成了一个java web程序，后端springboot，接收输入关键词，在索引表中查找，返回词条索引字符串，拆分字符串做处理，在school_tb中查询每个键，把结果存成数组以json形式发到前端。</p>
+<p>react做前端接受结果做渲染，用正则表达式高亮关键字，效果如下：</p>
+<p><img src="Screenshot_20190304_083725.png" alt=""></p>
+<p>自此，一个简单的wordcount搜索引擎就实现了。但是，这只能给静态的资源提供搜索，进一步的，我们可以用spark实现动态增加词条资源。</p>
+<h1 id="动态搜索引擎"><a href="#动态搜索引擎" class="headerlink" title="动态搜索引擎"></a>动态搜索引擎</h1><h2 id="集群说明-1"><a href="#集群说明-1" class="headerlink" title="集群说明"></a>集群说明</h2><p>一共有6个节点<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">xuranusMaster:172.16.173.136</span><br><span class="line">xuranusSlave1:172.16.173.137</span><br><span class="line">xuranusSlave2:172.16.173.138</span><br><span class="line"></span><br><span class="line">zookeeper001:172.16.173.139</span><br><span class="line">zookeeper002:172.16.173.140</span><br><span class="line">zookeeper003:172.16.173.141</span><br></pre></td></tr></table></figure></p>
+<p>其中服务的分布：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Hadoop:xuranusMaster xuranusSlave1 xuranusSlave2</span><br><span class="line">Hbase:xuranusMaster xuranusSlave1 xuranusSlave2</span><br><span class="line">Zookeeper:zookeeper001 zookeeper002 zookeeper003</span><br><span class="line">spark:xuranusMaster xuranusSlave1 xuranusSlave2</span><br><span class="line">kafka:xuranusMaster xuranusSlave1 xuranusSlave2</span><br></pre></td></tr></table></figure></p>
+<h2 id="算法说明"><a href="#算法说明" class="headerlink" title="算法说明"></a>算法说明</h2><p>本次实验用kafka+spark-streaming搭建了一个实时流式计算集群。</p>
+<p>先从wikipedia上下了10多篇关于编程语言的文章存储在本地，用scala写了一个kafka生产者，读取文件，并向消息队列发送文本(每隔2s发送一次，模拟爬虫)。</p>
+<p>生产者：KafkaProducerThread.scala</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">KafkaProducerThread</span> <span class="keyword">extends</span> <span class="title">Thread</span></span>&#123;  </span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">run</span></span>():<span class="type">Unit</span> = &#123;  </span><br><span class="line">    <span class="keyword">val</span> topic = <span class="string">&quot;test&quot;</span>  </span><br><span class="line">    <span class="keyword">val</span> brokers = <span class="string">&quot;xuranusMaster:9092,xuranusSlave1:9092,xuranusSlave2:9092&quot;</span>  </span><br><span class="line">    <span class="keyword">val</span> props = <span class="keyword">new</span> <span class="type">Properties</span>()  </span><br><span class="line">    props.put(<span class="string">&quot;bootstrap.servers&quot;</span>, brokers)  </span><br><span class="line">    props.put(<span class="string">&quot;group.id&quot;</span>, <span class="string">&quot;xuranus&quot;</span>)  </span><br><span class="line">    props.put(<span class="string">&quot;client.id&quot;</span>, <span class="string">&quot;ScalaProducerExample&quot;</span>)  </span><br><span class="line">    props.put(<span class="string">&quot;key.serializer&quot;</span>, <span class="string">&quot;org.apache.kafka.common.serialization.StringSerializer&quot;</span>)  </span><br><span class="line">    props.put(<span class="string">&quot;value.serializer&quot;</span>, <span class="string">&quot;org.apache.kafka.common.serialization.StringSerializer&quot;</span>)  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">val</span> producer = <span class="keyword">new</span> <span class="type">KafkaProducer</span>[<span class="type">String</span>, <span class="type">String</span>](props)  </span><br><span class="line">  </span><br><span class="line">    println(<span class="string">&quot;Start sent simulate.&quot;</span>)  </span><br><span class="line">    <span class="keyword">for</span>(i &lt;- <span class="number">1</span> to <span class="number">14</span>) &#123;  </span><br><span class="line">      <span class="keyword">val</span> fileName = <span class="string">&quot;/home/xuranus/spark_homework/article/&quot;</span> + i + <span class="string">&quot;.txt&quot;</span> <span class="comment">//读取文件 写入消息队列  </span></span><br><span class="line">      <span class="keyword">val</span> source = <span class="type">Source</span>.fromFile(fileName)  </span><br><span class="line">      <span class="keyword">val</span> str = source.mkString  </span><br><span class="line">      <span class="keyword">val</span> record = <span class="keyword">new</span> <span class="type">ProducerRecord</span>[<span class="type">String</span>, <span class="type">String</span>](topic,fileName , str)  </span><br><span class="line">      producer.send(record)  </span><br><span class="line">      println(<span class="string">&quot;produced &quot;</span> + i + <span class="string">&quot; articles!&quot;</span>)  </span><br><span class="line">      <span class="type">Thread</span>.sleep(<span class="number">2000</span>) <span class="comment">// 2s一次  </span></span><br><span class="line">    &#125;  </span><br><span class="line">    producer.close()  </span><br><span class="line">  &#125;  </span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+<p>streaming作为kafka消费者从消息队列拿key（存储目录）和value（文本内容）。在每个RDD接受到的数据中，先用正则匹配去除符号，清洗数据，然后分割统计词频建立所有存储到hbase</p>
+<p>消费者 KafkaStreamingConsumer.scala文件</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">KafkaStreamingConsumer</span> <span class="keyword">extends</span> <span class="title">Thread</span></span>&#123;  </span><br><span class="line">  <span class="type">Logger</span>.getLogger(<span class="string">&quot;org&quot;</span>).setLevel(<span class="type">Level</span>.<span class="type">OFF</span>)<span class="comment">//关闭无关输出  </span></span><br><span class="line">  <span class="type">Logger</span>.getLogger(<span class="string">&quot;akka&quot;</span>).setLevel(<span class="type">Level</span>.<span class="type">OFF</span>)  </span><br><span class="line">  </span><br><span class="line">  <span class="meta">@transient</span>  </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">insert</span></span>(word:<span class="type">String</span>,index:<span class="type">String</span>,count:<span class="type">String</span>): <span class="type">Unit</span> =&#123;  </span><br><span class="line">    <span class="keyword">val</span> conf = <span class="type">HBaseConfiguration</span>.create()  </span><br><span class="line">    conf.set(<span class="string">&quot;hbase.zookeeper.property.clientPort&quot;</span>, <span class="string">&quot;2181&quot;</span>)  </span><br><span class="line">    conf.set(<span class="string">&quot;hbase.zookeeper.quorum&quot;</span>, <span class="string">&quot;zookeeper001,zookeeper002,zookeeper003&quot;</span>)  </span><br><span class="line">    conf.set(<span class="string">&quot;hbase.master&quot;</span>, <span class="string">&quot;xuranusMaster:16000&quot;</span>)  </span><br><span class="line">    <span class="keyword">val</span> connection = <span class="type">ConnectionFactory</span>.createConnection(conf)  </span><br><span class="line">    <span class="keyword">val</span> admin = connection.getAdmin()  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">val</span> table = connection.getTable(<span class="type">TableName</span>.valueOf(<span class="string">&quot;articles&quot;</span>))  </span><br><span class="line">    <span class="keyword">val</span> theput= <span class="keyword">new</span> <span class="type">Put</span>(<span class="type">Bytes</span>.toBytes(word))  </span><br><span class="line">    theput.addColumn(<span class="type">Bytes</span>.toBytes(<span class="string">&quot;articlesCF&quot;</span>), <span class="type">Bytes</span>.toBytes(index), <span class="type">Bytes</span>.toBytes(count))  </span><br><span class="line">    table.put(theput)  </span><br><span class="line">  &#125;  </span><br><span class="line">  </span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">run</span></span>()= &#123;  </span><br><span class="line">    <span class="type">System</span>.setProperty(<span class="string">&quot;hadoop.home.dir&quot;</span>, <span class="string">&quot;/home/xuranus/Desktop/hadoop/hadoop-2.7.6&quot;</span>)  </span><br><span class="line">    <span class="type">System</span>.setProperty(<span class="string">&quot;log4j.rootCategory&quot;</span>, <span class="string">&quot;ERROR&quot;</span>)  </span><br><span class="line">    <span class="keyword">val</span> conf = <span class="keyword">new</span> <span class="type">SparkConf</span>().setAppName(<span class="string">&quot;app&quot;</span>).setMaster(<span class="string">&quot;local[*]&quot;</span>)  </span><br><span class="line">    <span class="keyword">val</span> ssc = <span class="keyword">new</span> <span class="type">StreamingContext</span>(conf,<span class="type">Seconds</span>(<span class="number">2</span>))  </span><br><span class="line">    <span class="keyword">val</span> kafkaParam = <span class="type">Map</span>(  </span><br><span class="line">      <span class="string">&quot;metadata.broker.list&quot;</span> -&gt; <span class="string">&quot;xuranusMaster:9092,xurausSlave01:9092,xuranusSlave2:9092&quot;</span>,  </span><br><span class="line">      <span class="string">&quot;bootstrap.servers&quot;</span> -&gt; <span class="string">&quot;xuranusMaster:9092&quot;</span>,  </span><br><span class="line">      <span class="string">&quot;key.deserializer&quot;</span> -&gt; classOf[<span class="type">StringDeserializer</span>],  </span><br><span class="line">      <span class="string">&quot;value.deserializer&quot;</span> -&gt; classOf[<span class="type">StringDeserializer</span>],  </span><br><span class="line">      <span class="string">&quot;auto.offset.reset&quot;</span> -&gt; <span class="string">&quot;earliest&quot;</span>,  </span><br><span class="line">      <span class="string">&quot;group.id&quot;</span> -&gt; <span class="string">&quot;tweet-consumer&quot;</span>  </span><br><span class="line">    )  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">val</span> preferredHosts = <span class="type">LocationStrategies</span>.<span class="type">PreferConsistent</span>  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">val</span> topics = <span class="type">Array</span>(<span class="string">&quot;test&quot;</span>)  </span><br><span class="line">    <span class="comment">//    获取日志数据  </span></span><br><span class="line">    <span class="keyword">val</span> stream =  </span><br><span class="line">      <span class="type">KafkaUtils</span>.createDirectStream[<span class="type">String</span>, <span class="type">String</span>](  </span><br><span class="line">      ssc,  </span><br><span class="line">      preferredHosts,  </span><br><span class="line">      <span class="type">ConsumerStrategies</span>.<span class="type">Subscribe</span>[<span class="type">String</span>, <span class="type">String</span>](topics, kafkaParam)  </span><br><span class="line">    )  </span><br><span class="line">  </span><br><span class="line">    stream.map(record=&gt;(record.key().toString,record.value().toString))  </span><br><span class="line">      .foreachRDD(rdd=&gt;&#123;  </span><br><span class="line">      rdd.foreachPartition(partition=&gt;&#123;  </span><br><span class="line">        partition.foreach(s=&gt;&#123;  </span><br><span class="line">          <span class="keyword">val</span> path = s._1  </span><br><span class="line">          <span class="keyword">val</span> content = s._2  </span><br><span class="line">          <span class="keyword">val</span> wordCounts = content <span class="comment">//清洗数据  </span></span><br><span class="line">            .replaceAll(<span class="string">&quot;[0123456789]&quot;</span>, <span class="string">&quot; &quot;</span>)  </span><br><span class="line">            .replaceAll(<span class="string">&quot;\\[&quot;</span>, <span class="string">&quot; &quot;</span>)  </span><br><span class="line">            .replaceAll(<span class="string">&quot;\\]&quot;</span>, <span class="string">&quot; &quot;</span>)  </span><br><span class="line">            .replaceAll(<span class="string">&quot;[,.:;]&quot;</span>, <span class="string">&quot; &quot;</span>)  </span><br><span class="line">            .replaceAll(<span class="string">&quot;\&quot;&quot;</span>, <span class="string">&quot; &quot;</span>)  </span><br><span class="line">            .replaceAll(<span class="string">&quot;&#x27;&quot;</span>, <span class="string">&quot; &quot;</span>)  </span><br><span class="line">            .replaceAll(<span class="string">&quot;\n&quot;</span>, <span class="string">&quot; &quot;</span>)  </span><br><span class="line">            .replaceAll(<span class="string">&quot;\\(&quot;</span>, <span class="string">&quot; &quot;</span>)  </span><br><span class="line">            .replaceAll(<span class="string">&quot;\\)&quot;</span>, <span class="string">&quot; &quot;</span>)  </span><br><span class="line">            .toLowerCase()  </span><br><span class="line">            .split(<span class="string">&quot; &quot;</span>). <span class="comment">//词频统计  </span></span><br><span class="line">            map((_,<span class="number">1</span>)).groupBy(_._1).map(x=&gt;(x._1,x._2.length))  </span><br><span class="line">  </span><br><span class="line">          wordCounts.filter(pair=&gt;pair._1.length&gt;<span class="number">0</span>).foreach((pair)=&gt;&#123;  </span><br><span class="line">            <span class="keyword">val</span> word = pair._1  </span><br><span class="line">            <span class="keyword">val</span> count = pair._2+<span class="string">&quot;&quot;</span>  </span><br><span class="line">            <span class="keyword">val</span> index = path  </span><br><span class="line">            println((word,index,count)) <span class="comment">//打印准备创建的索引  </span></span><br><span class="line">  </span><br><span class="line">            <span class="keyword">val</span> conf = <span class="type">HBaseConfiguration</span>.create()  </span><br><span class="line">            conf.set(<span class="string">&quot;hbase.zookeeper.property.clientPort&quot;</span>, <span class="string">&quot;2181&quot;</span>)  </span><br><span class="line">            conf.set(<span class="string">&quot;hbase.zookeeper.quorum&quot;</span>, <span class="string">&quot;zookeeper001,zookeeper002,zookeeper003&quot;</span>)  </span><br><span class="line">            conf.set(<span class="string">&quot;hbase.master&quot;</span>, <span class="string">&quot;xuranusMaster:16000&quot;</span>)  </span><br><span class="line">            <span class="keyword">val</span> connection = <span class="type">ConnectionFactory</span>.createConnection(conf)  </span><br><span class="line">  </span><br><span class="line">            <span class="comment">//持久化关键字索引  </span></span><br><span class="line">            <span class="keyword">val</span> table1 = connection.getTable(<span class="type">TableName</span>.valueOf(<span class="string">&quot;articles&quot;</span>))  </span><br><span class="line">            <span class="keyword">val</span> put1= <span class="keyword">new</span> <span class="type">Put</span>(<span class="type">Bytes</span>.toBytes(word))  </span><br><span class="line">            put1.addColumn(<span class="type">Bytes</span>.toBytes(<span class="string">&quot;articlesCF&quot;</span>), <span class="type">Bytes</span>.toBytes(index), <span class="type">Bytes</span>.toBytes(count))  </span><br><span class="line">            table1.put(put1)  </span><br><span class="line">  </span><br><span class="line">            <span class="comment">//持久化文本资源  </span></span><br><span class="line">            <span class="keyword">val</span> table2 = connection.getTable(<span class="type">TableName</span>.valueOf(<span class="string">&quot;articles_asset&quot;</span>))  </span><br><span class="line">            <span class="keyword">val</span> put2= <span class="keyword">new</span> <span class="type">Put</span>(<span class="type">Bytes</span>.toBytes(index))  </span><br><span class="line">            put2.addColumn(<span class="type">Bytes</span>.toBytes(<span class="string">&quot;articlesCF&quot;</span>), <span class="type">Bytes</span>.toBytes(<span class="string">&quot;content&quot;</span>), <span class="type">Bytes</span>.toBytes(content))  </span><br><span class="line">            table2.put(put2)  </span><br><span class="line">  </span><br><span class="line">            connection.close()  </span><br><span class="line">          &#125;)  </span><br><span class="line">  </span><br><span class="line">        &#125;)  </span><br><span class="line">      &#125;)  </span><br><span class="line">    &#125;)  </span><br><span class="line">    ssc.start()  </span><br><span class="line">    ssc.awaitTermination()  </span><br><span class="line">  &#125;  </span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+<p>Ui用web呈现，后端渲染，框架采用sbt play framework,主要的路由：实现了index,search,detail三个页面对应主页，搜索页，详细页。</p>
+<figure class="highlight scala"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> controllers  </span><br><span class="line"><span class="keyword">import</span> javax.inject._  </span><br><span class="line"><span class="keyword">import</span> play.api.mvc._  </span><br><span class="line">  </span><br><span class="line"><span class="meta">@Singleton</span>  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HomeController</span> <span class="title">@Inject</span>(<span class="params"></span>)(<span class="params">cc: <span class="type">ControllerComponents</span></span>) <span class="keyword">extends</span> <span class="title">AbstractController</span>(<span class="params">cc</span>) </span>&#123;  </span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">index</span> </span>= <span class="type">Action</span> &#123;  </span><br><span class="line">    <span class="type">Ok</span>(views.html.index(<span class="string">&quot;Welcome&quot;</span>))  </span><br><span class="line">  &#125;  </span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">search</span></span>(keyword:<span class="type">String</span>) = <span class="type">Action</span> &#123;  </span><br><span class="line">    <span class="keyword">val</span> res = <span class="type">HbaseQuery</span>.searchKeyWord(keyword).  </span><br><span class="line">      map(pair=&gt;(pair._1,limitStr(<span class="type">HbaseQuery</span>.getArticle(pair._1)),pair._2))  </span><br><span class="line">    <span class="type">Ok</span>(views.html.search(res))  </span><br><span class="line">  &#125;  </span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">detail</span></span>(index:<span class="type">String</span>) = <span class="type">Action</span> &#123;  </span><br><span class="line">    <span class="keyword">val</span> detail = <span class="type">HbaseQuery</span>.getArticle(index)  </span><br><span class="line">    <span class="type">Ok</span>(views.html.detail(detail))  </span><br><span class="line">  &#125;  </span><br><span class="line">  </span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">limitStr</span></span>(s:<span class="type">String</span>): <span class="type">String</span> = s <span class="keyword">match</span> &#123;  </span><br><span class="line">      <span class="keyword">case</span> _s <span class="keyword">if</span> _s.length &gt; <span class="number">300</span> =&gt; s.substring(<span class="number">0</span>,<span class="number">300</span>)+<span class="string">&quot;...&quot;</span>  </span><br><span class="line">      <span class="keyword">case</span> _ =&gt; s  </span><br><span class="line">  &#125;  </span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+<h2 id="程序结构"><a href="#程序结构" class="headerlink" title="程序结构"></a>程序结构</h2><p><img src="Screenshot_20190304_085233.png" alt=""></p>
+<h2 id="运行说明"><a href="#运行说明" class="headerlink" title="运行说明"></a>运行说明</h2><p>先启动web服务器，浏览器打开，进入搜索界面：</p>
+<p><img src="Screenshot_20190304_085312.png" alt=""></p>
+<p>开启消费者，等待接受消息，然后开启生产者开始写入。（此处两个进程为了便于测试用线程模拟）。console输出如下：(词条，索引，索引对应的词条频数)被持久化到hbase</p>
+<p><img src="Screenshot_20190304_085341.png" alt=""></p>
+<p>输入词条，开始查询，每隔几秒刷新一次，发现有新的搜索记录产生（录屏中有体现）</p>
+<p><img src="Screenshot_20190304_085414.png" alt=""></p>
+<p>点击一条记录，可以查看详细文本：Ctrl+F可以看到匹配的关键词</p>
+<p><img src="Screenshot_20190304_085455.png" alt=""></p>
+<p>查看hbase的信息，发现索引已生成：</p>
+<p><img src="Screenshot_20190304_085531.png" alt=""></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/" rel="tag"># 大数据</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/12/01/js%E5%BC%82%E6%AD%A5%E5%87%BD%E6%95%B0%E5%90%8C%E6%AD%A5/" rel="prev" title="js异步函数同步">
+      <i class="fa fa-chevron-left"></i> js异步函数同步
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/03/02/%E8%87%AA%E5%B7%B1%E5%86%99%E4%B8%AAJVM/" rel="next" title="自己写个JVM">
+      自己写个JVM <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E"><span class="nav-number">1.</span> <span class="nav-text">静态搜索引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E8%AF%B4%E6%98%8E"><span class="nav-number">1.1.</span> <span class="nav-text">集群说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E8%A1%A8"><span class="nav-number">1.2.</span> <span class="nav-text">建表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E7%B4%A2%E5%BC%95"><span class="nav-number">1.3.</span> <span class="nav-text">建立索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%95%8C%E9%9D%A2%E5%92%8C%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.4.</span> <span class="nav-text">界面和查询</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E"><span class="nav-number">2.</span> <span class="nav-text">动态搜索引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E8%AF%B4%E6%98%8E-1"><span class="nav-number">2.1.</span> <span class="nav-text">集群说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E8%AF%B4%E6%98%8E"><span class="nav-number">2.2.</span> <span class="nav-text">算法说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E7%BB%93%E6%9E%84"><span class="nav-number">2.3.</span> <span class="nav-text">程序结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E8%AF%B4%E6%98%8E"><span class="nav-number">2.4.</span> <span class="nav-text">运行说明</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/";
+    this.page.identifier = "2018/12/23/hbase实现搜索引擎/";
+    this.page.title = "HBase实现搜索引擎";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

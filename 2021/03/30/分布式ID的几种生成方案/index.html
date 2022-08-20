@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="分布式系统中往往涉及生成唯一ID的业务：例如多个模块产生一类数据库的记录，需要保证记录的ID互不冲突。较优的ID生成规则往往需要满足：  唯一性：生成的ID全局上唯一，冲突的概率几乎为0 有序性：生成的ID按照某种规则有序，便于数据库的插入和排序 可用性：在高并发下依然能正确生成唯一的ID 高性能：每次生成唯一ID的相应速度要快 自主性：不依赖中心认证即可自主生成唯一的ID 安全性：不暴露系统和业">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式ID的几种生成方案">
+<meta property="og:url" content="http://xuranus.github.io/2021/03/30/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%9A%84%E5%87%A0%E7%A7%8D%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="分布式系统中往往涉及生成唯一ID的业务：例如多个模块产生一类数据库的记录，需要保证记录的ID互不冲突。较优的ID生成规则往往需要满足：  唯一性：生成的ID全局上唯一，冲突的概率几乎为0 有序性：生成的ID按照某种规则有序，便于数据库的插入和排序 可用性：在高并发下依然能正确生成唯一的ID 高性能：每次生成唯一ID的相应速度要快 自主性：不依赖中心认证即可自主生成唯一的ID 安全性：不暴露系统和业">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2021/03/30/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%9A%84%E5%87%A0%E7%A7%8D%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/1.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/03/30/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%9A%84%E5%87%A0%E7%A7%8D%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/3.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/03/30/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%9A%84%E5%87%A0%E7%A7%8D%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/2.png">
+<meta property="article:published_time" content="2021-03-30T11:53:59.000Z">
+<meta property="article:modified_time" content="2021-09-05T12:51:13.912Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="分布式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2021/03/30/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%9A%84%E5%87%A0%E7%A7%8D%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/1.png">
+
+<link rel="canonical" href="http://xuranus.github.io/2021/03/30/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%9A%84%E5%87%A0%E7%A7%8D%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>分布式ID的几种生成方案 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/03/30/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%9A%84%E5%87%A0%E7%A7%8D%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          分布式ID的几种生成方案
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-30 11:53:59" itemprop="dateCreated datePublished" datetime="2021-03-30T11:53:59Z">2021-03-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/03/30/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%9A%84%E5%87%A0%E7%A7%8D%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/30/分布式ID的几种生成方案/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>分布式系统中往往涉及生成唯一ID的业务：例如多个模块产生一类数据库的记录，需要保证记录的ID互不冲突。较优的ID生成规则往往需要满足：</p>
+<ul>
+<li>唯一性：生成的ID全局上唯一，冲突的概率几乎为0</li>
+<li>有序性：生成的ID按照某种规则有序，便于数据库的插入和排序</li>
+<li>可用性：在高并发下依然能正确生成唯一的ID</li>
+<li>高性能：每次生成唯一ID的相应速度要快</li>
+<li>自主性：不依赖中心认证即可自主生成唯一的ID</li>
+<li>安全性：不暴露系统和业务相关信息</li>
+</ul>
+<p>这里总结一下主要的ID生成方案。<br><span id="more"></span></p>
+<h2 id="UUID"><a href="#UUID" class="headerlink" title="UUID"></a>UUID</h2><p>UUID全称通用唯一识别码 (Universally Unique Identifier），是一个由<strong>机器编码</strong>，<strong>时间</strong>和<strong>时钟编号</strong>等生成的全网唯一编码。</p>
+<p>UUID由以下几部分的组合：</p>
+<ol>
+<li>当前日期和时间。UUID的第一个部分与时间有关，如果你在生成一个UUID之后，过几秒又生成一个UUID，则第一个部分不同，其余相同。</li>
+<li>时钟序列。</li>
+<li>全局唯一的IEEE机器识别号，如果有网卡，从网卡MAC地址获得，没有网卡以其他方式获得。</li>
+</ol>
+<p>关于UUID这个标准使用最普遍的是微软的GUID(Globals Unique Identifiers)。标准的UUID格式为：<code>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</code> (8-4-4-4-12)。它能保证每个节点所生成的标识都不会重复，并且随着WEB服务等整合技术的发展，UUID的优势将更加明显。根据使用的特定机制，UUID最少在3000+年内不会重复。</p>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>生成简单，无需配置</li>
+<li>无需中心服务支持，本地进行，没有网络消耗。</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>生成的结果串长达36字节，作为主键使得MySQL查询效率低</li>
+<li>基于MAC地址的UUID生成算法可能会泄露MAC地址</li>
+<li>无需字符串作为ID，无法排序</li>
+</ul>
+<p>用Jdk 1.5后提供了UUID的生成：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    String uuid = UUID.randomUUID().toString();</span><br><span class="line">    System.out.println(uuid);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 6a498e42-55fc-42f4-8328-d6658e5f82db</span></span><br></pre></td></tr></table></figure>
+<h2 id="MongoDB的ObjectID算法"><a href="#MongoDB的ObjectID算法" class="headerlink" title="MongoDB的ObjectID算法"></a>MongoDB的ObjectID算法</h2><p>MongoDB采用12字节的字符串作为生成的ID。其中被划分位4段：</p>
+<ul>
+<li>4字节：秒级UNIX时间戳（Timestamp）</li>
+<li>3字节：主机唯一标识符（Machine ID）</li>
+<li>2字节：同一机器，不同进程产生的进程标识符（PID）</li>
+<li>6字节：随机数计数器，在同一机器同一秒内自增，确保同一秒内产生的ID不冲突（Increment）</li>
+</ul>
+<p>使用16进制字符串和-表示ObjectID，例：<code>5dba76a3-d2c366-7f99-57dfb0</code>表示：</p>
+<ul>
+<li>Timestamp：1572501155</li>
+<li>MachineId：13812582</li>
+<li>pid：32665</li>
+<li>Increment：5758896</li>
+</ul>
+<p>MongoDB的ObjectID作为分布式ID，和UUID的原理类似，优缺点也类似：</p>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>本地生产，无需网络消耗，使用简单，没有高可用风险</li>
+<li>生成的ID中包含了时间信息</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>字符串ID占用12字节，不易储存，降低了查询性能</li>
+</ul>
+<blockquote>
+<p>MongoDB 3.4前的Machine ID生成规则是：对<code>hostname</code>去hash后的前几位，PID的生成规则是直接取进程号。但是随着虚拟化技术的发展，大量服务部署的环境<code>hostname</code>都是<code>localhost</code>，用容器部署的服务，由于容器中只有一个进程，PID一直为1，所以使得这两个字段不能区分不同节点的服务。3.4后Machine ID和PID都采用了随机数。</p>
+</blockquote>
+<h2 id="数据库自增ID"><a href="#数据库自增ID" class="headerlink" title="数据库自增ID"></a>数据库自增ID</h2><p>用Oracle的触发器或者MySQL的<code>AUTO_INCREMENT</code>实现插入时获取自增ID。</p>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>产生的ID有序，便于排序</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>抗并发性不好，数据库压力大，数据库容易成为性能瓶颈</li>
+<li>数据根据插入的先后严格自增，容易泄露数据量，容易被爬虫爬取数据。</li>
+<li>无法维持高可用性：一般数据库都是读写分离，一主多从。插入数据获取ID是写操作，需要主库参与，一旦主库故障，系统就无法正常运行了。</li>
+</ul>
+<p>可以用以下的几种方案弥补数据库生成自增ID的缺陷：</p>
+<h3 id="数据库按初始值和步长水平拆分"><a href="#数据库按初始值和步长水平拆分" class="headerlink" title="数据库按初始值和步长水平拆分"></a>数据库按初始值和步长水平拆分</h3><p>例如：将插入负载分配到3台数据库上，设置三台的ID的初始值分别为1,2,3。设置三台ID的增长步长为3:<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># MySQL1</span><br><span class="line">set @@auto_increment_offset = 1;     -- 起始值</span><br><span class="line">set @@auto_increment_increment = 3;  -- 步长</span><br><span class="line"></span><br><span class="line"># MySQL2</span><br><span class="line">set @@auto_increment_offset = 2;     -- 起始值</span><br><span class="line">set @@auto_increment_increment = 3;  -- 步长</span><br><span class="line"></span><br><span class="line"># MySQL3</span><br><span class="line">set @@auto_increment_offset = 3;     -- 起始值</span><br><span class="line">set @@auto_increment_increment = 3;  -- 步长</span><br></pre></td></tr></table></figure><br>则三台数据库产生的ID分别为：<br><img src="1.png" alt=""></p>
+<p>每台数据库能生成的ID是互不冲突的，而且防止了写入的单点故障。但是这种方案需要事先根据实际的数据量需求确定水平拆分的数量，不然很容易造成后期初始值分配耗尽，集群难以再扩容的问题。以上面的3节点集群为例，如果后续要再加入一个节点，需要停机修改所有节点的步长，并把初始值设置的大于当前最大ID。</p>
+<h3 id="基于数据库的号段模式"><a href="#基于数据库的号段模式" class="headerlink" title="基于数据库的号段模式"></a>基于数据库的号段模式</h3><p>号段模式是当下分布式ID生成器的主流实现方式之一，号段模式可以理解为从数据库批量的获取自增ID，每次从数据库取出一个号段范围，例如 (1,1000] 代表1000个ID，具体的业务服务将本号段，生成1~1000的自增ID并加载到内存。表结构如下：<br><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> id_generator (</span><br><span class="line">  id <span class="type">int</span>(<span class="number">10</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  max_id <span class="type">bigint</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;当前最大可用的id&#x27;</span>,</span><br><span class="line">  step <span class="type">int</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;号段的布长&#x27;</span>,</span><br><span class="line">  biz_type <span class="type">int</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;业务类型&#x27;</span>,</span><br><span class="line">  version <span class="type">int</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;版本号，乐观锁，每次都更新version，保证并发时数据的正确性&#x27;</span>,</span><br><span class="line">  <span class="keyword">PRIMARY</span> KEY (`id`)</span><br><span class="line">) </span><br></pre></td></tr></table></figure><br>等这批号段ID用完，再次向数据库申请新号段，对<code>max_id</code>字段做一次<code>update</code>操作，<code>update max_id = max_id + step</code>，<code>update</code>成功则说明新号段获取成功，新的号段范围是<code>(max_id ,max_id +step]</code>。<br><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">update id_generator </span><br><span class="line"><span class="keyword">set</span> max_id <span class="operator">=</span> #&#123;max_id<span class="operator">+</span>step&#125;, version <span class="operator">=</span> version <span class="operator">+</span> <span class="number">1</span> </span><br><span class="line"><span class="keyword">where</span> version <span class="operator">=</span> #&#123;version&#125; <span class="keyword">and</span> biz_type <span class="operator">=</span> XXX</span><br></pre></td></tr></table></figure></p>
+<p><strong>缺点</strong></p>
+<ul>
+<li>单点故障服务器重启会丢失内存中分配到的ID号段，下次重新获得号段，造成ID不连续。</li>
+</ul>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>不强依赖于数据库，不会频繁的访问数据库，有效减轻了数据库的压力</li>
+<li>数据库故障后还可以支撑一段时间</li>
+</ul>
+<h2 id="基于Redis生成ID"><a href="#基于Redis生成ID" class="headerlink" title="基于Redis生成ID"></a>基于Redis生成ID</h2><p>Redis所有命令是单线程的，本身提供<code>INCR</code>，<code>INCREBY</code>这样的自增原子命令，所以能保障生成的ID是唯一有序的。</p>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>不依赖数据库，且性能更高</li>
+<li>生成的ID天然有序，利于分页和排序</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>基于Redis生成本质上还是没有摆脱中心服务器的限制，依然没有解决高可用的问题。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; set seq_id 1     // 初始化自增ID为1</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; incr seq_id      // 增加1，并返回递增后的数值</span><br><span class="line">(integer) 2</span><br></pre></td></tr></table></figure>
+<p>用Java编程的使用可以使用<code>RedisAtomicLong</code>的<code>addAndGet()</code>方法。</p>
+<p>用Redis实现需要注意一点，要考虑到Redis持久化的问题。Redis有两种持久化方式RDB和AOF：</p>
+<ul>
+<li>RDB会定时打一个快照进行持久化，假如连续自增但Redis没及时持久化，而这会Redis挂掉了，重启Redis后会出现ID重复的情况。</li>
+<li>AOF会对每条写命令进行持久化，即使Redis挂掉了也不会出现ID重复的情况，但由于<code>INCR</code>命令的特殊性，会导致Redis重启恢复的数据时间过长。</li>
+</ul>
+<p>当数据量很大的时候，还可以仿照上述MySQL的方案配置Redis集群来获得更好的吞吐量。Redis生成ID适合处理每日从0增长的流水号：先获取当日日期<code>yyyyMMdd</code>，和一串开始数字<code>000000001</code>，每次用<code>INCR</code>累加数字，生成一个流水号。</p>
+<h2 id="SnowFlake"><a href="#SnowFlake" class="headerlink" title="SnowFlake"></a>SnowFlake</h2><p>雪花算法（Snowflake）是Twiiter的分布式项目ID生成算法，在改算法影响下，国内各公司陆续开发出各具特色的分布式ID生成器。<br><img src="3.png" alt=""><br>Snowflake生成的是一个8字节的Long类型ID。</p>
+<ul>
+<li>因为Long类型是带符号数，为了使ID一直为正数，第一个bit位一直为0。</li>
+<li>41bit是<strong>毫秒</strong>级时间戳，时间戳不取当前时间戳，而是存：当前时间戳 - 固定开始时间戳。从0开始的41位时间戳可以用69年。</li>
+<li>10bit是工作机器ID（workId），可以容纳1024个机器</li>
+<li>12bit是序列号，支持<strong>同一机器同一毫秒内</strong>生成4096个ID</li>
+</ul>
+<p>综上：Snowflake支持同一毫秒内生成$2^{22}$个ID，支持1024个机器工作69年。</p>
+<p><strong>优点</strong>：</p>
+<ul>
+<li>生成的ID简短（只要一个8字节的Long类型即可容纳）</li>
+<li>ID是总体增长的，便于排序，但又不是严格连续的，不会泄露数据总量</li>
+<li>不需要中心节点的调度，每台节点完成workId和开始时间的配置后，可以在本地执行ID生成任务。</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>Snowflake算法强依赖于时间，如果发生时钟回拨，可能会引起ID重复，所以建议关闭时钟同步。</li>
+</ul>
+<p>实现代码如下：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SnowFlakeShortUrl</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 起始的时间戳</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">long</span> START_TIMESTAMP = <span class="number">1480166465631L</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 每一部分占用的位数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">long</span> SEQUENCE_BIT = <span class="number">12</span>;   <span class="comment">//序列号占用的位数</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">long</span> MACHINE_BIT = <span class="number">5</span>;     <span class="comment">//机器标识占用的位数</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">long</span> DATA_CENTER_BIT = <span class="number">5</span>; <span class="comment">//数据中心占用的位数</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 每一部分的最大值</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">long</span> MAX_SEQUENCE = -<span class="number">1L</span> ^ (-<span class="number">1L</span> &lt;&lt; SEQUENCE_BIT);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">long</span> MAX_MACHINE_NUM = -<span class="number">1L</span> ^ (-<span class="number">1L</span> &lt;&lt; MACHINE_BIT);</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">long</span> MAX_DATA_CENTER_NUM = -<span class="number">1L</span> ^ (-<span class="number">1L</span> &lt;&lt; DATA_CENTER_BIT);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 每一部分向左的位移</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">long</span> MACHINE_LEFT = SEQUENCE_BIT;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">long</span> DATA_CENTER_LEFT = SEQUENCE_BIT + MACHINE_BIT;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> <span class="keyword">long</span> TIMESTAMP_LEFT = DATA_CENTER_LEFT + DATA_CENTER_BIT;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> dataCenterId;  <span class="comment">//数据中心</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> machineId;     <span class="comment">//机器标识</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> sequence = <span class="number">0L</span>; <span class="comment">//序列号</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> lastTimeStamp = -<span class="number">1L</span>;  <span class="comment">//上一次时间戳</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">long</span> <span class="title">getNextMill</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> mill = getNewTimeStamp();</span><br><span class="line">        <span class="keyword">while</span> (mill &lt;= lastTimeStamp) &#123;</span><br><span class="line">            mill = getNewTimeStamp();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> mill;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">long</span> <span class="title">getNewTimeStamp</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> System.currentTimeMillis();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据指定的数据中心ID和机器标志ID生成指定的序列号</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> dataCenterId 数据中心ID</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> machineId    机器标志ID</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SnowFlakeShortUrl</span><span class="params">(<span class="keyword">long</span> dataCenterId, <span class="keyword">long</span> machineId)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (dataCenterId &gt; MAX_DATA_CENTER_NUM || dataCenterId &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;DtaCenterId can&#x27;t be greater than MAX_DATA_CENTER_NUM or less than 0！&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (machineId &gt; MAX_MACHINE_NUM || machineId &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;MachineId can&#x27;t be greater than MAX_MACHINE_NUM or less than 0！&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">this</span>.dataCenterId = dataCenterId;</span><br><span class="line">        <span class="keyword">this</span>.machineId = machineId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 产生下一个ID</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">long</span> <span class="title">nextId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> currTimeStamp = getNewTimeStamp();</span><br><span class="line">        <span class="keyword">if</span> (currTimeStamp &lt; lastTimeStamp) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;Clock moved backwards.  Refusing to generate id&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (currTimeStamp == lastTimeStamp) &#123;</span><br><span class="line">            <span class="comment">//相同毫秒内，序列号自增</span></span><br><span class="line">            sequence = (sequence + <span class="number">1</span>) &amp; MAX_SEQUENCE;</span><br><span class="line">            <span class="comment">//同一毫秒的序列数已经达到最大</span></span><br><span class="line">            <span class="keyword">if</span> (sequence == <span class="number">0L</span>) &#123;</span><br><span class="line">                currTimeStamp = getNextMill();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">//不同毫秒内，序列号置为0</span></span><br><span class="line">            sequence = <span class="number">0L</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        lastTimeStamp = currTimeStamp;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> (currTimeStamp - START_TIMESTAMP) &lt;&lt; TIMESTAMP_LEFT <span class="comment">//时间戳部分</span></span><br><span class="line">                | dataCenterId &lt;&lt; DATA_CENTER_LEFT       <span class="comment">//数据中心部分</span></span><br><span class="line">                | machineId &lt;&lt; MACHINE_LEFT             <span class="comment">//机器标识部分</span></span><br><span class="line">                | sequence;                             <span class="comment">//序列号部分</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SnowFlakeShortUrl snowFlake = <span class="keyword">new</span> SnowFlakeShortUrl(<span class="number">2</span>, <span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; (<span class="number">1</span> &lt;&lt; <span class="number">4</span>); i++) &#123;</span><br><span class="line">            <span class="comment">//10进制</span></span><br><span class="line">            System.out.println(snowFlake.nextId());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="uid-generator"><a href="#uid-generator" class="headerlink" title="uid-generator"></a>uid-generator</h2><p><a target="_blank" rel="noopener" href="https://github.com/baidu/uid-generator">uid-generator</a>是由百度技术部开发，基于Snowflake算法实现的，与原始的snowflake算法不同在于，uid-generator支持自定义时间戳、工作机器ID和序列号等各部分的位数，而且uid-generator中采用用户自定义workId的生成策略。</p>
+<p>uid-generator需要与数据库配合使用，需要新增一个<code>WORKER_NODE</code>表。当应用启动时会向数据库表中去插入一条数据，插入成功后返回的自增ID就是该机器的workId数据由host，port组成。</p>
+<p>workId，占用了22个bit位，时间占用了28个bit位，序列化占用了13个bit位，需要注意的是，和原始的snowflake不太一样，时间的单位是秒，而不是毫秒，workId也不一样，而且同一应用每次重启就会消费一个workId。</p>
+<h2 id="Leaf"><a href="#Leaf" class="headerlink" title="Leaf"></a>Leaf</h2><p><a target="_blank" rel="noopener" href="https://github.com/Meituan-Dianping/Leaf">Leaf</a>由美团开发，同时支持号段模式和snowflake算法模式，可以切换使用。</p>
+<h3 id="号段模式"><a href="#号段模式" class="headerlink" title="号段模式"></a>号段模式</h3><p>先建一张表<code>leaf_alloc</code>：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `leaf_alloc` (</span><br><span class="line">  `biz_tag` <span class="type">varchar</span>(<span class="number">128</span>)  <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;&#x27;</span> COMMENT <span class="string">&#x27;业务key&#x27;</span>,</span><br><span class="line">  `max_id` <span class="type">bigint</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;1&#x27;</span> COMMENT <span class="string">&#x27;当前已经分配了的最大id&#x27;</span>,</span><br><span class="line">  `step` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;初始步长，也是动态调整的最小步长&#x27;</span>,</span><br><span class="line">  `description` <span class="type">varchar</span>(<span class="number">256</span>)  <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;业务key的描述&#x27;</span>,</span><br><span class="line">  `update_time` <span class="type">timestamp</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="built_in">CURRENT_TIMESTAMP</span> <span class="keyword">ON</span> UPDATE <span class="built_in">CURRENT_TIMESTAMP</span> COMMENT <span class="string">&#x27;数据库维护的更新时间&#x27;</span>,</span><br><span class="line">  <span class="keyword">PRIMARY</span> KEY (`biz_tag`)</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB;</span><br></pre></td></tr></table></figure>
+<p>然后在项目中开启号段模式，配置对应的数据库信息，并关闭snowflake模式<br><figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">leaf.name=com.sankuai.leaf.opensource.test</span></span><br><span class="line"><span class="string">leaf.segment.enable=true</span></span><br><span class="line"><span class="string">leaf.jdbc.url=jdbc:mysql://localhost:3306/leaf_test?useUnicode=true&amp;characterEncoding=utf8&amp;characterSetResults=utf8</span></span><br><span class="line"><span class="string">leaf.jdbc.username=root</span></span><br><span class="line"><span class="string">leaf.jdbc.password=root</span></span><br><span class="line"></span><br><span class="line"><span class="string">leaf.snowflake.enable=false</span></span><br><span class="line"><span class="comment">#leaf.snowflake.zk.address=</span></span><br><span class="line"><span class="comment">#leaf.snowflake.port=</span></span><br></pre></td></tr></table></figure><br>启动leaf-server模块的<code>LeafServerApplication</code>，项目就跑起来了</p>
+<ul>
+<li>号段模式获取分布式自增ID的测试url：<code>http：//localhost:8080/api/segment/get/leaf-segment-test</code></li>
+<li>监控号段模式：<code>http://localhost:8080/cache</code></li>
+</ul>
+<h3 id="snowflake模式"><a href="#snowflake模式" class="headerlink" title="snowflake模式"></a>snowflake模式</h3><p>Leaf的snowflake模式依赖于ZooKeeper，不同于原始snowflake算法也主要是在workId的生成上，Leaf中workId是基于ZooKeeper的顺序Id来生成的，每个应用在使用Leaf-snowflake时，启动时都会都在Zookeeper中生成一个顺序Id，相当于一台机器对应一个顺序节点，也就是一个workId。</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">leaf.snowflake.enable=true</span></span><br><span class="line"><span class="string">leaf.snowflake.zk.address=127.0.0.1</span></span><br><span class="line"><span class="string">leaf.snowflake.port=2181</span></span><br></pre></td></tr></table></figure>
+<p>snowflake模式获取分布式自增ID的测试url：<code>http://localhost:8080/api/snowflake/get/test</code></p>
+<h2 id="Tinyid"><a href="#Tinyid" class="headerlink" title="Tinyid"></a>Tinyid</h2><p><a target="_blank" rel="noopener" href="https://github.com/didi/tinyid">Tinyid</a>是基于号段模式原理实现的与Leaf如出一辙，每个服务获取一个号段（1000,2000]、（2000,3000]、（3000,4000]</p>
+<p><img src="2.png" alt=""></p>
+<p>Tinyid提供<code>http</code>和<code>tinyid-client</code>两种方式接入</p>
+<h3 id="Http方式接入"><a href="#Http方式接入" class="headerlink" title="Http方式接入"></a>Http方式接入</h3><ol>
+<li>创建数据表：<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `tiny_id_info` (</span><br><span class="line">  `id` <span class="type">bigint</span>(<span class="number">20</span>) unsigned <span class="keyword">NOT</span> <span class="keyword">NULL</span> AUTO_INCREMENT COMMENT <span class="string">&#x27;自增主键&#x27;</span>,</span><br><span class="line">  `biz_type` <span class="type">varchar</span>(<span class="number">63</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;&#x27;</span> COMMENT <span class="string">&#x27;业务类型，唯一&#x27;</span>,</span><br><span class="line">  `begin_id` <span class="type">bigint</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;0&#x27;</span> COMMENT <span class="string">&#x27;开始id，仅记录初始值，无其他含义。初始化时begin_id和max_id应相同&#x27;</span>,</span><br><span class="line">  `max_id` <span class="type">bigint</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;0&#x27;</span> COMMENT <span class="string">&#x27;当前最大id&#x27;</span>,</span><br><span class="line">  `step` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">DEFAULT</span> <span class="string">&#x27;0&#x27;</span> COMMENT <span class="string">&#x27;步长&#x27;</span>,</span><br><span class="line">  `delta` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;1&#x27;</span> COMMENT <span class="string">&#x27;每次id增量&#x27;</span>,</span><br><span class="line">  `remainder` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;0&#x27;</span> COMMENT <span class="string">&#x27;余数&#x27;</span>,</span><br><span class="line">  `create_time` <span class="type">timestamp</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;2010-01-01 00:00:00&#x27;</span> COMMENT <span class="string">&#x27;创建时间&#x27;</span>,</span><br><span class="line">  `update_time` <span class="type">timestamp</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;2010-01-01 00:00:00&#x27;</span> COMMENT <span class="string">&#x27;更新时间&#x27;</span>,</span><br><span class="line">  `version` <span class="type">bigint</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;0&#x27;</span> COMMENT <span class="string">&#x27;版本号&#x27;</span>,</span><br><span class="line">  <span class="keyword">PRIMARY</span> KEY (`id`),</span><br><span class="line">  <span class="keyword">UNIQUE</span> KEY `uniq_biz_type` (`biz_type`)</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB AUTO_INCREMENT<span class="operator">=</span><span class="number">1</span> <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8 COMMENT <span class="string">&#x27;id信息表&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `tiny_id_token` (</span><br><span class="line">  `id` <span class="type">int</span>(<span class="number">11</span>) unsigned <span class="keyword">NOT</span> <span class="keyword">NULL</span> AUTO_INCREMENT COMMENT <span class="string">&#x27;自增id&#x27;</span>,</span><br><span class="line">  `token` <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;&#x27;</span> COMMENT <span class="string">&#x27;token&#x27;</span>,</span><br><span class="line">  `biz_type` <span class="type">varchar</span>(<span class="number">63</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;&#x27;</span> COMMENT <span class="string">&#x27;此token可访问的业务类型标识&#x27;</span>,</span><br><span class="line">  `remark` <span class="type">varchar</span>(<span class="number">255</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;&#x27;</span> COMMENT <span class="string">&#x27;备注&#x27;</span>,</span><br><span class="line">  `create_time` <span class="type">timestamp</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;2010-01-01 00:00:00&#x27;</span> COMMENT <span class="string">&#x27;创建时间&#x27;</span>,</span><br><span class="line">  `update_time` <span class="type">timestamp</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;2010-01-01 00:00:00&#x27;</span> COMMENT <span class="string">&#x27;更新时间&#x27;</span>,</span><br><span class="line">  <span class="keyword">PRIMARY</span> KEY (`id`)</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB AUTO_INCREMENT<span class="operator">=</span><span class="number">1</span> <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8 COMMENT <span class="string">&#x27;token信息表&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `tiny_id_info` (`id`, `biz_type`, `begin_id`, `max_id`, `step`, `delta`, `remainder`, `create_time`, `update_time`, `version`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">    (<span class="number">1</span>, <span class="string">&#x27;test&#x27;</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">100000</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="string">&#x27;2018-07-21 23:52:58&#x27;</span>, <span class="string">&#x27;2018-07-22 23:19:27&#x27;</span>, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `tiny_id_info` (`id`, `biz_type`, `begin_id`, `max_id`, `step`, `delta`, `remainder`, `create_time`, `update_time`, `version`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">    (<span class="number">2</span>, <span class="string">&#x27;test_odd&#x27;</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">100000</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="string">&#x27;2018-07-21 23:52:58&#x27;</span>, <span class="string">&#x27;2018-07-23 00:39:24&#x27;</span>, <span class="number">3</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `tiny_id_token` (`id`, `token`, `biz_type`, `remark`, `create_time`, `update_time`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">    (<span class="number">1</span>, <span class="string">&#x27;0f673adf80504e2eaa552f5d791b644c&#x27;</span>, <span class="string">&#x27;test&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;2017-12-14 16:36:46&#x27;</span>, <span class="string">&#x27;2017-12-14 16:36:48&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `tiny_id_token` (`id`, `token`, `biz_type`, `remark`, `create_time`, `update_time`)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">    (<span class="number">2</span>, <span class="string">&#x27;0f673adf80504e2eaa552f5d791b644c&#x27;</span>, <span class="string">&#x27;test_odd&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;2017-12-14 16:36:46&#x27;</span>, <span class="string">&#x27;2017-12-14 16:36:48&#x27;</span>);</span><br></pre></td></tr></table></figure></li>
+<li>配置数据库：<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">datasource.tinyid.names=primary</span></span><br><span class="line"><span class="string">datasource.tinyid.primary.driver-class-name=com.mysql.jdbc.Driver</span></span><br><span class="line"><span class="string">datasource.tinyid.primary.url=jdbc:mysql://ip:port/databaseName?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8</span></span><br><span class="line"><span class="string">datasource.tinyid.primary.username=root</span></span><br><span class="line"><span class="string">datasource.tinyid.primary.password=123456</span></span><br></pre></td></tr></table></figure></li>
+<li>启动tinyid-server后测试<br>获取分布式自增ID: <code>http://localhost:9999/tinyid/id/nextIdSimple?bizType=test&amp;token=0f673adf80504e2eaa552f5d791b644c</code><br>返回结果: <code>3</code></li>
+</ol>
+<p>批量获取分布式自增ID:<code>http://localhost:9999/tinyid/id/nextIdSimple?bizType=test&amp;token=0f673adf80504e2eaa552f5d791b644c&amp;batchSize=10</code><br>返回结果:  <code>4,5,6,7,8,9,10,11,12,13</code></p>
+<h3 id="Java客户端方式接入"><a href="#Java客户端方式接入" class="headerlink" title="Java客户端方式接入"></a>Java客户端方式接入</h3><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.xiaoju.uemc.tinyid<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>tinyid-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;tinyid.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>配置文件<br><figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="string">tinyid.server</span> <span class="string">=localhost:9999</span></span><br><span class="line"><span class="string">tinyid.token</span> <span class="string">=0f673adf80504e2eaa552f5d791b644c</span></span><br></pre></td></tr></table></figure></p>
+<p><code>test</code>，<code>tinyid.token</code>是在数据库表中预先插入的数据，<code>test</code>是具体业务类型，<code>tinyid.token</code>表示可访问的业务类型</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 获取单个分布式自增ID</span></span><br><span class="line">Long id =  TinyId . nextId( <span class="string">&quot; test &quot;</span> );</span><br><span class="line"></span><br><span class="line"><span class="comment">// 按需批量分布式自增ID</span></span><br><span class="line">List&lt;Long&gt; ids =  TinyId . nextId( <span class="string">&quot; test &quot;</span> , <span class="number">10</span> );</span><br></pre></td></tr></table></figure>
+<p><strong>总结</strong>：每种分布式ID生成ID都有各自的优缺点，在实际业务中，还是应该仔细分析实际的需求，结合使用场景，选取最适合的方案。</p>
+<blockquote>
+<p>参考资料：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/w_monster/article/details/104244845">https://blog.csdn.net/w_monster/article/details/104244845</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/4ba1c5e8c185">https://www.jianshu.com/p/4ba1c5e8c185</a></li>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000022717820">https://segmentfault.com/a/1190000022717820</a></li>
+<li><a href="https://link.zhihu.com/?target=https%3A//www.cnblogs.com/imstudy/p/9766549.html">https://link.zhihu.com/?target=https%3A//www.cnblogs.com/imstudy/p/9766549.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_23864697/article/details/88887252">https://blog.csdn.net/qq_23864697/article/details/88887252</a></li>
+</ul>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" rel="tag"># 分布式</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/29/Samba%E6%8B%B7%E8%B4%9D%E6%96%87%E4%BB%B6%E7%9A%84pre-allowcate%E6%9C%BA%E5%88%B6/" rel="prev" title="Samba拷贝文件的pre-allowcate机制">
+      <i class="fa fa-chevron-left"></i> Samba拷贝文件的pre-allowcate机制
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/04/01/underfined%E4%B8%8Enull%E7%9A%84%E5%8C%BA%E5%88%AB/" rel="next" title="underfined与null的区别">
+      underfined与null的区别 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#UUID"><span class="nav-number">1.</span> <span class="nav-text">UUID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MongoDB%E7%9A%84ObjectID%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">MongoDB的ObjectID算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%87%AA%E5%A2%9EID"><span class="nav-number">3.</span> <span class="nav-text">数据库自增ID</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E6%8C%89%E5%88%9D%E5%A7%8B%E5%80%BC%E5%92%8C%E6%AD%A5%E9%95%BF%E6%B0%B4%E5%B9%B3%E6%8B%86%E5%88%86"><span class="nav-number">3.1.</span> <span class="nav-text">数据库按初始值和步长水平拆分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%8F%B7%E6%AE%B5%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.2.</span> <span class="nav-text">基于数据库的号段模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8ERedis%E7%94%9F%E6%88%90ID"><span class="nav-number">4.</span> <span class="nav-text">基于Redis生成ID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SnowFlake"><span class="nav-number">5.</span> <span class="nav-text">SnowFlake</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#uid-generator"><span class="nav-number">6.</span> <span class="nav-text">uid-generator</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Leaf"><span class="nav-number">7.</span> <span class="nav-text">Leaf</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%B7%E6%AE%B5%E6%A8%A1%E5%BC%8F"><span class="nav-number">7.1.</span> <span class="nav-text">号段模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#snowflake%E6%A8%A1%E5%BC%8F"><span class="nav-number">7.2.</span> <span class="nav-text">snowflake模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tinyid"><span class="nav-number">8.</span> <span class="nav-text">Tinyid</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Http%E6%96%B9%E5%BC%8F%E6%8E%A5%E5%85%A5"><span class="nav-number">8.1.</span> <span class="nav-text">Http方式接入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%96%B9%E5%BC%8F%E6%8E%A5%E5%85%A5"><span class="nav-number">8.2.</span> <span class="nav-text">Java客户端方式接入</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2021/03/30/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%9A%84%E5%87%A0%E7%A7%8D%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/";
+    this.page.identifier = "2021/03/30/分布式ID的几种生成方案/";
+    this.page.title = "分布式ID的几种生成方案";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="crontabLinux的crontab是系统自带的实现定时任务的模块，后台以守护进程的形式被systemd管理。crontab根据crontab表达式来配置一个定时任务，标准unix版本的crontab表达式是一个空格分割的5段字符串：分 时 日 月 星（分钟，小时，某日，某月，某年），一些其他的版本可能有7段：秒 分 时 日 月 星 年，此处以5段式表达式为准。 基本用法：crontab [-">
+<meta property="og:type" content="article">
+<meta property="og:title" content="定时任务的几种实现方式">
+<meta property="og:url" content="http://xuranus.github.io/2021/04/07/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="crontabLinux的crontab是系统自带的实现定时任务的模块，后台以守护进程的形式被systemd管理。crontab根据crontab表达式来配置一个定时任务，标准unix版本的crontab表达式是一个空格分割的5段字符串：分 时 日 月 星（分钟，小时，某日，某月，某年），一些其他的版本可能有7段：秒 分 时 日 月 星 年，此处以5段式表达式为准。 基本用法：crontab [-">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2021/04/07/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/1.png">
+<meta property="article:published_time" content="2021-04-07T14:31:32.000Z">
+<meta property="article:modified_time" content="2021-09-05T12:51:13.916Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2021/04/07/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/1.png">
+
+<link rel="canonical" href="http://xuranus.github.io/2021/04/07/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>定时任务的几种实现方式 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/07/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          定时任务的几种实现方式
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-07 14:31:32" itemprop="dateCreated datePublished" datetime="2021-04-07T14:31:32Z">2021-04-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/04/07/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/07/定时任务的几种实现方式/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>19k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>17 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="crontab"><a href="#crontab" class="headerlink" title="crontab"></a>crontab</h2><p>Linux的crontab是系统自带的实现定时任务的模块，后台以守护进程的形式被<code>systemd</code>管理。crontab根据crontab表达式来配置一个定时任务，标准unix版本的crontab表达式是一个空格分割的5段字符串：<code>分 时 日 月 星</code>（分钟，小时，某日，某月，某年），一些其他的版本可能有7段：<code>秒 分 时 日 月 星 年</code>，此处以5段式表达式为准。</p>
+<p>基本用法：<code>crontab [-u user] &#123; -l | -r | -e &#125;</code>。<code>root</code>权限下<code>-u</code>可以指定他人的时程，不填默认设置自己的时程。</p>
+<ul>
+<li><code>-e</code> : 编辑器来设定时程表</li>
+<li><code>-r</code> : 删除目前的时程表</li>
+<li><code>-l</code> : 列出目前的时程表</li>
+</ul>
+<span id="more"></span>
+<p><strong>crontab表达式</strong>：<br><code>分 时 日 月 星</code> 每一位取一个数字的时候，表示某一具体时间，各个域的取值范围为：</p>
+<ul>
+<li>分（Minute）：[0,59]的整数</li>
+<li>时（Hour）：[0,23]的整数</li>
+<li>日（DayOfMonth）：[0,31]的整数</li>
+<li>月（Month）:[1,12]的整数</li>
+<li>星（DayOfWeek）：[1,7]的整数（1是星期天，2是星期一）</li>
+</ul>
+<blockquote>
+<p>实际使用过程中可能因为操作系统版本不同导致取值范围不同，有的月份从0开始计数。为了屏蔽平台差异，建议使用：”JAN”,…,”DEC”等英文缩写表示月份，使用”SUN”,…,”SAT”表示星期几</p>
+</blockquote>
+<p>除了给每个域声明具体的值，还可以用以下四种字符表示多个时间点：</p>
+<ul>
+<li><code>,</code>：代表枚举，可以表示域内多个时间点</li>
+<li><code>*</code>：代表每一，匹配域内任意值</li>
+<li><code>-</code>：代表域内一个<strong>闭区间</strong>的连续取值</li>
+<li><code>n/m</code>：代表步长，从<code>n</code>开始取值，每次步长<code>m</code>，取遍域内所有合法的值</li>
+<li><code>nL</code>：表示最后，如DayOfWeek域使用<code>5L</code>,意味着在最后的一个星期四触发</li>
+<li><code>W</code>：表示有效工作日(周一到周五),只能出现在DayofMonth域。例如：在 DayofMonth使用<code>5W</code>：如果5日是星期六，则将在最近的工作日：星期五，即4日触发。如果5日是星期天，则在6日(周一)触发；如果5日在星期一到星期五中的一天，则就在5日触发。另外一点，W的最近寻找不会跨过月份</li>
+<li><code>LW</code>：表示在某个月最后一个工作日（某月最后一个周五）</li>
+<li><code>#</code>：用于确定每个月第几个星期几，只能出现在DayofMonth域。例如在<code>4#2</code>，表示某月的第二个星期三。</li>
+<li><code>?</code>：只能用在DayofMonth和DayofWeek两个域，用于协调配置的冲突</li>
+</ul>
+<p>例：</p>
+<ul>
+<li><code>11 4 5 1 ?</code>：1月5日04:11执行</li>
+<li><code>11 * 4 5 ?</code>：1月5日每小时11分执行</li>
+<li><code>* * * * *</code>：每分钟执行</li>
+<li><code>11/4 5 1 4 ?</code>：4月1日05:11，05:15，05:19，….，05:59执行</li>
+<li><code>11,4 5 1 4 ?</code>：4月1日05:04，05:11执行</li>
+<li><code>0 12 ? * WED</code>：每个星期三中午12点 </li>
+</ul>
+<p>以ubuntu为例子，<code>crontab -l</code>查看当前定时任务配置：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># For example, you can run a backup of all your user accounts</span></span><br><span class="line"><span class="comment"># at 5 a.m every week with:</span></span><br><span class="line"><span class="comment"># 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/</span></span><br><span class="line"><span class="comment"># </span></span><br><span class="line"><span class="comment"># For more information see the manual pages of crontab(5) and cron(8)</span></span><br><span class="line"><span class="comment"># </span></span><br><span class="line"><span class="comment"># m h  dom mon dow   command</span></span><br></pre></td></tr></table></figure><br>看到<code>m h dom mon dow</code>说明只支持标准的5段crontab表达式，表达式后直接写命令。写一个“每日凌晨删除十天前日志文件”的定时任务，<code>crontab -e</code>，选择一个编辑器，在末尾写入：<code>0 0 * * * find /var/log -ctime +10 -print0 | xargs -0 rm</code>，保存退出后显示<code>crontab: installing new crontab</code>说明新的定时任务开始配置。如果想立刻启动新的定时任务，可以直接重启<code>cron</code>服务：<code>sudo systemctl restart cron</code>。</p>
+<p>如果定时任务需要设置用户的环境变量，可以<code>* * * * * . /etc/profile; /usr/bin/bash script.sh</code>。如果定时任务需要<code>root</code>权限，可以用<code>root</code>用户设置<code>root</code>的时程：<code>sudo crontab -u root -e</code></p>
+<h2 id="Timer"><a href="#Timer" class="headerlink" title="Timer"></a>Timer</h2><p><code>Timer</code>是JDK自带的定时任务类，需要配合<code>TimerTask</code>一起使用。一个简单的定时任务Demo如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;main thread id = &quot;</span> + Thread.currentThread().getId());</span><br><span class="line">    Timer timer = <span class="keyword">new</span> Timer();</span><br><span class="line"></span><br><span class="line">    TimerTask timerTask1 = <span class="keyword">new</span> TimerTask() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="comment">//implement your code here</span></span><br><span class="line">            System.out.printf(<span class="string">&quot;Task1 start, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    TimerTask timerTask2 = <span class="keyword">new</span> TimerTask() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="comment">//implement your code here</span></span><br><span class="line">            System.out.printf(<span class="string">&quot;Task2 start, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    System.out.printf(<span class="string">&quot;Timer ready to schedule, time = %s \n&quot;</span>,<span class="keyword">new</span> Date().toString());</span><br><span class="line">    timer.schedule(timerTask1,<span class="number">1000</span>,<span class="number">1000</span>);</span><br><span class="line">    timer.schedule(timerTask2,<span class="number">1000</span>,<span class="number">1000</span>);</span><br><span class="line">    System.out.printf(<span class="string">&quot;Timer doesn&#x27;t block main thread, time = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>每个<code>TimerTask</code>中实现<code>Runnable</code>接口，然后由<code>Timer</code>对象使用<code>schedule()</code>方法将任务加入定时任务队列，这里指定<code>timerTask</code>和<code>timerTask2</code>在1s后开始执行，每隔1s执行一次。执行的控制台结果如下：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">main thread id = 1</span><br><span class="line">Timer ready to schedule, time = Wed Apr 14 14:36:54 CST 2021 </span><br><span class="line">Timer doesn&#x27;t block main thread, time = Wed Apr 14 14:36:54 CST 2021 </span><br><span class="line">Task1 start, time = Wed Apr 14 14:36:55 CST 2021, thread id = 12 </span><br><span class="line">Task2 start, time = Wed Apr 14 14:36:55 CST 2021, thread id = 12 </span><br><span class="line">Task2 start, time = Wed Apr 14 14:36:56 CST 2021, thread id = 12 </span><br><span class="line">Task1 start, time = Wed Apr 14 14:36:56 CST 2021, thread id = 12 </span><br><span class="line">Task1 start, time = Wed Apr 14 14:36:57 CST 2021, thread id = 12 </span><br><span class="line">Task2 start, time = Wed Apr 14 14:36:57 CST 2021, thread id = 12 </span><br><span class="line">Task2 start, time = Wed Apr 14 14:36:58 CST 2021, thread id = 12 </span><br><span class="line">Task1 start, time = Wed Apr 14 14:36:58 CST 2021, thread id = 12 </span><br><span class="line">Task1 start, time = Wed Apr 14 14:36:59 CST 2021, thread id = 12 </span><br><span class="line">Task2 start, time = Wed Apr 14 14:36:59 CST 2021, thread id = 12 </span><br></pre></td></tr></table></figure><br>由于每个任务都打印出了线程号和开始时间，可以看到每个<code>TimerTask</code>任务按照我们的预期的设定，严格按照每1s执行一次的设定。其中<code>main</code>函数线程ID是1，而同一个<code>Timer</code>调度的<code>TimerTask</code>的线程ID都是12。</p>
+<p>这是因为<code>Timer</code>本身是一个单线程的调度器，每个<code>Timer</code>对象中维护一个继承自<code>Thread</code>的<code>TimerThread</code>类的对象，和一个<code>TimerTask</code>类型的队列。当<code>Timer</code>被实例化，该线程就启动了，他将检查<code>Timer</code>中的<code>TimerTask</code>队列中的时间和当前系统时间，定时执行<code>run()</code>方法中的业务逻辑。而<code>Timer</code>的<code>schedule()</code>方法只是设置<code>TimerTask</code>的执行时间间隔和开始执行时间，讲<code>TimerTask</code>对象加入<code>Timer</code>中的任务队列，该方法不会阻塞线程。</p>
+<p>以上案例是<code>Timer</code>在比较理想的情况下的表现，当一个<code>TimerTask</code>执行的时间较长，由于<code>Timer</code>只维护了一个<code>TimerThread</code>线程，执行时间较长的<code>TimerTask</code>会阻塞其他的<code>TimerTask</code>，造成每个<code>TimerTask</code>执行的间隔时间与预期不一致：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;main thread id = &quot;</span> + Thread.currentThread().getId());</span><br><span class="line">    Timer timer = <span class="keyword">new</span> Timer();</span><br><span class="line"></span><br><span class="line">    TimerTask timerTask1 = <span class="keyword">new</span> TimerTask() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="comment">//implement your code here</span></span><br><span class="line">            System.out.printf(<span class="string">&quot;Task1 start, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId());</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                TimeUnit.SECONDS.sleep(<span class="number">4</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.printf(<span class="string">&quot;Task1 finished, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    TimerTask timerTask2 = <span class="keyword">new</span> TimerTask() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="comment">//implement your code here</span></span><br><span class="line">            System.out.printf(<span class="string">&quot;Task2 start, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId());</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                TTimeUnit.SECONDS.sleep(<span class="number">3</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.printf(<span class="string">&quot;Task2 finished, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    System.out.printf(<span class="string">&quot;Timer ready to schedule, time = %s \n&quot;</span>,<span class="keyword">new</span> Date().toString());</span><br><span class="line">    timer.schedule(timerTask1,<span class="number">1000</span>,<span class="number">1000</span>);</span><br><span class="line">    timer.schedule(timerTask2,<span class="number">1000</span>,<span class="number">1000</span>);</span><br><span class="line">    System.out.printf(<span class="string">&quot;Timer doesn&#x27;t block main thread, time = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>让<code>TimerTask1</code>执行时间达到3s，<code>TimerTask2</code>执行时间达到4s，依旧设置每1s执行一次，输出如下：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">main thread id = 1</span><br><span class="line">Timer ready to schedule, time = Wed Apr 14 15:31:15 CST 2021 </span><br><span class="line">Timer doesn&#x27;t block main thread, time = Wed Apr 14 15:31:15 CST 2021 </span><br><span class="line">Task1 start, time = Wed Apr 14 15:31:16 CST 2021, thread id = 12 </span><br><span class="line">Task1 finished, time = Wed Apr 14 15:31:20 CST 2021, thread id = 12 </span><br><span class="line">Task2 start, time = Wed Apr 14 15:31:20 CST 2021, thread id = 12 </span><br><span class="line">Task2 finished, time = Wed Apr 14 15:31:23 CST 2021, thread id = 12 </span><br><span class="line">Task1 start, time = Wed Apr 14 15:31:23 CST 2021, thread id = 12 </span><br><span class="line">Task1 finished, time = Wed Apr 14 15:31:27 CST 2021, thread id = 12 </span><br><span class="line">Task2 start, time = Wed Apr 14 15:31:27 CST 2021, thread id = 12 </span><br></pre></td></tr></table></figure><br>可以观察到<code>TimerTask1</code>执行间隔时间达到了7s。</p>
+<p>如果某个<code>TimerTask</code>执行的过程中抛出了异常，还会干扰其他任务的执行,这里再<code>TimerTask1</code>里除0模拟抛出异常：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;main thread id = &quot;</span> + Thread.currentThread().getId());</span><br><span class="line">    Timer timer = <span class="keyword">new</span> Timer();</span><br><span class="line"></span><br><span class="line">    TimerTask timerTask1 = <span class="keyword">new</span> TimerTask() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="comment">//implement your code here</span></span><br><span class="line">            System.out.printf(<span class="string">&quot;Task1 start, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId());</span><br><span class="line">            <span class="comment">//Exception here!</span></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                TimeUnit.SECONDS.sleep(<span class="number">4</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(<span class="number">6</span>/<span class="number">0</span>); </span><br><span class="line">            System.out.printf(<span class="string">&quot;Task1 finished, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    TimerTask timerTask2 = <span class="keyword">new</span> TimerTask() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="comment">//implement your code here</span></span><br><span class="line">            System.out.printf(<span class="string">&quot;Task2 start, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId());</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                TimeUnit.SECONDS.sleep(<span class="number">3</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.printf(<span class="string">&quot;Task2 finished, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    System.out.printf(<span class="string">&quot;Timer ready to schedule, time = %s \n&quot;</span>,<span class="keyword">new</span> Date().toString());</span><br><span class="line">    timer.schedule(timerTask1,<span class="number">1000</span>,<span class="number">1000</span>);</span><br><span class="line">    timer.schedule(timerTask2,<span class="number">1000</span>,<span class="number">1000</span>);</span><br><span class="line">    System.out.printf(<span class="string">&quot;Timer doesn&#x27;t block main thread, time = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>这次执行直接报错退出了：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">main thread id = 1</span><br><span class="line">Timer ready to schedule, time = Wed Apr 14 15:37:36 CST 2021 </span><br><span class="line">Timer doesn&#x27;t block main thread, time = Wed Apr 14 15:37:36 CST 2021 </span><br><span class="line">Task1 start, time = Wed Apr 14 15:37:37 CST 2021, thread id = 12 </span><br><span class="line">Exception in thread &quot;Timer-0&quot; java.lang.ArithmeticException: / by zero</span><br><span class="line">	at TestTimer$1.run(TimerTest.java:15)</span><br><span class="line">	at java.util.TimerThread.mainLoop(Timer.java:555)</span><br><span class="line">	at java.util.TimerThread.run(Timer.java:505)</span><br></pre></td></tr></table></figure><br>由于<code>TimerTask</code>抛出异常会直接把所有参与调度的任务一起拖死，再编程的时候必须对<code>run()</code>方法内的代码<code>try</code>，<code>catch</code>。</p>
+<p><strong>总结</strong>：使用<code>Timer</code>处理定时任务实现简单，但是存在以下问题：</p>
+<ul>
+<li>任务执行时间长影响其他任务</li>
+<li>任务异常影响其他任务</li>
+</ul>
+<h2 id="ScheduledExecutorService"><a href="#ScheduledExecutorService" class="headerlink" title="ScheduledExecutorService"></a>ScheduledExecutorService</h2><p><code>ScheduledExecutorService</code>再JDK1.5后引入，可以替代<code>Timer</code>的功能，并解决了<code>Timer</code>面对的一切问题。</p>
+<p>直接测试<code>Timer</code>存在的问题的例子，由三个任务，每个任务都需要运行4s，运行间隔分别为3s，4s，5s：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;main thread id = &quot;</span> + Thread.currentThread().getId());</span><br><span class="line">    ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line">    scheduledExecutorService.scheduleAtFixedRate(() -&gt; &#123;</span><br><span class="line">        <span class="comment">//implement your code here</span></span><br><span class="line">        System.out.printf(<span class="string">&quot;Task1 start, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            TimeUnit.SECONDS.sleep(<span class="number">4</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="number">6</span>/<span class="number">0</span>);</span><br><span class="line">        System.out.printf(<span class="string">&quot;Task1 finished, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId());</span><br><span class="line">    &#125;, <span class="number">1</span>, <span class="number">3</span>, TimeUnit.SECONDS); <span class="comment">//delay 1s, period 3s</span></span><br><span class="line"></span><br><span class="line">    scheduledExecutorService.scheduleAtFixedRate(() -&gt; &#123;</span><br><span class="line">        <span class="comment">//implement your code here</span></span><br><span class="line">        System.out.printf(<span class="string">&quot;Task2 start, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            TimeUnit.SECONDS.sleep(<span class="number">4</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.printf(<span class="string">&quot;Task2 finished, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId());</span><br><span class="line">    &#125;, <span class="number">1</span>, <span class="number">4</span>, TimeUnit.SECONDS); <span class="comment">//delay 1s, period 4s</span></span><br><span class="line"></span><br><span class="line">    scheduledExecutorService.scheduleAtFixedRate(() -&gt; &#123;</span><br><span class="line">        <span class="comment">//implement your code here</span></span><br><span class="line">        System.out.printf(<span class="string">&quot;Task3 start, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            TimeUnit.SECONDS.sleep(<span class="number">4</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.printf(<span class="string">&quot;Task3 finished, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId());</span><br><span class="line">    &#125;, <span class="number">1</span>, <span class="number">5</span>, TimeUnit.SECONDS); <span class="comment">//delay 1s, period 5s</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>控制台结果如下：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">main thread id = 1</span><br><span class="line">Task1 start, time = Wed Apr 14 16:05:05 CST 2021, thread id = 12 </span><br><span class="line">Task3 start, time = Wed Apr 14 16:05:05 CST 2021, thread id = 14 </span><br><span class="line">Task2 start, time = Wed Apr 14 16:05:05 CST 2021, thread id = 13 </span><br><span class="line">Task3 finished, time = Wed Apr 14 16:05:09 CST 2021, thread id = 14 </span><br><span class="line">Task2 finished, time = Wed Apr 14 16:05:09 CST 2021, thread id = 13 </span><br><span class="line">Task2 start, time = Wed Apr 14 16:05:09 CST 2021, thread id = 12 </span><br><span class="line">Task3 start, time = Wed Apr 14 16:05:10 CST 2021, thread id = 14 </span><br><span class="line">Task2 finished, time = Wed Apr 14 16:05:13 CST 2021, thread id = 12 </span><br><span class="line">Task2 start, time = Wed Apr 14 16:05:13 CST 2021, thread id = 13 </span><br><span class="line">Task3 finished, time = Wed Apr 14 16:05:14 CST 2021, thread id = 14 </span><br><span class="line">Task3 start, time = Wed Apr 14 16:05:15 CST 2021, thread id = 16 </span><br><span class="line">Task2 finished, time = Wed Apr 14 16:05:17 CST 2021, thread id = 13 </span><br><span class="line">Task2 start, time = Wed Apr 14 16:05:17 CST 2021, thread id = 17 </span><br><span class="line">Task3 finished, time = Wed Apr 14 16:05:19 CST 2021, thread id = 16 </span><br><span class="line">Task3 start, time = Wed Apr 14 16:05:20 CST 2021, thread id = 12 </span><br><span class="line">Task2 finished, time = Wed Apr 14 16:05:21 CST 2021, thread id = 17 </span><br><span class="line">Task2 start, time = Wed Apr 14 16:05:21 CST 2021, thread id = 18 </span><br><span class="line">Task3 finished, time = Wed Apr 14 16:05:24 CST 2021, thread id = 12 </span><br><span class="line">Task3 start, time = Wed Apr 14 16:05:25 CST 2021, thread id = 12 </span><br><span class="line">Task2 finished, time = Wed Apr 14 16:05:25 CST 2021, thread id = 18 </span><br><span class="line">Task2 start, time = Wed Apr 14 16:05:25 CST 2021, thread id = 18 </span><br><span class="line">Task3 finished, time = Wed Apr 14 16:05:29 CST 2021, thread id = 12 </span><br><span class="line">Task2 finished, time = Wed Apr 14 16:05:29 CST 2021, thread id = 18 </span><br></pre></td></tr></table></figure><br>可以看出<code>Task2</code>严格按照设定的4s一次的速率被执行，<code>Task3</code>严格按照5s一次的速率执行，尽管执行时间达到了4s也没有干涉到其他任务。<code>Task1</code>中发生了除0异常，直接退出了，没有在后续任务中出现，也没有影响到<code>Task2</code>和<code>Task3</code>的后续执行。</p>
+<p>观察可以看出每次调度一个<code>Task</code>线程ID都在变化，这是因为<code>ScheduledExecutorService</code>维护了一个线程池。</p>
+<p><strong>总结</strong>：<code>ScheduledExecutorService</code>通过维护一个线程池，使得调度的任务之间相互不影响，可以完全取代<code>Timer</code>。</p>
+<h2 id="SpringTask"><a href="#SpringTask" class="headerlink" title="SpringTask"></a>SpringTask</h2><p>如果业务用到了Spring，可以直接用Spring提供的SpringTask实现定时任务。只需要在启动类上加上<code>@EnableScheduling</code>注解即可，添加定时任务时给方法加上<code>@Scheduled</code>注解即可：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span> <span class="comment">// must be declared!!!</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TaskDemo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled(cron = &quot;* * * * * *&quot;)</span> <span class="comment">//execute per sec</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">runTask</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Task Start&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p><code>@Scheduled</code>中用6分段crontab表达式（秒 分 时 日 月 星）描述执行时间</p>
+</blockquote>
+<h2 id="Quartz"><a href="#Quartz" class="headerlink" title="Quartz"></a>Quartz</h2><p>Quartz是Java一个比较成熟的定时任务框架，他提供了额外的作业调度管理。</p>
+<p>首先引入Maven依赖：<br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- https://mvnrepository.com/artifact/org.quartz-scheduler/quartz --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.quartz-scheduler<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>quartz<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.3.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure><br>Quartz执行定时任务主要涉及三个类/接口：</p>
+<ul>
+<li><code>Job</code></li>
+<li><code>Scheduler</code></li>
+<li><code>Trigger</code></li>
+</ul>
+<p>其中<code>Job</code>是一个接口，业务逻辑实现在<code>Job</code>的<code>execute()</code>中，每个定时任务对应一个<code>Job</code>。<code>Trigger</code>也是一个接口，用于定义任务的触发时间，<code>Tigger</code>有多个默认实现：<code>SimpleTrigger</code>、<code>CronTigger</code>等。<code>Scheduler</code>是一个调度器接口，也提供了多个默认实现。<code>Scheduler</code>用于把<code>Job</code>和<code>Trigger</code>结合起来参与调度：<br><img src="1.png" alt=""></p>
+<p>以下是一个具体例子：首先实现两个Job，<code>Job1</code>、<code>Job2</code>，实现<code>Job</code>接口。<code>Job2</code>中模拟了除0异常。<code>JobExecutionContext</code>中包含了Quartz运行时的环境以及<code>Job</code>本身的详细数据信息。<br>当<code>Schedule</code>调度执行一个<code>Job</code>的时候，就会将<code>JobExecutionContext</code>传递给该<code>Job</code>的<code>execute()</code>中，<code>Job</code>就可以通过<code>JobExecutionContext</code>对象获取信息。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Job1</span> <span class="keyword">implements</span> <span class="title">Job</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(JobExecutionContext jobExecutionContext)</span> <span class="keyword">throws</span> JobExecutionException </span>&#123;</span><br><span class="line">        <span class="comment">//implement your code here</span></span><br><span class="line">        System.out.printf(<span class="string">&quot;Job1 start, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId()); </span><br><span class="line">        Date().toString(), Thread.currentThread().getId());</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            TimeUnit.SECONDS.sleep(<span class="number">3</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.printf(<span class="string">&quot;Job1 finished, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Job2</code>是一个会出现异常的任务：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Job2</span> <span class="keyword">implements</span> <span class="title">Job</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(JobExecutionContext jobExecutionContext)</span> <span class="keyword">throws</span> JobExecutionException </span>&#123;</span><br><span class="line">        <span class="comment">//implement your code here</span></span><br><span class="line">        System.out.printf(<span class="string">&quot;Job2 start, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId());</span><br><span class="line">        System.out.println(<span class="number">1</span>/<span class="number">0</span>); <span class="comment">//simulate exception</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            TimeUnit.SECONDS.sleep(<span class="number">4</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.printf(<span class="string">&quot;Job1 finished, time = %s, thread id = %s \n&quot;</span>, <span class="keyword">new</span> Date().toString(), Thread.currentThread().getId());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>main</code>函数中用<code>StdSchedulerFactory</code>创建一个<code>StdScheduler</code>。每个<code>Job</code>需要用<code>JobDetail</code>实例化并绑定，<code>JobDetail</code>给<code>Job</code>提供了额外属性：<code>name</code>，<code>group</code>。<code>Job</code>和<code>JobDetail</code>分离的设计使得每次<code>Scheduler</code>执行都会创建一个新的<code>Job</code>实例，防止了对<code>Job</code>的并发访问。每个<code>Trigger</code>也可以设置<code>name</code>和<code>group</code>，<code>tigger1</code>用<code>SimpleTigger</code>实现，<code>tigger2</code>使用<code>CronTrigger</code>实现，支持7段式（秒 分 时 日 月 星 年）的crontab表达式。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> SchedulerException, InterruptedException </span>&#123;</span><br><span class="line">    <span class="comment">// 1、create scheduler</span></span><br><span class="line">    Scheduler scheduler = <span class="keyword">new</span> StdSchedulerFactory().getScheduler();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2、bind job to jobDetail</span></span><br><span class="line">    JobDetail jobDetail1 = JobBuilder.newJob(Job1.class)</span><br><span class="line">            .withIdentity(<span class="string">&quot;job1&quot;</span>, <span class="string">&quot;group1&quot;</span>)</span><br><span class="line">            .build();</span><br><span class="line">    JobDetail jobDetail2 = JobBuilder.newJob(Job2.class)</span><br><span class="line">            .withIdentity(<span class="string">&quot;job2&quot;</span>, <span class="string">&quot;group1&quot;</span>)</span><br><span class="line">            .build();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3. set trigger to invoke job per sec</span></span><br><span class="line">    Trigger trigger1 = TriggerBuilder.newTrigger()</span><br><span class="line">            .withIdentity(<span class="string">&quot;trigger1&quot;</span>, <span class="string">&quot;triggerGroup1&quot;</span>)</span><br><span class="line">            .startNow()<span class="comment">//立即生效</span></span><br><span class="line">            .withSchedule(SimpleScheduleBuilder.simpleSchedule()</span><br><span class="line">                    .withIntervalInSeconds(<span class="number">1</span>)<span class="comment">//invoke this job per sec</span></span><br><span class="line">                    .repeatForever()).build();</span><br><span class="line"></span><br><span class="line">    Trigger trigger2 = TriggerBuilder.newTrigger()</span><br><span class="line">            .withIdentity(<span class="string">&quot;trigger2&quot;</span>, <span class="string">&quot;triggerGroup1&quot;</span>)</span><br><span class="line">            .startNow()</span><br><span class="line">            .withSchedule(CronScheduleBuilder.cronSchedule(<span class="string">&quot;* * * * * ? *&quot;</span>)) <span class="comment">//invoke this job per sec</span></span><br><span class="line">            .build();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//4、execute</span></span><br><span class="line">    scheduler.scheduleJob(jobDetail1, trigger1);</span><br><span class="line">    scheduler.scheduleJob(jobDetail2, trigger2);</span><br><span class="line">    System.out.println(<span class="string">&quot;--------scheduler start ! ------------&quot;</span>);</span><br><span class="line">    scheduler.start();</span><br><span class="line"></span><br><span class="line">    System.out.println(<span class="string">&quot;scheduler.start() won&#x27;t block this thread!&quot;</span>);</span><br><span class="line">    TimeUnit.SECONDS.sleep(<span class="number">5</span>);</span><br><span class="line">    scheduler.shutdown();</span><br><span class="line">    System.out.println(<span class="string">&quot;--------scheduler shutdown ! ------------&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>控制台输出如下：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--------scheduler start ! ------------</span><br><span class="line">scheduler.start() won&#x27;t block this thread!</span><br><span class="line">Job1 start, time = Thu Apr 15 10:34:49 CST 2021, thread id = 12 </span><br><span class="line">Job2 start, time = Thu Apr 15 10:34:49 CST 2021, thread id = 13 </span><br><span class="line">Job1 start, time = Thu Apr 15 10:34:50 CST 2021, thread id = 14 </span><br><span class="line">Job2 start, time = Thu Apr 15 10:34:50 CST 2021, thread id = 15 </span><br><span class="line">Job1 start, time = Thu Apr 15 10:34:51 CST 2021, thread id = 16 </span><br><span class="line">Job2 start, time = Thu Apr 15 10:34:51 CST 2021, thread id = 17 </span><br><span class="line">Job1 start, time = Thu Apr 15 10:34:52 CST 2021, thread id = 18 </span><br><span class="line">Job2 start, time = Thu Apr 15 10:34:52 CST 2021, thread id = 19 </span><br><span class="line">Job1 finished, time = Thu Apr 15 10:34:52 CST 2021, thread id = 12 </span><br><span class="line">Job1 start, time = Thu Apr 15 10:34:53 CST 2021, thread id = 20 </span><br><span class="line">Job1 finished, time = Thu Apr 15 10:34:53 CST 2021, thread id = 14 </span><br><span class="line">Job2 start, time = Thu Apr 15 10:34:53 CST 2021, thread id = 21 </span><br><span class="line">Job1 finished, time = Thu Apr 15 10:34:54 CST 2021, thread id = 16 </span><br><span class="line">Job1 start, time = Thu Apr 15 10:34:54 CST 2021, thread id = 13 </span><br><span class="line">Job2 start, time = Thu Apr 15 10:34:54 CST 2021, thread id = 15 </span><br><span class="line">--------scheduler shutdown ! ------------</span><br><span class="line">Job1 finished, time = Thu Apr 15 10:34:55 CST 2021, thread id = 18 </span><br><span class="line">Job1 finished, time = Thu Apr 15 10:34:56 CST 2021, thread id = 20 </span><br><span class="line">Job1 finished, time = Thu Apr 15 10:34:57 CST 2021, thread id = 13 </span><br><span class="line"></span><br><span class="line">Process finished with exit code 0</span><br></pre></td></tr></table></figure><br>可以看出Quartz实现的定时任务，每个任务会严格按照设置的时间执行，不会因为执行时间超时或异常影响其他任务。每次执行任务的线程ID各不相同，说明<code>Scheduler</code>也是基于线程池设计的，维护<code>QuartzSchedulerThread</code>，使各个任务线程相互独立。当某个任务抛出异常，还会被再次执行。<code>scheduler.start()</code>不会阻塞主线程，需要用<code>scheduler.shutdown()</code>停止调度。当请求停止调度后，主线程会等待当前在执行的所有任务完成后再退出。</p>
+<p>需要保证每个<code>Trigger</code>只能对应一个任务，<code>QuartzScheduler</code>会检查<code>JobDetail</code>和<code>Trigger</code>的key：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (trigger.getJobKey() == <span class="keyword">null</span>) &#123;</span><br><span class="line">    trig.setJobKey(jobDetail.getKey());</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!trigger.getJobKey().equals(jobDetail.getKey())) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> SchedulerException(<span class="string">&quot;Trigger does not reference given job!&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>如果一样，会跑出”Trigger does not reference given job!”错误。</p>
+<p><strong>总结</strong>：Quartz是一个比较完美的定时任务框架，需要额外引入依赖。如果对业务稳定有较高要求，可以用Quartz。</p>
+<h2 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h2><p>上面的方法都是关于单机定时任务的实现，如果是以下场景：</p>
+<ul>
+<li>给新注册的用户一周后发送一封邮件</li>
+<li>给火车票在发车后检查车票状态</li>
+</ul>
+<p>这些业务的数据量巨大，给每个任务都在内存中设置定时器不现实，而且一旦定时任务模块退出还会丢失定时信息。这种情况下可以使用Redis来实现分布式系统定时任务，将<code>Trigger</code>和<code>Job</code>分开。使用Redis实现延迟任务的方法大体可分为两类：通过ZSet的方式和键空间通知的方式。</p>
+<p>添加Maven的Redis依赖：<br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>redis.clients<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jedis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.7.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>ZSet实现方式<br>通过ZSet实现定时任务的思路是，将定时任务存放到ZSet集合中，并且将过期时间存储到ZSet的<code>Score</code>字段中，然后通过一个无限循环来判断当前时间内是否有需要执行的定时任务，如果有则进行执行，具体实现代码如下：<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisScheduleDemo</span> </span>&#123;</span><br><span class="line">    <span class="comment">// zset key</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String _KEY = <span class="string">&quot;redisTask&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> Jedis jedis = <span class="keyword">new</span> Jedis(<span class="string">&quot;localhost&quot;</span>,<span class="number">6379</span>);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        jedis.zadd(_KEY, Instant.now().plusSeconds(<span class="number">11</span>).getEpochSecond(), <span class="string">&quot;function1&quot;</span>);</span><br><span class="line">        jedis.zadd(_KEY, Instant.now().plusSeconds(<span class="number">45</span>).getEpochSecond(), <span class="string">&quot;function2&quot;</span>);</span><br><span class="line">        jedis.zadd(_KEY, Instant.now().plusSeconds(<span class="number">14</span>).getEpochSecond(), <span class="string">&quot;function2&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;current time is &quot;</span> + <span class="keyword">new</span> Date());</span><br><span class="line">        doDelayQueue(jedis);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">doDelayQueue</span><span class="params">(Jedis jedis)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            Instant nowInstant = Instant.now();</span><br><span class="line">            <span class="keyword">long</span> lastSecond = nowInstant.plusSeconds(-<span class="number">1</span>).getEpochSecond(); <span class="comment">// 上一秒时间</span></span><br><span class="line">            <span class="keyword">long</span> nowSecond = nowInstant.getEpochSecond();</span><br><span class="line">            Set&lt;String&gt; data = jedis.zrangeByScore(_KEY, lastSecond, nowSecond);</span><br><span class="line">            <span class="keyword">for</span> (String item: data) &#123;</span><br><span class="line">                <span class="comment">//consume data, and start a task</span></span><br><span class="line">                <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">                    System.out.println(<span class="string">&quot;start a task, invoke function [&quot;</span> + item + <span class="string">&quot;] at &quot;</span> + <span class="keyword">new</span> Date());</span><br><span class="line">                &#125;).start();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// remove task</span></span><br><span class="line">            jedis.zremrangeByScore(_KEY, lastSecond, nowSecond);</span><br><span class="line">            TimeUnit.SECONDS.sleep(<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+输出如下：<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">current time is Fri Apr 16 13:58:40 CST 2021</span><br><span class="line">start a task, invoke function [function1] at Fri Apr 16 13:58:51 CST 2021</span><br><span class="line">start a task, invoke function [function3] at Fri Apr 16 13:58:54 CST 2021</span><br><span class="line">start a task, invoke function [function2] at Fri Apr 16 13:59:25 CST 2021</span><br></pre></td></tr></table></figure>
+定时任务创建服务和定时任务执行服务可以彼此成为独立的进程，使用Redis通信。创建者只需要把定时任务写入Redis，执行者轮询消费Zset中的数据，并创建任务。</li>
+</ol>
+<ol>
+<li>键空间通知<br>我们可以通过Redis的键空间通知来实现定时任务，它的实现思路是给所有的定时任务设置一个过期时间，等到了过期之后，我们通过订阅过期消息就能感知到定时任务需要被执行了，此时我们执行定时任务即可。</li>
+</ol>
+<p>默认情况下Redis是不开启键空间通知的，需要我们通过<code>config set notify-keyspace-events Ex</code>的命令手动开启，<br>或者取消<code>redis.conf</code>中<code>notify-keyspace-events Ex</code>的注解后重启Redis。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#  Example 2: to get the stream of the expired keys subscribing to channel</span><br><span class="line">#             name __keyevent@0__:expired use:</span><br><span class="line">#</span><br><span class="line">notify-keyspace-events Ex</span><br></pre></td></tr></table></figure></p>
+<p>开启之后定时任务的代码如下：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisKeyExpireScheduleDemo</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String _TOPIC = <span class="string">&quot;__keyevent@0__:expired&quot;</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> Jedis jedis = <span class="keyword">new</span> Jedis(<span class="string">&quot;localhost&quot;</span>,<span class="number">6379</span>);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 订阅过期消息</span></span><br><span class="line">        jedis.psubscribe(<span class="keyword">new</span> JedisPubSub() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPMessage</span><span class="params">(String pattern, String channel, String message)</span> </span>&#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;invoke function [&quot;</span> + message + <span class="string">&quot;] at &quot;</span> + <span class="keyword">new</span> Date());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, _TOPIC);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>Redis中输入<code>set function1 0</code>，<code>expire function1 10</code>，就创建了一个10秒后执行<code>function1</code>的任务。</p>
+<p>控制台输出如下：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">invoke function [function1] at Fri Apr 16 14:15:12 CST 2021</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>参考资料：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.bejson.com/othertools/cron/">cron在线工具</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jb51.net/article/155453.htm">Timer和ScheduledExecutorService实现</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/pan_junbiao/article/details/109556822">Spring中集成Quartz</a></li>
+</ul>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/04/07/%E5%B8%B8%E8%A7%81Web%E6%94%BB%E5%87%BB%E4%B8%8E%E5%BA%94%E5%AF%B9%E6%96%B9%E5%BC%8F/" rel="prev" title="常见Web攻击与应对方式">
+      <i class="fa fa-chevron-left"></i> 常见Web攻击与应对方式
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/04/07/Linux%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%89%8B%E5%86%8C/" rel="next" title="Linux常用工具手册">
+      Linux常用工具手册 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#crontab"><span class="nav-number">1.</span> <span class="nav-text">crontab</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Timer"><span class="nav-number">2.</span> <span class="nav-text">Timer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ScheduledExecutorService"><span class="nav-number">3.</span> <span class="nav-text">ScheduledExecutorService</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SpringTask"><span class="nav-number">4.</span> <span class="nav-text">SpringTask</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Quartz"><span class="nav-number">5.</span> <span class="nav-text">Quartz</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis"><span class="nav-number">6.</span> <span class="nav-text">Redis</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2021/04/07/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/";
+    this.page.identifier = "2021/04/07/定时任务的几种实现方式/";
+    this.page.title = "定时任务的几种实现方式";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

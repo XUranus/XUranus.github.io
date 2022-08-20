@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="版本：Solr 8   简介现实生活中我们都知道大多数网站或应用都必须具有某种搜索功能，问题是搜索功能往往是巨大的资源消耗并且它们由于沉重的数据库加载而拖垮你的应用的性能。在项目开发过程中为了提高查询效率和降低数据库的压力，因此就将查询量大的数据放到Solr中。  Solr是一个高性能，采用Java开发，基于Lucene的全文搜索服务器。同时对其进行了扩展，提供了比Lucene更为丰富的查询语言">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr数据导入">
+<meta property="og:url" content="http://xuranus.github.io/2020/11/18/Solr%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="版本：Solr 8   简介现实生活中我们都知道大多数网站或应用都必须具有某种搜索功能，问题是搜索功能往往是巨大的资源消耗并且它们由于沉重的数据库加载而拖垮你的应用的性能。在项目开发过程中为了提高查询效率和降低数据库的压力，因此就将查询量大的数据放到Solr中。  Solr是一个高性能，采用Java开发，基于Lucene的全文搜索服务器。同时对其进行了扩展，提供了比Lucene更为丰富的查询语言">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2020/11/18/Solr%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/1.PNG">
+<meta property="og:image" content="http://xuranus.github.io/2020/11/18/Solr%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/2.PNG">
+<meta property="og:image" content="http://xuranus.github.io/2020/11/18/Solr%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/4.PNG">
+<meta property="og:image" content="http://xuranus.github.io/2020/11/18/Solr%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/5.PNG">
+<meta property="og:image" content="http://xuranus.github.io/2020/11/18/Solr%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/6.PNG">
+<meta property="og:image" content="http://xuranus.github.io/2020/11/18/Solr%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/3.PNG">
+<meta property="og:image" content="http://xuranus.github.io/2020/11/18/Solr%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/7.PNG">
+<meta property="article:published_time" content="2020-11-17T21:48:21.000Z">
+<meta property="article:modified_time" content="2021-09-05T12:51:13.906Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="Solr">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2020/11/18/Solr%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/1.PNG">
+
+<link rel="canonical" href="http://xuranus.github.io/2020/11/18/Solr%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Solr数据导入 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2020/11/18/Solr%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solr数据导入
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-17 21:48:21" itemprop="dateCreated datePublished" datetime="2020-11-17T21:48:21Z">2020-11-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/11/18/Solr%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/11/18/Solr数据导入/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>8.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>版本：Solr 8 </p>
+</blockquote>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>现实生活中我们都知道大多数网站或应用都必须具有某种搜索功能，问题是搜索功能往往是巨大的资源消耗并且它们由于沉重的数据库加载而拖垮你的应用的性能。在项目开发过程中为了提高查询效率和降低数据库的压力，因此就将查询量大的数据放到Solr中。</p>
+<ul>
+<li>Solr是一个高性能，采用Java开发，基于Lucene的全文搜索服务器。同时对其进行了扩展，提供了比Lucene更为丰富的查询语言，同时实现了可配置、可扩展并对查询性能进行了优化，并且提供了一个完善的功能管理界面，是一款非常优秀的全文搜索引擎。</li>
+<li>Solr可以和Hadoop一起使用。由于Hadoop处理大量数据，Solr帮助我们从这么大的源中找到所需的信息。不仅限于搜索，Solr也可以用于存储目的。像其他NoSQL数据库一样，它是一种非关系数据存储和处理技术。</li>
+<li>Solr本身也可以看成数据库,(NoSql类型),但它比数据库搜索速度更快,所以在项目中我们一般把搜索的部分交给Solr。</li>
+<li>数据库本身不能实现分词效果,而只能使用模糊查询,但是模糊查询非常低效,查询速度比较慢,由于在实际生活中,一般搜索是用的比较多的,这样数据库压力自然就很大,所以我们就让供专业的solr来做搜索功能</li>
+</ul>
+<span id="more"></span>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>Win/Linux/Mac都可从官网下载Solr的Jar包:<a target="_blank" rel="noopener" href="https://lucene.apache.org/solr/">Apache Solr</a>，也可用Docker一键部署:<br><code>docker pull solr:8.7.0</code><br><code>docker run --name solr -p 8983:8983 -t solr</code></p>
+<p>解压，配置<code>$SOLR_HOME</code>环境变量（可选）。如果配置了<code>$SOLR_HOME</code>，就需要在<code>$SOLR_HOME</code>下配置默认的<code>solr.xml</code>:<br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">solr</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">solrcloud</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;host&quot;</span>&gt;</span>$&#123;host:&#125;<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;hostPort&quot;</span>&gt;</span>$&#123;jetty.port:8983&#125;<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;hostContext&quot;</span>&gt;</span>$&#123;hostContext:solr&#125;<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;zkClientTimeout&quot;</span>&gt;</span>$&#123;zkClientTimeout:15000&#125;<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bool</span> <span class="attr">name</span>=<span class="string">&quot;genericCoreNodeNames&quot;</span>&gt;</span>$&#123;genericCoreNodeNames:true&#125;<span class="tag">&lt;/<span class="name">bool</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">solrcloud</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">shardHandlerFactory</span> <span class="attr">name</span>=<span class="string">&quot;shardHandlerFactory&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">class</span>=<span class="string">&quot;HttpShardHandlerFactory&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;socketTimeout&quot;</span>&gt;</span>$&#123;socketTimeout:0&#125;<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;connTimeout&quot;</span>&gt;</span>$&#123;connTimeout:0&#125;<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">shardHandlerFactory</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">solr</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>Solr 内置了 Jetty，所以不需要任何安装任何Web容器即可运行。直接通过命令行就可以启动。<br>进入<code>$SOLR_HOME/bin</code>目录，<code>./solr start</code>，默认端口<code>8983</code>，浏览器输入<code>localhost:8983</code>界面如下：<br><img src="1.PNG" alt=""></p>
+<p>Solr启动可以启动多个服务，对应多个端口，启动默认端口是<code>8983</code>，关闭和重启则需要指定端口</p>
+<ul>
+<li>启动：<code>solr start -p &lt;port&gt;</code>  </li>
+<li>关闭：<code>solr stop -p &lt;port&gt;</code></li>
+<li>重启：<code>solr restart -p &lt;port&gt;</code></li>
+</ul>
+<h2 id="DIH数据导入"><a href="#DIH数据导入" class="headerlink" title="DIH数据导入"></a>DIH数据导入</h2><p>接下来介绍一个从MySQL导入手机相关数据到Solr的例子:</p>
+<h3 id="数据准备"><a href="#数据准备" class="headerlink" title="数据准备"></a>数据准备</h3><p>创建一张MySQL表，描述手机的信息：<br><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> IF <span class="keyword">EXISTS</span> `phone`;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `phone` (</span><br><span class="line">  `id` <span class="type">INT</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span> AUTO_INCREMENT,</span><br><span class="line">  `name` <span class="type">VARCHAR</span>(<span class="number">50</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `description` <span class="type">VARCHAR</span>(<span class="number">255</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `os` <span class="type">VARCHAR</span>(<span class="number">10</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `created_at` <span class="type">timestamp</span> <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="built_in">CURRENT_TIMESTAMP</span> <span class="keyword">ON</span> UPDATE <span class="built_in">CURRENT_TIMESTAMP</span>,</span><br><span class="line">  <span class="keyword">PRIMARY</span> KEY (`id`)</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB AUTO_INCREMENT<span class="operator">=</span><span class="number">16</span> <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br><span class="line"><span class="keyword">SET</span> FOREIGN_KEY_CHECKS <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure></p>
+<p>插入几条数据：<br><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `phone` (`name`,`description`,`os`) <span class="keyword">values</span> (&quot;小米10&quot;,&quot;小米最自豪的作品。凝聚了众多创新技术，120X 超远变焦、120W秒充科技 、120Hz 专业屏幕。&quot;,&quot;安卓&quot;);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `phone` (`name`,`description`,`os`) <span class="keyword">values</span> (&quot;IPhone12&quot;,&quot;IPhone是美国Apple（苹果公司）于北京时间2017年9月13日凌晨1点，在Apple Park新总部的史蒂夫·乔布斯剧院会上发布的新机型。其中“X”是罗马数字“10”的意思&quot;,&quot;IOS&quot;);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `phone` (`name`,`description`,`os`) <span class="keyword">values</span> (&quot;华为Mate40&quot;,&quot;HUAWEI Mate 40系列 跃见非凡。5nm 麒麟旗舰SoC，超感知徕卡电影影像，有线无线双超级快充，EMUI 11智慧体验。&quot;,&quot;安卓&quot;);</span><br></pre></td></tr></table></figure></p>
+<h3 id="创建Core"><a href="#创建Core" class="headerlink" title="创建Core"></a>创建Core</h3><p>在Solr中创建一个名为<code>phone</code>的Core，在Solr中一个Core就类似一张数据表。</p>
+<p>首先在<code>server/solr</code>创建一个名为<code>phone</code>的文件夹，然后把本目录下<code>configsets</code>中提供的配置模板复制过去：<code>cp -r ./configsets/_default/conf/ ./phone/</code>。  </p>
+<p>然后在网页中创建Core：<br><img src="2.PNG" alt=""></p>
+<p>创建完后，<code>server/solr</code>下<code>phone</code>文件夹目录结构如下：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">- phone/</span><br><span class="line"> - core.properties</span><br><span class="line"> - conf/</span><br><span class="line">   - solrconfig.xml</span><br><span class="line">   - managed-schema</span><br><span class="line"> - data/</span><br></pre></td></tr></table></figure><br>其中<code>conf/</code>中存放该Core的配置，<code>data/</code>中存放数据。</p>
+<p>点击左侧出现的Core Selector即可选择刚刚创建的Core</p>
+<h3 id="配置依赖"><a href="#配置依赖" class="headerlink" title="配置依赖"></a>配置依赖</h3><p>在<code>solrconfig.xml</code>写入以下依赖<br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">lib</span> <span class="attr">dir</span>=<span class="string">&quot;$&#123;solr.install.dir:../../../..&#125;/dist/&quot;</span> <span class="attr">regex</span>=<span class="string">&quot;ik-analyzer-\d.*\.jar&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">lib</span> <span class="attr">dir</span>=<span class="string">&quot;$&#123;solr.install.dir:../../../..&#125;/dist/&quot;</span> <span class="attr">regex</span>=<span class="string">&quot;mysql-connector-java-\d.*\.jar&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">lib</span> <span class="attr">dir</span>=<span class="string">&quot;$&#123;solr.install.dir:../../../..&#125;/dist/&quot;</span> <span class="attr">regex</span>=<span class="string">&quot;solr-dataimporthandler-\d.*\.jar&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure><br><a target="_blank" rel="noopener" href="https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.49.zip">mysql-connector-java</a></p>
+<h3 id="配置Schema"><a href="#配置Schema" class="headerlink" title="配置Schema"></a>配置Schema</h3><p><code>managed-schema</code>文件中主要有三种标签:</p>
+<ul>
+<li><code>dynamicField</code></li>
+<li><code>fieldType</code></li>
+<li><code>field</code></li>
+</ul>
+<p>其中<code>fieldType</code>对应的是字段的类型，<code>field</code>对应的是字段。</p>
+<p><code>fieldType</code>会指定字段的分词器，我们现在点击左侧的Analysis查看分词效果。选择<code>text_en</code>类型，输入一句话：<em>Always believe that good things are about to happen</em>，分词效果如下：<br><img src="4.PNG" alt=""></p>
+<p>这是英文的分词效果，按照空格分词，比较简单。但是如果用中文：<em>永远相信美好的事情即将发生</em>，效果会很差，变成了一个字一个词：<br><img src="5.PNG" alt=""></p>
+<p>这说明<code>text_en</code>这种分词器不适合中文分词的场景，中文分词推荐使用IkAnalyzer。于是我们自己定义一个<code>fieldType</code>叫<code>text_ik</code>，指定它的分词器为<code>org.wltea.analyzer.lucene.IKTokenizerFactory</code>。在<code>solrconfig.xml</code>中导入依赖包:<code>&lt;lib dir=&quot;$&#123;solr.install.dir:../../../..&#125;/dist/&quot; regex=&quot;ik-analyzer-solr8-\d.*\.jar&quot; /&gt;</code>（<a target="_blank" rel="noopener" href="https://github.com/magese/ik-analyzer-solr">下载地址</a>），在<code>managed-schema</code>中加入<code>text_cn</code>的定义:<br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">&quot;text_ik&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.TextField&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">analyzer</span> <span class="attr">type</span>=<span class="string">&quot;index&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tokenizer</span> <span class="attr">class</span>=<span class="string">&quot;org.wltea.analyzer.lucene.IKTokenizerFactory&quot;</span> <span class="attr">conf</span>=<span class="string">&quot;ik.conf&quot;</span> <span class="attr">useSmart</span>=<span class="string">&quot;false&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">&quot;solr.LowerCaseFilterFactory&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">analyzer</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">analyzer</span> <span class="attr">type</span>=<span class="string">&quot;query&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tokenizer</span> <span class="attr">class</span>=<span class="string">&quot;org.wltea.analyzer.lucene.IKTokenizerFactory&quot;</span> <span class="attr">conf</span>=<span class="string">&quot;ik.conf&quot;</span> <span class="attr">useSmart</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">&quot;solr.LowerCaseFilterFactory&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">analyzer</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">fieldType</span>&gt;</span></span><br></pre></td></tr></table></figure><br>保存然后reload Core，再次进入Analysis模块，已经出现<code>text_ik</code>类型，分词效果如下：<br><img src="6.PNG" alt=""></p>
+<p>新版的Solr推荐用网页端直接设置字段：<br><img src="3.PNG" alt=""></p>
+<p>配置完成后<code>field</code>应包含如下字段：<br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span> <span class="attr">multiValued</span>=<span class="string">&quot;false&quot;</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">required</span>=<span class="string">&quot;true&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;created_at&quot;</span> <span class="attr">type</span>=<span class="string">&quot;pdates&quot;</span> <span class="attr">uninvertible</span>=<span class="string">&quot;true&quot;</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;description&quot;</span> <span class="attr">type</span>=<span class="string">&quot;text_ik&quot;</span> <span class="attr">uninvertible</span>=<span class="string">&quot;true&quot;</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">type</span>=<span class="string">&quot;text_ik&quot;</span> <span class="attr">uninvertible</span>=<span class="string">&quot;true&quot;</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;os&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span> <span class="attr">uninvertible</span>=<span class="string">&quot;true&quot;</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure><br>其中<code>name</code>和<code>description</code>被设置为<code>text_ik</code>类型，方便后续分词与检索。</p>
+<h3 id="配置db-data-config-xml"><a href="#配置db-data-config-xml" class="headerlink" title="配置db-data-config.xml"></a>配置db-data-config.xml</h3><p>在<code>solrconfig.xml</code>同级目录下，创建一个<code>db-data-config.xml</code>文件，写入MySQL导入数据的配置：<br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">dataConfig</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dataSource</span> <span class="attr">name</span>=<span class="string">&quot;db&quot;</span> <span class="attr">type</span>=<span class="string">&quot;JdbcDataSource&quot;</span> <span class="attr">driver</span>=<span class="string">&quot;com.mysql.jdbc.Driver&quot;</span> <span class="attr">url</span>=<span class="string">&quot;jdbc:mysql://localhost:3306/test?useUnicode=true<span class="symbol">&amp;amp;</span>useJDBCCompliantTimezoneShift=true<span class="symbol">&amp;amp;</span>useLegacyDatetimeCode=false<span class="symbol">&amp;amp;</span>serverTimezone=UTC&quot;</span> <span class="attr">user</span>=<span class="string">&quot;root&quot;</span> <span class="attr">password</span>=<span class="string">&quot;root&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">document</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">entity</span> <span class="attr">name</span>=<span class="string">&quot;phone&quot;</span> <span class="attr">dataSource</span>=<span class="string">&quot;db&quot;</span> <span class="attr">transformer</span>=<span class="string">&quot;DateFormatTransformer&quot;</span> <span class="attr">pk</span>=<span class="string">&quot;id&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">query</span>=<span class="string">&quot;SELECT * FROM phone&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">deltaQuery</span>=<span class="string">&quot;SELECT id FROM phone WHERE created_at &gt; &#x27;$&#123;dataimporter.last_index_time&#125;&#x27;&quot;</span></span></span><br><span class="line"><span class="tag">            &gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">column</span>=<span class="string">&quot;id&quot;</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">column</span>=<span class="string">&quot;name&quot;</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">fiele</span> <span class="attr">column</span>=<span class="string">&quot;os&quot;</span> <span class="attr">name</span>=<span class="string">&quot;os&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">column</span>=<span class="string">&quot;description&quot;</span> <span class="attr">name</span>=<span class="string">&quot;description&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">column</span>=<span class="string">&quot;created_at&quot;</span> <span class="attr">name</span>=<span class="string">&quot;created_at&quot;</span> <span class="attr">dateTimeFormat</span>=<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">entity</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">document</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dataConfig</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="配置requestHandler"><a href="#配置requestHandler" class="headerlink" title="配置requestHandler"></a>配置requestHandler</h3><p>在<code>solrconfig.xml</code>配置文件中引入<code>db-data-config.xml</code>文件<br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">requestHandler</span> <span class="attr">name</span>=<span class="string">&quot;/dataimport&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.solr.handler.dataimport.DataImportHandler&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;defaults&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;config&quot;</span>&gt;</span>db-data-config.xml<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">requestHandler</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>保存然后reload core，进入Dataimport模块，选择<code>full-import</code>，点击Excute导入数据。然后进入到Query中查找即可。<br><img src="7.PNG" alt=""></p>
+<p>上述数据导入是走的Data Import Handler，简称<code>DIH</code>。这种方式会遍历数据库，根据创建时间进行增量导入或者全量导入，导入时会检查主键(ID)字段是否存在，选择覆盖或创建一条文档(doc)。这种导入需要在mysql导入完后调用<code>/dataimport</code>接口，异步导入数据。当有数据同步性需求时（如必须对solr中一条数据的创建时间可控），可以选择用<code>/update</code>接口直接导入。</p>
+<h2 id="通过-update接口导入"><a href="#通过-update接口导入" class="headerlink" title="通过/update接口导入"></a>通过/update接口导入</h2><p>Solr的操作都可以通过他提供的HTTP接口完成，所以可以通过<code>/update</code>接口直接同步导入，而Java中提供了对HTTP接口的封装模块<code>SolrJ</code>。创建maven项目，到日pom依赖：<br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"> <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.solr<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>solr-solrj<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>7.2.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure><br>Java中创建一条新的记录：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String SOLR_URL = <span class="string">&quot;http://localhost:8983/solr/phone&quot;</span>;</span><br><span class="line">SolrClient client = <span class="keyword">new</span> HttpSolrClient.Builder(SOLR_URL).withConnectionTimeout(<span class="number">10000</span>).withSocketTimeout(<span class="number">60000</span>).build();</span><br><span class="line"></span><br><span class="line">SolrInputDocument document = <span class="keyword">new</span> SolrInputDocument();</span><br><span class="line">document.setField(<span class="string">&quot;os&quot;</span>,<span class="string">&quot;安卓&quot;</span>);</span><br><span class="line">document.setField(<span class="string">&quot;name&quot;</span>,<span class="string">&quot;小米11&quot;</span>);</span><br><span class="line">document.setField(<span class="string">&quot;description&quot;</span>,<span class="string">&quot;方方面面的新突破，开启了 2021 年高端旗舰的新标准。它轻薄、出彩 - 带来一块创下 13 项纪录的高端屏幕。&quot;</span> +</span><br><span class="line">        <span class="string">&quot;更快的速度、更强大的影像系统，以及全面飞跃的视听体验。&quot;</span> +</span><br><span class="line">        <span class="string">&quot;种种突破，共同成就了这款 2021 年小米高端代表作，助你轻装上阵，一往无前。&quot;</span>);</span><br><span class="line">document.setField(<span class="string">&quot;created_at&quot;</span>,<span class="keyword">new</span> Date());</span><br><span class="line">document.setField(<span class="string">&quot;id&quot;</span>,<span class="number">19</span>);</span><br><span class="line"></span><br><span class="line">client.add(document);</span><br><span class="line">client.commit();</span><br></pre></td></tr></table></figure><br>当要删除时，可以调用<code>/delete</code>接口，也可直接用<code>SolrJ</code>的API。<code>client.deleteByQuery(&quot;*:*&quot;)</code>表示删除全部。无论提交还是删除，都需要调用<code>client.commit()</code>生效:<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">client.deleteByQuery(<span class="string">&quot;*:*&quot;</span>);</span><br><span class="line">client.commit();</span><br></pre></td></tr></table></figure></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Solr/" rel="tag"># Solr</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/10/22/Redis%E9%AB%98%E5%B9%B6%E5%8F%91/" rel="prev" title="Redis高并发">
+      <i class="fa fa-chevron-left"></i> Redis高并发
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%881%EF%BC%89%E6%9C%89%E7%A9%B7%E8%87%AA%E5%8A%A8%E6%9C%BA/" rel="next" title="形式语言与自动机理论（1）有穷自动机">
+      形式语言与自动机理论（1）有穷自动机 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DIH%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5"><span class="nav-number">3.</span> <span class="nav-text">DIH数据导入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87"><span class="nav-number">3.1.</span> <span class="nav-text">数据准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BACore"><span class="nav-number">3.2.</span> <span class="nav-text">创建Core</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E4%BE%9D%E8%B5%96"><span class="nav-number">3.3.</span> <span class="nav-text">配置依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AESchema"><span class="nav-number">3.4.</span> <span class="nav-text">配置Schema</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEdb-data-config-xml"><span class="nav-number">3.5.</span> <span class="nav-text">配置db-data-config.xml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AErequestHandler"><span class="nav-number">3.6.</span> <span class="nav-text">配置requestHandler</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87-update%E6%8E%A5%E5%8F%A3%E5%AF%BC%E5%85%A5"><span class="nav-number">4.</span> <span class="nav-text">通过&#x2F;update接口导入</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2020/11/18/Solr%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/";
+    this.page.identifier = "2020/11/18/Solr数据导入/";
+    this.page.title = "Solr数据导入";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

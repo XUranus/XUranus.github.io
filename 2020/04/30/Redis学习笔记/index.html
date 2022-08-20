@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="实验楼练习地址：Redis基础教程，本文拷贝自实验楼  Redis简介Redis 是什么REmote DIctionary Server(Redis) 是一个由 Salvatore Sanfilippo 写的 key-value 存储系统。Redis 提供了一些丰富的数据结构，包括 lists、sets、ordered sets 以及 hashes ，当然还有和 Memcached 一样的 st">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis学习笔记">
+<meta property="og:url" content="http://xuranus.github.io/2020/04/30/Redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="实验楼练习地址：Redis基础教程，本文拷贝自实验楼  Redis简介Redis 是什么REmote DIctionary Server(Redis) 是一个由 Salvatore Sanfilippo 写的 key-value 存储系统。Redis 提供了一些丰富的数据结构，包括 lists、sets、ordered sets 以及 hashes ，当然还有和 Memcached 一样的 st">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-29T18:12:13.000Z">
+<meta property="article:modified_time" content="2021-09-05T12:51:13.902Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="Redis">
+<meta property="article:tag" content="数据库">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://xuranus.github.io/2020/04/30/Redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Redis学习笔记 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2020/04/30/Redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis学习笔记
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-29 18:12:13" itemprop="dateCreated datePublished" datetime="2020-04-29T18:12:13Z">2020-04-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2020/04/30/Redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/04/30/Redis学习笔记/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>14k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>13 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>实验楼练习地址：<a target="_blank" rel="noopener" href="https://www.shiyanlou.com/courses/106">Redis基础教程</a>，本文拷贝自实验楼</p>
+</blockquote>
+<h1 id="Redis简介"><a href="#Redis简介" class="headerlink" title="Redis简介"></a>Redis简介</h1><h2 id="Redis-是什么"><a href="#Redis-是什么" class="headerlink" title="Redis 是什么"></a>Redis 是什么</h2><p>REmote DIctionary Server(Redis) 是一个由 Salvatore Sanfilippo 写的 key-value 存储系统。Redis 提供了一些丰富的数据结构，包括 lists、sets、ordered sets 以及 hashes ，当然还有和 Memcached 一样的 strings 结构。Redis 当然还包括了对这些数据结构的丰富操作。</p>
+<p>Redis 常被称作是一款数据结构服务器（data structure server）。Redis 的键值可以包括字符串（strings）类型，同时它还包括哈希（hashes）、列表（lists）、集合（sets）和 有序集合（sorted sets）等数据类型。</p>
+<p>对于这些数据类型，你可以执行原子操作。例如：对字符串进行附加操作（append）；递增哈希中的值；向列表中增加元素；计算集合的交集、并集与差集等。</p>
+<span id="more"></span>
+<h2 id="Redis-的优点"><a href="#Redis-的优点" class="headerlink" title="Redis 的优点"></a>Redis 的优点</h2><p>性能极高：Redis 能支持超过 100K+ 每秒的读写频率。<br>丰富的数据类型：Redis 支持二进制案例的 Strings， Lists， Hashes， Sets 及 Ordered Sets 数据类型操作。<br>原子：Redis 的所有操作都是原子性的，同时 Redis 还支持对几个操作全并后的原子性执行。<br>丰富的特性：Redis 还支持 publish/subscribe， 通知， key 过期等等特性。</p>
+<h2 id="Redis的安装"><a href="#Redis的安装" class="headerlink" title="Redis的安装"></a>Redis的安装</h2><p>使用 Redis 只需要下载对应的软件包开箱即用，截止目前（2019.1）最新的版本有 5.* 可用，实验楼提供的是 2.8.4 稳定版，这也是目前市场的主流版本。</p>
+<h3 id="使用通用的源码包进行编译安装。"><a href="#使用通用的源码包进行编译安装。" class="headerlink" title="使用通用的源码包进行编译安装。"></a>使用通用的源码包进行编译安装。</h3><p>下载 Redis 的程序包：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">wget http://labfile.oss.aliyuncs.com/courses/106/redis-2.8.4.tar.gz</span><br><span class="line">tar -xzvf redis-2.8.4.tar.gz</span><br><span class="line">cd redis-2.8.4</span><br><span class="line">make</span><br><span class="line">make test</span><br></pre></td></tr></table></figure><br>服务端：<code>src/redis-server</code><br>客户端：<code>src/redis-cli</code><br>默认配置文件：<code>redis.conf</code><br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cp redis-server /usr/local/bin/</span><br><span class="line">cp redis-cli /usr/local/bin/</span><br></pre></td></tr></table></figure><br>添加完成后在任何目录下输入 <code>redis-server</code> 可启动服务器，输入 <code>redis-cli</code> 可启动客户端。</p>
+<h3 id="Pacman"><a href="#Pacman" class="headerlink" title="Pacman"></a>Pacman</h3><p>在ArchLinux下用Pacman安装，版本号已经达到5.x，可一键安装服务器和客户端 <code>sudo pacman -S redis</code>，以守护进程启动 <code>sudo systemctl start redis</code>，启动客户端和上述方法一样。配置 <code>/etc/redis.conf</code></p>
+<h2 id="Redis启动"><a href="#Redis启动" class="headerlink" title="Redis启动"></a>Redis启动</h2><p>服务端通用的启动方法是 <code>redis-server</code>，默认占用6379端口，可以在启动时指定具体的配置文件，查看进程：<code>pe -ef|grep redis</code>。</p>
+<p>客户端启动方法为 <code>redis-cli</code>，在有的环境下，redis 交互环境可能出现中文乱码的情况，解决办法是用下列命令启动 redis 客户端 <code>redis-cli --raw</code></p>
+<h1 id="Redis数据类型"><a href="#Redis数据类型" class="headerlink" title="Redis数据类型"></a>Redis数据类型</h1><p>Redis 不仅仅是简单的 key-value 存储器，同时也是一种 data structures server。传统的 key-value 是指支持使用一个 key 字符串来索引 value 字符串的存储，而 Redis 中，value 不仅仅支持字符串，还支持更多的复杂结构，包括列表、集合、哈希表等。</p>
+<h2 id="Strings"><a href="#Strings" class="headerlink" title="Strings"></a>Strings</h2><p>字符串是一种最基本、最常用的 Redis 值类型。</p>
+<p>Redis 字符串是二进制安全的，这意味着一个 Redis 字符串能包含任意类型的数据，例如： 一张经过 base64 编码的图片或者一个序列化的 Ruby 对象。通过这样的方式，Redis 的字符串可以支持任意形式的数据，但是对于过大的文件不适合存入 redis，一方面系统内存有限，另外一方面字符串类型的值最多能存储 512M 字节的内容。</p>
+<p>可以使用 set 和 get 命令来创建和检索 strings。注意：<strong>set 命令将取代现有的任何已经存在的 key</strong>。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; set mykey myvalue</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; get mykey</span><br><span class="line">&quot;myvalue&quot;</span><br></pre></td></tr></table></figure><br>set 命令还有一个提供附加参数的选项，我们能够让 set 命令只有在没有相同 key 的情况下成功，反之亦然，可以让 set 命令在有相同 key 值的情况下成功：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; set mykey newval nx</span><br><span class="line">(nil)</span><br><span class="line">127.0.0.1:6379&gt; set mykey newval xx</span><br><span class="line">OK</span><br></pre></td></tr></table></figure></p>
+<p>对string类型数据的加法，自增：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; set counter 100 #初始化counter 100</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; incr counter #counter +1</span><br><span class="line">(integer) 101</span><br><span class="line">127.0.0.1:6379&gt; incrby counter 50 #counter +50</span><br><span class="line">(integer) 151</span><br></pre></td></tr></table></figure><br>counter始终是字符串对象，但是字面量必须是<strong>整数</strong>才能适用加法自增。</p>
+<p>Redis 可以运用 mset 和 mget 命令一次性完成多个 key-value 的对应关系，使用 mget 命令，Redis 返回一个 value 数组：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; mset a 10 b 20 c 30</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; mget a b c</span><br><span class="line">1) &quot;10&quot;</span><br><span class="line">2) &quot;20&quot;</span><br><span class="line">3) &quot;30&quot;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Lists"><a href="#Lists" class="headerlink" title="Lists"></a>Lists</h2><p>Redis 列表是简单的字符串列表，按照插入顺序排序。你可以添加一个元素到列表的头部（左边）或者尾部（右边），lpush 命令插入一个新的元素到头部，而 rpush 命令插入一个新元素到尾部。当这两个操作中的任一操作在一个空的 Key 上执行时就会创建一个新的列表。相似的，如果一个列表操作清空一个列表，那么对应的 key 将被从 key 空间删除。</p>
+<p>push 一类的命令的返回值为 list 的长度。这里有一些类表操作和结果的例子：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; rpush mylist A #如果mylist不存在，会自主创建初始化第一个元素为A</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; rpush mylist B</span><br><span class="line">(integer) 2</span><br><span class="line">127.0.0.1:6379&gt; rpush mylist 0</span><br><span class="line">(integer) 3</span><br><span class="line">127.0.0.1:6379&gt; lrange mylist 0 -1 #0 -1表示按照序号从左到右，-1表示最后一个，用于展示全部</span><br><span class="line">1) &quot;A&quot;</span><br><span class="line">2) &quot;B&quot;</span><br><span class="line">3) &quot;0&quot;</span><br></pre></td></tr></table></figure><br>这些命令都是可变的命令，也就是说你可以一次加入多个元素放入 list：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; rpush mylist 1 2 3 4 5 &quot;foo bar&quot;</span><br><span class="line">(integer) 9</span><br><span class="line">127.0.0.1:6379&gt; lrange mylist 0 -1</span><br><span class="line">1) &quot;A&quot;</span><br><span class="line">2) &quot;B&quot;</span><br><span class="line">3) &quot;0&quot;</span><br><span class="line">4) &quot;1&quot;</span><br><span class="line">5) &quot;2&quot;</span><br><span class="line">6) &quot;3&quot;</span><br><span class="line">7) &quot;4&quot;</span><br><span class="line">8) &quot;5&quot;</span><br><span class="line">9) &quot;foo bar&quot;</span><br></pre></td></tr></table></figure></p>
+<p>在 Redis 的命令操作中，还有一类重要的操作：pop，它可以弹出一个元素，简单的理解就是获取并删除第一个元素，和 push 类似的是它也支持双边的操作，可以从右边弹出一个元素也可以从左边弹出一个元素，对应的指令为 rpop 和 lpop：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; del mylist #删除 初始化列表</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt;  rpush mylist a b c</span><br><span class="line">(integer) 3</span><br><span class="line">127.0.0.1:6379&gt; rpop mylist</span><br><span class="line">&quot;c&quot;</span><br><span class="line">127.0.0.1:6379&gt; lrange mylist 0 -1</span><br><span class="line">1) &quot;a&quot;</span><br><span class="line">2) &quot;b&quot;</span><br><span class="line">127.0.0.1:6379&gt; lpop mylist</span><br><span class="line">&quot;a&quot;</span><br><span class="line">127.0.0.1:6379&gt; lrange mylist 0 -1</span><br><span class="line">1) &quot;b&quot;</span><br></pre></td></tr></table></figure><br>一个列表最多可以包含 4294967295（2 的 32 次方减一） 个元素，这意味着它可以容纳海量的信息，最终瓶颈一般都取决于服务器内存大小。</p>
+<p>事实上，在高级的企业架构当中，会把缓存服务器分离开来，因为数据库服务器和缓存服务器的特点各异，比如对于数据库服务器应该用更快、更大的硬盘，而缓存专用服务器则偏向内存性能，一般都是 64GB 起步。</p>
+<h3 id="List-阻塞操作"><a href="#List-阻塞操作" class="headerlink" title="List 阻塞操作"></a>List 阻塞操作</h3><p>理解阻塞操作对一些请求操作有很大的帮助，关于阻塞操作的作用，这里举一个例子。</p>
+<p>假如你要去楼下买一个汉堡，一个汉堡需要花一定的时间才能做出来，非阻塞式的做法是去付完钱走人，过一段时间来看一下汉堡是否做好了，没好就先离开，过一会儿再来，而且要知道可能不止你一个人在买汉堡，在你离开的时候很可能别人会取走你的汉堡，这是很让人烦的事情。</p>
+<p>阻塞式就不一样了，付完钱一直在那儿等着，不拿到汉堡不走人，并且后面来的人统统排队。</p>
+<p>Redis 提供了阻塞式访问 brpop 和 blpop 命令。用户可以在获取数据不存在时阻塞请求队列，如果在时限内获得数据则立即返回，如果超时还没有数据则返回 null。</p>
+<h3 id="List-常见应用场景"><a href="#List-常见应用场景" class="headerlink" title="List 常见应用场景"></a>List 常见应用场景</h3><p>分析 List 应用场景需要结合它的特点，List 元素是线性有序的，很容易就可以联想到聊天记录，你一言我一语都有先后，因此 List 很适合用来存储聊天记录等顺序结构的数据。</p>
+<h2 id="Hashes"><a href="#Hashes" class="headerlink" title="Hashes"></a>Hashes</h2><p>Redis Hashes 是字符串字段和字符串值之间的映射，因此它们是展现对象的完美数据类型。例如一个有名、姓、年龄等等属性的用户：一个带有一些字段的 hash 仅仅需要一块很小的空间存储，因此你可以存储数以百万计的对象在一个小的 Redis 实例中。哈希主要用来表现对象，它们有能力存储很多对象，因此你可以将哈希用于许多其它的任务。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; hmset user:1000 username antirez birthyear 1977 verified 1</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; hget user:1000 username</span><br><span class="line">&quot;antirez&quot;</span><br><span class="line">127.0.0.1:6379&gt; hget user:1000 birthyear</span><br><span class="line">&quot;1977&quot;</span><br><span class="line">127.0.0.1:6379&gt; hgetall user:1000</span><br><span class="line">1) &quot;username&quot;</span><br><span class="line">2) &quot;antirez&quot;</span><br><span class="line">3) &quot;birthyear&quot;</span><br><span class="line">4) &quot;1977&quot;</span><br><span class="line">5) &quot;verified&quot;</span><br><span class="line">6) &quot;1&quot;</span><br></pre></td></tr></table></figure></p>
+<p>hmset 命令设置一个多域的 hash 表，hget 命令获取指定的单域，hgetall 命令获取指定 key 的所有信息。hmget 类似于 hget，只是返回一个 value 数组。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; hmget user:1000 username birthyear no-such-field</span><br><span class="line">1) &quot;antirez&quot;</span><br><span class="line">2) &quot;1977&quot;</span><br><span class="line">3) (nil)</span><br></pre></td></tr></table></figure>
+<p>同样可以根据需要对 hash 表的表项进行单独的操作<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; hincrby user:1000 birthyear 10</span><br><span class="line">(integer) 1987</span><br><span class="line">127.0.0.1:6379&gt; hgetall user:1000</span><br><span class="line">1) &quot;username&quot;</span><br><span class="line">2) &quot;antirez&quot;</span><br><span class="line">3) &quot;birthyear&quot;</span><br><span class="line">4) &quot;1987&quot;</span><br><span class="line">5) &quot;verified&quot;</span><br><span class="line">6) &quot;1&quot;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h2><p>Redis 集合（Set）是一个<strong>无序</strong>的字符串集合。你可以以 O(1) 的时间复杂度 (无论集合中有多少元素时间复杂度都是常量）完成添加、删除以及测试元素是否存在。</p>
+<p>Redis 集合拥有令人满意的不允许包含相同成员的属性，多次添加相同的元素，最终在集合里只会有一个元素，这意味着它可以非常方便地对数据进行去重操作，一个 Redis 集合的非常有趣的事情是它支持一些服务端的命令从现有的集合出发去进行集合运算，因此你可以在非常短的时间内进行合并（unions）， 求交集（intersections）， 找出不同的元素（differences of sets）。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; sadd myset 1 2 3</span><br><span class="line">(integer) 3</span><br><span class="line">127.0.0.1:6379&gt; smembers myset</span><br><span class="line">1) &quot;1&quot;</span><br><span class="line">2) &quot;2&quot;</span><br><span class="line">3) &quot;3&quot;</span><br><span class="line">127.0.0.1:6379&gt; sismember myset 3</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; sismember myset 30</span><br><span class="line">(integer) 0</span><br><span class="line">127.0.0.1:6379&gt; sismember mys 3</span><br><span class="line">(integer) 0</span><br></pre></td></tr></table></figure>
+<p>sadd 命令产生一个无序集合，返回集合的元素个数。smembers 用于查看集。sismember 用于查看集合是否存在，匹配项包括集合名和元素个数。匹配成功返回 1，匹配失败返回 0。</p>
+<blockquote>
+<p>sismember myset 3<br>sismember myset 30<br>sismember mys 3<br>操作截图：</p>
+</blockquote>
+<h2 id="Sorted-Set"><a href="#Sorted-Set" class="headerlink" title="Sorted Set"></a>Sorted Set</h2><p>Redis 有序集合与普通集合非常相似，是一个没有重复元素的字符串集合。不同之处是有序集合的每一个成员都关联了一个权值，这个权值被用来按照从最低分到最高分的方式排序集合中的成员。集合的成员是唯一的，但是权值可以是重复的。</p>
+<p>使用有序集合你可以以非常快的速度（O(log(N))）添加、删除和更新元素。因为元素是有序的， 所以你也可以很快的根据权值（score）或者次序（position）来获取一个范围的元素。访问有序集合的中间元素也是非常快的，因此你能够使用有序集合作为一个没有重复成员的智能列表。在有序集合中，你可以很快捷的访问一切你需要的东西：有序的元素，快速的存在性测试，快速访问集合的中间元素！简而言之使用有序集合你可以完成许多对性能有极端要求的任务，而那些任务使用其它类型的数据库真的是很难完成的。</p>
+<p>zadd 与 sadd 类似，但是在元素之前多了一个参数，这个参数便是用于排序的。形成一个有序的集合。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">zadd hackers 1940 &quot;Alan Kay&quot;</span><br><span class="line">zadd hackers 1957 &quot;Sophie Wilson&quot;</span><br><span class="line">zadd hackers 1953 &quot;Richard Stallman&quot;</span><br><span class="line">zadd hackers 1949 &quot;Anita Borg&quot;</span><br><span class="line">zadd hackers 1965 &quot;Yukihiro Matsumoto&quot;</span><br><span class="line">zadd hackers 1914 &quot;Hedy Lamarr&quot;</span><br><span class="line">zadd hackers 1916 &quot;Claude Shannon&quot;</span><br><span class="line">zadd hackers 1969 &quot;Linus Torvalds&quot;</span><br><span class="line">zadd hackers 1912 &quot;Alan Turing&quot;</span><br></pre></td></tr></table></figure></p>
+<p>查看集合：zrange 是查看正序的集合，zrevrange 是查看反序的集合。0 表示集合第一个元素，-1 表示集合的倒数第一个元素。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; zrange hackers 0 -1</span><br><span class="line">1) &quot;Alan Turing&quot;</span><br><span class="line">2) &quot;Hedy Lamarr&quot;</span><br><span class="line">3) &quot;Claude Shannon&quot;</span><br><span class="line">4) &quot;Alan Kay&quot;</span><br><span class="line">5) &quot;Anita Borg&quot;</span><br><span class="line">6) &quot;Richard Stallman&quot;</span><br><span class="line">7) &quot;Sophie Wilson&quot;</span><br><span class="line">8) &quot;Yukihiro Matsumoto&quot;</span><br><span class="line">9) &quot;Linus Torvalds&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; zrevrange hackers 0 -1</span><br><span class="line">1) &quot;Linus Torvalds&quot;</span><br><span class="line">2) &quot;Yukihiro Matsumoto&quot;</span><br><span class="line">3) &quot;Sophie Wilson&quot;</span><br><span class="line">4) &quot;Richard Stallman&quot;</span><br><span class="line">5) &quot;Anita Borg&quot;</span><br><span class="line">6) &quot;Alan Kay&quot;</span><br><span class="line">7) &quot;Claude Shannon&quot;</span><br><span class="line">8) &quot;Hedy Lamarr&quot;</span><br><span class="line">9) &quot;Alan Turing&quot;</span><br></pre></td></tr></table></figure>
+<p>使用 withscores 参数返回记录值。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; zrange hackers 0 -1 withscores</span><br><span class="line"> 1) &quot;Alan Turing&quot;</span><br><span class="line"> 2) &quot;1912&quot;</span><br><span class="line"> 3) &quot;Hedy Lamarr&quot;</span><br><span class="line"> 4) &quot;1914&quot;</span><br><span class="line"> 5) &quot;Claude Shannon&quot;</span><br><span class="line"> 6) &quot;1916&quot;</span><br><span class="line"> 7) &quot;Alan Kay&quot;</span><br><span class="line"> 8) &quot;1940&quot;</span><br><span class="line"> 9) &quot;Anita Borg&quot;</span><br><span class="line">10) &quot;1949&quot;</span><br><span class="line">11) &quot;Richard Stallman&quot;</span><br><span class="line">12) &quot;1953&quot;</span><br><span class="line">13) &quot;Sophie Wilson&quot;</span><br><span class="line">14) &quot;1957&quot;</span><br><span class="line">15) &quot;Yukihiro Matsumoto&quot;</span><br><span class="line">16) &quot;1965&quot;</span><br><span class="line">17) &quot;Linus Torvalds&quot;</span><br><span class="line">18) &quot;1969&quot;</span><br></pre></td></tr></table></figure>
+<h1 id="Redis系统管理"><a href="#Redis系统管理" class="headerlink" title="Redis系统管理"></a>Redis系统管理</h1><h2 id="适合全体类型的常用命令"><a href="#适合全体类型的常用命令" class="headerlink" title="适合全体类型的常用命令"></a>适合全体类型的常用命令</h2><h3 id="EXISTS-and-DEL"><a href="#EXISTS-and-DEL" class="headerlink" title="EXISTS and DEL"></a>EXISTS and DEL</h3><p><code>exists key</code>：判断一个 key 是否存在，存在返回 1，否则返回 0。</p>
+<p><code>del key</code>：删除某个 key，或是一系列 key，比如：del key1 key2 key3 key4。成功返回 1，失败返回 0（key 值不存在）。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; set mykey hello</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; exists mykey</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; del mykey</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; exists mykey</span><br><span class="line">(integer) 0</span><br></pre></td></tr></table></figure>
+<h3 id="TYPE-and-KEYS"><a href="#TYPE-and-KEYS" class="headerlink" title="TYPE and KEYS"></a>TYPE and KEYS</h3><p><code>type key</code>：返回某个 key 元素的数据类型 (none:不存在，string:字符，list:列表，set:元组，zset:有序集合，hash:哈希)，key 不存在返回空。</p>
+<p><code>keys key—pattern</code>：返回匹配的 key 列表，比如：keys foo* 表示查找 foo 开头的 keys。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; set mykey x</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; type mykey</span><br><span class="line">string</span><br><span class="line">127.0.0.1:6379&gt; keys my*</span><br><span class="line">1) &quot;mylist&quot;</span><br><span class="line">2) &quot;mykey&quot;</span><br><span class="line">3) &quot;myset&quot;</span><br><span class="line">127.0.0.1:6379&gt; del mykey</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; keys my*</span><br><span class="line">1) &quot;mylist&quot;</span><br><span class="line">2) &quot;myset&quot;</span><br><span class="line">127.0.0.1:6379&gt; type mykey</span><br><span class="line">none</span><br></pre></td></tr></table></figure></p>
+<h3 id="RANDOMKEY-and-CLEAR"><a href="#RANDOMKEY-and-CLEAR" class="headerlink" title="RANDOMKEY and CLEAR"></a>RANDOMKEY and CLEAR</h3><p><code>randomkey</code>：随机获得一个已经存在的 key，如果当前数据库为空，则返回空字符串。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; randomkey</span><br><span class="line">&quot;myset&quot;</span><br></pre></td></tr></table></figure><br><code>clear</code> 清屏</p>
+<h3 id="RENAME-and-RENAMENX"><a href="#RENAME-and-RENAMENX" class="headerlink" title="RENAME and RENAMENX"></a>RENAME and RENAMENX</h3><p><code>rename oldname newname</code>：更改 key 的名字，新键如果存在将被覆盖。</p>
+<p><code>renamenx oldname newname</code>：更改 key 的名字，新键如果存在则更新失败。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; rename mylist newlist</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; exists mylist</span><br><span class="line">(integer) 0</span><br><span class="line">127.0.0.1:6379&gt; exists newlist</span><br><span class="line">(integer) 1</span><br></pre></td></tr></table></figure>
+<h3 id="DBSIZE"><a href="#DBSIZE" class="headerlink" title="DBSIZE"></a>DBSIZE</h3><p><code>dbsize</code> 返回当前数据库的 key 的总数。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; dbsize</span><br><span class="line">(integer) 8</span><br></pre></td></tr></table></figure></p>
+<h2 id="Redis-时间相关命令"><a href="#Redis-时间相关命令" class="headerlink" title="Redis 时间相关命令"></a>Redis 时间相关命令</h2><h3 id="限定-key-生存时间"><a href="#限定-key-生存时间" class="headerlink" title="限定 key 生存时间"></a>限定 key 生存时间</h3><p>这同样是一个无视数据类型的命令，对于临时存储很有用处。避免进行大量的 DEL 操作。</p>
+<p><code>expire</code>：设置某个 key 的过期时间（<strong>秒</strong>)，比如：<code>expire bruce 1000</code> 表示设置 bruce 这个 key 1000 秒后系统自动删除，注意：如果在还没有过期的时候，对值进行了改变，那么那个值会被清除。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; set key some-value</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; expire key 10</span><br><span class="line">(integer) 1</span><br><span class="line">127.0.0.1:6379&gt; get key (马上执行此命令)</span><br><span class="line">&quot;some-value&quot;</span><br><span class="line">127.0.0.1:6379&gt; get key (10s后执行此命令)</span><br><span class="line">(nil)</span><br></pre></td></tr></table></figure><br>结果显示：执行 expire 命令后，马上 get 会显示 key 存在；10 秒后再 get 时，key 已经被自动删除。</p>
+<h3 id="查询-key-剩余生存时间"><a href="#查询-key-剩余生存时间" class="headerlink" title="查询 key 剩余生存时间"></a>查询 key 剩余生存时间</h3><p>限时操作可以在 set 命令中实现，并且可用 <code>ttl</code> 命令查询 key 剩余生存时间。</p>
+<p><code>ttl</code>：查找某个 key 还有多长时间过期，返回时间单位为秒。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; set key 100 ex 30</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; ttl key</span><br><span class="line">(integer) 26</span><br><span class="line">127.0.0.1:6379&gt; ttl key</span><br><span class="line">(integer) 22</span><br></pre></td></tr></table></figure></p>
+<h3 id="清除-key"><a href="#清除-key" class="headerlink" title="清除 key"></a>清除 key</h3><p><code>flushdb</code>：清空当前数据库中的所有键。</p>
+<p><code>flushall</code>：清空所有数据库中的所有键。</p>
+<h2 id="Redis-设置相关命令"><a href="#Redis-设置相关命令" class="headerlink" title="Redis 设置相关命令"></a>Redis 设置相关命令</h2><p>Redis 有其配置文件，可以通过 client-command 窗口查看或者更改相关配置。下面介绍相关命令。</p>
+<h3 id="CONFIG-GET-and-CONFIG-SET"><a href="#CONFIG-GET-and-CONFIG-SET" class="headerlink" title="CONFIG GET and CONFIG SET"></a>CONFIG GET and CONFIG SET</h3><p><code>config get</code>  ：用来读取运行 Redis 服务器的配置参数。</p>
+<p><code>config set</code>：用于更改运行 Redis 服务器的配置参数。</p>
+<p><code>auth</code>：认证密码。</p>
+<p>下面针对 Redis 密码的示例：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; config get requirepass  查看密码</span><br><span class="line">1) &quot;requirepass&quot;</span><br><span class="line">2) &quot;&quot;</span><br><span class="line">127.0.0.1:6379&gt; config set requirepass 12345 # 设置密码为12345</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; config get requirepass # 报错，没有认证</span><br><span class="line">(error) NOAUTH Authentication required.</span><br><span class="line">127.0.0.1:6379&gt; auth 12345 # 认证密码</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; config get requirepass</span><br><span class="line">1) &quot;requirepass&quot;</span><br><span class="line">2) &quot;12345&quot;</span><br></pre></td></tr></table></figure><br>可以通过修改 Redis 的配置文件 <code>redis.conf</code> 修改密码。</p>
+<p><code>config get</code> 命令是以 list 的 key-value 对显示的，如查询数据类型的最大条目：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; auth 12345</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; config get *max-*-entries*</span><br><span class="line">1) &quot;hash-max-ziplist-entries&quot;</span><br><span class="line">2) &quot;512&quot;</span><br><span class="line">3) &quot;set-max-intset-entries&quot;</span><br><span class="line">4) &quot;512&quot;</span><br><span class="line">5) &quot;zset-max-ziplist-entries&quot;</span><br><span class="line">6) &quot;128&quot;</span><br></pre></td></tr></table></figure>
+<p><code>config resetstat</code>：重置数据统计报告，通常返回值为 “OK”。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; config resetstat</span><br><span class="line">OK</span><br></pre></td></tr></table></figure></p>
+<h3 id="查询信息"><a href="#查询信息" class="headerlink" title="查询信息"></a>查询信息</h3><p><code>info [section]</code>：查询 Redis 相关信息。</p>
+<p><code>info</code> 命令可以查询 Redis 几乎所有的信息，其命令选项有如下：</p>
+<ul>
+<li>server: Redis server 的常规信息</li>
+<li>clients: Client 的连接选项</li>
+<li>memory: 存储占用相关信息</li>
+<li>persistence: RDB and AOF 相关信息</li>
+<li>stats: 常规统计</li>
+<li>replication: Master/Slave 请求信息</li>
+<li>cpu: CPU 占用信息统计</li>
+<li>cluster: Redis 集群信息</li>
+<li>keyspace: 数据库信息统计</li>
+<li>all: 返回所有信息</li>
+<li>default: 返回常规设置信息</li>
+</ul>
+<p>若命令参数为空，info 命令返回所有信息。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; info keyspace</span><br><span class="line"># Keyspace</span><br><span class="line">127.0.0.1:6379&gt; info server</span><br><span class="line"># Server</span><br><span class="line">redis_version:5.0.4</span><br><span class="line">redis_git_sha1:00000000</span><br><span class="line">redis_git_dirty:0</span><br><span class="line">redis_build_id:534ea8a77d5f7efc</span><br><span class="line">redis_mode:standalone</span><br><span class="line">os:Linux 5.0.9-arch1-1-ARCH x86_64</span><br><span class="line">arch_bits:64</span><br><span class="line">multiplexing_api:epoll</span><br><span class="line">atomicvar_api:atomic-builtin</span><br><span class="line">gcc_version:8.2.1</span><br><span class="line">process_id:19050</span><br><span class="line">run_id:f9d6cf4324df9d6fb6616750de1424f28bd1fd3c</span><br><span class="line">tcp_port:6379</span><br><span class="line">uptime_in_seconds:73127</span><br><span class="line">uptime_in_days:0</span><br><span class="line">hz:10</span><br><span class="line">configured_hz:10</span><br><span class="line">lru_clock:13020011</span><br><span class="line">executable:/usr/bin/redis-server</span><br><span class="line">config_file:/etc/redis.conf</span><br></pre></td></tr></table></figure>
+<h1 id="Redis-的高级应用"><a href="#Redis-的高级应用" class="headerlink" title="Redis 的高级应用"></a>Redis 的高级应用</h1><h2 id="安全性"><a href="#安全性" class="headerlink" title="安全性"></a>安全性</h2><p>涉及到客户端连接是需要指定密码的（由于 redis 速度相当的快，一秒钟可以 150K 次的密码尝试，所以需要设置一个强度很大的密码）。</p>
+<p>设置密码的方式有两种：</p>
+<ul>
+<li>使用 <code>config set</code> 命令的 <code>requirepass</code> 参数，具体格式为 <code>config set requirepass &quot;password&quot;</code>。</li>
+<li>在 <code>redis.conf</code> 文件中设置 <code>requirepass</code> 属性，后面为密码。<br>输入认证的方式也有两种：</li>
+</ul>
+<p>登录时可以使用 <code>redis-cli -a password</code>。登录后可以使用 <code>auth password</code>。</p>
+<h2 id="设置密码"><a href="#设置密码" class="headerlink" title="设置密码"></a>设置密码</h2><p>第一种密码设置方式在上一个实验中已经提到（在 CONFIG SET 命令讲解的实例），此处我们来看看第二种方式设置密码。</p>
+<p>首先需要进入 Redis 的安装目录，然后修改配置文件 <code>redis.conf</code>。根据 grep 命令的结果，使用 vim 编辑器修改 <code># requirepass foobared</code> 为 <code>requirepass 12345</code>，然后保存退出。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">grep -n requirepass /etc/redis/redis.conf</span><br><span class="line">sudo vim /etc/redis/redis.conf</span><br></pre></td></tr></table></figure>
+<h2 id="重启-redis-server-与-redis-cli"><a href="#重启-redis-server-与-redis-cli" class="headerlink" title="重启 redis-server 与 redis-cli"></a>重启 redis-server 与 redis-cli</h2><p>重启 redis server：</p>
+<p><code>sudo service redis-server restart</code> 或者 <code>sudo systemctl restart redis</code></p>
+<p>进入到 redis-cli 交互界面进行验证：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt; info</span><br><span class="line">&gt; auth 12345</span><br><span class="line">&gt; info</span><br><span class="line">&gt; exit</span><br></pre></td></tr></table></figure>
+<p>结果表明第一次 info 命令失败，在 auth 认证之后 info 命令正常返回，最后退出 redis-cli。</p>
+<p>另外一种密码认证方式，启动客户端时验证：<code>redis-cli -a 12345</code></p>
+<h2 id="主从复制"><a href="#主从复制" class="headerlink" title="主从复制"></a>主从复制</h2><p>为了分担服务器压力，会在特定情况下部署多台服务器分别用于缓存的读和写操作，用于写操作的服务器称为主服务器，用于读操作的服务器称为从服务器。</p>
+<p>从服务器通过 psync 操作同步主服务器的写操作，并按照一定的时间间隔更新主服务器上新写入的内容。</p>
+<p>Redis 主从复制的过程：</p>
+<ol>
+<li>Slave 与 Master 建立连接，发送 psync 同步命令。</li>
+<li>Master 会启动一个后台进程，将数据库快照保存到文件中，同时 Master 主进程会开始收集新的写命令并缓存。</li>
+<li>后台完成保存后，就将此文件发送给 Slave。</li>
+<li>Slave 将此文件保存到磁盘上。</li>
+</ol>
+<p>Redis 主从复制特点：</p>
+<ol>
+<li>可以拥有多个 Slave。</li>
+<li>多个 Slave 可以连接同一个 Master 外，还可以连接到其它的 Slave。（当 Master 宕机后，相连的 Slave 转变为 Master）</li>
+<li>主从复制不会阻塞 Master，在同步数据时， Master 可以继续处理 Client 请求。</li>
+<li>提高了系统的可伸缩性。</li>
+</ol>
+<p>从服务器的主要作用是响应客户端的数据请求，比如返回一篇博客信息。</p>
+<p>上面说到了主从复制是不会阻塞 Master 的，就是说 Slave 在从 Master 复制数据时，Master 的删改插入等操作继续进行不受影响。</p>
+<p>如果在同步过程中，主服务器修改了一篇博客，而同步到从服务器上的博客是修改前的。这时候就会出现时间差，即修改了博客过后，在访问网站的时候还是原来的数据，这是因为从服务器还未同步最新的更改，这也就意味着非阻塞式的同步只能应用于对读数据延迟接受度较高的场景。</p>
+<p>要建立这样一个主从关系的缓存服务器，只需要在 Slave 端执行命令:<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># SLAVEOF IPADDRESS:PORT</span><br><span class="line">&gt; SLAVEOF 127.0.0.1:6379</span><br></pre></td></tr></table></figure><br>如果主服务器设置了连接密码，就需要在从服务器中事先设置好：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">config set masterauth &lt;password&gt;</span><br></pre></td></tr></table></figure><br>这样，当前服务器就作为 127.0.0.1:6379 下的一个从服务器，它将定期从该服务器复制数据到自身。</p>
+<p>在以前的版本中（2.8 以前），你应该慎用 redis 的主从复制功能，因为它的同步机制效率低下，可以想象每一次短线重连都要复制主服务器上的全部数据，算上网络通讯所耗费的时间，反而可能达不到通过 redis 缓存来提升应用响应速度的效果。但是幸运的是，官方在 2.8 以后推出了解决方案，通过部分同步来解决大量的重复操作。</p>
+<p>这需要主服务器和从服务器都至少达到 2.8 的版本要求。</p>
+<h2 id="事务处理"><a href="#事务处理" class="headerlink" title="事务处理"></a>事务处理</h2><p>Redis 的事务处理比较简单。只能保证 client 发起的事务中的命令可以连续的执行，而且不会插入其它的 client 命令，当一个 client 在连接中发出 multi 命令时，这个连接就进入一个事务的上下文，该连接后续的命令不会执行，而是存放到一个队列中，当执行 exec 命令时，redis 会顺序的执行队列中的所有命令。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; multi</span><br><span class="line">OK</span><br><span class="line">127.0.0.1:6379&gt; set name a</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; set name b</span><br><span class="line">QUEUED</span><br><span class="line">127.0.0.1:6379&gt; exec</span><br><span class="line">1) OK</span><br><span class="line">2) OK</span><br><span class="line">127.0.0.1:6379&gt; get name</span><br><span class="line">&quot;b&quot;</span><br></pre></td></tr></table></figure></p>
+<p>需要注意的是，redis 对于事务的处理方式比较特殊，它<strong>不会在事务过程中出错时恢复到之前的状态</strong>，这在实际应用中导致我们<strong>不能依赖 redis 的事务来保证数据一致性</strong>。</p>
+<h2 id="持久化机制"><a href="#持久化机制" class="headerlink" title="持久化机制"></a>持久化机制</h2><p>内存和磁盘的区别除了速度差别以外，还有就是内存中的数据会在重启之后消失，持久化的作用就是要将这些数据长久存到磁盘中以支持长久使用。</p>
+<p>Redis 是一个支持持久化的内存数据库，Redis 需要经常将内存中的数据同步到磁盘来保证持久化。</p>
+<p>Redis 支持两种持久化方式：</p>
+<ol>
+<li>snapshotting（快照）：将数据存放到文件里，默认方式。</li>
+</ol>
+<p>是将内存中的数据以快照的方式写入到二进制文件中，默认文件 dump.rdb，可以通过配置设置自动做快照持久化的方式。可配置 Redis 在 n 秒内如果超过 m 个 key 被修改就自动保存快照。比如：</p>
+<p>save 900 1：900 秒内如果超过 1 个 key 被修改，则发起快照保存。</p>
+<p>save 300 10：300 秒内如果超过 10 个 key 被修改，则快照保存。</p>
+<ol>
+<li>Append-only file（缩写为 aof）：将读写操作存放到文件中。</li>
+</ol>
+<p>由于快照方式在一定间隔时间做一次，所以如果 Redis 意外 down 掉的话，就会丢失最后一次快照后的所有修改。</p>
+<p>aof 比快照方式有更好的持久化性，是由于使用 aof 时，redis 会将每一个收到的写命令都通过 write 函数写入到文件中，当 redis 启动时会通过重新执行文件中保存的写命令来在内存中重新建立整个数据库的内容。</p>
+<p>由于 os 会在内核中缓存 write 做的修改，所以可能不是立即写到磁盘上，这样 aof 方式的持久化也还是有可能会丢失一部分数据。可以通过配置文件告诉 redis 我们想要通过 fsync 函数强制 os 写入到磁盘的时机。</p>
+<p>配置文件中的可配置参数：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">appendonly yes //启用 aof 持久化方式</span><br><span class="line"></span><br><span class="line"># appendfsync always //收到写命令就立即写入磁盘，最慢，但是保证了数据的完整持久化</span><br><span class="line"></span><br><span class="line">appendfsync everysec //每秒钟写入磁盘一次，在性能和持久化方面做了很好的折中</span><br><span class="line"></span><br><span class="line"># appendfsync no //完全依赖 os，性能最好，持久化没有保证</span><br></pre></td></tr></table></figure><br>在 redis-cli 的命令中，save 命令是将数据写入磁盘中。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; help save</span><br><span class="line"></span><br><span class="line">  SAVE -</span><br><span class="line">  summary: Synchronously save the dataset to disk</span><br><span class="line">  since: 1.0.0</span><br><span class="line">  group: server</span><br><span class="line"></span><br><span class="line">127.0.0.1:6379&gt; save</span><br><span class="line">OK</span><br></pre></td></tr></table></figure></p>
+<h2 id="虚拟内存的使用"><a href="#虚拟内存的使用" class="headerlink" title="虚拟内存的使用"></a>虚拟内存的使用</h2><p>虚拟内存管理在 2.6 及之上版本取消了，取消了是指这部分内容在后面的版本会由 redis 软件自身管理，在本实验中，选择的是 2.8.4 版本的 redis，所以实验中的配置文件没有虚拟内存管理功能的配置选项，此处仅为讲解。</p>
+<p>Redis 的虚拟内存是暂时把不经常访问的数据从内存交换到磁盘中，从而腾出内存空间用于其它的访问数据，尤其对于 redis 这样的内存数据库，内存总是不够用的。除了分隔到多个 redis server 外，提高数据库容量的方法就是使用虚拟内存，把那些不常访问的数据交换到磁盘上。</p>
+<p>通过配置 vm 相关的 <code>redis.config</code> 配置：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 开启 vm 功能</span><br><span class="line">vm-enable yes</span><br><span class="line"></span><br><span class="line"># 交换出来的 value 保存的文件路径</span><br><span class="line">vm-swap-file /tmp/redis.swap</span><br><span class="line"></span><br><span class="line"># redis 使用的最大内存上限</span><br><span class="line">vm-max-memory 10000000</span><br><span class="line"></span><br><span class="line"># 每个页面的大小 32 字节</span><br><span class="line">vm-page-size 32</span><br><span class="line"></span><br><span class="line"># 最多使用多少个页面</span><br><span class="line">vm-pages 123217729</span><br><span class="line"></span><br><span class="line"># 用于执行 value 对象换入的工作线程数量</span><br><span class="line">vm-max-threads 4</span><br></pre></td></tr></table></figure></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Redis/" rel="tag"># Redis</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag"># 数据库</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/21/%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E7%9A%84share/" rel="prev" title="命令行下的share">
+      <i class="fa fa-chevron-left"></i> 命令行下的share
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/10/22/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E6%9C%89%E5%87%A0%E7%A7%8D%E5%86%99%E6%B3%95%EF%BC%9F/" rel="next" title="单例模式有几种写法？">
+      单例模式有几种写法？ <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">Redis简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.1.</span> <span class="nav-text">Redis 是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-%E7%9A%84%E4%BC%98%E7%82%B9"><span class="nav-number">1.2.</span> <span class="nav-text">Redis 的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis%E7%9A%84%E5%AE%89%E8%A3%85"><span class="nav-number">1.3.</span> <span class="nav-text">Redis的安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E9%80%9A%E7%94%A8%E7%9A%84%E6%BA%90%E7%A0%81%E5%8C%85%E8%BF%9B%E8%A1%8C%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85%E3%80%82"><span class="nav-number">1.3.1.</span> <span class="nav-text">使用通用的源码包进行编译安装。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pacman"><span class="nav-number">1.3.2.</span> <span class="nav-text">Pacman</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis%E5%90%AF%E5%8A%A8"><span class="nav-number">1.4.</span> <span class="nav-text">Redis启动</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">Redis数据类型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Strings"><span class="nav-number">2.1.</span> <span class="nav-text">Strings</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Lists"><span class="nav-number">2.2.</span> <span class="nav-text">Lists</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#List-%E9%98%BB%E5%A1%9E%E6%93%8D%E4%BD%9C"><span class="nav-number">2.2.1.</span> <span class="nav-text">List 阻塞操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#List-%E5%B8%B8%E8%A7%81%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">2.2.2.</span> <span class="nav-text">List 常见应用场景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hashes"><span class="nav-number">2.3.</span> <span class="nav-text">Hashes</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Set"><span class="nav-number">2.4.</span> <span class="nav-text">Set</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sorted-Set"><span class="nav-number">2.5.</span> <span class="nav-text">Sorted Set</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">Redis系统管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%82%E5%90%88%E5%85%A8%E4%BD%93%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">3.1.</span> <span class="nav-text">适合全体类型的常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#EXISTS-and-DEL"><span class="nav-number">3.1.1.</span> <span class="nav-text">EXISTS and DEL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TYPE-and-KEYS"><span class="nav-number">3.1.2.</span> <span class="nav-text">TYPE and KEYS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RANDOMKEY-and-CLEAR"><span class="nav-number">3.1.3.</span> <span class="nav-text">RANDOMKEY and CLEAR</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RENAME-and-RENAMENX"><span class="nav-number">3.1.4.</span> <span class="nav-text">RENAME and RENAMENX</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DBSIZE"><span class="nav-number">3.1.5.</span> <span class="nav-text">DBSIZE</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-%E6%97%B6%E9%97%B4%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4"><span class="nav-number">3.2.</span> <span class="nav-text">Redis 时间相关命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%90%E5%AE%9A-key-%E7%94%9F%E5%AD%98%E6%97%B6%E9%97%B4"><span class="nav-number">3.2.1.</span> <span class="nav-text">限定 key 生存时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2-key-%E5%89%A9%E4%BD%99%E7%94%9F%E5%AD%98%E6%97%B6%E9%97%B4"><span class="nav-number">3.2.2.</span> <span class="nav-text">查询 key 剩余生存时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%85%E9%99%A4-key"><span class="nav-number">3.2.3.</span> <span class="nav-text">清除 key</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-%E8%AE%BE%E7%BD%AE%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4"><span class="nav-number">3.3.</span> <span class="nav-text">Redis 设置相关命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CONFIG-GET-and-CONFIG-SET"><span class="nav-number">3.3.1.</span> <span class="nav-text">CONFIG GET and CONFIG SET</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E4%BF%A1%E6%81%AF"><span class="nav-number">3.3.2.</span> <span class="nav-text">查询信息</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Redis-%E7%9A%84%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">Redis 的高级应用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E6%80%A7"><span class="nav-number">4.1.</span> <span class="nav-text">安全性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%AF%86%E7%A0%81"><span class="nav-number">4.2.</span> <span class="nav-text">设置密码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E5%90%AF-redis-server-%E4%B8%8E-redis-cli"><span class="nav-number">4.3.</span> <span class="nav-text">重启 redis-server 与 redis-cli</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6"><span class="nav-number">4.4.</span> <span class="nav-text">主从复制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86"><span class="nav-number">4.5.</span> <span class="nav-text">事务处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%81%E4%B9%85%E5%8C%96%E6%9C%BA%E5%88%B6"><span class="nav-number">4.6.</span> <span class="nav-text">持久化机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">4.7.</span> <span class="nav-text">虚拟内存的使用</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2020/04/30/Redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/";
+    this.page.identifier = "2020/04/30/Redis学习笔记/";
+    this.page.title = "Redis学习笔记";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

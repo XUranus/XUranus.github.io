@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="请求堆上分配内存需要操作系统的参与，频繁的向请求内存开销很大。为了优化这个问题，可以把预先分配一部分内存放在池子里。 C++在堆上创建对象一般是用new，new的执行包含了两个过程：  分配内存 初始化对象  而delete的执行也包含了两个过程：  对象析构 释放内存  当创建单个对象的时候，我们拥有构造对象所需的值，我们通常希望内存分配和对象初始化组合在一起；但是连续分配一堆对象的时候，我们往">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解std::allocator&lt;T&gt;">
+<meta property="og:url" content="http://xuranus.github.io/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3std-allocator/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="请求堆上分配内存需要操作系统的参与，频繁的向请求内存开销很大。为了优化这个问题，可以把预先分配一部分内存放在池子里。 C++在堆上创建对象一般是用new，new的执行包含了两个过程：  分配内存 初始化对象  而delete的执行也包含了两个过程：  对象析构 释放内存  当创建单个对象的时候，我们拥有构造对象所需的值，我们通常希望内存分配和对象初始化组合在一起；但是连续分配一堆对象的时候，我们往">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-07-03T21:34:17.000Z">
+<meta property="article:modified_time" content="2022-07-17T02:00:48.964Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://xuranus.github.io/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3std-allocator/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>深入理解std::allocator<T> | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3std-allocator/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入理解std::allocator<T>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-07-03 21:34:17" itemprop="dateCreated datePublished" datetime="2022-07-03T21:34:17Z">2022-07-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-07-17 02:00:48" itemprop="dateModified" datetime="2022-07-17T02:00:48Z">2022-07-17</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3std-allocator/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/04/深入理解std-allocator/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>3.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>请求堆上分配内存需要操作系统的参与，频繁的向请求内存开销很大。为了优化这个问题，可以把预先分配一部分内存放在池子里。</p>
+<p>C++在堆上创建对象一般是用<code>new</code>，<code>new</code>的执行包含了两个过程：</p>
+<ol>
+<li>分配内存</li>
+<li>初始化对象</li>
+</ol>
+<p>而<code>delete</code>的执行也包含了两个过程：</p>
+<ol>
+<li>对象析构</li>
+<li>释放内存</li>
+</ol>
+<p>当创建单个对象的时候，我们拥有构造对象所需的值，我们通常希望内存分配和对象初始化组合在一起；但是连续分配一堆对象的时候，我们往往希望分配内存和对象初始化分离，先分配一大快内存，在需要时再按需执行对象的初始化，此时如果将内存分配和对象初始化放在一起则会导致不必要的性能开销。例如<code>new std::vector&lt;T&gt;(10)</code>，我们希望只分配10个<code>T</code>类型的空间，而不执行<code>T</code>的默认构造方法，只有在<code>emplace_back</code>的时候才对内存初始化。</p>
+<span id="more"></span>
+<p>标准库中提供的<code>std::allocator&lt;T&gt;</code>模板类允许我们将内存分配和对象初始化分离，使用<code>std::allocator&lt;T&gt;</code>通常会提供更好的性能和更灵活的内存管理能力。</p>
+<p><code>std::allocator&lt;T&gt;</code>定义在头文件<code>&lt;memory&gt;</code>中，提供一种类型感知的内存分配方法，它分配的内存是原始的、未构造的。</p>
+<p>allocator分配的内存是未构造的(unconstructed)。我们按需要在此内存中构造对象。在新标准库中，construct成员函数接受一个指针和零个或多个额外参数，在给定位置构造一个元素。额外参数用来初始化构造的对象。类似make_shared的参数，这些额外参数必须是与构造的对象的类型相匹配的合法的初始化器。</p>
+<p>在早期版本的标准库中，construct只接受两个参数：指向创建对象位置的指针和一个元素类型的值。因此，我们只能将一个元素拷贝到未构造空间中，而不能用元素类型的任何其它构造函数来构造一个元素。还未构造对象的情况下就使用原始内存是错误的。为了使用allocator返回的内存，我们必须用construct构造对象。使用未构造的内存，其行为是未定义的。</p>
+<p><code>std::allocator&lt;T&gt;</code>支持的方法如下：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>std::allocator&lt;T&gt;()</code></td>
+<td>构造一个能够分配<code>T</code>类型对象的allocator对象</td>
+</tr>
+<tr>
+<td><code>T* allocate(int n)</code></td>
+<td>分配一段原始的未初始化的内存，长度为 <code>n * sizeof(T)</code>，返回分配的地址</td>
+</tr>
+<tr>
+<td><code>deallocate(T* p, n)</code></td>
+<td>释放指针<code>p</code>开始的，长度为<code>n * sizeof(T)</code>的连续内存空间。<code>p</code>必须是<code>allocate</code>返回的地址，且<code>n</code>必须是<code>p</code>指向内存创建时候的大小。调用之前必须先调用<code>destroy()</code></td>
+</tr>
+<tr>
+<td><code>construct(T* p, args...)</code></td>
+<td>在<code>p</code>指向的地址处用<code>args</code>参数列表构造<code>T</code>类型对象</td>
+</tr>
+<tr>
+<td><code>destroy(T* p)</code></td>
+<td>对<code>p</code>指向的地址的对象执行析构</td>
+</tr>
+</tbody>
+</table>
+</div>
+<pre class="mermaid">flowchart LR
+  subgraph new [new]
+    allocate --> construct
+  end
+  subgraph delete [delete]
+    destroy --> deallocate
+  end
+  construct --> destroy</pre>
+
+<p>使用<code>std::allocator&lt;T&gt;</code>来管理一个对象的生命周期时，先用<code>allocate</code>分配一段原始的、未初始化的内存，然后用<code>construct()</code>在这段内存上初始化对象。用<code>destroy()</code>析构对象，析构后的内存可以用<code>deallocate()</code>归还给操作系统，也可以再次用<code>construct()</code>在上面构造其他对象。</p>
+<blockquote>
+<p>传递给<code>deallocate()</code>的指针不能为空，它必须指向由<code>allocate()</code>分配的内存。而且，传递给<code>deallocate()</code>的大小参数必须与调用<code>allocate()</code>分配内存时提供的大小参数具有一样的值</p>
+</blockquote>
+<p>标准库还为<code>std::allocator&lt;T&gt;</code>类定义了两个伴随算法，可以在迭代器指向的未初始化内存中创建对象：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>uninitialized_copy(std::iterator&lt;T&gt; begin, std::iterator&lt;T&gt; end, std::iterator&lt;T&gt; iter)</code></td>
+<td>从迭代器<code>begin</code>到<code>end</code>之间的内存依次拷贝到<code>iter</code>开始的的未初始化的内存中</td>
+</tr>
+<tr>
+<td><code>uninitialized_copy_n(std::iterator&lt;T&gt; begin, int n, std::iterator&lt;T&gt; iter)</code></td>
+<td>从迭代器<code>begin</code>开始，拷贝<code>n</code>个元素到<code>iter</code>开始的内存中</td>
+</tr>
+<tr>
+<td><code>uninitialized_fill(std::iterator&lt;T&gt; begin, std::iterator&lt;T&gt; end, T v)</code></td>
+<td>将<code>begin</code>和<code>end</code>之间的内容用<code>v</code>填充</td>
+</tr>
+<tr>
+<td></td>
+</tr>
+<tr>
+<td><code>uninitialized_fill_n(std::iterator&lt;T&gt; begin, int n, T v)</code></td>
+<td>从<code>begin</code>开始的位置依次拷贝<code>n</code>个值为<code>v</code>的对象</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code>std::allocator&lt;T&gt;</code>是STL容器的默认内存分配器。你还可以替换自己的分配器，这允许你控制标准容器分配内存的方式。</p>
+<p>例子：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*================================================================</span></span><br><span class="line"><span class="comment">*   Copyright (C) 2022 XUranus All rights reserved.</span></span><br><span class="line"><span class="comment">*   </span></span><br><span class="line"><span class="comment">*   File:         test_allocator.cpp</span></span><br><span class="line"><span class="comment">*   Author:       XUranus</span></span><br><span class="line"><span class="comment">*   Date:         2022-06-17-</span></span><br><span class="line"><span class="comment">*   Description:  </span></span><br><span class="line"><span class="comment">*</span></span><br><span class="line"><span class="comment">================================================================*/</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;memory&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cassert&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TEST1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::allocator&lt;std::string&gt; strAlloc;</span><br><span class="line">    std::string *str = strAlloc.<span class="built_in">allocate</span>(<span class="number">3</span>);</span><br><span class="line">    std::string *p = str;</span><br><span class="line"></span><br><span class="line">    strAlloc.<span class="built_in">construct</span>(p); <span class="comment">// &quot;&quot;</span></span><br><span class="line">    <span class="built_in">assert</span>(p-&gt;<span class="built_in">empty</span>());</span><br><span class="line"></span><br><span class="line">    strAlloc.<span class="built_in">construct</span>(++p, <span class="number">5</span>, <span class="string">&#x27;a&#x27;</span>); <span class="comment">// &quot;aaaaa&quot;</span></span><br><span class="line">    <span class="built_in">assert</span>(*p == <span class="string">&quot;aaaaa&quot;</span>);</span><br><span class="line">    </span><br><span class="line">    strAlloc.<span class="built_in">construct</span>(++p, <span class="string">&quot;Hello&quot;</span>); <span class="comment">// &quot;Hello&quot;</span></span><br><span class="line">    <span class="built_in">assert</span>(*p == <span class="string">&quot;Hello&quot;</span>);</span><br><span class="line"></span><br><span class="line">    strAlloc.<span class="built_in">destroy</span>(str + <span class="number">1</span>);</span><br><span class="line">    strAlloc.<span class="built_in">construct</span>(str + <span class="number">1</span>, <span class="string">&quot;new string&quot;</span>);</span><br><span class="line">    <span class="built_in">assert</span>(*(str + <span class="number">1</span>) == <span class="string">&quot;new string&quot;</span>);</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    strAlloc.<span class="built_in">destroy</span>(str);</span><br><span class="line">    strAlloc.<span class="built_in">destroy</span>(str + <span class="number">1</span>);</span><br><span class="line">    strAlloc.<span class="built_in">destroy</span>(str + <span class="number">2</span>);</span><br><span class="line">    strAlloc.<span class="built_in">deallocate</span>(str, <span class="number">3</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TEST2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::vector&lt;<span class="keyword">int</span>&gt; vec &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;;</span><br><span class="line">    std::allocator&lt;<span class="keyword">int</span>&gt; intAlloc;</span><br><span class="line">    <span class="keyword">int</span>* p = intAlloc.<span class="built_in">allocate</span>(<span class="number">6</span>); <span class="comment">// p = &#123; ?, ?, ?, ?, ?, ? &#125;</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">int</span>* q = std::<span class="built_in">uninitialized_copy</span>(vec.<span class="built_in">begin</span>(), vec.<span class="built_in">end</span>(), p); <span class="comment">// p = &#123; 1, 2, 3, ?, ?, ? &#125;</span></span><br><span class="line">    std::<span class="built_in">uninitialized_fill_n</span>(q, <span class="number">3</span>, <span class="number">10</span>); <span class="comment">// p = &#123; 1, 2, 3, 10, 10, 10&#125;;</span></span><br><span class="line">    <span class="built_in">assert</span>(*p == <span class="number">1</span>);</span><br><span class="line">    <span class="built_in">assert</span>(*(p + <span class="number">3</span>) == <span class="number">10</span>);</span><br><span class="line">    </span><br><span class="line">    intAlloc.<span class="built_in">deallocate</span>(p, <span class="number">6</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">TEST1</span>();</span><br><span class="line">    <span class="built_in">TEST2</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;SUCESS&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV15h41167wt?spm_id_from=333.337.search-card.all.click&amp;vd_source=7b12ced4d39cf756884de8d6e05af036">std::allocator 是什么？重点不是“是什么”，而是“为什么”</a></li>
+<li><a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/memory/allocator">cpp reference: allocator</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/07/04/ASAN%E3%80%81TSAN%E3%80%81UBSAN%E3%80%81KASAN%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93/" rel="prev" title="ASAN、TSAN、UBSAN、KASAN使用总结">
+      <i class="fa fa-chevron-left"></i> ASAN、TSAN、UBSAN、KASAN使用总结
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3C-%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/" rel="next" title="深入理解C++ 智能指针">
+      深入理解C++ 智能指针 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3std-allocator/";
+    this.page.identifier = "2022/07/04/深入理解std-allocator/";
+    this.page.title = "深入理解std::allocator<T>";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

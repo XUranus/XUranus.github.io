@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="Shadowsocks 不安全深圳正在利用精准SS协议识别技术查禁VPN上网,查到有使用VPN行为就停宽带，写了保证书才给恢复宽带。运营商直接从源头监控你网络接入的情况。任何浏览的网址和数据都被监控，翻墙的事情也就显而易见。 SSR 成为新宠SSR版本的出现，改变了SS单纯的TCP发包模式，利用UDP和TCP转换，将协议流量特征降到最低，同时混淆及自定义协议接口，将流量变成隐性且不易察觉，特别是后">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ss升级ssr">
+<meta property="og:url" content="http://xuranus.github.io/2017/10/12/ss%E5%8D%87%E7%BA%A7ssr/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="Shadowsocks 不安全深圳正在利用精准SS协议识别技术查禁VPN上网,查到有使用VPN行为就停宽带，写了保证书才给恢复宽带。运营商直接从源头监控你网络接入的情况。任何浏览的网址和数据都被监控，翻墙的事情也就显而易见。 SSR 成为新宠SSR版本的出现，改变了SS单纯的TCP发包模式，利用UDP和TCP转换，将协议流量特征降到最低，同时混淆及自定义协议接口，将流量变成隐性且不易察觉，特别是后">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-10-11T22:30:59.000Z">
+<meta property="article:modified_time" content="2021-09-05T12:51:13.909Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="科学上网">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://xuranus.github.io/2017/10/12/ss%E5%8D%87%E7%BA%A7ssr/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>ss升级ssr | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2017/10/12/ss%E5%8D%87%E7%BA%A7ssr/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ss升级ssr
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-10-11 22:30:59" itemprop="dateCreated datePublished" datetime="2017-10-11T22:30:59Z">2017-10-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/10/12/ss%E5%8D%87%E7%BA%A7ssr/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/10/12/ss升级ssr/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>1.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Shadowsocks-不安全"><a href="#Shadowsocks-不安全" class="headerlink" title="Shadowsocks 不安全"></a>Shadowsocks 不安全</h2><p>深圳正在利用精准SS协议识别技术查禁VPN上网,查到有使用VPN行为就停宽带，写了保证书才给恢复宽带。运营商直接从源头监控你网络接入的情况。任何浏览的网址和数据都被监控，翻墙的事情也就显而易见。</p>
+<h2 id="SSR-成为新宠"><a href="#SSR-成为新宠" class="headerlink" title="SSR 成为新宠"></a>SSR 成为新宠</h2><p>SSR版本的出现，改变了SS单纯的TCP发包模式，利用UDP和TCP转换，将协议流量特征降到最低，同时混淆及自定义协议接口，将流量变成隐性且不易察觉，特别是后期redirect参数，甚至可以将Twitter的流量伪装成bing的流量发包传输，整体来说SSR版本后期定制性不可小觑。</p>
+<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><p>全能代理，同一端口支持socks4/socks4a/socks5/http<br>节点统计，包括延迟、连接数、当前下载速度、最高速度、出错率等等<br>连接管理，随时断开指定节点的连接，或修改节点后自动断开<br>协议转换，把UDP包封装于TCP里发送<br>多重代理，通过设置前置socks5/http代理，可达到任意重代理<br>协议插件，支持自定义协议和协议混淆</p>
+<span id="more"></span>
+<h3 id="SSR-官网介绍："><a href="#SSR-官网介绍：" class="headerlink" title="SSR 官网介绍："></a>SSR 官网介绍：</h3><p>这里是ShadowsocksR的非常简陋的辣鸡主页。本软件是很少人知道的网络减速器，专门通过奇怪的加密和协议，让你机器跑满CPU，以便让更多人享受龟爬般的网络，感受进度条永远卡在99%的快感。</p>
+<h3 id="SSR-服务端"><a href="#SSR-服务端" class="headerlink" title="SSR 服务端"></a>SSR 服务端</h3><p>使用 docker 可以最快速地完成安装。</p>
+<ol>
+<li>安装 docker 和启动 docker</li>
+</ol>
+<h4 id="centos-系统"><a href="#centos-系统" class="headerlink" title="centos 系统"></a>centos 系统</h4><p><code>yum update &amp;&amp; yum install -y docker &amp;&amp; systemctl start docker</code></p>
+<h4 id="ubuntu-系统"><a href="#ubuntu-系统" class="headerlink" title="ubuntu 系统"></a>ubuntu 系统</h4><p><code>apt-get update &amp;&amp; apt-get install -y docker &amp;&amp; service docker start</code><br>执行 docker ps， 如果看到下图，就表示 docker 安装成功了。</p>
+<ol>
+<li><p>下载和启动 SSR<br><code>-p 8888:8888</code> 意思是 SSR 跑着哪个端口，<code>-p 8000:8888</code>，客户端链接的时候是配置 8000 端口<br><code>$PASSWORD</code> 替换为你想要的密码<br><code>docker pull breakwa11/shadowsocksr &amp;&amp; docker run -itd -p 8888:8888 --env SERVER_PORT=8888 --env PASSWORD=$PASSWORD --name ssr breakwa11/shadowsocksr</code></p>
+</li>
+<li><p>查看 启动情况<br><code>docker logs -f ssr</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">server.py:106 server start with protocol[auth_aes128_md5] password [liuxingvpn123] method [aes-128-ctr] obfs [tls1.2_ticket_auth_compatible] obfs_param []</span><br></pre></td></tr></table></figure>
+<p>如果看到上面这样一段信息，就表示安装成功了。这段信息显示了 protocol，password，method，obfs_param，客户端需要和服务器端设置成一样，才能连接成功。</p>
+</li>
+<li><p>重启<br><code>docker restart ssr</code></p>
+</li>
+</ol>
+<h3 id="加密方式和混淆"><a href="#加密方式和混淆" class="headerlink" title="加密方式和混淆"></a>加密方式和混淆</h3><p>想探究原理的，请看这篇文章：<a target="_blank" rel="noopener" href="https://github.com/breakwa11/shadowsocks-rss/blob/master/ssr.md">https://github.com/breakwa11/shadowsocks-rss/blob/master/ssr.md</a><br>没有要求的，直接使用系统默认设置即可。ssr 已经选了一个比较适合的方案，auth_aes128_md5 + tls1.2_ticket_auth_compatible</p>
+<h3 id="进阶配置"><a href="#进阶配置" class="headerlink" title="进阶配置"></a>进阶配置</h3><p>选择何种TCP协议和混淆模式因各地区和VPS属性而定，这里面的变量太大，就是原作者也无法提供一种准确的恒定参数，那么首先看看各参数的解释（来自作者Wiki）</p>
+<h3 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h3><p>Android APP: SSR-android<br>iOS APP： Shadowrocket, Potatso2, Cross<br>MAC APP：ShadowsocksX-NG, ShadowsocksX-R<br>其它跨平台分支：avege, electron-ssr  </p>
+<p>客户端采用和服务器端同样的配置即可，客户端可以增加一个混淆参数，自由发挥即可。</p>
+<p>Port: 端口<br>Password: 填一个密码<br>Encrypt: 选择一种加密方式，根据服务器的设置<br>Protocol: 选择一种协议，根据服务器的设置<br>Protocolparam: 不用填<br>Obfs: 如果你的运营商没有封锁 SS 可以选择 plain，如果你的运营商是小运营  商，推荐选择 tls1.2_ticket_auth 或者 http_simple<br>Obfs_params: 可以不填  </p>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>SSR 到底能不能躲开监管，还有待考证。至少目前来说成为了我新的得力工具。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/" rel="tag"># 科学上网</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/10/09/Git%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/" rel="prev" title="Git使用入门">
+      <i class="fa fa-chevron-left"></i> Git使用入门
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/10/28/Linux%E4%B8%8B%E7%9A%84%E7%A3%81%E5%8A%9B%E4%B8%8B%E8%BD%BD%E5%B7%A5%E5%85%B7/" rel="next" title="Linux下的磁力下载工具">
+      Linux下的磁力下载工具 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Shadowsocks-%E4%B8%8D%E5%AE%89%E5%85%A8"><span class="nav-number">1.</span> <span class="nav-text">Shadowsocks 不安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SSR-%E6%88%90%E4%B8%BA%E6%96%B0%E5%AE%A0"><span class="nav-number">2.</span> <span class="nav-text">SSR 成为新宠</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E7%82%B9"><span class="nav-number">2.1.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SSR-%E5%AE%98%E7%BD%91%E4%BB%8B%E7%BB%8D%EF%BC%9A"><span class="nav-number">2.2.</span> <span class="nav-text">SSR 官网介绍：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SSR-%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-number">2.3.</span> <span class="nav-text">SSR 服务端</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#centos-%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.3.1.</span> <span class="nav-text">centos 系统</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ubuntu-%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.3.2.</span> <span class="nav-text">ubuntu 系统</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E6%96%B9%E5%BC%8F%E5%92%8C%E6%B7%B7%E6%B7%86"><span class="nav-number">2.4.</span> <span class="nav-text">加密方式和混淆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E9%98%B6%E9%85%8D%E7%BD%AE"><span class="nav-number">2.5.</span> <span class="nav-text">进阶配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">2.6.</span> <span class="nav-text">客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">2.7.</span> <span class="nav-text">结语</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2017/10/12/ss%E5%8D%87%E7%BA%A7ssr/";
+    this.page.identifier = "2017/10/12/ss升级ssr/";
+    this.page.title = "ss升级ssr";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

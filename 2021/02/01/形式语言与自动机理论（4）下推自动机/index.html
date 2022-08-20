@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="下推自动机一个下推自动机和一个$\epsilon$-NFA类似，拥有一个无限长的输入带，一个有穷状态控制器，一个读头。同时具有$\epsilon$-NFA的特性：  有限状态 非确定 $\epsilon$转移与之不同的是，下推自动机增加一个符号栈，符号栈有一个读写头，读写的时候后进先出，只用栈顶，栈长度无限。 $pop$：仅仅弹出栈顶一个符号 $push$：可压入一个符号串  读头从输入带上一次读">
+<meta property="og:type" content="article">
+<meta property="og:title" content="形式语言与自动机理论（4）下推自动机">
+<meta property="og:url" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="下推自动机一个下推自动机和一个$\epsilon$-NFA类似，拥有一个无限长的输入带，一个有穷状态控制器，一个读头。同时具有$\epsilon$-NFA的特性：  有限状态 非确定 $\epsilon$转移与之不同的是，下推自动机增加一个符号栈，符号栈有一个读写头，读写的时候后进先出，只用栈顶，栈长度无限。 $pop$：仅仅弹出栈顶一个符号 $push$：可压入一个符号串  读头从输入带上一次读">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/76.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/77.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/78.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/79.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/80.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/78.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/76.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/79.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/81.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/82.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/83.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/84.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/85.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/86.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/87.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/88.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/89.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/90.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/91.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/92.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/93.png">
+<meta property="article:published_time" content="2021-02-01T08:26:29.000Z">
+<meta property="article:modified_time" content="2021-09-05T12:51:13.919Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="形式语言与自动机理论">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/76.png">
+
+<link rel="canonical" href="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>形式语言与自动机理论（4）下推自动机 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          形式语言与自动机理论（4）下推自动机
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-01 08:26:29" itemprop="dateCreated datePublished" datetime="2021-02-01T08:26:29Z">2021-02-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA/" itemprop="url" rel="index"><span itemprop="name">形式语言与自动机理论</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/02/01/形式语言与自动机理论（4）下推自动机/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>13k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>12 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="下推自动机"><a href="#下推自动机" class="headerlink" title="下推自动机"></a>下推自动机</h2><p><img src="76.png" alt=""><br>一个下推自动机和一个$\epsilon$-NFA类似，拥有一个无限长的输入带，一个有穷状态控制器，一个读头。同时具有$\epsilon$-NFA的特性：</p>
+<ul>
+<li>有限状态</li>
+<li>非确定</li>
+<li>$\epsilon$转移<br>与之不同的是，下推自动机增加一个符号栈，符号栈有一个读写头，读写的时候后进先出，只用栈顶，栈长度无限。</li>
+<li>$pop$：仅仅弹出栈顶一个符号</li>
+<li>$push$：可压入一个符号<strong>串</strong></li>
+</ul>
+<p>读头从输入带上一次读入一个字符，并向右移动一个单位长度，控制符号栈读头弹出一个符号。有穷控制器根据读入的字符，弹出的栈顶符号以及当前的状态，修改当前状态，并向符号栈压入一个新串。</p>
+<blockquote>
+<p>下推自动机能识别的语言比有穷自动机更多<br><span id="more"></span></p>
+</blockquote>
+<h3 id="形式定义"><a href="#形式定义" class="headerlink" title="形式定义"></a>形式定义</h3><p>下推自动机（PDA，Pushdown Automata），$P$为七元组</p>
+<script type="math/tex; mode=display">
+P=(Q,\Sigma,\Gamma,\delta,q_0,Z_0,F)</script><ul>
+<li>$Q$：有穷状态集</li>
+<li>$\Sigma$：有穷输入符号集</li>
+<li>$\Gamma$：有穷栈符号集</li>
+<li>$\delta:Q \times (\Sigma \cup \lbrace \epsilon \rbrace) \times \Gamma \to 2^{Q \times \Gamma^{\ast}}$：状态转移函数</li>
+<li>$q_0 \in Q$：初始状态</li>
+<li>$Z_0 \in \Gamma - \Sigma$：栈底符号</li>
+<li>$F \subseteq Q$：接受状态集或终态集</li>
+</ul>
+<p>如果$q,p_i \in Q(1 \leq i \leq m)$，$a \in \Sigma$，$Z \in \Gamma$，$\beta_i \in \Gamma^{\ast}$，可以有动作</p>
+<script type="math/tex; mode=display">
+\delta(q,a,Z) = \lbrace (p_1,\beta_1),(p_2,\beta_2),\dots,(p_m,\beta_m) \rbrace</script><p>或</p>
+<script type="math/tex; mode=display">
+\delta(q,\epsilon,Z) = \lbrace (p_1,\beta_1),(p_2,\beta_2),\dots,(p_m,\beta_m) \rbrace</script><p>对于状态为$q$的情况，接受一个字符$a$或者$\epsilon$，当栈顶为$Z$时，弹出$Z$，接下来可以压入串$\beta_i$，并跳到状态$p_i$；也可以压入串$\beta_j$，并跳到状态$p_j$，对应的状态转移图如下：<br><img src="77.png" alt=""></p>
+<p>例1：设计识别$L_{01}=\lbrace 0^n1^n \vert n \geq 1 \rbrace$的PDA。</p>
+<p>正则语言不能表示的语言，PDA可以表达。当读入0的时候，把0都压入栈中；当读入1时，弹出一个0。当读完最后一个符号，如果正好栈置0，可以通过空转移跳转到接受状态。为此引入一个栈底符号$Z_0$，它事先存在于栈中。<br><img src="78.png" alt=""><br>一开始，状态为$q_0$时对应接受0的状态，当栈顶是$Z_0$和0时压入一个0。当读到1且栈顶为0，就跳转到$q_1$准备接受1，此后每次读1都出栈一个0。如果串合法，读完后栈顶是$Z_0$，此时通过空转移跳转到接受状态。</p>
+<p>例2：设计识别$L_{wwr} = \lbrace ww^R \vert w \in (0+1)^{\ast} \rbrace$</p>
+<p>即识别01构成的回文串。在读$w$的时候压栈，读$w^R$时出栈，则出栈的符号和读入的符号相同。具体流程是：在读$w$时候对应$q_0$，无论栈顶是什么，都仅把读入的压栈，两种读入，三种栈顶情况，一共考虑六种可能。读完$w$后，通过$\epsilon$-转移转移到$q_1$开始读$w^R$，考虑三种栈顶可能。在$q_1$状态时吗，读入和栈顶相等时，只弹出。当读完$ww^R$，栈顶变为$Z_0$，通过空转移跳转到接收状态。<br><img src="79.png" alt=""></p>
+<h3 id="瞬时描述和转移符号"><a href="#瞬时描述和转移符号" class="headerlink" title="瞬时描述和转移符号"></a>瞬时描述和转移符号</h3><p><strong>定义</strong>：为描述PDA瞬间的格局，定义$Q \times \Sigma^{\ast} \times \Gamma^{\ast}$中三元组$(q,w,\gamma)$为瞬时描述（ID，Instananeous Description），表示此时PDA处于状态$q$，剩余输入串$w$，栈中当前全部符号为$\gamma$<br><img src="80.png" alt=""></p>
+<p><strong>定义</strong>：在PDA $P$中如果$(p,\beta) \in \delta(q,a,Z)$，由$(q,aw,Z\alpha)$到$(p,w,\beta\alpha)$，称为$ID$的转移$\vdash_P$，记为</p>
+<script type="math/tex; mode=display">
+(q,aw,Z\alpha) ⊢_P (p,w,\beta\alpha)</script><p>其中$w \in \Sigma^{\ast}, \ \alpha \in \Gamma^{\ast}$<br>若有$ID \ I,J,K$，递归定义$\vdash_P^{\ast}$为：</p>
+<ul>
+<li>$I \vdash_P^{\ast} I$</li>
+<li>若$I \vdash_P^{\ast} J,\ J \vdash_P^{\ast} K$，则$I \vdash_P^{\ast} K$</li>
+</ul>
+<p>若$P$已知，可省略，记为$\vdash$和$\vdash^{\ast}$</p>
+<p>续例：语言$L_{01} = \lbrace 0^n1^n \vert n \geq 1 \rbrace$的PDA，识别0011时的$ID$序列。<br><img src="78.png" alt=""></p>
+<script type="math/tex; mode=display">
+(q_0,0011,Z_0) \vdash (q_0,011,0Z_0) \vdash (q_0,11,00Z_0) \vdash (q_1,1,0Z_0) \vdash (q_1,\epsilon,Z_0) \vdash (q_2,\epsilon,Z_0)</script><p><strong>定理23</strong>：对$\forall w \in \Sigma^{\ast}, \forall \gamma \in \Gamma^{\ast}$，如果</p>
+<script type="math/tex; mode=display">
+(q,x,\alpha) \vdash_P^{\ast} (p,y,\beta)</script><p>那么</p>
+<script type="math/tex; mode=display">
+(q,xw,\alpha\gamma) \vdash_P^{\ast} (p,yw,\beta\gamma)</script><p>即：“输入串后加一个$w$，栈后面加一个$\gamma$，$ID$依然可以转移”，原因是PDA没有用到输入串$x$之后的部分$w$和栈$\beta$后的部分$\gamma$<br><img src="76.png" alt=""></p>
+<p><strong>定理24</strong>：<br>对$\forall w \in \Sigma^{\ast}$，如果</p>
+<script type="math/tex; mode=display">
+(q,xw,\alpha) \vdash_P^{\ast} (p,yw,\beta)</script><p>那么</p>
+<script type="math/tex; mode=display">
+(q,x,\alpha) \vdash_P^{\ast} (p,y,\beta)</script><p>因为转移过程输入串没有用到$w$，所以可以删掉。</p>
+<blockquote>
+<p>注意对栈不实用删除$w$</p>
+</blockquote>
+<h2 id="下推自动机接受的语言"><a href="#下推自动机接受的语言" class="headerlink" title="下推自动机接受的语言"></a>下推自动机接受的语言</h2><p><strong>定义</strong>：PDA $P=(Q,\Sigma,\Gamma,\delta,q_0,Z_0,F)$</p>
+<ul>
+<li>$P$以终态方式接受的语言，记为$\boldsymbol{L}(P)$，定义为<script type="math/tex; mode=display">
+\boldsymbol{L}(P) = \lbrace w \vert (q_0,w,Z_0) \vdash^{\ast} (p,\epsilon,\gamma), p \in F \rbrace</script></li>
+<li>以空栈方式接受的语言，记为$\boldsymbol{N}(P)$，定义为<script type="math/tex; mode=display">
+\boldsymbol{N}(P) = \lbrace w \vert (q_0,w,Z_0) \vdash^{\ast} (p,\epsilon,\epsilon) \rbrace</script></li>
+</ul>
+<p>续例2：识别$L_{wwr} = \lbrace ww^R \vert w \in (0+1)^{\ast} \rbrace$ 的PDA $P$，从终态方式接受，改为空栈方式接受。<br><img src="79.png" alt=""><br>用$\delta(q_1,\epsilon,Z_0)=\lbrace(q_1,\epsilon) \rbrace$代替$\delta(q_1,\epsilon,Z_0)=\lbrace (q_2,Z_0)\rbrace$即可。<br><img src="81.png" alt=""></p>
+<h3 id="从终态方式到空栈方式"><a href="#从终态方式到空栈方式" class="headerlink" title="从终态方式到空栈方式"></a>从终态方式到空栈方式</h3><p><strong>定理25</strong>：如果PDA $P_F$以终态方式接受语言$L$，那么一定存在PDA $P_N$以空栈方式接受$L</p>
+<p><strong>证明</strong>：设$P_F=(Q,\Sigma, \Gamma,\delta_F,q_0,Z_0,F)$，构造PDA $P_N$<br>模拟$P_F$</p>
+<script type="math/tex; mode=display">
+P_N=(Q \cup \lbrace p_0,p \rbrace, \Sigma, \Gamma \cup \lbrace X_0 \rbrace, \delta_N, p_0, X_0, \emptyset )</script><p>增加一个状态$p<em>0$，用$\epsilon$转移把$P_F$的栈底符压入栈中，然后让$P_F$去接受他该接受的字符串，当完成字符串读取，他的状态会落入到某一个接受状态中（例如$q</em>{f<em>i}$或$q</em>{f_j}$），再利用空转移，再利用$\epsilon$转移将栈中符号弹出，跳转到$p$，再$p$中再利用空转移，将栈中符号全部弹出，栈空。即：如果一个串可以被$P_F$接受，那么也一定可以再$p$状态被$P_F$以空栈方式接受。<br><img src="82.png" alt=""><br>由于大部分都是模拟$P_F$，所以其中的$\delta_N$大部分是$P_F$的状态转移函数。$\delta_N$的定义如下：</p>
+<ul>
+<li>$P_N$首先将$P_F$的栈底符号压栈，开始模拟$P_F$：<script type="math/tex; mode=display">
+\delta_N(p_0,\epsilon,X_0)=\lbrace (q_0,Z_0X_0) \rbrace</script></li>
+<li>$P_N$模拟$P_F$的动作：$\forall q \in Q, \ \forall a \in \Sigma \cup \lbrace \epsilon \rbrace,\ \forall Y \in \Gamma$<script type="math/tex; mode=display">
+\delta_N(q,a,Y) \text{包含} \delta_F(q,a,Y) \text{的全部元素}</script></li>
+<li>从$q_f \in F$开始弹出栈中符号，即$\forall q_f \in F,\forall Y \in \Gamma \cup \lbrace X_0 \rbrace$<script type="math/tex; mode=display">
+\delta_N(q_f,\epsilon,Y) \text{包含} (p,\epsilon)</script></li>
+<li>在状态$p$时，弹出全部栈中符号，即$\forall Y \in \Gamma \cup \lbrace X_0 \rbrace$<script type="math/tex; mode=display">
+\delta_N(p,\epsilon,Y) = \lbrace (p,\epsilon) \rbrace</script></li>
+</ul>
+<p>接下来证明构造的正确性。对于$\forall w \in \Sigma^{\ast}$有：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+w \in \boldsymbol{L}(P_F) &\Rightarrow (q_0,w,Z_0) \vdash_{P_F}^{\ast}(q_f,\epsilon,\gamma) \\
+&\Rightarrow(q_0,w,Z_0 X_0) \vdash_{P_F}^{\ast} (q_f,\epsilon,\gamma X_0) \\
+&\Rightarrow (q_0,w,Z_0 X_0) \vdash_{P_N}^{\ast} (q_f,\epsilon,\gamma X_0) \\
+&\Rightarrow (p_0,w,X_0) \vdash_{P_N}^{\ast} (q_0,w,Z_0X_0) \vdash_{P_N}^{\ast} (q_f,\epsilon,\gamma X_0) \\
+&\Rightarrow(p_0,w,X_0) \vdash_{P_N}^{\ast} (q_f,\epsilon,\gamma X_0) \vdash_{P_N}^{\ast} (p,\epsilon, \epsilon) \\
+&\Rightarrow w \in \boldsymbol{L}(P_N)
+\end{aligned}</script><p>即$\boldsymbol{N}(P_F) \subseteq \boldsymbol{L}(P_N)$<br>对$\forall w \in \Sigma^{\ast}$有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+w \in \boldsymbol{L}(P_N) &\Rightarrow (p_0,w,X_0) \vdash_{P_N}^{\ast}(p,\epsilon,\epsilon) \\
+&\Rightarrow(p_0,w,X_0) \vdash_{P_N}^{\ast} (q_0,w,Z_0 X_0) \vdash_{P_N}^{\ast} (p,\epsilon,\epsilon)\\
+&\Rightarrow(q_0,w,Z_0 X_0) \vdash_{P_N}^{\ast} (q_f,\epsilon,\gamma X_0) \vdash_{P_N}^{\ast} (p,\epsilon,\epsilon)\\
+&\Rightarrow (q_0,w,Z_0) \vdash_{P_N}^{\ast} (q_f,\epsilon,\gamma) \\
+&\Rightarrow (q_0,w,Z_0) \vdash_{P_F}^{\ast} (q_f,\epsilon,\gamma)\\
+&\Rightarrow w \in \boldsymbol{L}(P_F)
+\end{aligned}</script><p>即$\boldsymbol{N}(P_N) \subseteq \boldsymbol{L}(P_F)$，所以$\boldsymbol{N}(P_N) = \boldsymbol{L}(P_F)$</p>
+<h3 id="从空栈方式到终态方式"><a href="#从空栈方式到终态方式" class="headerlink" title="从空栈方式到终态方式"></a>从空栈方式到终态方式</h3><p><strong>定理26</strong>：如果PDA $P_N$以空栈方式接受语言$L$，那么一定存在PDA $P_F$以以终态方式接受$L$</p>
+<p><strong>证明</strong>：设$P_N= (Q,\Sigma,\Gamma,\delta_N,q_0,Z_0,\emptyset)$，构造PDA $P_F$</p>
+<script type="math/tex; mode=display">
+P_F = (Q \cup \lbrace p_0, p_f \rbrace,\Sigma,\Gamma \cup \lbrace X_0 \rbrace,\delta_F,p_0,X_0,\lbrace p_f \rbrace)</script><p><img src="83.png" alt=""><br>其中$\delta_F$定义如下：</p>
+<ul>
+<li>$P_F$开始时，将$P_N$栈底符号压入栈，并开始模拟$P_N$<script type="math/tex; mode=display">
+\delta_F(p_0, \epsilon, X_0) = \lbrace (q_0,Z_0X_0) \rbrace</script><ul>
+<li>$P_F$模拟$P_N$，$\forall q \in Q,\ \forall a \in \Sigma \cup \lbrace \epsilon \rbrace, \ \forall Y \in \Gamma$:<script type="math/tex; mode=display">
+\delta_F(q,a,Y) = \delta_N(q,a,Y)</script></li>
+</ul>
+</li>
+<li>在$\forall q \in Q$时，看到$P_F$的栈底$X_0$，则转移到新终态$p_f$：<script type="math/tex; mode=display">
+\delta_F(q,\epsilon,X_0)=\lbrace (p_f,\epsilon) \rbrace</script></li>
+</ul>
+<p>对$\forall w \in \Sigma^{\ast}$有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+w \in \boldsymbol{N}(P_N) &\Rightarrow (q_0,w,Z_0) \vdash_{P_N}^{\ast} (q,\epsilon,\epsilon) \\
+&\Rightarrow (q_0,w,Z_0 X_0) \vdash_{P_N}^{\ast} (q,\epsilon,X_0) \\
+&\Rightarrow (q_0,w,Z_0 X_0) \vdash_{P_F}^{\ast} (q,\epsilon,X_0) \\
+&\Rightarrow (q_0,w,X_0) \vdash_{P_F} (q_0,w,Z_0 X_0) \vdash_{P_F}^{\ast} (q,\epsilon,X_0) \\
+&\Rightarrow (q_0,w,X_0) \vdash_{P_F}^{\ast} (q,\epsilon,X_0) \vdash_{P_F} (p_f,\epsilon,\epsilon) \\
+&\Rightarrow (p_0,w,X_0) \vdash_{P_F}^{\ast} (p_f,\epsilon,\epsilon) \\
+&\Rightarrow w \in \boldsymbol{L}(P_F)
+\end{aligned}</script><p>即$\boldsymbol{N}(P_N) \subseteq \boldsymbol{L}(P_F)$<br>对$\forall w \in \Sigma^{\ast}$有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+w \in \boldsymbol{L}(P_F) &\Rightarrow (p_0,w,X_0) \vdash_{P_F}^{\ast} (p_f,\epsilon,\epsilon) \\
+&\Rightarrow (p_0,w,X_0) \vdash_{P_F}^{\ast} (q,\epsilon,X_0) \vdash_{P_F} (p_f,\epsilon,\epsilon) \\
+&\Rightarrow(p_0,w,X_0) \vdash_{P_F} (q_0,w,Z_0 X_0) \vdash_{P_F}^{\ast} (q,\epsilon,X_0) \\
+&\Rightarrow (q_0,w,Z_0 X_0) \vdash_{P_F}^{\ast} (q,\epsilon,X_0) \\
+&\Rightarrow (q_0,w,Z_0) \vdash_{P_F}^{\ast} (q,\epsilon,\epsilon) \\
+&\Rightarrow w \in \boldsymbol{N}(P_N)
+\end{aligned}</script><p>即$\boldsymbol{N}(P_F) \subseteq \boldsymbol{L}(P_N)$，所以$\boldsymbol{L}(P_F) = \boldsymbol{N}(P_N)$</p>
+<p>例3：接受$L=\lbrace 0,1 \rbrace^{\ast} \vert w \text{中字符0和1的数量相同} \rbrace$的PDA<br><img src="84.png" alt=""></p>
+<p>例4：接受$L=\lbrace 0^n1^m \vert 0 \leq n \leq m \leq 2n \rbrace$的PDA<br><img src="85.png" alt=""></p>
+<h2 id="下推自动机与文法的等价性"><a href="#下推自动机与文法的等价性" class="headerlink" title="下推自动机与文法的等价性"></a>下推自动机与文法的等价性</h2><h3 id="由CFG到PDA"><a href="#由CFG到PDA" class="headerlink" title="由CFG到PDA"></a>由CFG到PDA</h3><p>例5：设计语言$L=\lbrace 0^n1^m \vert 1 \leq m \leq n \rbrace$的PDA<br><img src="86.png" alt=""></p>
+<p>续例5：设计语言$L=\lbrace 0^n1^m \vert 1 \leq m \leq n \rbrace$的CFG</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+S &\to AB \\
+A &\to 0A \vert \epsilon \\
+B &\to 0B1 \vert 01
+\end{aligned}</script><p>字符串00011的最左派生：</p>
+<script type="math/tex; mode=display">
+S \underset{lm}{\Rightarrow} AB \underset{lm}{\Rightarrow} 0AB \underset{lm}{\Rightarrow} 0B \underset{lm}{\Rightarrow} 00B1 \underset{lm}{\Rightarrow} 00011</script><p>续例5：语言$L=\lbrace 0^n1^m \vert 1 \leq m \leq n \rbrace$</p>
+<p>用PDA栈顶符号的替换，模拟文法的最左派生<br><img src="87.png" alt=""></p>
+<p>续例5：语言$L=\lbrace 0^n1^m \vert 1 \leq m \leq n \rbrace$<br><img src="88.png" alt=""></p>
+<p><strong>定理27</strong>：任何CFL $L$，一定存在PDA $P$，使$L=\boldsymbol{N}(P)$</p>
+<p><strong>构造与文法等价的PDA</strong><br>如果CFG $G= (V,T,P^{\prime},S)$，构造PDA</p>
+<script type="math/tex; mode=display">
+P=(\lbrace q \rbrace,T,V \cup T,\delta,q,S,\emptyset)</script><p>其中$\delta$为：</p>
+<ul>
+<li>$\forall A \in V$：<script type="math/tex; mode=display">
+\delta(q,\epsilon,A) = \lbrace (q,\beta) \vert A \to \beta \in P^{\prime} \rbrace</script></li>
+<li>$\forall a \in T$：<script type="math/tex; mode=display">
+\delta(q,a,a) = \lbrace (q,\epsilon) \rbrace</script>那么$\boldsymbol{L}(G) = \boldsymbol{N}(P)$</li>
+</ul>
+<p>例6：为文法$S \to aAA,\ A \to aA \vert bS \vert a$，构造PDA<br><img src="89.png" alt=""></p>
+<p>证明：往证</p>
+<script type="math/tex; mode=display">
+S \underset{}{\stackrel{\ast}{\Rightarrow}} w \Leftrightarrow (q,w,S) \vdash_P^{\ast} (q,\epsilon,\epsilon)</script><p>【充分性】往证</p>
+<script type="math/tex; mode=display">
+S \underset{lm}{\stackrel{\ast}{\Rightarrow}} w \Leftrightarrow (q,w,S) \vdash^{\ast} (q,\epsilon,\epsilon)</script><p>设$S \underset{lm}{\stackrel{\ast}{\Rightarrow}} w$中第$i$个左句型为$x_iA_i\alpha_i$，其中$x_i \in \Sigma^{\ast},A_i \in V,\alpha_i \in (V \cup T)^{\ast}$。并将$S$看作第0个左句型$x_0A_0\alpha_0=S$，那么</p>
+<script type="math/tex; mode=display">
+x_0 = \epsilon,A_0 = S,\alpha_0 = \epsilon</script><p>将$w$看作第$n$个左句型$x_nA_n\alpha_n=w$，那么</p>
+<script type="math/tex; mode=display">
+x_n = w,A_n=\epsilon,\alpha_n = \epsilon</script><p>再对派生步骤$i$归证，往证</p>
+<script type="math/tex; mode=display">
+S \underset{lm}{\stackrel{\ast}{\Rightarrow}} x_iA_i\alpha_i \land w = x_iy_i \Rightarrow (q,w,S) \vdash^{\ast} (q,y_i,A_i\alpha_i)</script><p>归纳基础：当左派生要0步时，显然成立</p>
+<script type="math/tex; mode=display">
+(q,w,S) \vdash^{\ast} (q,y_0,A_0\alpha_0)=(q,w,S)</script><p>归纳递推：假设$i$步时上式成立，当第$i+1$步时，一定是$A_i \to \beta$应用到$x_iA_i\alpha_i$</p>
+<script type="math/tex; mode=display">
+S \underset{lm}{\stackrel{\ast}{\Rightarrow}} x_iA_i\alpha_i \underset{lm}{\stackrel{}{\Rightarrow}} x_i\beta\alpha_i = x_{i+1}A_{i+1}\alpha_{i+1}</script><p>变元$A<em>{i+1}$一定再$\beta\alpha_i$中，设$A</em>{i+1}$之前的终结符为$x^{\prime}$，则有</p>
+<script type="math/tex; mode=display">
+\beta\alpha_i = x^{\prime}A_{i+1}\alpha_{i+1}</script><p>又因为$w=x<em>iy_i=x_ix^{\prime}y</em>{i+1}=x<em>{i+1}y</em>{i+1}$，所以有</p>
+<script type="math/tex; mode=display">
+y_i = x^{\prime}y_{i+1}</script><p>那么，再PDA中从ID $(q,y_i,A_i\alpha_i)$模拟最左派生，用产生式$A_i \to \beta$替换栈顶$A_i$后，有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+(q,w,S) &\vdash^{\ast} (q,y_i,A_i\alpha_i) \\
+&\vdash (q,y_i,\beta\alpha_i) \\
+&= (q,x^{\prime}y_{i+1},x^{\prime}A_{i+1}\alpha_{i+1}) \\
+&\vdash^{\ast} (q,y_{i+1},A_{i+1}\alpha_{i+1})
+\end{aligned}</script><p>因此$S \underset{lm}{\stackrel{\ast}{\Rightarrow}} w \Rightarrow (q,w,S) \vdash^{\ast} (q,y_n,A_n\alpha_n)=(q,\epsilon,\epsilon)$，即充分性得证。</p>
+<p>【必要性】往证更一般的，对任何变元$A$，都有：</p>
+<script type="math/tex; mode=display">
+(q,x,A) \vdash^{\ast} (q,\epsilon,\epsilon) \Longrightarrow A \underset{}{\stackrel{\ast}{\Rightarrow}} x</script><p>可以看作“从输入带中消耗掉$x$”与“从栈中弹出$A$”两种作用相互抵消。对ID转移$(q,x,A) \vdash^i (q,\epsilon,\epsilon)$的次数$i$归纳证明。</p>
+<p>归纳基础：当$i=1$次时，只能是$x=\epsilon$且$A \to \epsilon$为产生式，所以$A \underset{}{\stackrel{\ast}{\Rightarrow}} \epsilon$且$A</p>
+<p>归纳递推：假设$i \leq n(n \geq 0)$时上式成立。当$i = n+1$时，因为$A$是变元，其第1步转移一定是</p>
+<script type="math/tex; mode=display">
+(q,x,A) \vdash (q,x,Y_1 Y_2 \dots Y_m)</script><p>且$A \to Y_1 Y_2 \dots Y_m$是产生式，其中$Y_i$是变元或终结符，而其余的$n$步转移</p>
+<script type="math/tex; mode=display">
+(q,x,Y_1 Y_2 \dots Y_m) \vdash^{\ast} (q,\epsilon,\epsilon)</script><p>中每个$Y_i$从栈中被完全弹出时，将消耗掉的那部分$x$记为$x_i$，那么显然有</p>
+<script type="math/tex; mode=display">
+x=x_1 x_2 \dots x_m</script><p>而每个$Y_i$从栈中被完全弹出时，都不超过$n$步，所以由归纳假设</p>
+<script type="math/tex; mode=display">
+(q,x_i,Y_i) \vdash^{\ast} (q,\epsilon,\,\epsilon) \Rightarrow Y_i \underset{}{\stackrel{\ast}{\Rightarrow}} x_ix_i</script><p>再由$A$的产生式$A \to Y_1 Y_2 \dots Y_m$，有</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+A &\underset{}{\stackrel{\ast}{\Rightarrow}} Y_1 Y_2 \dots Y_m \\
+&\underset{}{\stackrel{\ast}{\Rightarrow}} x_1 Y_2 \dots Y_m \\
+&\underset{}{\stackrel{\ast}{\Rightarrow}} x_1 x_2 \dots Y_m \\
+&\underset{}{\stackrel{\ast}{\Rightarrow}} x_1 x_2 \dots x_m = x
+\end{aligned}</script><p>因此当$A=S,x=w$时，</p>
+<script type="math/tex; mode=display">
+(q,w,S) \vdash^{\ast} (q,\epsilon,\epsilon) \Longrightarrow S \underset{}{\stackrel{\ast}{\Rightarrow}} w</script><p>成立，即必要性得证。所以，任何CFL都可由PDA识别。</p>
+<p><strong>构造与GNF格式文法等价的PDA</strong><br>如果GNF格式的CFG $G=(V,T,P^{\prime},S)$，那么构造PDA</p>
+<script type="math/tex; mode=display">
+P = (\lbrace q \rbrace,T,V,\delta,q,S,\emptyset)</script><p>为每个产生式，定义$\delta$为：</p>
+<script type="math/tex; mode=display">
+\delta(q,a,A)=\lbrace (q,\beta) \vert A \to a\beta \in P^{\prime} \rbrace</script><p>续例6：文法$S \to aAA, A \to aS \vert  bS \vert a$为GNF格式，构造等价的PDA<br><img src="90.png" alt=""></p>
+<h3 id="从PDA到CFG"><a href="#从PDA到CFG" class="headerlink" title="从PDA到CFG"></a>从PDA到CFG</h3><p><strong>定理</strong>：如果PDA $P$，由$L=\boldsymbol{N}(P)$，那么$L$是上下文无关语言。</p>
+<p><strong>构造与PDA等价的CFG</strong><br>如果PDA $P=(Q,\Sigma,\Gamma,\delta,q_0,Z_0,F)$，那么构造CFG $G=(V,T,P^{\prime},S)$，其中$V$和$P^{\prime}$为：</p>
+<ol>
+<li>$V=\lbrace [qX_p] \vert p,q \in Q,X \in \Gamma \rbrace \cup \lbrace S \rbrace$</li>
+<li>对$\forall p \in Q$，构造产生式$S \to [q_0Z_0p]$</li>
+<li>对$\forall (p,Y_1 Y_2 \dots Y_n) \in \delta(q,a,X)$，构造$\vert Q \vert^{n}$个产生式</li>
+</ol>
+<p>其中$a \in \Sigma \cup \lbrace \epsilon \rbrace, X,Y_i \in \Gamma$，而$r_i \in Q$是$n$次$\vert Q \vert$种状态的组合。若$i=0$，为$[qX_p] \to a$</p>
+<p>例7：将PDA $P=(\lbrace p,q \rbrace,(0,1),\lbrace X,Z \rbrace, \delta, q,Z)$<br>转为CFG，其中$\delta$如下：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\delta(q,1,Z) &= \lbrace (q,XZ) \rbrace \\
+\delta(q,1,X) &= \lbrace (q,XX) \rbrace \\
+\delta(q,0,X) &= \lbrace (p,X) \rbrace \\
+\delta(q,\epsilon,Z) &= \lbrace (q,\epsilon) \rbrace \\
+\delta(q,1,X) &= \lbrace (p,\epsilon) \rbrace \\
+\delta(q,0,Z) &= \lbrace (q,Z) \rbrace \\
+\end{aligned}</script><p><img src="91.png" alt=""></p>
+<h2 id="确定性下推自动机"><a href="#确定性下推自动机" class="headerlink" title="确定性下推自动机"></a>确定性下推自动机</h2><p><strong>定义</strong>：如果PDA $P=(Q,\Sigma,\Gamma,\delta,q_0,Z_0,F)$满足</p>
+<ol>
+<li>$\forall a \in \Sigma \cup \lbrace \epsilon \rbrace, \delta(q,a,X)$至多有一个动作</li>
+<li>$\forall a \in \Sigma$，如果$\delta(q,a,X) \not= \emptyset$，那么$\delta(q,\epsilon,X)=\emptyset$</li>
+</ol>
+<p>则称$P$为确定型下推自动机(DPDA)</p>
+<p>DPDA $P$以终态的方式接受的语言$\boldsymbol{L}(P)$称为DCFL</p>
+<ul>
+<li>DPDA中$\forall (q,a,Z) \in Q \times \Sigma \times \Gamma$满足$\vert \delta(q,a,Z) \vert + \vert \delta(q,\epsilon,Z) \vert \leq 1$</li>
+<li>DPDA与PDA不等价</li>
+</ul>
+<p>例8：任何DPDA都无法接受$L_{wwr}$，但是可以接受</p>
+<script type="math/tex; mode=display">
+L_{wcwr} = \lbrace wcw^R \vert w \in (0+1)^{\ast} \rbrace</script><p><img src="92.png" alt=""></p>
+<p>DCFL的重要应用</p>
+<ul>
+<li>非固有歧义语言的真子集</li>
+<li>程序设计语言的语法分析器</li>
+<li>$LR(k)$文法，Yacc的基础，解析时间复杂度为$O(n)$</li>
+</ul>
+<h3 id="正则语言与DPDA"><a href="#正则语言与DPDA" class="headerlink" title="正则语言与DPDA"></a>正则语言与DPDA</h3><p><strong>定理29</strong>：如果$L$是正则语言，那么存在DPDA $P$以终态方式接受$L$，即$L=\boldsymbol{L}(P)$</p>
+<p><strong>证明</strong>：显然，DPDA $P$可以不用栈而莫模拟任何DFA</p>
+<ul>
+<li>$L_{wcwr}$显然CFL，所以DCFL语言类真包含正则语言</li>
+<li>DPDA无法识别$L_{wwr}$，所以DCFL语言真包含于CFL</li>
+</ul>
+<p><strong>定义</strong>：如果语言$L$中不存在字符串$x$和$y$，使$x$是$y$的前缀，称语言$L$满足前缀性质</p>
+<p><strong>定理30</strong>：DPDA $P$且$L=\boldsymbol{N}(P)$，当且仅当$L$由前缀性质，且存在DPDA $P^{\prime}$使$L=\boldsymbol{L}(P^{\prime})$</p>
+<ul>
+<li>DPDA $P$的$\boldsymbol{N}(P)$更有限，即使正则语言$\boldsymbol{0}^{\ast}$也无法接受</li>
+<li>但却可以被某个DPDA以终态方式接受</li>
+</ul>
+<h3 id="DPDA与歧义文法"><a href="#DPDA与歧义文法" class="headerlink" title="DPDA与歧义文法"></a>DPDA与歧义文法</h3><p><strong>定理31</strong>：DPDA $P$，语言$L=\boldsymbol{L}(P)$，那么$L$有无歧义的CFG</p>
+<p><strong>定理32</strong>：DPDA $P$，语言$L=\boldsymbol{N}(P)$，那么$L$有无歧义的CFG</p>
+<ul>
+<li>因此DPDA再语法分析中占重要地位</li>
+<li>但是并非所有固有歧义CFL都会被DPDA识别如$L_{wwr}$有无歧义文法$S \to 0S1 \vert 1S1 \vert \epsilon$</li>
+</ul>
+<p>语言之间的关系：<img src="93.png" alt=""></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA/" rel="tag"># 形式语言与自动机理论</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/27/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%883%EF%BC%89%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E6%96%87%E6%B3%95/" rel="prev" title="形式语言与自动机理论（3）上下文无关文法">
+      <i class="fa fa-chevron-left"></i> 形式语言与自动机理论（3）上下文无关文法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/04/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%885%EF%BC%89%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E8%AF%AD%E8%A8%80%E7%9A%84%E6%80%A7%E8%B4%A8/" rel="next" title="形式语言与自动机理论（5）上下文无关语言的性质">
+      形式语言与自动机理论（5）上下文无关语言的性质 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA"><span class="nav-number">1.</span> <span class="nav-text">下推自动机</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%A2%E5%BC%8F%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.</span> <span class="nav-text">形式定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9E%AC%E6%97%B6%E6%8F%8F%E8%BF%B0%E5%92%8C%E8%BD%AC%E7%A7%BB%E7%AC%A6%E5%8F%B7"><span class="nav-number">1.2.</span> <span class="nav-text">瞬时描述和转移符号</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA%E6%8E%A5%E5%8F%97%E7%9A%84%E8%AF%AD%E8%A8%80"><span class="nav-number">2.</span> <span class="nav-text">下推自动机接受的语言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E7%BB%88%E6%80%81%E6%96%B9%E5%BC%8F%E5%88%B0%E7%A9%BA%E6%A0%88%E6%96%B9%E5%BC%8F"><span class="nav-number">2.1.</span> <span class="nav-text">从终态方式到空栈方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E7%A9%BA%E6%A0%88%E6%96%B9%E5%BC%8F%E5%88%B0%E7%BB%88%E6%80%81%E6%96%B9%E5%BC%8F"><span class="nav-number">2.2.</span> <span class="nav-text">从空栈方式到终态方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA%E4%B8%8E%E6%96%87%E6%B3%95%E7%9A%84%E7%AD%89%E4%BB%B7%E6%80%A7"><span class="nav-number">3.</span> <span class="nav-text">下推自动机与文法的等价性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B1CFG%E5%88%B0PDA"><span class="nav-number">3.1.</span> <span class="nav-text">由CFG到PDA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8EPDA%E5%88%B0CFG"><span class="nav-number">3.2.</span> <span class="nav-text">从PDA到CFG</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AE%E5%AE%9A%E6%80%A7%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA"><span class="nav-number">4.</span> <span class="nav-text">确定性下推自动机</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E8%AF%AD%E8%A8%80%E4%B8%8EDPDA"><span class="nav-number">4.1.</span> <span class="nav-text">正则语言与DPDA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DPDA%E4%B8%8E%E6%AD%A7%E4%B9%89%E6%96%87%E6%B3%95"><span class="nav-number">4.2.</span> <span class="nav-text">DPDA与歧义文法</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/";
+    this.page.identifier = "2021/02/01/形式语言与自动机理论（4）下推自动机/";
+    this.page.title = "形式语言与自动机理论（4）下推自动机";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

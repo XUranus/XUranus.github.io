@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="C++建立在C语言的基础上，在系统化学习C++之前，先把本科学的C语言捡起来。  基本数据类型基本数据类型长度和数据模型有关，有几种常见的数据模型：LP32、ILP32、LP64、ILP64、LLP64。     类型 LP32 ILP32 LP64 ILP64 LLP64     char 8 8 8 8 8   short 16 16 16 16 16   int 16 32 32 64 3">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入学习C语言">
+<meta property="og:url" content="http://xuranus.github.io/2022/05/02/%E4%BB%8EC%E5%88%B0C/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="C++建立在C语言的基础上，在系统化学习C++之前，先把本科学的C语言捡起来。  基本数据类型基本数据类型长度和数据模型有关，有几种常见的数据模型：LP32、ILP32、LP64、ILP64、LLP64。     类型 LP32 ILP32 LP64 ILP64 LLP64     char 8 8 8 8 8   short 16 16 16 16 16   int 16 32 32 64 3">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2022/05/02/%E4%BB%8EC%E5%88%B0C/ctype_derive.drawio.png">
+<meta property="article:published_time" content="2022-05-01T20:26:52.000Z">
+<meta property="article:modified_time" content="2022-06-23T14:49:12.994Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="C">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2022/05/02/%E4%BB%8EC%E5%88%B0C/ctype_derive.drawio.png">
+
+<link rel="canonical" href="http://xuranus.github.io/2022/05/02/%E4%BB%8EC%E5%88%B0C/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>深入学习C语言 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/05/02/%E4%BB%8EC%E5%88%B0C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入学习C语言
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-05-01 20:26:52" itemprop="dateCreated datePublished" datetime="2022-05-01T20:26:52Z">2022-05-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-06-23 14:49:12" itemprop="dateModified" datetime="2022-06-23T14:49:12Z">2022-06-23</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2022/05/02/%E4%BB%8EC%E5%88%B0C/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/05/02/从C到C/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>C++建立在C语言的基础上，在系统化学习C++之前，先把本科学的C语言捡起来。</p>
+</blockquote>
+<h2 id="基本数据类型"><a href="#基本数据类型" class="headerlink" title="基本数据类型"></a>基本数据类型</h2><p>基本数据类型长度和数据模型有关，有几种常见的数据模型：LP32、ILP32、LP64、ILP64、LLP64。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>LP32</th>
+<th>ILP32</th>
+<th>LP64</th>
+<th>ILP64</th>
+<th>LLP64</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>char</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+</tr>
+<tr>
+<td>short</td>
+<td>16</td>
+<td>16</td>
+<td>16</td>
+<td>16</td>
+<td>16</td>
+</tr>
+<tr>
+<td>int</td>
+<td>16</td>
+<td>32</td>
+<td>32</td>
+<td>64</td>
+<td>32</td>
+</tr>
+<tr>
+<td>long</td>
+<td>32</td>
+<td>32</td>
+<td>64</td>
+<td>64</td>
+<td>32</td>
+</tr>
+<tr>
+<td>long long</td>
+<td>64</td>
+<td>64</td>
+<td>64</td>
+<td>64</td>
+<td>64</td>
+</tr>
+<tr>
+<td>ptr</td>
+<td>32</td>
+<td>32</td>
+<td>64</td>
+<td>64</td>
+<td>64</td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<p><code>char</code>,<code>short</code>,<code>long long</code>,<code>float</code>,<code>double</code>的长度总是固定的，而指针长度往往和平台有关，而<code>int</code>,<code>long</code>长度和数据模型有关。</p>
+</blockquote>
+<span id="more"></span>
+<p>如今的64位类Unix平台使用LP64数据模型，而Windows使用LLP64（除了指针是64位，其他还是和ILP32一样）</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>win32</th>
+<th>win64</th>
+<th>unix32</th>
+<th>unix64</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>char</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>short</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+</tr>
+<tr>
+<td>int</td>
+<td>4</td>
+<td>4</td>
+<td>4</td>
+<td>4</td>
+</tr>
+<tr>
+<td>long</td>
+<td>4</td>
+<td><strong>4</strong></td>
+<td>4</td>
+<td>8</td>
+</tr>
+<tr>
+<td>long long</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+</tr>
+<tr>
+<td>float</td>
+<td>4</td>
+<td>4</td>
+<td>4</td>
+<td>4</td>
+</tr>
+<tr>
+<td>double</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+<td>8</td>
+</tr>
+<tr>
+<td>long double</td>
+<td>8</td>
+<td>8</td>
+<td><strong>12</strong></td>
+<td><strong>16</strong></td>
+</tr>
+<tr>
+<td>指针</td>
+<td>4</td>
+<td>8</td>
+<td>4</td>
+<td>8</td>
+</tr>
+<tr>
+<td>size_t</td>
+<td>4</td>
+<td>8</td>
+<td>4</td>
+<td>8</td>
+</tr>
+<tr>
+<td>bool</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<p>需要额外留意win64的<code>long</code>依然是32位的，<code>long long</code>永远是64位的</p>
+<p><code>char</code>，<code>short</code>，<code>int</code>，<code>long</code>可以用<code>unsigned</code>修饰，<code>double</code>和<code>float</code>不行。</p>
+</blockquote>
+<h2 id="指针的几种用法"><a href="#指针的几种用法" class="headerlink" title="指针的几种用法"></a>指针的几种用法</h2><ol>
+<li><p>一般类型的指针</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a1 = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">int</span> *p1 = &amp;a1; <span class="comment">// 指向int类型的指针</span></span><br><span class="line">*p1 = <span class="number">20</span>; <span class="comment">// a1 == 20</span></span><br></pre></td></tr></table></figure>
+<p>可以通过对<code>p1</code>解引用修改指向的变量的值。如果去修改指向常量的值则会编译器报warning。</p>
+</li>
+<li><p>常量指针</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a2 = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *p2 = &amp;a2; <span class="comment">// 常量指针，指向一个const int类型，</span></span><br><span class="line">*p2 = <span class="number">20</span>; <span class="comment">// 编译出错</span></span><br></pre></td></tr></table></figure>
+<p>常量指针，提示编译器指向的变量是一个常量（无论指向目标本身有没有<code>const</code>修饰），不允许用指针解引用修改这个变量的值，如果修改则直接编译出错。</p>
+</li>
+</ol>
+<blockquote>
+<ul>
+<li><code>const int* p2</code>和<code>int const* p2</code>是一个写法 </li>
+<li><code>int *p2, p3</code> 声明了一个<code>int*</code>指针<code>p2</code>和一个<code>int</code>变量<code>p3</code></li>
+</ul>
+</blockquote>
+<ol>
+<li><p>指针常量</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a3 = <span class="number">10</span>, a4 = <span class="number">20</span>;</span><br><span class="line"><span class="keyword">int</span>* <span class="keyword">const</span> p3 = &amp;a3; <span class="comment">// 指针常量，不允许再指向其他变量</span></span><br><span class="line">p3 = &amp;a4; <span class="comment">// 编译出错</span></span><br></pre></td></tr></table></figure>
+<p>指针常量，必须声明后就指向某个对象，声明后不可以再指向其他变量</p>
+</li>
+<li><p>指向常量的指针常量</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a5 = <span class="number">10</span>, a6 = <span class="number">20</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *<span class="keyword">const</span> p4 = &amp;a5; <span class="comment">//指向常量的指针常量，不允许修改指向的值，也不允许指向其他的变量</span></span><br><span class="line">*p4 = <span class="number">20</span>; <span class="comment">// 编译错误</span></span><br><span class="line">p4 = &amp;a6;</span><br></pre></td></tr></table></figure>
+<p>指向常量的指针常量既不允许修改指向的值，也不允许指向其他的变量。</p>
+</li>
+<li><p>数组</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> p5[<span class="number">10</span>]; <span class="comment">// 数组</span></span><br><span class="line"><span class="keyword">int</span> *p6 = p5;</span><br></pre></td></tr></table></figure>
+<p><code>p5</code>是个栈上的数组，可以用其他<code>int</code>类型指针指向它。但是<code>sizeof(p5)</code>为数组占用的比特数（40），<code>sizeof(p6)</code>则是指针占用大小（8）。</p>
+</li>
+</ol>
+<p>例:<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">func1</span><span class="params">(<span class="keyword">char</span>[] str)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">sizeof</span>(str);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">func2</span><span class="params">(<span class="keyword">int</span>[] ptr)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">sizeof</span>(ptr);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">char</span>[] str1 = <span class="string">&quot;123&quot;</span>;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%d %d %d\n&quot;</span>,func1(str1), <span class="keyword">sizeof</span>(str1), <span class="built_in">strlen</span>(str1)); <span class="comment">// 8 4 3</span></span><br><span class="line">  <span class="keyword">int</span> p1[<span class="number">5</span>] = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;; <span class="comment">// 8 20</span></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%d %d\n&quot;</span>, func2(p1), <span class="keyword">sizeof</span>(p1));</span><br><span class="line">  <span class="keyword">int</span> p2[] = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;; <span class="comment">// 8 20</span></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%d %d\n&quot;</span>, func2(p2), <span class="keyword">sizeof</span>(p2));</span><br><span class="line">  <span class="keyword">char</span> str2[<span class="number">3</span>] = <span class="string">&quot;12345&quot;</span>;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%d %d %d\n&quot;</span>,func1(str2), <span class="keyword">sizeof</span>(str2), <span class="built_in">strlen</span>(str2)); <span class="comment">// 8 3 6</span></span><br><span class="line">  <span class="keyword">int</span> p3[<span class="number">3</span>] = &#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>&#125;;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%d %d\n&quot;</span>, func2(p3), <span class="keyword">sizeof</span>(p3)); <span class="comment">// 8 12</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<ul>
+<li>x64下为例。对形参数组使用<code>sizeof</code>固定返回8。</li>
+<li>数组声明后的初始化如果超过声明长度会warning，实际分配空间根据声明长度确定。<code>sizeof</code>返回的也是实际分配空间、即声明长度。也可以写明长度来隐式声明。</li>
+<li>字符串形式定义字符数字需要注意末尾隐式定义了个<code>\0</code>，实际占用长度需要+1，<code>strlen()</code>返回字符串长度，而<code>sizeof</code>返回字符串长度+1</li>
+</ul>
+<p>如何记忆几种指针的区别：<code>[T const | const T | T]* [const | ?]</code>，<code>*</code>前是对被指向对象的约束（能否通过解引用修改指向对象），<code>*</code>后是对指针本身的约束（是否能指向其他对象）</p>
+<ul>
+<li><code>T*</code>：指向<code>T</code>的指针，可以指向其他值，可以通过解引用修改指向的值</li>
+<li><code>T const*</code>或<code>const T*</code>：指向<code>const T</code>的指针，目标不可被修改，但可以指向其他值</li>
+<li><code>T* const</code>：指向<code>T</code>的指针，目标能修改，但是指针有<code>const</code>修饰符，所以指针不可变，不能指向其他对象</li>
+<li><code>T const* const</code>或<code>const T* const</code>，指向<code>const T*</code>且指针本身有<code>const</code>修饰符，目标不能被修改且指针不能指向其他对象</li>
+</ul>
+</blockquote>
+<h2 id="表达式"><a href="#表达式" class="headerlink" title="表达式"></a>表达式</h2><p>编译器编译的原则是<strong>贪心算法</strong>，即：<strong>尽可能多的匹配token</strong>。</p>
+<p>例：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">3</span>, b = <span class="number">4</span>;</span><br><span class="line"><span class="keyword">int</span> c = a+++b; <span class="comment">// 等价于int c = (a++) + b, 优先匹配a++</span></span><br></pre></td></tr></table></figure></p>
+<p>例：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">3</span>, b = <span class="number">4</span>;</span><br><span class="line"><span class="keyword">int</span> c = a+++-+-+--n; <span class="comment">// 等价于int c = (a++)+(-(+(-(+(--n)))));</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="类型自动转换"><a href="#类型自动转换" class="headerlink" title="类型自动转换"></a>类型自动转换</h3><p>例：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">-1</span>;</span><br><span class="line"><span class="keyword">for</span>(; i &lt; <span class="keyword">sizeof</span>(<span class="keyword">int</span>), i++) &#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%d&quot;</span>,i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>事实上这段循环根本不会执行，因为有符号数<code>i</code>和无符号值<code>sizeof(int)</code>比较涉及到有符号数与无符号数的减法运算，<strong>有符号数参与无符号数的运算会先将有符号数转为无符号数</strong>。而-1转为无符号数会远大于4</p>
+<p>例：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">-20</span>;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> b = <span class="number">10</span>;</span><br><span class="line"><span class="keyword">int</span> c = a + b; <span class="comment">// a + b是无符数，强行转为有符号数，c=-10</span></span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;a + b = %u, c = %d\n&quot;</span>, a + b, c);</span><br><span class="line"><span class="keyword">if</span>(a + b &gt; <span class="number">0</span>) &#123; <span class="comment">// a + b是无符号数4294967286&gt;0</span></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;a + b &gt; 0&quot;</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;a + b &lt;= 0&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(c &gt; <span class="number">0</span>) &#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;c &gt; 0&quot;</span>)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123; <span class="comment">// c是有符号数-10</span></span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;c &lt;= 0&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// out:</span></span><br><span class="line"><span class="comment">// a + b = 4294967286, c = -10</span></span><br><span class="line"><span class="comment">// a + b &gt; 0</span></span><br><span class="line"><span class="comment">// c &lt;= 0</span></span><br></pre></td></tr></table></figure></p>
+<p>类型自动转换的原则：</p>
+<ul>
+<li>参与运算的类型不同，先转换成相同的类型再运算</li>
+<li>数据类型会向数据增长的方向转换，<code>char</code>-&gt;<code>short</code>-&gt;<code>int</code>-&gt;<code>long</code>，有符号会向无符号转化</li>
+<li>所有<code>float</code>类型的运算都会转换成<code>double</code>再运算，哪怕只有一个<code>float</code></li>
+<li>浮点数和整数一起运算，统一转换成浮点数运算</li>
+<li><code>char</code>和<code>short</code>类型的值参与运算，无论他们有无符号，结果都自动转为<code>int</code></li>
+<li>赋值运算时，等号右边的类型向左边的类型转换</li>
+<li>如果<code>char</code>或者<code>short</code>与<code>int</code>类型运算，结果有无符号视<code>int</code>有无符号决定</li>
+</ul>
+<p><img src="ctype_derive.drawio.png" alt=""></p>
+<h2 id="宏"><a href="#宏" class="headerlink" title="宏"></a>宏</h2><p>宏替换是编译期过程，不占用运行时间。宏只能在函数外部定义。</p>
+<ol>
+<li>常量宏替换<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ITEM_SIZE 8</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ITEM_COUNT 100</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TOTAL_ITEM_SIZE (ITEM_SIZE*ITEM_COUNT)</span></span><br></pre></td></tr></table></figure></li>
+<li>类型宏定义<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> u1 unsigned char</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> u2 unsigned short</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> u4 unsigned int</span></span><br></pre></td></tr></table></figure></li>
+<li><p>函数宏<br>函数宏名称和参数之间不能有空格，参数和实现之间必须有空格。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX(x, y) (((x) &gt; (y)) ? (x) : (y))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ABS(x) (((x) &gt; 0) ? (x) : (-(x)))</span></span><br></pre></td></tr></table></figure>
+<p><strong>宏函数必须用括号将所有表达式层层包裹，以防出现运算符优先级的问题</strong>。例如：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ABS(x) (x &gt; 0 ? x : -x)</span></span><br><span class="line"><span class="keyword">int</span> a = <span class="number">1</span>, b = <span class="number">2</span>;</span><br><span class="line">ABS(a + b);</span><br></pre></td></tr></table></figure>
+<p>实际上执行的是：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">(a + b &gt; <span class="number">0</span> ? a + b : - a + b)</span><br></pre></td></tr></table></figure>
+<p>这与预期肯定是不一致的。此外如果传入某个函数的执行结果如<code>ABS(func(a))</code>会两次调用<code>func()</code>，这可能带来性能问题。</p>
+</li>
+<li><p>头文件保护</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> _MODULE_A_</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _MODULE_A_</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;xxx.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> &#123; <span class="comment">//强制以C的形式编译</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// header content here</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure></li>
+<li>内置调试宏<ul>
+<li><code>__FILE__</code>：当前文件名</li>
+<li><code>__LINE__</code>：当前行号</li>
+<li><code>__DATE__</code>：当前日期</li>
+<li><code>__TIME__</code>：当前时间</li>
+</ul>
+</li>
+</ol>
+<p>这些宏一般用于调试。<br>例，用内置宏实现一个日志宏函数：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LOG(str, args...) printf(<span class="meta-string">&quot;[%s %s][%s:%d] &quot;</span>#str<span class="meta-string">&quot;\n&quot;</span>, __DATE__, __TIME__, __FILE__, __LINE__, ##args)</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">char</span> ip[] = <span class="string">&quot;192.168.0.1&quot;</span>;</span><br><span class="line">  <span class="keyword">int</span> n = <span class="number">200</span>;</span><br><span class="line">  LOG(<span class="string">&quot;receive %d bytes from server %s&quot;</span>, n, ip);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// May  1 2022 16:36:24][4.c:8] &quot;receive 200 bytes from server 192.168.0.1&quot;</span></span><br></pre></td></tr></table></figure></p>
+<p>宏的缺点：</p>
+<ul>
+<li>宏在符号表中不存在，无法打热补丁，在单步调试时无法进入</li>
+<li>宏会使得程序的代码空间增大</li>
+<li>宏常量没有数据类型，编译器无法执行类型检查<br>优点：</li>
+<li>宏函数效率高</li>
+<li>一些功能只能用宏实现。一些数据要在编译阶段确定，只能用宏。<br>总结：</li>
+<li>尽量不使用宏函数，除非有性能原因</li>
+<li>宏定义的名字在一个工程中要保持唯一性，防止不一致。</li>
+</ul>
+<h2 id="枚举"><a href="#枚举" class="headerlink" title="枚举"></a>枚举</h2><p>例：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> &#123;</span></span><br><span class="line">  Apple = <span class="number">4</span>,</span><br><span class="line">  Banana,</span><br><span class="line">  Orange = <span class="number">5</span>,</span><br><span class="line">  Lemon</span><br><span class="line">&#125; fruit;</span><br><span class="line"></span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%d %d %d %d&quot;</span>, Apple, Banana, Orange, Lemon, <span class="keyword">sizeof</span>(fruit)); <span class="comment">// 4 5 5 6 4</span></span><br></pre></td></tr></table></figure><br>枚举类型的大小和编译器、编译选项都有关，一般为4或8个字节。<strong>建议不要对枚举用<code>sizeof</code>，且对枚举成员赋值不要超过4字节</strong>。</p>
+<ul>
+<li>枚举成员可以指定值，如果不指定，就从前一个有值的成员开始依次递增，如果第一个成员没有指定，默认是0。</li>
+<li>枚举值可能存在成员值相同的情况（如例子）</li>
+<li>枚举赋值不要超过4字节。枚举之前不要强行转化。</li>
+</ul>
+<h2 id="结构体"><a href="#结构体" class="headerlink" title="结构体"></a>结构体</h2><p><strong>字节对齐</strong>：现代计算机以字节编址，理论上可以从任何位置取操作数。但是实际上，访问特定类型的变量只能从特定的地址访问内存，这就是字节对齐。</p>
+<p>如果期望只从4的倍数的地址取操作数，就是4字节对齐。</p>
+<p>例：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 默认4字节对齐</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">        <span class="keyword">char</span> str[<span class="number">10</span>]; <span class="comment">// size: 10bytes, padding:2 bytes, total 12byes mod 4 == 0</span></span><br><span class="line">        <span class="keyword">int</span> n; <span class="comment">// 4 bytes, no padding</span></span><br><span class="line">        <span class="keyword">float</span> f; <span class="comment">// 4 bytes, no padding</span></span><br><span class="line">&#125; STRUCT_DEMO; <span class="comment">// total 12 + 4 + 4 = 20 bytes</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        STRUCT_DEMO demo = &#123;<span class="string">&quot;Heng&quot;</span>, <span class="number">1919810</span>, <span class="number">114.514</span>&#125;;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%u %u %u %u&quot;</span>,<span class="keyword">sizeof</span>(demo), &amp;demo.str, &amp;demo.n, &amp;demo.f);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//20 8313680 8313692 8313696</span></span><br></pre></td></tr></table></figure></p>
+<p>可以用<code>#pragma pack(n)</code>来声明n字节对齐</p>
+<p><strong>字节对齐的原因</strong>：</p>
+<ol>
+<li><p>运行速度更快</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> pack(1)</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">  <span class="keyword">char</span> ch;</span><br><span class="line">  <span class="keyword">double</span> n;</span><br><span class="line">&#125; st_1;</span><br><span class="line"></span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%f&quot;</span>, st_1.n)</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> pack(4)</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">  <span class="keyword">char</span> ch;</span><br><span class="line">  <span class="keyword">double</span> n;</span><br><span class="line">&#125; st_2;</span><br><span class="line"></span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%f&quot;</span>, st_2.n)</span><br></pre></td></tr></table></figure>
+<p><code>st_1</code>和<code>st_2</code>分别使用1字节对齐和4字节对齐，且有着相同的格式。在x64下一次取操作数最多取8字节，访问<code>st_1.n</code>需要取2次数，而访问<code>st_2.n</code>只要取一次数。</p>
+</li>
+<li><p>如果不字节对齐，指针从基地址读取数据也许会出错，结构体赋值也可能会出错。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">pragma</span> pack(1)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="keyword">char</span> ch1; </span><br><span class="line">    <span class="keyword">char</span> ch2;</span><br><span class="line">    <span class="keyword">int</span> n;</span><br><span class="line">&#125; STRUCT_DEMO;  </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    STRUCT_DEMO st = &#123;<span class="string">&#x27;a&#x27;</span>,<span class="string">&#x27;b&#x27;</span>,<span class="number">1</span>&#125;;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, <span class="keyword">sizeof</span>(st)); <span class="comment">// 6</span></span><br><span class="line">    <span class="keyword">int</span> n1 = *(<span class="keyword">int</span>*)(&amp;st.ch1); </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, n1); </span><br><span class="line">    <span class="keyword">int</span> n2 = *(<span class="keyword">int</span>*)(&amp;st.ch2); <span class="comment">// might crash: data abort exception</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, n2);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>例如1字节对齐时从<code>st.ch2</code>处访问数据违反了对齐规则（地址非4的倍数），部分CPU和编译器可能触发data abort exception</p>
+</li>
+</ol>
+<blockquote>
+<p>访问数据违反了对齐规则是否出错主要取决于CPU和编译器</p>
+</blockquote>
+<ol>
+<li>结构体赋值字节不对齐可能会出错<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="keyword">char</span> ch1;</span><br><span class="line">    <span class="keyword">char</span> ch2;</span><br><span class="line">    <span class="keyword">char</span> ch3;</span><br><span class="line">&#125; STRUCT_DEMO;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    STRUCT_DEMO demo;</span><br><span class="line">    <span class="keyword">char</span> *p = (<span class="keyword">char</span>*)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">char</span>) * <span class="number">10</span>);</span><br><span class="line">    p++; <span class="comment">// p指向位置不满足对齐</span></span><br><span class="line">    demo = *((STRUCT_DEMO*)p); <span class="comment">// might crash</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+部分CPU，执行结构体赋值指令使用的是STM/LDM之类的块拷贝指令，而<strong>块拷贝指令要求基址必须满足4字节对齐</strong>，否则就会导致数据读取异常。</li>
+</ol>
+<p><strong>如何设置字节对齐</strong>：</p>
+<ul>
+<li>自然对齐：调整结构体成员变量的申明顺序，按照8,4,2,1字节的顺序排列。不够对其的字段用保留字段填充至对齐</li>
+<li>使用预编译选项<code>#pragma pack(n)</code>让编译器自动对齐</li>
+<li>不对齐结构不用非同类型指针访问，不进行类型转换</li>
+<li>尽量不对结构体直接赋值，使用<code>memcpy</code>拷贝结构体</li>
+</ul>
+<p><strong>结构体大小计算</strong><br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 4 字节对齐</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span> <span class="comment">// size = 6</span></span><br><span class="line">    <span class="keyword">char</span> a;</span><br><span class="line">    <span class="keyword">short</span> b;</span><br><span class="line">    <span class="keyword">short</span> c;</span><br><span class="line">&#125; DEMO_1;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span> <span class="comment">// sizeof = 12</span></span><br><span class="line">    <span class="keyword">int</span> a;</span><br><span class="line">    DEMO_1 b;</span><br><span class="line">&#125; DEMO_2;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span> <span class="comment">// sizeof = 8</span></span><br><span class="line">    <span class="keyword">int</span> a;</span><br><span class="line">    <span class="keyword">short</span> b;</span><br><span class="line">&#125; DEMO_3;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span> <span class="comment">// sizeof = 0 (c) or 1 (c++)</span></span><br><span class="line"></span><br><span class="line">&#125; DEMO_4; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    DEMO_1 d1;</span><br><span class="line">    DEMO_2 d2;</span><br><span class="line">    DEMO_3 d3;</span><br><span class="line">    DEMO_4 d4;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d %d %d %d&quot;</span>, <span class="keyword">sizeof</span>(d1), <span class="keyword">sizeof</span>(d2), <span class="keyword">sizeof</span>(d3), <span class="keyword">sizeof</span>(d4));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;   </span><br><span class="line"><span class="comment">// gcc compile output:</span></span><br><span class="line"><span class="comment">// 6 12 8 0</span></span><br><span class="line"><span class="comment">// g++ compile output:</span></span><br><span class="line"><span class="comment">// 6 12 8 1</span></span><br></pre></td></tr></table></figure><br><strong>关于对齐的几个基本概念</strong>：</p>
+<ul>
+<li>数据类型自身的对齐值：<code>char</code>为1，<code>short</code>为2，<code>float</code>为4，<code>int</code>通常为4</li>
+<li>结构体/类的自身对齐值：其成员中自身对齐值最大的值</li>
+<li>制定对齐值：<code>#pragma pack(n)</code>指定<code>n</code>字节对齐</li>
+<li>数据成员，结构体有效对齐值：自身对齐值和指定对其值去较小的</li>
+</ul>
+<p><strong>结构体对其原则</strong>：</p>
+<ul>
+<li>每个成员分别按有效对齐值对齐，起始地址 % 有效对齐值 = 0</li>
+<li>结构体默认对齐方式是它最长的成员的对齐方式，起始地址 % 最大成员有效对齐值 = 0</li>
+<li>结构体对齐后的长度必须是成员中有效对齐值的整数倍</li>
+</ul>
+<h2 id="联合体"><a href="#联合体" class="headerlink" title="联合体"></a>联合体</h2><p>联合体的大小是最大的成员的大小，所有成员共享联合体空间。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">    <span class="keyword">char</span> a[<span class="number">2</span>];</span><br><span class="line">    <span class="keyword">int</span> b;</span><br><span class="line">&#125; U1;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    U1 u1;</span><br><span class="line">    u1.b = <span class="number">0x12345678</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%x %x\n&quot;</span>, u1.a[<span class="number">0</span>], u1.a[<span class="number">2</span>]);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 78 56</span></span><br></pre></td></tr></table></figure>
+<p>x86下大端的存储结构如下：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>u1.a</td>
+<td>0x78</td>
+<td>0x56</td>
+<td>0x34</td>
+<td>0x12</td>
+</tr>
+<tr>
+<td>u1.b</td>
+<td>0x78</td>
+<td>0x56</td>
+<td>0x34</td>
+<td>0x12</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><p>指向函数的指针</p>
+<p>例：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">char</span> a[] = &#123;<span class="string">&#x27;a&#x27;</span>,<span class="string">&#x27;b&#x27;</span>,<span class="string">&#x27;c&#x27;</span>&#125;; <span class="comment">//末尾没有空白符</span></span><br><span class="line"><span class="keyword">char</span> b[] = <span class="string">&quot;abc&quot;</span>; <span class="comment">//末尾有空白符，等价于&#123;&#x27;a&#x27;,&#x27;b&#x27;,&#x27;c&#x27;,&#x27;\0&#x27;&#125;</span></span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%d %d %d %d&quot;</span>,<span class="keyword">sizeof</span>(a), <span class="built_in">strlen</span>(a), <span class="keyword">sizeof</span>(b), <span class="built_in">strlen</span>(b));</span><br><span class="line"><span class="comment">// 3 6 4 3</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="函数指针"><a href="#函数指针" class="headerlink" title="函数指针"></a>函数指针</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(*PFUN)</span><span class="params">(<span class="keyword">float</span>, <span class="keyword">int</span>, <span class="keyword">char</span>*)</span></span>; <span class="comment">// 定义函数指针</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">float</span> n1, <span class="keyword">int</span> n2, <span class="keyword">char</span>* n3)</span> </span>&#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;%f %d %s\n&quot;</span>, n1, n2, n3);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  PFUN pf = func; <span class="comment">//创建函数指针指向之前的函数，通过指针调用之前的函数</span></span><br><span class="line">  pf(<span class="number">11.3</span>, <span class="number">514</span>, <span class="string">&quot;Test&quot;</span>); </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 11.30000 514 Test</span></span><br></pre></td></tr></table></figure>
+<h3 id="inline函数"><a href="#inline函数" class="headerlink" title="inline函数"></a>inline函数</h3><p><code>inline</code>函数用于建议编译器展开对改函数的调用，从而没有函数调用调用的开销。不同于宏函数，内联函数是真正的函数，编译器会检察参数类型，消除宏函数的隐患。内联函数和宏函数一样可能会导致代码空间膨胀。</p>
+<blockquote>
+<p><code>inline</code>只是对编译器的建议，对内联函数是否展开由编译器决定。<strong>内联函数不宜太长，而且必须在头文件中定义</strong>。</p>
+</blockquote>
+<p>例:<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">abs</span><span class="params">(<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> n &gt; <span class="number">0</span> ? n : -n;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="extern函数"><a href="#extern函数" class="headerlink" title="extern函数"></a>extern函数</h3><ul>
+<li>extern`关键字置于变量和函数之前，表示变量和函数定义在别的文件中，提示编译器去其他模块寻找该变量和函数的定义。</li>
+<li><code>extern</code>关键字可以用于替代<code>#include</code>来声明函数</li>
+<li><code>extern &quot;C&quot;</code>：C++在解决函数多态问题时，会将函数名和参数联合起来生成一个中间函数名，而C语言不会，因此会造成链接时找不到对应函数的情况</li>
+</ul>
+<p>例：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//main.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">extern</span> <span class="keyword">int</span> <span class="title">sum</span><span class="params">(<span class="keyword">int</span>, <span class="keyword">int</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> s = sum(<span class="number">114</span>, <span class="number">514</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;sum=%d\n&quot;</span>, s);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// sum.c</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sum</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br><code>gcc main.c sum.c -o main</code>编译成功，输出628</p>
+<h3 id="static函数"><a href="#static函数" class="headerlink" title="static函数"></a>static函数</h3><p><code>static</code>函数只能被同文件和包含其的文件的函数调用。</p>
+<p>例：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//main.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">extern</span> <span class="keyword">int</span> <span class="title">sum</span><span class="params">(<span class="keyword">int</span>, <span class="keyword">int</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> s = sum(<span class="number">114</span>, <span class="number">514</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;sum=%d\n&quot;</span>, s);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// sum.c</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">sum</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a + b;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br><code>gcc main.c sum.c -o main</code>编译失败，找不到<code>sum</code>的引用：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/usr/bin/ld: /tmp/ccLduJ3g.o: in function `main&#x27;:</span><br><span class="line">main.c:(.text+0x13): undefined reference to `sum&#x27;</span><br><span class="line">collect2: error: ld returned 1 exit status</span><br></pre></td></tr></table></figure><br>解决办法：改用<code>#include</code>引入<code>sum</code>或者取消<code>static</code></p>
+<h2 id="字符串和指针"><a href="#字符串和指针" class="headerlink" title="字符串和指针"></a>字符串和指针</h2><h3 id="函数形参数组和指针互换"><a href="#函数形参数组和指针互换" class="headerlink" title="函数形参数组和指针互换"></a>函数形参数组和指针互换</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func1</span><span class="params">(<span class="keyword">char</span> *str)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;size=%d, str=%s\n&quot;</span>, <span class="keyword">sizeof</span>(str), str);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func2</span><span class="params">(<span class="keyword">char</span> str[])</span> </span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;size=%d, str=%s\n&quot;</span>, <span class="keyword">sizeof</span>(str), str);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func3</span><span class="params">(<span class="keyword">char</span> str[<span class="number">3</span>])</span> </span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;size=%d, str=%s\n&quot;</span>, <span class="keyword">sizeof</span>(str), str);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    func1(<span class="string">&quot;Hello World&quot;</span>); <span class="comment">//size=8, str=Hello World</span></span><br><span class="line">    func2(<span class="string">&quot;Hello World&quot;</span>); <span class="comment">//size=8, str=Hello World</span></span><br><span class="line">    func3(<span class="string">&quot;Hello World&quot;</span>); <span class="comment">//size=8, str=Hello World</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>char str[]</code>，<code>char* str</code>，<code>char str[n]</code>作为形参本质上都是<code>char *</code></p>
+<h3 id="使用sizeof时，数组和指针定义不可互换"><a href="#使用sizeof时，数组和指针定义不可互换" class="headerlink" title="使用sizeof时，数组和指针定义不可互换"></a>使用<code>sizeof</code>时，数组和指针定义不可互换</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">char</span> *str1 = <span class="string">&quot;hello world&quot;</span>;</span><br><span class="line"><span class="keyword">char</span> str2[<span class="number">15</span>] = <span class="string">&quot;Hello world&quot;</span>;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%d %d\n&quot;</span>, <span class="keyword">sizeof</span>(str1), <span class="keyword">sizeof</span>(str2)); <span class="comment">// 8 15</span></span><br></pre></td></tr></table></figure>
+<p>指针使用<code>sizeof</code>永远返回指针大小，数组则返回数组大小</p>
+<h3 id="数组和指针在表达式取值中有相同的本质"><a href="#数组和指针在表达式取值中有相同的本质" class="headerlink" title="数组和指针在表达式取值中有相同的本质"></a>数组和指针在表达式取值中有相同的本质</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">char</span>* str1 = <span class="string">&quot;Hello World&quot;</span>;</span><br><span class="line"><span class="keyword">char</span> str2[] = <span class="string">&quot;Hello World&quot;</span>;</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%c %c %c %c&quot;</span>, str1[<span class="number">3</span>], *(str1 + <span class="number">3</span>), str2[<span class="number">3</span>], *(str2 + <span class="number">3</span>));</span><br></pre></td></tr></table></figure>
+<p>数组头可以看作是指针，指针可以看作数组头，都可用下标访问和步长解引用获取变量值。<code>str[3]</code>会被编译器编译成<code>*(str + 3)</code></p>
+<h3 id="多维数组的步长"><a href="#多维数组的步长" class="headerlink" title="多维数组的步长"></a>多维数组的步长</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">char</span> a1[<span class="number">10</span>]; <span class="comment">// step 1</span></span><br><span class="line"><span class="keyword">int</span> a2[<span class="number">10</span>]; <span class="comment">// step 4</span></span><br><span class="line"><span class="keyword">char</span> a3[<span class="number">10</span>][<span class="number">3</span>]; <span class="comment">// step 3</span></span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%u %u\n&quot;</span>, a1, a1 + <span class="number">1</span>);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%u %u\n&quot;</span>, a2, a2 + <span class="number">1</span>);</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%u %u %u\n&quot;</span>, a3, a3 + <span class="number">1</span>, (a3 + <span class="number">1</span>) + <span class="number">1</span>);</span><br><span class="line"><span class="comment">// 1551264830 1551264831</span></span><br><span class="line"><span class="comment">// 1551264784 1551264788</span></span><br><span class="line"><span class="comment">// 1551264752 1551264755 1551264756</span></span><br></pre></td></tr></table></figure>
+<p><code>char a3[10][3]</code>中<code>(a3 + 1)</code>指向<code>a3[10][0]</code></p>
+<h2 id="内存布局"><a href="#内存布局" class="headerlink" title="内存布局"></a>内存布局</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">str1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> s[] = <span class="string">&quot;HelloWorld1&quot;</span>;</span><br><span class="line">    <span class="keyword">return</span> s;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">str2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span> s[] = &#123;<span class="string">&#x27;H&#x27;</span>,<span class="string">&#x27;e&#x27;</span>,<span class="string">&#x27;l&#x27;</span>,<span class="string">&#x27;l&#x27;</span>,<span class="string">&#x27;o&#x27;</span>,<span class="string">&#x27;W&#x27;</span>,<span class="string">&#x27;o&#x27;</span>,<span class="string">&#x27;r&#x27;</span>,<span class="string">&#x27;l&#x27;</span>,<span class="string">&#x27;d&#x27;</span>,<span class="string">&#x27;2&#x27;</span>,<span class="string">&#x27;\0&#x27;</span>&#125;;</span><br><span class="line">    <span class="keyword">return</span> s;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">str3</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>* s = <span class="string">&quot;HelloWorld3&quot;</span>;</span><br><span class="line">    <span class="keyword">return</span> s;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">str4</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">char</span>* s = <span class="string">&quot;HelloWorld4&quot;</span>;</span><br><span class="line">    <span class="keyword">return</span> s;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">char</span>* <span class="title">str5</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;HelloWorld5&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">//printf(&quot;%s\n&quot;, str1()); // segment fault (core dumped)</span></span><br><span class="line">    <span class="comment">//printf(&quot;%s\n&quot;, str2()); // segment fault (core dumped)</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, str3());</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, str4());</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, str5());</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>str1()</code>和<code>str2()</code>的字符串分配在栈上，内容随着函数返回被销毁，所以无法正确返回数据。</p>
+<p><code>str3()</code>，<code>str4()</code>，<code>str5()</code>可以正确返回结果，<code>str3()</code></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> n;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test_global_var_init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;global n = %d\n&quot;</span>, n);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test_local_var_init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> m;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;local m = %d\n&quot;</span>, m);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test_heap_var_init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span>* pm = (<span class="keyword">int</span>*)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">int</span>));</span><br><span class="line">    <span class="keyword">if</span>(pm != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;heap m = %d\n&quot;</span>, *pm);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    test_global_var_init();</span><br><span class="line">    test_local_var_init();</span><br><span class="line">    test_heap_var_init();   </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// global n = 0</span></span><br><span class="line"><span class="comment">// local m = 21931</span></span><br><span class="line"><span class="comment">// heap m = 14324</span></span><br></pre></td></tr></table></figure>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>segment</th>
+<th>段名</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BSS</td>
+<td>BSS段</td>
+<td>存放程序中未初始化的全局变量，不占用执行程序大小，其内容由操作系统初始化（赋0）</td>
+</tr>
+<tr>
+<td>data</td>
+<td>数据段</td>
+<td>存放程序中已初始化的全局变量</td>
+</tr>
+<tr>
+<td>code</td>
+<td>代码段</td>
+<td>存放程序执行代码的内存区域，大小在程序运行前已经确定，而且通常属于只读</td>
+</tr>
+<tr>
+<td>heap</td>
+<td>堆</td>
+<td>存放进程运行中被动态分配的内存段，大小并不固定，可动态扩张或缩减，malloc分配的是堆上内存</td>
+</tr>
+<tr>
+<td>stack</td>
+<td>栈</td>
+<td>用户存放程序临时创建的局部变量（但不包括static声明的变量）。在函数被调用时，其参数也会被压入发起调用的进程栈</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>TODO::用<code>objdump -s</code>分析二进制</p>
+<h2 id="常见的坑"><a href="#常见的坑" class="headerlink" title="常见的坑"></a>常见的坑</h2><h3 id="变量的定义与声明"><a href="#变量的定义与声明" class="headerlink" title="变量的定义与声明"></a>变量的定义与声明</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">0</span>; <span class="comment">//定义，声明了类型、名称，同时分配空间和初始化</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="keyword">int</span> a; <span class="comment">//声明，变量在其他地方</span></span><br></pre></td></tr></table></figure>
+<p>变量申明仅表明对象的类型和名称，而定义还会给变量分配空间和初始化值，定义也是声明。声明可以有多次，定义只能有一次。</p>
+<h3 id="switch"><a href="#switch" class="headerlink" title="switch"></a>switch</h3><p><code>switch(variable)</code>变量只能是<code>char</code>，<code>int</code>类型，<code>case</code>总常量值不能重复。分支语句块如果重复可以改为：<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">switch</span>(variable) &#123;</span><br><span class="line">  <span class="keyword">case</span> VAR1:</span><br><span class="line">  <span class="keyword">case</span> VAR2: &#123;</span><br><span class="line">    <span class="comment">// do something...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="不能返回栈上值的引用"><a href="#不能返回栈上值的引用" class="headerlink" title="不能返回栈上值的引用"></a>不能返回栈上值的引用</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">string&amp; <span class="title">shorter</span><span class="params">(string&amp; s1, string&amp; s2)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(s1.<span class="built_in">size</span>() &lt; s2.<span class="built_in">size</span>()) &#123;</span><br><span class="line">    <span class="keyword">return</span> s1;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> s2;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当函数执行完后，栈上对象会被析构。返回引用类型时，不能返回栈上对象的引用。</p>
+<h3 id="对象生命周期"><a href="#对象生命周期" class="headerlink" title="对象生命周期"></a>对象生命周期</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">string s = <span class="string">&quot;HelloWorld&quot;</span>;</span><br><span class="line"><span class="keyword">char</span> *p1 = s.<span class="built_in">substr</span>(<span class="number">1</span>).<span class="built_in">data</span>();</span><br><span class="line">cout &lt;&lt; p1 &lt;&lt; endl; <span class="comment">// elloWorld</span></span><br><span class="line"><span class="keyword">char</span> *p2 = s.<span class="built_in">substr</span>(<span class="number">1</span>).<span class="built_in">data</span>();</span><br><span class="line">cout &lt;&lt; p2 &lt;&lt; endl; <span class="comment">// elloWorld</span></span><br></pre></td></tr></table></figure>
+<p>参考资料:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/359775573?ivk_sa=1024320u">C语言未初始化的局部变量必懂</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/snowhuit/article/details/120104786">C语言内存布局理解</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/01/22/%E6%A0%91%E8%8E%93%E6%B4%BE%E6%90%AD%E5%BB%BAKodi%E6%9C%BA%E9%A1%B6%E7%9B%92/" rel="prev" title="树莓派搭建Kodi机顶盒">
+      <i class="fa fa-chevron-left"></i> 树莓派搭建Kodi机顶盒
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/05/22/Orange-Pi-Zero%E5%88%9B%E5%BB%BA%E6%97%A0%E7%BA%BF%E7%83%AD%E7%82%B9/" rel="next" title="Orange Pi Zero创建无线热点">
+      Orange Pi Zero创建无线热点 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">基本数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E7%9A%84%E5%87%A0%E7%A7%8D%E7%94%A8%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">指针的几种用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E8%87%AA%E5%8A%A8%E8%BD%AC%E6%8D%A2"><span class="nav-number">3.1.</span> <span class="nav-text">类型自动转换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8F"><span class="nav-number">4.</span> <span class="nav-text">宏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%9A%E4%B8%BE"><span class="nav-number">5.</span> <span class="nav-text">枚举</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">6.</span> <span class="nav-text">结构体</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%81%94%E5%90%88%E4%BD%93"><span class="nav-number">7.</span> <span class="nav-text">联合体</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%BD%E6%95%B0"><span class="nav-number">8.</span> <span class="nav-text">函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E6%8C%87%E9%92%88"><span class="nav-number">8.1.</span> <span class="nav-text">函数指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#inline%E5%87%BD%E6%95%B0"><span class="nav-number">8.2.</span> <span class="nav-text">inline函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#extern%E5%87%BD%E6%95%B0"><span class="nav-number">8.3.</span> <span class="nav-text">extern函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#static%E5%87%BD%E6%95%B0"><span class="nav-number">8.4.</span> <span class="nav-text">static函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E6%8C%87%E9%92%88"><span class="nav-number">9.</span> <span class="nav-text">字符串和指针</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E5%BD%A2%E5%8F%82%E6%95%B0%E7%BB%84%E5%92%8C%E6%8C%87%E9%92%88%E4%BA%92%E6%8D%A2"><span class="nav-number">9.1.</span> <span class="nav-text">函数形参数组和指针互换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8sizeof%E6%97%B6%EF%BC%8C%E6%95%B0%E7%BB%84%E5%92%8C%E6%8C%87%E9%92%88%E5%AE%9A%E4%B9%89%E4%B8%8D%E5%8F%AF%E4%BA%92%E6%8D%A2"><span class="nav-number">9.2.</span> <span class="nav-text">使用sizeof时，数组和指针定义不可互换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E5%92%8C%E6%8C%87%E9%92%88%E5%9C%A8%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8F%96%E5%80%BC%E4%B8%AD%E6%9C%89%E7%9B%B8%E5%90%8C%E7%9A%84%E6%9C%AC%E8%B4%A8"><span class="nav-number">9.3.</span> <span class="nav-text">数组和指针在表达式取值中有相同的本质</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%BB%B4%E6%95%B0%E7%BB%84%E7%9A%84%E6%AD%A5%E9%95%BF"><span class="nav-number">9.4.</span> <span class="nav-text">多维数组的步长</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80"><span class="nav-number">10.</span> <span class="nav-text">内存布局</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E5%9D%91"><span class="nav-number">11.</span> <span class="nav-text">常见的坑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E7%9A%84%E5%AE%9A%E4%B9%89%E4%B8%8E%E5%A3%B0%E6%98%8E"><span class="nav-number">11.1.</span> <span class="nav-text">变量的定义与声明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#switch"><span class="nav-number">11.2.</span> <span class="nav-text">switch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E8%83%BD%E8%BF%94%E5%9B%9E%E6%A0%88%E4%B8%8A%E5%80%BC%E7%9A%84%E5%BC%95%E7%94%A8"><span class="nav-number">11.3.</span> <span class="nav-text">不能返回栈上值的引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-number">11.4.</span> <span class="nav-text">对象生命周期</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2022/05/02/%E4%BB%8EC%E5%88%B0C/";
+    this.page.identifier = "2022/05/02/从C到C/";
+    this.page.title = "深入学习C语言";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

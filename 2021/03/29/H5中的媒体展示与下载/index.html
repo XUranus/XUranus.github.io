@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="最近看到项目里有个模块叫download，用node编写，用作中间件，改变HTTP Response的Header以下载文件，于是打算在本文对H5种媒体的展示或下载方式做一个简单的归纳。  首先npx create_react_app media-demo创建一个测试媒体类型展示的React Demo，我们打算在Download.jsx种实现一个简单的图片展示和下载模块。首先上代码：import">
+<meta property="og:type" content="article">
+<meta property="og:title" content="H5中的媒体展示与下载">
+<meta property="og:url" content="http://xuranus.github.io/2021/03/29/H5%E4%B8%AD%E7%9A%84%E5%AA%92%E4%BD%93%E5%B1%95%E7%A4%BA%E4%B8%8E%E4%B8%8B%E8%BD%BD/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="最近看到项目里有个模块叫download，用node编写，用作中间件，改变HTTP Response的Header以下载文件，于是打算在本文对H5种媒体的展示或下载方式做一个简单的归纳。  首先npx create_react_app media-demo创建一个测试媒体类型展示的React Demo，我们打算在Download.jsx种实现一个简单的图片展示和下载模块。首先上代码：import">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2021/03/29/H5%E4%B8%AD%E7%9A%84%E5%AA%92%E4%BD%93%E5%B1%95%E7%A4%BA%E4%B8%8E%E4%B8%8B%E8%BD%BD/1.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/03/29/H5%E4%B8%AD%E7%9A%84%E5%AA%92%E4%BD%93%E5%B1%95%E7%A4%BA%E4%B8%8E%E4%B8%8B%E8%BD%BD/2.png">
+<meta property="article:published_time" content="2021-03-29T13:08:19.000Z">
+<meta property="article:modified_time" content="2021-09-05T12:51:13.899Z">
+<meta property="article:author" content="XUranus">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2021/03/29/H5%E4%B8%AD%E7%9A%84%E5%AA%92%E4%BD%93%E5%B1%95%E7%A4%BA%E4%B8%8E%E4%B8%8B%E8%BD%BD/1.png">
+
+<link rel="canonical" href="http://xuranus.github.io/2021/03/29/H5%E4%B8%AD%E7%9A%84%E5%AA%92%E4%BD%93%E5%B1%95%E7%A4%BA%E4%B8%8E%E4%B8%8B%E8%BD%BD/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>H5中的媒体展示与下载 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/03/29/H5%E4%B8%AD%E7%9A%84%E5%AA%92%E4%BD%93%E5%B1%95%E7%A4%BA%E4%B8%8E%E4%B8%8B%E8%BD%BD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          H5中的媒体展示与下载
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-29 13:08:19" itemprop="dateCreated datePublished" datetime="2021-03-29T13:08:19Z">2021-03-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/03/29/H5%E4%B8%AD%E7%9A%84%E5%AA%92%E4%BD%93%E5%B1%95%E7%A4%BA%E4%B8%8E%E4%B8%8B%E8%BD%BD/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/29/H5中的媒体展示与下载/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>4.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>最近看到项目里有个模块叫download，用node编写，用作中间件，改变HTTP Response的Header以下载文件，于是打算在本文对H5种媒体的展示或下载方式做一个简单的归纳。</p>
+</blockquote>
+<p>首先<code>npx create_react_app media-demo</code>创建一个测试媒体类型展示的React Demo，我们打算在<code>Download.jsx</code>种实现一个简单的图片展示和下载模块。首先上代码：<br><figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">const</span> url = <span class="string">&quot;https://img.moegirl.org.cn/common/f/ff/YJSNPI_Ascii_Art..png&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Download</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&#123;url&#125;</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&#123;url&#125;</span>&gt;</span>link<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Download;</span><br></pre></td></tr></table></figure></p>
+<span id="more"></span>
+<h2 id="no-referrer"><a href="#no-referrer" class="headerlink" title="no-referrer"></a>no-referrer</h2><p>这个模块会被直接挂载到<code>App.js</code>上，按道理会展示一张地址为<code>https://img.moegirl.org.cn/common/f/ff/YJSNPI_Ascii_Art..png</code>的图片。下方带有一个连接。打开浏览器，却看到图片未能加载，连接也无法正常跳转到图片，于是打开控制台一看究竟，发现图片的请求报<code>403</code>错误。是连接出错了吗？事实上不是：<strong>直接复制连接地址到浏览器种发现是可以正常打开的</strong>。</p>
+<p>HTTP请求体的<code>header</code>中有一个<code>referrer</code>字段，用来表示发起HTTP请求的源地址信息，这个<code>referrer</code>信息是可以省略但是不可修改的。你能设置是否带上这个<code>referrer</code>信息，单不能定制<code>referrer</code>的值。</p>
+<p>服务器端在拿到这个<code>referrer</code>值后就可以进行相关的处理，比如图片资源，可以通过<code>referrer</code>值判断请求是否来自本站，若不是则返回403或者重定向返回其他信息，从而实现图片的防盗链。上面出现<code>403</code>就是因为，请求的是别人服务器上的资源，但把自己的<code>referrer</code>信息带过去了，被对方服务器拦截返回了<code>403</code>。</p>
+<p>在前端可以通过<code>meta</code>来设置referrer policy(来源策略)。所以针对上面的<code>403</code>情况的解决方法，就是把<code>referrer</code>设置成<code>no-referrer</code>，这样发送请求不会带上<code>referrer</code>信息，对方服务器也就无法拦截了。<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;referrer&quot;</span> <span class="attr">content</span>=<span class="string">&quot;no-referrer&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure><br>隐藏<code>referrer</code>信息后，张口闭眼成功展示！<br><img src="1.png" alt=""></p>
+<p>浏览器中<code>referrer</code>默认的值是<code>no-referrer-when-downgrade</code>，就是除了降级请求的情况以外都会带上<code>referrer</code>信息。降级请求是指HTTPS协议的地址去请求HTTP协议，所以上面<code>403</code>的情况还有另一种解决方法就是，请求的图片地址换成HTTP协议，自己的地址使用HTTP协议，这样降级请求也不会带上<code>referrer</code>。</p>
+<h3 id="配置Nginx防盗链"><a href="#配置Nginx防盗链" class="headerlink" title="配置Nginx防盗链"></a>配置Nginx防盗链</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">location ~* \.(gif|jpg|png|jpeg)$ &#123;</span><br><span class="line">    valid_referers none  valid.url.com;</span><br><span class="line">    if ($invalid_referer) &#123;</span><br><span class="line">            return 403;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先第一句以文件格式后缀匹配出图片资源路径，然后通过<code>valid_referers</code>添加合法的<code>referer</code>地址，加上<code>none</code>，表示没有传<code>referer</code>也是合法的，最后<code>referer</code>不合法的情况返回<code>403</code>。如果想跳其他地址或返回其他图片资源可以这样：<code>rewrite xxx.xxx.com/xxx.jpg</code>。</p>
+<p>HTTP头部中还有一个与<code>referrer</code>类似的叫<code>orgin</code>的字段，在发送跨域请求或预检请求(preflight request)时会带上这个参数，他用来表示发起请求的服务器地址，这个参数是必定会传的，然后服务器端用此字段来判断是否允许跨域。</p>
+<h2 id="下载资源"><a href="#下载资源" class="headerlink" title="下载资源"></a>下载资源</h2><p>我们除了展示图片，还要实现一个点击按钮下载的需求。于是<code>Download.jsx</code>加上一个<code>button</code>，点击时候触发下载。假定在<code>download()</code>实现下载事件。<br><figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">const</span> url = <span class="string">&quot;https://img.moegirl.org.cn/common/f/ff/YJSNPI_Ascii_Art..png&quot;</span></span><br><span class="line"><span class="keyword">const</span> download = <span class="function">(<span class="params">url</span>)=&gt;</span>&#123;</span><br><span class="line">    <span class="comment">//TOTO</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Download</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&#123;url&#125;</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&#123;url&#125;</span>&gt;</span>link<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="symbol">&amp;nbsp;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span>=&gt;</span>download(url)&#125;&gt;download<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Download;</span><br></pre></td></tr></table></figure></p>
+<h3 id="window-open"><a href="#window-open" class="headerlink" title="window.open"></a>window.open</h3><p>用<code>windows.open(url)</code>在可以下载<code>docx</code>，<code>exe</code>等浏览器无法展示的文件，单对于图片和<code>mp4</code>，<code>mp3</code>会直接在新页面打开。</p>
+<p>不出所料，直接在新页面打开了图片，没有触发下载。</p>
+<h3 id="创建虚拟DOM-a"><a href="#创建虚拟DOM-a" class="headerlink" title="创建虚拟DOM a"></a>创建虚拟DOM a</h3><p>网上常见的JS控制下载的方法就是创建一个虚拟的<code>a</code>类型的DOM，然后将点击事件分发给它，根据它的<code>download</code>属性下载<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> download=<span class="function">(<span class="params">url</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> aLink = <span class="built_in">document</span>.createElement(<span class="string">&#x27;a&#x27;</span>)</span><br><span class="line">    aLink.download = <span class="string">&#x27;Picture.png&#x27;</span> </span><br><span class="line">    aLink.href = url </span><br><span class="line">    aLink.dispatchEvent(<span class="keyword">new</span> MouseEvent(<span class="string">&#x27;click&#x27;</span>, &#123;&#125;))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>但是经过测试并没有达到预期的下载效果，而是直接在页面打开了图片。这是因为图片地址和前端不同源，针对跨域的图片，不能用这种方式下载。作为对照，用React在<code>public</code>目录下的<code>logo192.png</code>图片做测试：<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> url = <span class="string">&quot;/logo192.png&quot;</span></span><br></pre></td></tr></table></figure><br>发现同源图片是可以通过该种方式正常下载的，且下载的文件名和<code>download</code>属性的值保持一致：<br><img src="2.png" alt=""></p>
+<h3 id="canvas-toDataURL"><a href="#canvas-toDataURL" class="headerlink" title="canvas.toDataURL"></a>canvas.toDataURL</h3><p>通过url转base64，利用canvas.toDataURL的API转化成base6<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> download = <span class="function">(<span class="params">url</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span> (<span class="function">(<span class="params">resolve,reject</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> image = <span class="keyword">new</span> Image();</span><br><span class="line">      image.onload = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">let</span> canvas = <span class="built_in">document</span>.createElement(<span class="string">&#x27;canvas&#x27;</span>);</span><br><span class="line">        canvas.width = <span class="built_in">this</span>.naturalWidth;</span><br><span class="line">        canvas.height = <span class="built_in">this</span>.naturalHeight;</span><br><span class="line">        <span class="comment">// 将图片插入画布并开始绘制</span></span><br><span class="line">        canvas.getContext(<span class="string">&#x27;2d&#x27;</span>).drawImage(image, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">        <span class="comment">// result</span></span><br><span class="line">        <span class="keyword">let</span> result = canvas.toDataURL(<span class="string">&#x27;image/png&#x27;</span>)</span><br><span class="line">        resolve(result);</span><br><span class="line">      &#125;;</span><br><span class="line">      <span class="comment">// CORS 策略，会存在跨域问题https://stackoverflow.com/questions/20424279/canvas-todataurl-securityerror</span></span><br><span class="line">      image.setAttribute(<span class="string">&quot;crossOrigin&quot;</span>,<span class="string">&#x27;Anonymous&#x27;</span>);</span><br><span class="line">      image.src = url;</span><br><span class="line">      <span class="comment">// 图片加载失败的错误处理</span></span><br><span class="line">      image.onerror = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        reject(<span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&#x27;图片流异常&#x27;</span>));</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>这种方式经过测试，同样会存在跨域问题，虽然已经设置了允许跨域，但是浏览器对此却是拒绝的。如果图片链接是跨域的，浏览器会禁用download，只允许打开图片而不允许下载。</p>
+<h3 id="Content-disposition"><a href="#Content-disposition" class="headerlink" title="Content-disposition"></a>Content-disposition</h3><p>前端拿到图片的流信息后，需要做进一步转化处理，将流信息转化成一个本地的下载地址，这对前端是一种性能上的消耗，其实这一过程是多余的。HTTP协议响应头<code>Content-disposition</code>可以控制用户请求所得的内容存为一个文件的时候提供一个默认的文件名，文件直接在浏览器上显示或者在访问时弹出文件下载对话框。在中间层开个通用的下载接口，可以支持任意类型的文件下载。<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">router.get(<span class="string">&#x27;/common/download&#x27;</span>, <span class="function">(<span class="params">req, res, next</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> url = req.query.url</span><br><span class="line">  <span class="keyword">const</span> fileName = req.query.fileName</span><br><span class="line">  request.get(&#123; url, <span class="attr">encoding</span>: <span class="literal">null</span> &#125;, <span class="function">(<span class="params">error, response, body</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (error) &#123;</span><br><span class="line">      next(error)</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">const</span> fileType = response.headers[<span class="string">&#x27;content-type&#x27;</span>].split(<span class="string">&#x27;/&#x27;</span>)[<span class="number">1</span>]</span><br><span class="line">    res.setHeader(<span class="string">&#x27;Content-disposition&#x27;</span>, getContentDisposition(fileName, fileType))</span><br><span class="line">    res.setHeader(<span class="string">&#x27;Content-type&#x27;</span>, response.headers[<span class="string">&#x27;content-type&#x27;</span>])</span><br><span class="line">    res.send(body)</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getContentDisposition</span>(<span class="params">fileName, fileType</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="string">`attachment; filename=<span class="subst">$&#123;<span class="built_in">encodeURIComponent</span>(fileName)&#125;</span>.<span class="subst">$&#123;fileType&#125;</span>; filename*=utf-8&#x27;&#x27;<span class="subst">$&#123;<span class="built_in">encodeURIComponent</span>(fileName)&#125;</span>.<span class="subst">$&#123;fileType&#125;</span>;`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="application-octet-stream"><a href="#application-octet-stream" class="headerlink" title="application/octet-stream"></a>application/octet-stream</h3><p>一般文件服务器相应文件请求的时候，都会在<code>Content-Type</code>种说明文件类型，浏览器也就基于此判断执行的方式是打开开始下载。如果是<code>application/octet-stream</code>类型的，则浏览器会判定位这是个不支持的二进制类型数据，所以会触发下载。于是可以在文件服务器上修改<code>Content-Type: application/octet-stream</code>来欺骗浏览器。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">location /download/ &#123;</span><br><span class="line">    alias /;</span><br><span class="line">    add_header Content-Type application/octet-stream;</span><br><span class="line">    allow all;</span><br><span class="line">    autoindex on;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>注意：<code>Content-disposition</code>的设置需要注意兼容firefox以及IE浏览器</p>
+<blockquote>
+<p>参考文献：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/56df73d0d128?utm_source=oschina-app">html访问图片资源403问题(http referrer)</a></li>
+</ul>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/18/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%884%EF%BC%89%E4%BC%97%E5%8C%85%E7%AE%97%E6%B3%95/" rel="prev" title="大数据算法（4）众包算法">
+      <i class="fa fa-chevron-left"></i> 大数据算法（4）众包算法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/29/Samba%E6%8B%B7%E8%B4%9D%E6%96%87%E4%BB%B6%E7%9A%84pre-allowcate%E6%9C%BA%E5%88%B6/" rel="next" title="Samba拷贝文件的pre-allowcate机制">
+      Samba拷贝文件的pre-allowcate机制 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#no-referrer"><span class="nav-number">1.</span> <span class="nav-text">no-referrer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AENginx%E9%98%B2%E7%9B%97%E9%93%BE"><span class="nav-number">1.1.</span> <span class="nav-text">配置Nginx防盗链</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E8%B5%84%E6%BA%90"><span class="nav-number">2.</span> <span class="nav-text">下载资源</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#window-open"><span class="nav-number">2.1.</span> <span class="nav-text">window.open</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%99%9A%E6%8B%9FDOM-a"><span class="nav-number">2.2.</span> <span class="nav-text">创建虚拟DOM a</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#canvas-toDataURL"><span class="nav-number">2.3.</span> <span class="nav-text">canvas.toDataURL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Content-disposition"><span class="nav-number">2.4.</span> <span class="nav-text">Content-disposition</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#application-octet-stream"><span class="nav-number">2.5.</span> <span class="nav-text">application&#x2F;octet-stream</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2021/03/29/H5%E4%B8%AD%E7%9A%84%E5%AA%92%E4%BD%93%E5%B1%95%E7%A4%BA%E4%B8%8E%E4%B8%8B%E8%BD%BD/";
+    this.page.identifier = "2021/03/29/H5中的媒体展示与下载/";
+    this.page.title = "H5中的媒体展示与下载";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="概述什么是模式在一个环境中对一个问题的解决方案就是模式 为什么需要模式有经验的程序员会复用过去问题中的解决方案。结构优良的面向对象系统有类和对象的迭代模式。对过去模式的知识的学习让一个开发者效率更高而且让设计变得更活且可复用。 Benefits Of Design PatternsCapture expertise and make it accessible tonon-experts in a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式">
+<meta property="og:url" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="概述什么是模式在一个环境中对一个问题的解决方案就是模式 为什么需要模式有经验的程序员会复用过去问题中的解决方案。结构优良的面向对象系统有类和对象的迭代模式。对过去模式的知识的学习让一个开发者效率更高而且让设计变得更活且可复用。 Benefits Of Design PatternsCapture expertise and make it accessible tonon-experts in a">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181108_190812.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181112_175832.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181112_180835.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181112_183052.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181115_152125.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181120_164007.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181120_170503.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181119_153348.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181119_153438.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181120_134710.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181122_224638.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181122_152015.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181126_141835.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181126_150804.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181126_155735.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181129_163426.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181129_152039.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181129_152213.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181129_162957.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181203_150252">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181203_153038.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181203_154740.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181206_140834.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181206_163545.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181206_160347.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181206_160740.png">
+<meta property="article:published_time" content="2018-11-05T14:02:37.000Z">
+<meta property="article:modified_time" content="2021-09-05T12:51:13.922Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="设计模式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/Screenshot_20181108_190812.png">
+
+<link rel="canonical" href="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>设计模式 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          设计模式
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-05 14:02:37" itemprop="dateCreated datePublished" datetime="2018-11-05T14:02:37Z">2018-11-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/11/05/设计模式/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>13k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>12 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><h2 id="什么是模式"><a href="#什么是模式" class="headerlink" title="什么是模式"></a>什么是模式</h2><p>在一个环境中对一个问题的解决方案就是模式</p>
+<h2 id="为什么需要模式"><a href="#为什么需要模式" class="headerlink" title="为什么需要模式"></a>为什么需要模式</h2><p>有经验的程序员会复用过去问题中的解决方案。结构优良的面向对象系统有类和对象的迭代模式。对过去模式的知识的学习让一个开发者效率更高而且让设计变得更活且可复用。</p>
+<p>Benefits Of Design Patterns<br>Capture expertise and make it accessible to<br>non-experts in a standard form<br>n Facilitate communication among developers<br>by providing a common language<br>n Make it easier to reuse successful designs<br>and avoid alternatives that diminish<br>reusability<br>n Facilitate design modifications<br>n Improve design documentation<br>Improve design understandability</p>
+<span id="more"></span>
+<h2 id="为什么需要学习设计模式"><a href="#为什么需要学习设计模式" class="headerlink" title="为什么需要学习设计模式"></a>为什么需要学习设计模式</h2><ul>
+<li>可以复用设计的专业知识</li>
+<li>让软件更加灵活可变，可拓展</li>
+<li>统一两个工程师之间的交流术语</li>
+</ul>
+<h2 id="设计模式的弊端"><a href="#设计模式的弊端" class="headerlink" title="设计模式的弊端"></a>设计模式的弊端</h2><ul>
+<li>权衡：设计模式有可能会很复杂</li>
+<li>没有经验的用户可能会使用比实际需要更多的设计模式<ul>
+<li>你应当试图提醒自己为什么要用设计模式，模式是一个工具，使用模式，而不是模式使用你！</li>
+</ul>
+</li>
+</ul>
+<h2 id="设计模式的种类"><a href="#设计模式的种类" class="headerlink" title="设计模式的种类"></a>设计模式的种类</h2><ul>
+<li>分析</li>
+<li>设计</li>
+<li>组织</li>
+<li>过程</li>
+<li>项目计划</li>
+<li>配置管理</li>
+</ul>
+<p>Types Of Software Patterns<br>n Riehle and Zullighoven in “Understanding and Using<br>Patterns in Software Development” mention three types<br>of software patterns. q Conceptual Pattern<br>n Pattern whose form is described by means of terms and<br>concepts from the application domain<br>q Design Pattern<br>n Pattern whose form is described by means of software design<br>constructs, such as objects, classes, inheritance and<br>aggregation<br>q Programming Pattern (Programming Idiom)<br>n Pattern whose form is described by means of programming<br>language constructs</p>
+<h2 id="三种模式类型"><a href="#三种模式类型" class="headerlink" title="三种模式类型"></a>三种模式类型</h2><ul>
+<li><p>Creational Patterns 创建型</p>
+<ul>
+<li>Abstract Factory (抽象工厂)</li>
+<li>Builder (建造者)</li>
+<li>Factory Method (工厂方法)</li>
+<li>Singleton (单例)</li>
+<li>Prototype (原型)</li>
+</ul>
+</li>
+<li><p>Structural Patterns 结构型</p>
+<ul>
+<li>Adapter (适配器)</li>
+<li>Bridge (桥接)</li>
+<li>Composite (合成)</li>
+<li>Decorator (装饰器)</li>
+<li>Facade (门面)</li>
+<li>Flyweight (享元)</li>
+<li>Proxy (代理)</li>
+</ul>
+</li>
+<li><p>Behavioral Patterns 行为型</p>
+<ul>
+<li>Chain of Responsibility (责任链)</li>
+<li>Command (命令)</li>
+<li>Interpreter (解释器)</li>
+<li>Iterator (迭代器)</li>
+<li>Mediator (中介者)</li>
+<li>Memento (备忘录)</li>
+<li>Observer (观察者)</li>
+<li>State (状态)</li>
+<li>Strategy (策略)</li>
+<li>Template Method (模板方法)</li>
+<li>Visitor (访问者)</li>
+</ul>
+</li>
+</ul>
+<h1 id="UML"><a href="#UML" class="headerlink" title="UML"></a>UML</h1><p>统一建模语言UML(Unified Modeling Language)是一个软件工程行业中，需求普遍的的开发这建模语言，用来提供一种标准的来虚拟化系统设计的方法。</p>
+<h2 id="类图-Class-Diagram-是一种静态的结构化图表，通过展现系统的类，变量，方法来描述系统的结构和对象之间的关系"><a href="#类图-Class-Diagram-是一种静态的结构化图表，通过展现系统的类，变量，方法来描述系统的结构和对象之间的关系" class="headerlink" title="类图(Class Diagram)是一种静态的结构化图表，通过展现系统的类，变量，方法来描述系统的结构和对象之间的关系"></a>类图(Class Diagram)是一种静态的结构化图表，通过展现系统的类，变量，方法来描述系统的结构和对象之间的关系</h2><p>画类图:<br>三个矩形,上中下分别写类名,成员变量,方法名,如果是抽象类,则类名需要用斜体表示,静态的成员变量和方法需要加上下划线</p>
+<p>继承使用空三角箭头实线,接口使用<code>&lt;&lt;interface&gt;&gt;</code>标识,接口实现类使用空心三角虚线</p>
+<p>聚合表示不是一定具有的关系,用空心箭头,组合是强关系,一方依赖一方存在,用实心箭头</p>
+<p>成员方法中,+-#~分别表示公有,私有,保护,默认/友元</p>
+<p>一切类之间的其他关系用普通箭头表示(uses…creates….notifies….)</p>
+<h2 id="时序图"><a href="#时序图" class="headerlink" title="时序图"></a>时序图</h2><p>时序图是一个展示对象按照何种顺序一个一个操作的交互图,展现了对象在时间序列中如何交互</p>
+<h1 id="面向对象准则"><a href="#面向对象准则" class="headerlink" title="面向对象准则"></a>面向对象准则</h1><p>面向对象设计的7大准则</p>
+<ul>
+<li>SRP: Single Responsibility Principle 单一职责原则</li>
+<li>OCP: Open-Closed Principle 开放-封闭原则</li>
+<li>LSP: Liskov Substitution Principle 里氏替换原则</li>
+<li>ISP: Interface Segregation Principle 接口分离原则</li>
+<li>DIP: Dependence Inversion Principle 依赖倒置原则</li>
+<li>CRP: Composite/Aggregate Reuse Principle 组合/聚合复用原则</li>
+<li>PLK: Principle of Least Knowledge 最小知识原则</li>
+</ul>
+<p>SOLID表示前5个设计原则,目的是让软件设计更加易于理解,灵活和可维护</p>
+<p>面向对象设计的7大致命错误</p>
+<ul>
+<li>Rigidity (僵化) – make it hard to change</li>
+<li>Fragility (脆弱) – make it easy to break</li>
+<li>Immobility (固化) – make it hard to reuse</li>
+<li>Viscosity (黏滞) – make it hard to do the rightthing</li>
+<li>Needless Complexity (非必要复杂性) – over design</li>
+<li>Needless Repetition (非必要重复) – error prone</li>
+<li>Not doing any design</li>
+</ul>
+<h2 id="SRP"><a href="#SRP" class="headerlink" title="SRP"></a>SRP</h2><blockquote>
+<p>Single Responsibility Principle</p>
+</blockquote>
+<p>从软件变化的角度来看，就一个而言，应该仅有一个让他发生变化的原因。单一职责原则及内聚性（Cohesion），表示一个模块的组成元素之间的功能相关性。</p>
+<p>单一职责意味着内聚性的上升，多职责意味着耦合性上升，会导致复用性下降</p>
+<h2 id="OCP"><a href="#OCP" class="headerlink" title="OCP"></a>OCP</h2><blockquote>
+<p>Open Closed Principle</p>
+</blockquote>
+<p>软件实体（类，模块，方法等）应该开放扩展，但应关闭修改。</p>
+<ul>
+<li>开放扩展：满足增加新模块的需求</li>
+<li>关闭修改：不需要且不能够修改当前模块来满足新的需求</li>
+</ul>
+<p>基于已经存在的系统，软件来提供新方法来满足需求，应次软件有很强的适应性和灵活性。已存在的模块，尤其是最重要的那些抽象模块（已经被仔细测试过的），不需要再被修改，因此软件有很强的稳定性和持久性。</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><p>依赖抽象，多态，继承，接口</p>
+<p>抽象是指抽象类和接口，他们是固定的但是有很多可能的行为，行为由继承/实现了他们的子类去完成。接口是预定义的，所以不能够被修改。接口开放扩展，因为他有灵活的继承者数量。修改接口会给他的子类继承者带来级联的改变。 </p>
+<p>例子：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GraphicEditor</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">drawShape</span><span class="params">(Shape s)</span> </span>&#123;</span><br><span class="line">        s.draw();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Shape</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">draw</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rectangle</span> <span class="keyword">extends</span> <span class="title">Shape</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">draw</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// draw the rectangle</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;   </span><br></pre></td></tr></table></figure><br>可以新增图形继承<code>Shape</code>类，实现<code>draw()</code>方法，每次调用该方法都对对应相对的实现方法。</p>
+<p>OCP不能总被完全满足，总有一些功能扩展不能在不修改代码的基础上实现。OCP应该在合理的范围内被使用，设计者应该预测到模块潜在的变化，之后建立相应的抽象类来实现他们。</p>
+<p>OCP是面向对象设计的核心，抽象是OCP的核心，OCP意味着更好的复用和可维护性。过分使用OCP也是个坏主意，我们应该把那些经常变化的类抽象，同时也要避免无意义的抽象。不可能所有系统模块满足OCP，但是我们应该让不满足OCP的模块最小化。</p>
+<h2 id="LSP"><a href="#LSP" class="headerlink" title="LSP"></a>LSP</h2><blockquote>
+<p>Liskov Substitution Principle(里氏替换原则)</p>
+</blockquote>
+<p>任何基类可以出现的地方，子类一定可以出现。</p>
+<p>所有的派生类遵从满足他们基类的行为。当一个子类的实例应该能够替换任何其超类的实例时，它们之间才具有is-A关系。</p>
+<p>里氏替换原则只是提出了一个问题，但没有给出解决方案。解决方案：契约式设计(Dedign by Contract)</p>
+<ul>
+<li>Pre-conditions<ul>
+<li>每个方法调用之前，该方法应该校验传入参数的正确性，只有正确才能执行该方法，否则认为调用方违反契约，不予执行。这称为前置条件。</li>
+</ul>
+</li>
+<li>Post-conditions<ul>
+<li>一旦通过前置条件的校验，方法必须执行，并且必须确保执行结果符合契约，这称之为后置条件。</li>
+</ul>
+</li>
+<li>Invariant<ul>
+<li>对象本身有一套对自身状态进行校验的检查条件，以确保该对象的本质不发生改变，这称之为不变式。</li>
+</ul>
+</li>
+</ul>
+<p>比如正方形不能替代矩形，所以不能让正方形继承矩形，那么正方形就必须也有<code>setWidth()</code>和<code>setHeight()</code>的方法，而应该让正方形和矩形一起继承四边形。</p>
+<p>LSP的解决方法：</p>
+<ul>
+<li>可以让两个不能代替的类继承一个抽象类</li>
+<li>可以让一个类持有一个类（聚合关系）</li>
+</ul>
+<p>LSP是使用继承的准则，LSP是理论主义和严格的，有时打破SP一点是合理的且有益的，无论如何，在设计继承关系时，LSP是需要考虑的。</p>
+<h2 id="ISP"><a href="#ISP" class="headerlink" title="ISP"></a>ISP</h2><blockquote>
+<p>Interface Sepregation Principle 接口分离原则</p>
+</blockquote>
+<p>ISP就是SRP的接口版本，一个类对另一个类的依赖关系应该取决于最小的接口</p>
+<p>接口应当是细粒度的，内聚的，大的接口会导致接口污染，减少接口的数量不能减少代码量，只能污染接口;接口应该尽可能小，甚至接口中没有方法定义都是合理的。</p>
+<h2 id="DIP"><a href="#DIP" class="headerlink" title="DIP"></a>DIP</h2><blockquote>
+<p>Dependence Inversion Principle (Hollywood Principle)依赖倒置原则</p>
+</blockquote>
+<p><strong>Don’t calln us,we’ll call you</strong></p>
+<p>高层模块不应该依赖于低层模决，二者都应该依赖于抽象。进一步的，抽象不应该依赖于细<br>节，细节应该依赖于抽象。</p>
+<p>Bad example:<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Hunter</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">take</span><span class="params">(Axe axe)</span></span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">take</span><span class="params">(Gun gun)</span></span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">take</span><span class="params">(Knife knife)</span></span>&#123;&#125;;</span><br><span class="line">    ....</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Axe</span>() </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Good Example:依赖一个抽象的类<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Player</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">take</span><span class="params">(Weapon w)</span></span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Hunter</span> <span class="keyword">extends</span> <span class="title">Player</span></span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Axe</span> <span class="keyword">extends</span> <span class="title">Weapon</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>提升灵活性，可测试性，可维护性，降低僵化</p>
+<p>高层为一个服务指定一个抽象接口，底层去实现这个接口，高层通过接口使用实现了他的底层的类的方法，所以高层不依赖于底层。相反，底层愈来愈高层指定的接口。依赖关系倒置。</p>
+<p>DIP原则：</p>
+<ul>
+<li>任何变量不应该有一个指向具体类的引用，而应该有一个指向抽象类的引用。</li>
+<li>任何类不能继承一个具体类</li>
+<li>任何方法不能重写基类中基本的方法</li>
+<li>DIP是过分严格的</li>
+</ul>
+<p>DIP是用来解耦的，用于类不稳定时，DIP的目的是经常使用接口而不是具体类</p>
+<p>共享的代码应该被放到抽象层的抽象类中，私有数据应该被移到具体类</p>
+<h2 id="CRP"><a href="#CRP" class="headerlink" title="CRP"></a>CRP</h2><blockquote>
+<p>Composite/Aggregate Reuse Principle</p>
+</blockquote>
+<p>多用组合，少用继承。组合/聚合复用原则就是在一个新的对象里面使用一些已有的对象，使之成为新对象的一部分；新的对象通过向这些对象的委派达到复用已有功能的目的。</p>
+<p>比如父类中增减字段会导致所有子类需要重写。可以让子类继承接口，父类有接口的一个句柄。</p>
+<p>聚合是一个has a的关系，组合是全体局部的关系。</p>
+<p>组合聚合是黑盒复用，被包含者的内部不可见。继承是白盒复用，强耦合，被继承者内部可见。</p>
+<p><strong>!重新看第三章PPT设计原则</strong></p>
+<h2 id="Observer-观察者"><a href="#Observer-观察者" class="headerlink" title="Observer(观察者)"></a>Observer(观察者)</h2><p>观察者是一种<strong>行为模式</strong></p>
+<h2 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h2><p>例子：当宝宝哭，爸爸必须立刻查看宝宝：<br>一种实现方式：Father使用while忙等待，坚挺宝宝的status是否为哭，但这样会浪费大量的资源；如果要增加宝宝的数量，就需要修改Father的代码，增加每次循环中判断的次数；如果增加一个妈妈，又会增加重复的代码。为了实现监听对象的状态的变化，映入观察者模式：此例中Baby是对象(Subject)，妈妈爸爸是观察者(Observer)。</p>
+<p><img src="Screenshot_20181108_190812.png" alt=""></p>
+<p>Subject是一个接口，所有被观察者实现它，被观察者的实例中包含一个存储observer的容器，用<code>registerObserver()</code>,<code>removeObserver()</code>来维护容器中的observer句柄的增删。<code>notifyObservers()</code>则遍历容器，调用容器中每个对象的<code>update()</code>方法，一般来说<code>update()</code>中传入this指针。一般来说这三个方法写作<code>attach()</code>，<code>detach()</code>，<code>notify()</code>。</p>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><p>同样所有观察者只需要实现observer接口，相互依赖的两者都各自抽象，做到了松耦合。<br>每个观察者都可以成为容器里的一个元素，实现了一个对象对应多个观察者，无需修改代码即可增删观察者。只需要观察者实现update的操作，而被观察者无需知道观察者的具体类型；观察者和被关查者可以属于不同的抽象层。同时事件得以广播，观察者可以在任何时间被增删。</p>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ul>
+<li>观察者之间感受不到互相的存在，他们对改变subject带来的影响可能是盲目的</li>
+<li>一个观察者对Subject的人畜无害的改变可能带来灾难性的后果</li>
+</ul>
+<h3 id="用途"><a href="#用途" class="headerlink" title="用途"></a>用途</h3><p>观察者模式又称publish-subscribe(发布订阅)，awt和一些框架(MVC)，事件监听器，都用到了观察者模式。</p>
+<h3 id="Java内建Observer"><a href="#Java内建Observer" class="headerlink" title="Java内建Observer"></a>Java内建Observer</h3><p>observable作为一个类让Subject继承，观察者需要实现Observer接口。<br>要注意调用了<code>setChanged()</code>之后，<code>notifyObservers()</code>才有用</p>
+<h2 id="Strategy-策略"><a href="#Strategy-策略" class="headerlink" title="Strategy(策略)"></a>Strategy(策略)</h2><p>把可能变化的代码独立出来，不要和不变化的代码混在一起。<br><img src="Screenshot_20181112_175832.png" alt=""><br>针对接口编程，而不是针对实现编程。这种做法体现了依赖倒置原则，体现了少用继承的观点。通过持有接口，增加了模块的灵活性，让你可以在运行时改变行为。</p>
+<p>针对一组算法，将每一个算法封装到具有共同接口的独立的类中，从而使得它们可以相互替换。策略模式使得算法可以在不影响到客户端的情况下发生变化。客户决定使用哪个算法。</p>
+<p>每个类由于自己的角色决定了他们不同的行为，策略模式提供了一种改变他们行为的方法。这种方式可以有效减少if语句的使用，让一些可替代的模块更具可扩展性和可重用性。</p>
+<p>但是这种模式也导致了客户使用难度的上升和对象的数目的增加。</p>
+<h3 id="awt中的体现"><a href="#awt中的体现" class="headerlink" title="awt中的体现"></a>awt中的体现</h3><p><img src="Screenshot_20181112_180835.png" alt=""></p>
+<h2 id="Factory-Method-工厂方法"><a href="#Factory-Method-工厂方法" class="headerlink" title="Factory Method(工厂方法)"></a>Factory Method(工厂方法)</h2><p>工厂方法是一种<strong>创建模式</strong>，用来解决不同子类的创建耦合的情况。<br>例：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (picnic) &#123;</span><br><span class="line">    duck = <span class="keyword">new</span> MallardDuck();</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (hunting) &#123;</span><br><span class="line">    duck = <span class="keyword">new</span> DecoyDuck();</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (inBathTub) &#123;</span><br><span class="line">    duck = <span class="keyword">new</span> RubberDuck();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>定义一个接口来创建对象，但是让子类决定哪个类来实例化。<br><img src="Screenshot_20181112_183052.png" alt=""></p>
+<p>所有的new操作都被放到一个<code>FactoryMethod()</code>里，集中返回不同的Product实例</p>
+<h2 id="Abstract-Factory-抽象工厂"><a href="#Abstract-Factory-抽象工厂" class="headerlink" title="Abstract Factory(抽象工厂)"></a>Abstract Factory(抽象工厂)</h2><p>笔记本上补图！</p>
+<h3 id="Decorator-装饰器-？重看"><a href="#Decorator-装饰器-？重看" class="headerlink" title="Decorator(装饰器)？重看"></a>Decorator(装饰器)？重看</h3><p>装饰器是一种<strong>结构模式</strong><br>当类中的属性经常变化时，要遵循可添加不可修改的原则。</p>
+<p><img src="Screenshot_20181115_152125.png" alt=""></p>
+<p>当给一个对象动态添加指责而不影响其他的时候，当继承会影响其他部分很不现实的时候，可采用装饰器。</p>
+<h3 id="实现-1"><a href="#实现-1" class="headerlink" title="实现"></a>实现</h3><p>使用聚合，让新的类中包含原有的类，从而新类中可以调用旧类的行为。使用聚合而不使用继承，防止了子类爆炸，基类改变带来子类的修改！体现了CRP的原则。例子：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Component component = <span class="keyword">new</span> DecoratorC(<span class="keyword">new</span> DecorationB(<span class="keyword">new</span> DecoratorA()));</span><br></pre></td></tr></table></figure></p>
+<h3 id="java中的IO"><a href="#java中的IO" class="headerlink" title="java中的IO"></a>java中的IO</h3><p>java中的IO就体现了这一设计模式，Writer,Reader类都是基于InputStream,OutputStream的封装，Stream用来做字节流处理，Writer/Reader做字符处理(java字符是unicode),例子<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">new BufferedReader(new FileReader(new FileInputStream(new File(&quot;file&quot;))))</span><br></pre></td></tr></table></figure></p>
+<h2 id="Singleton-单例"><a href="#Singleton-单例" class="headerlink" title="Singleton(单例)"></a>Singleton(单例)</h2><p>很多对象都只需要一个，例如线程池，缓存，对话框，处理注册表和配置的类，用于登陆的类，类似显卡打印机的类。</p>
+<p>单例子模式同样可以扩展，允许若干个类的实例。单例模式比静态更灵活，更易扩展，静态类不能有状态，而单例的类可以有状态。</p>
+<h3 id="饿汉模式"><a href="#饿汉模式" class="headerlink" title="饿汉模式"></a>饿汉模式</h3><p>程序启动时，类被实例化，线程安全。<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstane</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="懒汉模式"><a href="#懒汉模式" class="headerlink" title="懒汉模式"></a>懒汉模式</h3><p>线程不安全，多线程访问时可能得到多个Singleton对象，(即每个线程有自己的单例对象)<br>改进：volatile关键字<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstane</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(singleton == <span class="keyword">null</span>) </span><br><span class="line">            singleton = <span class="keyword">new</span> Singleton();</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Command-Behavioral-命令模式"><a href="#Command-Behavioral-命令模式" class="headerlink" title="Command Behavioral(命令模式)"></a>Command Behavioral(命令模式)</h2><p>命令模式把一个请求封装到一个对象中。命令模式允许系统使用不同的请求把客户端参数化，对请求排队或者记录请求日志，可以提供命令的撤销和恢复功能。（Action,Transaction）</p>
+<p>比如在一套用户界面工具箱里，按钮点击需要触发事件，但是事件是什么则需要对应的应用程序来实现。当行为被参数化为一个对象，你可以用一个回调函数来表达这种参数化，那就是，函数在某处被注册并在将来被返回。命令模式是回调的面向对象实现。</p>
+<h3 id="支持撤回"><a href="#支持撤回" class="headerlink" title="支持撤回"></a>支持撤回</h3><p>命令对象执行的操作可以讲上次对象的状态存在命令对象中，来消除命令执行带来的影响。命令对象可以存在一个List容器中，实现连续的撤回和取消撤回。(Undo and Redo)</p>
+<h3 id="支持记录变化"><a href="#支持记录变化" class="headerlink" title="支持记录变化"></a>支持记录变化</h3><p>通过添加<code>Load()</code>，<code>Store()</code>两个操作，可以持久记录变化，他们可以在系统崩溃后用来恢复。</p>
+<h3 id="支持事务-transaction"><a href="#支持事务-transaction" class="headerlink" title="支持事务(transaction)"></a>支持事务(transaction)</h3><ul>
+<li>一个系统的高级操作基本都是建立在底层操作上</li>
+<li>一个事务封装了对数据的一系列操作</li>
+<li>命令模式有共同接口，可以想调用事务一样调用命令</li>
+</ul>
+<ul>
+<li>命令模式把发送命令和执行命令的指责分开来，吧命令对象对托给不同的对象</li>
+<li>每个命令都是一个对象<br><img src="Screenshot_20181120_164007.png" alt=""></li>
+</ul>
+<p>Command decouples the object that invokes<br>the operation from the one that knows how to<br>perform it. n You can assemble commands into a<br>composite command (Composite pattern). n It’s easy to add new Commands, because<br>you don’t have to change existing classes. n It is easy to implement Undo and Redo.<br><img src="Screenshot_20181120_170503.png" alt=""></p>
+<h3 id="宏命令-macro-command"><a href="#宏命令-macro-command" class="headerlink" title="宏命令(macro command)"></a>宏命令(macro command)</h3><p>一堆命令变为一个命令：新建一个命令对象，其中包含一个拥有多个命令对象的容器，每次对象被触发时，则调用容器中所有对象的触发方法。</p>
+<p>应用：调度器，线程池，任务队列</p>
+<h2 id="适配器-Adapter"><a href="#适配器-Adapter" class="headerlink" title="适配器(Adapter)"></a>适配器(Adapter)</h2><p>你需要在现有系统上使用一个新系统，但是新系统和现有的系统不能适配，于是需要增加（OpenClose原则）一个新的模块来适配。</p>
+<p>适配时转化调用者的请求，使得能被新模块识别。适配器对被调用者和调用者是透明的，两者感觉不到请求被人处理。适配器使得原本因为接口不同不能工作的类能够一起使用。</p>
+<h3 id="实现-2"><a href="#实现-2" class="headerlink" title="实现"></a>实现</h3><p>具体实现两种方式：</p>
+<ul>
+<li>类适配器（继承）<br><img src="Screenshot_20181119_153348.png" alt=""><br>java不能实现，因为不能多继承</li>
+<li>对象适配器（聚合）<br><img src="Screenshot_20181119_153438.png" alt=""><br>适合增加方法，但不适合修改</li>
+</ul>
+<h3 id="几个原则"><a href="#几个原则" class="headerlink" title="几个原则"></a>几个原则</h3><ul>
+<li>适配器可以重写一些被适配者的方法</li>
+<li>当要给一个类和他的所有子类适配，适配器不起作用</li>
+<li>引入一个只有一个实例的适配类，就只有一种方式让客户访问到被适配的类。</li>
+<li>一个适配器不能和多个被适配者一起使用</li>
+</ul>
+<h3 id="实际生活中的适配器-枚举和迭代"><a href="#实际生活中的适配器-枚举和迭代" class="headerlink" title="实际生活中的适配器:枚举和迭代"></a>实际生活中的适配器:枚举和迭代</h3><p>早期的容器实现了一个<code>elements()</code>方法，返回一个枚举类，我们先让所有容器都支持Iterator，于是可以使用一个适配器。<br><img src="Screenshot_20181120_134710.png" alt=""></p>
+<h2 id="门面（Facade-Pattern）"><a href="#门面（Facade-Pattern）" class="headerlink" title="门面（Facade Pattern）"></a>门面（Facade Pattern）</h2><p>Facade不是一个具体的设计模式，更像diligent架构模式。减少接口太多的问题，使得暴露的接口尽可能少。</p>
+<p>当一个行为中包含了对多个模块的调用时，创造一个封装这些多个调用的方法。使得子系统易于使用易于理解。</p>
+<p>例子：家庭影院 电影开始 = {关灯，打开电视，播放….}</p>
+<h3 id="动机"><a href="#动机" class="headerlink" title="动机"></a>动机</h3><ul>
+<li>当系统太复杂，则需要一个子系统来减少复杂性<br>PPT 12 - 12</li>
+</ul>
+<h3 id="设计准则"><a href="#设计准则" class="headerlink" title="设计准则"></a>设计准则</h3><p>Principle of Least Knowledge (Law of Demeter)</p>
+<ul>
+<li>talk only to your immediate friends</li>
+</ul>
+<h3 id="Implement-Issus"><a href="#Implement-Issus" class="headerlink" title="Implement Issus"></a>Implement Issus</h3><ul>
+<li>一般来说，一个系统只有一个门面，但是在一些情况下，多个门面也要被考虑。</li>
+<li>不要给门面增加新的行为</li>
+<li>让门面成为一个有具体子类的抽象类来对于子系统有不同实现。这样的抽象耦合使得客户端不知道哪种子系统被使用，使得客户端和子系统解耦。</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li>从客户角度来看，Facade模式不仅简化了整个组件系统的接口，同时对于内部组件与外部<br>客户程序来说，从某种程度上也达到了一种“解耦”的效果，子系统内部任何变化不会影响到Facade接口的变化。 </li>
+<li>Facade对应的组件应该是“相互耦合关系比较大”的一系列组件，而不是一个简单功能的集合。</li>
+<li>Facade模式更注重从架构的层次去看整个系统，而不是单个类的层次。Facade更多是一<br>种架构设计模式</li>
+<li>Facade注重简化接口；Adapter注重转换接口；Decorater注重稳定接口的前提下为对象扩展功能。</li>
+</ul>
+<h2 id="模板方法-Template-Method"><a href="#模板方法-Template-Method" class="headerlink" title="模板方法(Template Method)*"></a>模板方法(Template Method)*</h2><p>模板方法是一种行为模式。</p>
+<p>准备一个抽象类，将部分逻辑以具体方法以及具体构造子的形式实现，然后声明一些抽象方法来迫使子类实现剩余的逻辑。不同的子类可以以不同的方式实现这些抽象方法，从而对剩余的逻辑有不同的实现。</p>
+<p>类似框架，固定了架构，具体实现由开发者决定。（FrameWork半完成软件）<br><img src="Screenshot_20181122_224638.png" alt=""></p>
+<p>例子：springboot，httpServlet</p>
+<h2 id="迭代器-Iterator"><a href="#迭代器-Iterator" class="headerlink" title="迭代器(Iterator)"></a>迭代器(Iterator)</h2><p>迭代器是一个行为模式，提供一种序列化访问聚合元素而不暴露底层结构的行为。</p>
+<p>聚合是不变的，但是遍历的机制是变化的。比如，增加一个过滤算法，聚合的接口应该要为新的方法修改。迭代器做到让遍历和容器本身解耦。</p>
+<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p><img src="Screenshot_20181122_152015.png" alt=""></p>
+<h3 id="实现-3"><a href="#实现-3" class="headerlink" title="实现"></a>实现</h3><ul>
+<li>Public，破坏封装性，但是可以存储多个对象的游标</li>
+<li>Private内部类，定义在聚合类中，保护封装性</li>
+</ul>
+<p>外部迭代器：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;String&gt; s = Arrays.asList(<span class="keyword">new</span> String[]&#123;<span class="string">&quot;A&quot;</span>,<span class="string">&quot;B&quot;</span>,<span class="string">&quot;C&quot;</span>,<span class="string">&quot;D&quot;</span>&#125;);</span><br><span class="line">Iterator&lt;String&gt; iter = s.listIterator();</span><br><span class="line"><span class="keyword">while</span>(iter.hasNext()) &#123;</span><br><span class="line">    System.out.println(iter.next());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>内部迭代器：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">s.forEach(name -&gt; System.out.println(name))</span><br></pre></td></tr></table></figure></p>
+<p>当迭代器遍历的时候，修改一个聚合会很危险：</p>
+<ul>
+<li>要么拷贝一份聚合，然后遍历拷贝，但是代价很大</li>
+<li>每次增删，聚合自己改变自己迭代器的状态</li>
+</ul>
+<p>静态迭代器：在创建时会拷贝一份聚合，在遍历时聚合的变化不影响<br>动态迭代器：动态迭代器是和静态迭代器相反，遍历的时候聚合的变化是允许的。（难以实现）</p>
+<p>迭代器必须实现的操作：<code>first</code>，<code>Next</code>，<code>isDone</code>，<code>currentItem</code>,还有一些额外有用的操作：<code>first</code>，<code>last</code>，<code>prev</code>，<code>skipTo</code>。一般的迭代器遍历所有元素，而过滤迭代器只遍历满足条件的元素。</p>
+<p>空迭代器：</p>
+<ul>
+<li>一个空迭代器是迭代器的退化版本，用于处理边界问题</li>
+<li>通过定义，一个空迭代器的遍历总是完成的，IsDone方法总是为true</li>
+<li>空迭代器可以让遍历树状的的聚合更加方便（比如组合）</li>
+</ul>
+<p>java5之后for循环中的迭代器：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span>(Object obj:collection) &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="组合-Composite"><a href="#组合-Composite" class="headerlink" title="组合(Composite)"></a>组合(Composite)</h2><p>组合是一种结构模型，树状结构的对象 类似数据结构中的List</p>
+<p><img src="Screenshot_20181126_141835.png" alt=""></p>
+<p>叶子和结点都实现component抽象类，当父结点获得请求，会传给孩子，一个个向下传。对于无法实现的方法，抛出异常即可。</p>
+<p>这种结构下访问父结点困难，可以额外在componet中构建父指针。</p>
+<p>用途中缀表达式求值 awt</p>
+<h2 id="状态-state"><a href="#状态-state" class="headerlink" title="状态(state)"></a>状态(state)</h2><p>状态模式是一种行为模式。</p>
+<p>状态模式允许一个对象在其内部状态改变的时候改变其行为。这个对象看上去就像改变了它的类一样。</p>
+<p><img src="Screenshot_20181126_150804.png" alt=""></p>
+<p>使用聚合+继承实现，方便扩展。Context是唯一暴露给客户的的类，state是具体状态的抽象</p>
+<h3 id="关于状态类的初始化"><a href="#关于状态类的初始化" class="headerlink" title="关于状态类的初始化"></a>关于状态类的初始化</h3><p>Lazy:只在具体的状态类必须时创建，不用就可以销毁<br>Eager:提前创建，并且不析构</p>
+<h3 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h3><p>可以建立一个表，来映射输入和具体的类，这样可以在运行时修改数据改变规则，而不是修改代码。</p>
+<h2 id="代理-proxy"><a href="#代理-proxy" class="headerlink" title="代理(proxy)"></a>代理(proxy)</h2><p>代理是一种结构模式</p>
+<p>代理模式给某一个对象提供一个代理对象，并由代理对象控制对原对象的引用。</p>
+<p>例如。在动态服务器连续的接受类似的请求时，会浪费资源对单一重复html对象多次渲染，一种解决方法就是使用一个代理类，代替目标类，只在必要时要求目标类重新渲染。</p>
+<p>比如，一个图像代理类，只有在文档要求他显示的时候，才会从磁盘上加载图像</p>
+<p><img src="Screenshot_20181126_155735.png" alt=""></p>
+<h2 id="享元-Flyweight"><a href="#享元-Flyweight" class="headerlink" title="享元(Flyweight)*"></a>享元(Flyweight)*</h2><p>结构化模式，共享元素，避免浪费。Flyweight means “次最轻量级的拳击选手”</p>
+<p>享元模式以共享的方式高效地支持大量的细粒度对象)“通过尽量共享实例来避免new出实例(new不仅消耗内存，还会花费时间)</p>
+<p><img src="Screenshot_20181129_163426.png" alt=""></p>
+<h2 id="建造者-builder"><a href="#建造者-builder" class="headerlink" title="建造者(builder)"></a>建造者(builder)</h2><p>用于组装复杂实例的创建模式</p>
+<ul>
+<li>Build：英文的意思是建造和构建具有建筑结构的大型物体。</li>
+<li>建造大楼时：打牢地基、搭建框架、然后自下而上一层层盖起来。通常需要先建造组成这个物体的各个部分，然后分阶段把它们组装起来</li>
+</ul>
+<p>建造者模式将产品的结构和产品的零件建造过程对客户端隐藏起来，把对建造过程进行指挥的责任和具体建造者零件的责任分割开来，达到责任划分和封装的目的。</p>
+<p><img src="Screenshot_20181129_152039.png" alt=""><br><img src="Screenshot_20181129_152213.png" alt=""></p>
+<p>建造模式和模板方法模式的区别：建造模式是为了构造，模板方法用的继承。模板方法超类控制约束方法的顺序；建造模式基于聚合</p>
+<h2 id="责任链-chain-of-responsibility"><a href="#责任链-chain-of-responsibility" class="headerlink" title="责任链(chain of responsibility)"></a>责任链(chain of responsibility)</h2><p>什么是“推卸责任”？</p>
+<ul>
+<li>坏的方面：e.g., 去办事，被不同部门踢皮球。</li>
+<li>好的方面：e.g., 当外部请求程序进行某个处理，但程序暂时无法直接决定由哪个对象负责处理时，就需要推卸责任。我们可以将多个对象组成一个职责链，然后按照它们在职责链上的顺序一个一个地找出谁来负责处理。</li>
+</ul>
+<p>责任链部门：对于一个请求，能自己做就自己做，做不了就推卸给下一个人；下一个人能自己做就自己做，不能做再推卸给下一个人。</p>
+<ul>
+<li>缺点：延迟</li>
+<li>优点：解耦（发送者甚至不知道应该谁是接受者）</li>
+</ul>
+<h3 id="目的"><a href="#目的" class="headerlink" title="目的"></a>目的</h3><p>避免了一个发送者固定一个接受者造成的耦合，让一个请求得到多次被传播的机会直到被处理。<br>例子：GUI中组建的焦点pass</p>
+<h3 id="结构-1"><a href="#结构-1" class="headerlink" title="结构"></a>结构</h3><p><img src="Screenshot_20181129_162957.png" alt=""><br>每一个handler‘持有’另一个handler的引用，做请求的传递</p>
+<p>存在一个请求到达最后依然没有被解决的可能。</p>
+<h2 id="中介者-调停者-Mediator"><a href="#中介者-调停者-Mediator" class="headerlink" title="中介者/调停者(Mediator)*"></a>中介者/调停者(Mediator)*</h2><p>中介者/调停者是一种行为模式。</p>
+<p>中介者/调停者对象封装了一系列对象相互作用的方式，使得这些对象不必互相明显引用。从而使它们可以较松散地耦合。当这些对象中的某些对象之间的相互作用发生改变时，不会立即影响到其他的一些对象之间的相互作用。从而保证这些相互作用可以彼此独立地变化。</p>
+<h2 id="桥接-Bridge"><a href="#桥接-Bridge" class="headerlink" title="桥接(Bridge)*"></a>桥接(Bridge)*</h2><p>希望增加新功能时</p>
+<ul>
+<li>类的功能层次结构<ul>
+<li>父类具有基本功能</li>
+<li>在子类中增加新的功能</li>
+</ul>
+</li>
+<li>当需要增加新功能时，我们可以从各个层次的类中找到最符合自己需求的类，然后以它为父类编写子类，并在子类中增加新的功能。</li>
+<li><p>希望增加新的实现时</p>
+<ul>
+<li>类的实现层次结构</li>
+<li>父类通过声明抽象方法定义接口</li>
+<li>子类通过实现具体方法来实现接口</li>
+</ul>
+</li>
+<li><p>当类的层次结构只有一层时，功能层次结构与实现结构是混杂在一个层次结构中的。这使得类层次结构变的复杂，也很难确定究竟该在类的哪一个层次结构中去增加子类。</p>
+</li>
+<li><p>需要将“类的功能层次结构”和“类的实现层次结构”分离为两个独立的类层次结构。然后在它们之间搭建一座bridge。</p>
+</li>
+<li><p>(桥接模式的用意是将抽象与实现解耦，使得二者可以独立地变化。)</p>
+</li>
+<li>抽象(Abstraction)不等于接口(Interface)，存在于多个实体中的共同的概念性联系，就是抽象。接口是一种抽<br>象的方式。</li>
+<li>所谓强耦和，就是在编译时期已经确定的，无法在运行时期动态改变的关联；所谓弱耦和，就是可以动态地确定并且可以在运行时期动态地改变的关联。</li>
+</ul>
+<p><img src="Screenshot_20181203_150252" alt=""></p>
+<h2 id="原型-ProtoType"><a href="#原型-ProtoType" class="headerlink" title="原型(ProtoType)"></a>原型(ProtoType)</h2><h2 id=""><a href="#" class="headerlink" title="#"></a>#</h2><p>使用原型实例指定要创建的对象类型，并通过复制此原型来创建新对象。</p>
+<p><img src="Screenshot_20181203_153038.png" alt=""></p>
+<p>客户要求ProtoType克隆自己</p>
+<ul>
+<li>优点：<ul>
+<li>一些情况工厂和建造模式也具有</li>
+<li>在运行时增删产品</li>
+<li>减少了创建器的结构</li>
+</ul>
+</li>
+<li>缺点：<ul>
+<li>所有子类必须实现克隆操作</li>
+</ul>
+</li>
+</ul>
+<p>java.Object的<code>clone()</code>方法执行的是一种浅复制，即：被复制的对象中指向的其他对象不会被复制实例，只会复制引用。</p>
+<p>类似工厂方法，但不完全是，这种是用于复制一个备份，而且是可以保留状态的复制。</p>
+<h2 id="备忘录-Memento"><a href="#备忘录-Memento" class="headerlink" title="备忘录(Memento)*"></a>备忘录(Memento)*</h2><p>备忘录是一种行为模式</p>
+<h3 id="目的-1"><a href="#目的-1" class="headerlink" title="目的"></a>目的</h3><p>在<strong>不破坏封装</strong>的条件下，将一个对象的状态捕捉住，并外部化，存储起来，从而可以在将来合适的时候把这个对象还原到存储起来的状态。(对象的持久化，游戏存档)</p>
+<h3 id="实现-4"><a href="#实现-4" class="headerlink" title="实现"></a>实现</h3><p>要在不破坏封装的情况下获取状态和恢复状态<br><img src="Screenshot_20181203_154740.png" alt=""></p>
+<p>协作过程：<br><img src="Screenshot_20181206_140834.png" alt=""></p>
+<h3 id="缺点-1"><a href="#缺点-1" class="headerlink" title="缺点"></a>缺点</h3><p>代价会很大。如果Originator必须复制大量信息以存储在Memento中，或者如果client经常创建并将Memento返回originate，那么Mementos可能会产生相当大的开销。</p>
+<h2 id="访问者-Visitor"><a href="#访问者-Visitor" class="headerlink" title="访问者(Visitor)*"></a>访问者(Visitor)*</h2><p>访问者是一种行为模式.表示要对对象结构的元素执行的操作。访问者允许您定义新操作，而无需更改其操作的元素的类</p>
+<p>对象结构包含许多具有不同接口的对象类，并且您希望对依赖于其具体类的这些对象执行操作。</p>
+<p>需要对对象结构中的对象执行许多不同且不相关的操作，并且您希望避免使用这些操作“污染”它们的类。 当许多应用程序共享对象结构时，使用Visitor将操作放在那些需要它们的应用程序中。</p>
+<p>定义对象结构的类很少改变，但是您经常希望在结构上定义新的操作<br><img src="Screenshot_20181206_163545.png" alt=""></p>
+<p>最典型的：文件系统的遍历</p>
+<h2 id="解释器-Interpreter"><a href="#解释器-Interpreter" class="headerlink" title="解释器(Interpreter)"></a>解释器(Interpreter)</h2><p>解释器是一种行为模式，给定一个语言之后，解释器模式可以定义出其文法的一种表示，并同时提供一个解释器。客户端可以使用这个解释器来解释这个语言中的句子。</p>
+<p><img src="Screenshot_20181206_160347.png" alt=""></p>
+<p>当存在要解释的语言时，请使用解释器模式，并且可以将语言中的语句表示为抽象语法树（抽象语法树）。这种模式下在<strong>语法简单时时候</strong>表现很好，不要考虑性能的问题。一般需要考虑到性能的时候，解释器通常不是用树状结构表示而是直接把他们翻译成另一种形式（四元式）。</p>
+<p><img src="Screenshot_20181206_160740.png" alt=""></p>
+<ul>
+<li>AbstractExpression:申明一个适用于所有节点的抽象解释方法</li>
+<li>TerminalExpression：申明一个关联终结符的解释器</li>
+<li><p>NonTerminalExpression: 声明一个关联非终结符的解释器,迭代解释</p>
+</li>
+<li><p>客户端将句子构建为抽象语法树NonterminalExpression和TerminalExpression实例。 </p>
+</li>
+<li>然后客户端初始化上下文和调用Interpret操作。</li>
+<li>每个NonterminalExpression节点根据每个子表达式的解释定义解释。</li>
+<li>每个TerminalExpression的Interpret操作定义递归中的基本情况。</li>
+<li>每个节点的解释操作使用上下文存储并访问解释器的状态</li>
+</ul>
+<p>这种一个符号一个instance的设计，很容易实现和维护和扩展，因为这种模式用类来表示语法规则。复杂的语法很难维护，Interpreter模式为语法中的每个规则定义至少一个类。因此，包含许多规则的语法可能难以管理和维护。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag"># 设计模式</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/11/03/jupyter-notebook%E7%9A%84%E4%BD%BF%E7%94%A8/" rel="prev" title="jupyter notebook的使用">
+      <i class="fa fa-chevron-left"></i> jupyter notebook的使用
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/09/ettercap%E5%AE%9E%E7%8E%B0dns%E6%B1%A1%E6%9F%93/" rel="next" title="Ettercap实现dns污染">
+      Ettercap实现dns污染 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">什么是模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.2.</span> <span class="nav-text">为什么需要模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%AD%A6%E4%B9%A0%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">为什么需要学习设计模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%BC%8A%E7%AB%AF"><span class="nav-number">1.4.</span> <span class="nav-text">设计模式的弊端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%A7%8D%E7%B1%BB"><span class="nav-number">1.5.</span> <span class="nav-text">设计模式的种类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E7%A7%8D%E6%A8%A1%E5%BC%8F%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.6.</span> <span class="nav-text">三种模式类型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#UML"><span class="nav-number">2.</span> <span class="nav-text">UML</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%9B%BE-Class-Diagram-%E6%98%AF%E4%B8%80%E7%A7%8D%E9%9D%99%E6%80%81%E7%9A%84%E7%BB%93%E6%9E%84%E5%8C%96%E5%9B%BE%E8%A1%A8%EF%BC%8C%E9%80%9A%E8%BF%87%E5%B1%95%E7%8E%B0%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%B1%BB%EF%BC%8C%E5%8F%98%E9%87%8F%EF%BC%8C%E6%96%B9%E6%B3%95%E6%9D%A5%E6%8F%8F%E8%BF%B0%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%BB%93%E6%9E%84%E5%92%8C%E5%AF%B9%E8%B1%A1%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">2.1.</span> <span class="nav-text">类图(Class Diagram)是一种静态的结构化图表，通过展现系统的类，变量，方法来描述系统的结构和对象之间的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%B6%E5%BA%8F%E5%9B%BE"><span class="nav-number">2.2.</span> <span class="nav-text">时序图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E5%87%86%E5%88%99"><span class="nav-number">3.</span> <span class="nav-text">面向对象准则</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SRP"><span class="nav-number">3.1.</span> <span class="nav-text">SRP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OCP"><span class="nav-number">3.2.</span> <span class="nav-text">OCP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.2.1.</span> <span class="nav-text">实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LSP"><span class="nav-number">3.3.</span> <span class="nav-text">LSP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ISP"><span class="nav-number">3.4.</span> <span class="nav-text">ISP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DIP"><span class="nav-number">3.5.</span> <span class="nav-text">DIP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CRP"><span class="nav-number">3.6.</span> <span class="nav-text">CRP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Observer-%E8%A7%82%E5%AF%9F%E8%80%85"><span class="nav-number">3.7.</span> <span class="nav-text">Observer(观察者)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0-1"><span class="nav-number">3.8.</span> <span class="nav-text">概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">3.8.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">3.8.2.</span> <span class="nav-text">缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E9%80%94"><span class="nav-number">3.8.3.</span> <span class="nav-text">用途</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java%E5%86%85%E5%BB%BAObserver"><span class="nav-number">3.8.4.</span> <span class="nav-text">Java内建Observer</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Strategy-%E7%AD%96%E7%95%A5"><span class="nav-number">3.9.</span> <span class="nav-text">Strategy(策略)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#awt%E4%B8%AD%E7%9A%84%E4%BD%93%E7%8E%B0"><span class="nav-number">3.9.1.</span> <span class="nav-text">awt中的体现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Factory-Method-%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95"><span class="nav-number">3.10.</span> <span class="nav-text">Factory Method(工厂方法)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Abstract-Factory-%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82"><span class="nav-number">3.11.</span> <span class="nav-text">Abstract Factory(抽象工厂)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Decorator-%E8%A3%85%E9%A5%B0%E5%99%A8-%EF%BC%9F%E9%87%8D%E7%9C%8B"><span class="nav-number">3.11.1.</span> <span class="nav-text">Decorator(装饰器)？重看</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0-1"><span class="nav-number">3.11.2.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#java%E4%B8%AD%E7%9A%84IO"><span class="nav-number">3.11.3.</span> <span class="nav-text">java中的IO</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Singleton-%E5%8D%95%E4%BE%8B"><span class="nav-number">3.12.</span> <span class="nav-text">Singleton(单例)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A5%BF%E6%B1%89%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.12.1.</span> <span class="nav-text">饿汉模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%87%92%E6%B1%89%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.12.2.</span> <span class="nav-text">懒汉模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Command-Behavioral-%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.13.</span> <span class="nav-text">Command Behavioral(命令模式)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E6%92%A4%E5%9B%9E"><span class="nav-number">3.13.1.</span> <span class="nav-text">支持撤回</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E8%AE%B0%E5%BD%95%E5%8F%98%E5%8C%96"><span class="nav-number">3.13.2.</span> <span class="nav-text">支持记录变化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E4%BA%8B%E5%8A%A1-transaction"><span class="nav-number">3.13.3.</span> <span class="nav-text">支持事务(transaction)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8F%E5%91%BD%E4%BB%A4-macro-command"><span class="nav-number">3.13.4.</span> <span class="nav-text">宏命令(macro command)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%82%E9%85%8D%E5%99%A8-Adapter"><span class="nav-number">3.14.</span> <span class="nav-text">适配器(Adapter)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0-2"><span class="nav-number">3.14.1.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%A0%E4%B8%AA%E5%8E%9F%E5%88%99"><span class="nav-number">3.14.2.</span> <span class="nav-text">几个原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E7%94%9F%E6%B4%BB%E4%B8%AD%E7%9A%84%E9%80%82%E9%85%8D%E5%99%A8-%E6%9E%9A%E4%B8%BE%E5%92%8C%E8%BF%AD%E4%BB%A3"><span class="nav-number">3.14.3.</span> <span class="nav-text">实际生活中的适配器:枚举和迭代</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%A8%E9%9D%A2%EF%BC%88Facade-Pattern%EF%BC%89"><span class="nav-number">3.15.</span> <span class="nav-text">门面（Facade Pattern）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%9C%BA"><span class="nav-number">3.15.1.</span> <span class="nav-text">动机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E5%87%86%E5%88%99"><span class="nav-number">3.15.2.</span> <span class="nav-text">设计准则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Implement-Issus"><span class="nav-number">3.15.3.</span> <span class="nav-text">Implement Issus</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.15.4.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95-Template-Method"><span class="nav-number">3.16.</span> <span class="nav-text">模板方法(Template Method)*</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8-Iterator"><span class="nav-number">3.17.</span> <span class="nav-text">迭代器(Iterator)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%84"><span class="nav-number">3.17.1.</span> <span class="nav-text">结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0-3"><span class="nav-number">3.17.2.</span> <span class="nav-text">实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%84%E5%90%88-Composite"><span class="nav-number">3.18.</span> <span class="nav-text">组合(Composite)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8A%B6%E6%80%81-state"><span class="nav-number">3.19.</span> <span class="nav-text">状态(state)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E7%8A%B6%E6%80%81%E7%B1%BB%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.19.1.</span> <span class="nav-text">关于状态类的初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A9%E5%B1%95"><span class="nav-number">3.19.2.</span> <span class="nav-text">扩展</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%90%86-proxy"><span class="nav-number">3.20.</span> <span class="nav-text">代理(proxy)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%AB%E5%85%83-Flyweight"><span class="nav-number">3.21.</span> <span class="nav-text">享元(Flyweight)*</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E9%80%A0%E8%80%85-builder"><span class="nav-number">3.22.</span> <span class="nav-text">建造者(builder)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%A3%E4%BB%BB%E9%93%BE-chain-of-responsibility"><span class="nav-number">3.23.</span> <span class="nav-text">责任链(chain of responsibility)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84"><span class="nav-number">3.23.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%84-1"><span class="nav-number">3.23.2.</span> <span class="nav-text">结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E4%BB%8B%E8%80%85-%E8%B0%83%E5%81%9C%E8%80%85-Mediator"><span class="nav-number">3.24.</span> <span class="nav-text">中介者&#x2F;调停者(Mediator)*</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A1%A5%E6%8E%A5-Bridge"><span class="nav-number">3.25.</span> <span class="nav-text">桥接(Bridge)*</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%9E%8B-ProtoType"><span class="nav-number">3.26.</span> <span class="nav-text">原型(ProtoType)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">3.27.</span> <span class="nav-text">#</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%87%E5%BF%98%E5%BD%95-Memento"><span class="nav-number">3.28.</span> <span class="nav-text">备忘录(Memento)*</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E7%9A%84-1"><span class="nav-number">3.28.1.</span> <span class="nav-text">目的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0-4"><span class="nav-number">3.28.2.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9-1"><span class="nav-number">3.28.3.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E8%80%85-Visitor"><span class="nav-number">3.29.</span> <span class="nav-text">访问者(Visitor)*</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E9%87%8A%E5%99%A8-Interpreter"><span class="nav-number">3.30.</span> <span class="nav-text">解释器(Interpreter)</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/";
+    this.page.identifier = "2018/11/05/设计模式/";
+    this.page.title = "设计模式";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

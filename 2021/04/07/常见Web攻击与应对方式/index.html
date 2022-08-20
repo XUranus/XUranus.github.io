@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="总结和概括一下常见的Web安全注意点  XSS攻击XSS(Cross Site Script)攻击，是攻击者想Web页面提交恶意脚本，当用户浏览页面的时候就会触发脚本。 攻击思路 盗取Cookie，模拟用户登录。用document.cookie获取cookie然后发送给某个后台服务器 弹出”Flash插件已过期”的提示，欺骗用户去钓鱼页下载被种下木马的插件  检测方式一般的检测方式是检测弹窗，看">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常见Web攻击与应对方式">
+<meta property="og:url" content="http://xuranus.github.io/2021/04/07/%E5%B8%B8%E8%A7%81Web%E6%94%BB%E5%87%BB%E4%B8%8E%E5%BA%94%E5%AF%B9%E6%96%B9%E5%BC%8F/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="总结和概括一下常见的Web安全注意点  XSS攻击XSS(Cross Site Script)攻击，是攻击者想Web页面提交恶意脚本，当用户浏览页面的时候就会触发脚本。 攻击思路 盗取Cookie，模拟用户登录。用document.cookie获取cookie然后发送给某个后台服务器 弹出”Flash插件已过期”的提示，欺骗用户去钓鱼页下载被种下木马的插件  检测方式一般的检测方式是检测弹窗，看">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-07T14:06:40.000Z">
+<meta property="article:modified_time" content="2021-09-05T12:51:13.916Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="网络安全">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://xuranus.github.io/2021/04/07/%E5%B8%B8%E8%A7%81Web%E6%94%BB%E5%87%BB%E4%B8%8E%E5%BA%94%E5%AF%B9%E6%96%B9%E5%BC%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>常见Web攻击与应对方式 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/07/%E5%B8%B8%E8%A7%81Web%E6%94%BB%E5%87%BB%E4%B8%8E%E5%BA%94%E5%AF%B9%E6%96%B9%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          常见Web攻击与应对方式
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-07 14:06:40" itemprop="dateCreated datePublished" datetime="2021-04-07T14:06:40Z">2021-04-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/04/07/%E5%B8%B8%E8%A7%81Web%E6%94%BB%E5%87%BB%E4%B8%8E%E5%BA%94%E5%AF%B9%E6%96%B9%E5%BC%8F/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/07/常见Web攻击与应对方式/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>3.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>总结和概括一下常见的Web安全注意点</p>
+</blockquote>
+<h2 id="XSS攻击"><a href="#XSS攻击" class="headerlink" title="XSS攻击"></a>XSS攻击</h2><p>XSS(Cross Site Script)攻击，是攻击者想Web页面提交恶意脚本，当用户浏览页面的时候就会触发脚本。</p>
+<h3 id="攻击思路"><a href="#攻击思路" class="headerlink" title="攻击思路"></a>攻击思路</h3><ol>
+<li>盗取Cookie，模拟用户登录。用<code>document.cookie</code>获取cookie然后发送给某个后台服务器</li>
+<li>弹出”Flash插件已过期”的提示，欺骗用户去钓鱼页下载被种下木马的插件</li>
+</ol>
+<h3 id="检测方式"><a href="#检测方式" class="headerlink" title="检测方式"></a>检测方式</h3><p>一般的检测方式是检测弹窗，看能否执行<code>alert(1)</code></p>
+<ul>
+<li>对提交后展示的文本，输入<code>&lt;script&gt;alert(1)&lt;/script&gt;</code></li>
+<li>提交插入图片的连接，输入<code>javascript:alert(1)</code>，图片元素会被渲染成<code>&lt;img src=&quot;javascript:alert(1)&quot;&gt;</code></li>
+</ul>
+<span id="more"></span>
+<h3 id="预防方式"><a href="#预防方式" class="headerlink" title="预防方式"></a>预防方式</h3><ul>
+<li>后端对<code>&lt;&gt;</code>使用<code>&amp;lt;&amp;gt</code>对输入内容转义，或者node用<code>encodeURI</code>对文本转义</li>
+<li>使用React可以避免XSS攻击，只有明确需要嵌入html代码的时候，使用<code>&lt;span dangerouslySetInnerHTML=&#123;&#123;"__html":data&#125;&#125;&gt;&lt;/span&gt;</code></li>
+</ul>
+<h2 id="SQL注入"><a href="#SQL注入" class="headerlink" title="SQL注入"></a>SQL注入</h2><p>SQL注入是通过构造输入，改变服务端的SQL执行逻辑。例一条登录判断的SQL：<code>select * from user where username = &#39;&quot; + username + &quot;&#39; and password = &#39;&quot; + password + &quot;&#39;&quot;</code>。对于任何用户名，构造以下输入作为密码：</p>
+<ul>
+<li><code>&#39; or &#39;1&#39;=&#39;1</code></li>
+<li><code>&#39; or &#39;1&#39;=&#39;1&#39; --</code></li>
+<li><code>&#39; or &#39;1&#39;=&#39;1&#39; /*</code></li>
+</ul>
+<p>实际上最终执行的SQL是<code>select * from user where username = &#39;xxx&#39; and password = &#39;&#39; or &#39;1&#39;=&#39;1&#39;</code>，这条一定可以查找到用户实现登录。</p>
+<h3 id="攻击思路-1"><a href="#攻击思路-1" class="headerlink" title="攻击思路"></a>攻击思路</h3><ul>
+<li>构造多条语句：<code>&#39; or &#39;1&#39;=&#39;1&#39;; DROP TABLE user; --</code>，删库。也可用来修改用户密码，创建新用户</li>
+<li>UDF反弹Shell，对服务器提权</li>
+</ul>
+<h3 id="检测方式-1"><a href="#检测方式-1" class="headerlink" title="检测方式"></a>检测方式</h3><p>单引号检测，一般老式php，asp项目存在SQL注入点的时候遇到单引号输入会报错</p>
+<h3 id="预防方式-1"><a href="#预防方式-1" class="headerlink" title="预防方式"></a>预防方式</h3><p>使用SQL的预编译功能</p>
+<p>JDBC的PreparedStatment继承自Statement，Statement执行SQL语句（包含参数）会直接发给DBMS，编译后直接执行；PreparedStatement执行SQL先将用?作为占位符的SQL语句模板发给DBMS先编译，之后直接运行编译后的SQL语句，参数在执行阶段传入。</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;selectPerson&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;hashmap&quot;</span>&gt;</span></span><br><span class="line">  SELECT * FROM PERSON WHERE ID = #&#123;id&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;selectPerson&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;hashmap&quot;</span>&gt;</span></span><br><span class="line">  SELECT * FROM PERSON WHERE ID = $&#123;id&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>Mybatis中有两种参数传递的方式：<code>#&#123;&#125;</code>、<script type="math/tex">{}`，两者的差异就在于，`#`是在预编译后，执行语句时再传递参数，`</script>是先传递参数，然后再执行编译，再执行语句。为了避免被SQL注入，应采用<code>#</code>传参。</p>
+<h2 id="CSRF攻击"><a href="#CSRF攻击" class="headerlink" title="CSRF攻击"></a>CSRF攻击</h2><p>CSRF（cross-site request forgery），跨站请求伪造。攻击者可以通过冒用你的身份执行某些请求。</p>
+<p>完成一次CSRF攻击，被攻击人必须：</p>
+<ol>
+<li>登录受信任网站A，并在本地生成Cookie</li>
+<li>在不登出A（Cookie没有过期）的情况下，访问危险网站B。</li>
+</ol>
+<h3 id="攻击案例"><a href="#攻击案例" class="headerlink" title="攻击案例"></a>攻击案例</h3><ol>
+<li><p>站点A的某个接口以GET请求完成银行转账操作：<code>GET https://somebank.com/transfer?bankid=114514&amp;money=1919810</code>。被害人登录A后继续访问了B，B页面中有这样一串代码：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;https://somebank.com/transfer?bankid=114514&amp;money=1919810&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>浏览器会带上用”somebank.com”的Cookie执行这一请求，使得用户给卡号为114514的卡汇入了1919810元。</p>
+</li>
+<li><p>上个案例中A使用GET方法设计请求，违反了HTTP规范，于是他们改用POST。对于一些老的PHP实现的后台站点，如果获取参数采用的<code>$_REQUEST[&quot;bankdid&quot;]</code>这种方式，不区分GET和POST，照样能获得参数，所以POST还是没有起到作用。</p>
+</li>
+</ol>
+<p>假设后台实现区分了POST，危险站点B依然可以构造一个POST请求：<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">　　<span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">　　　　<span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">　　　　　　<span class="function"><span class="keyword">function</span> <span class="title">steal</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">            iframe = <span class="built_in">document</span>.frames[<span class="string">&quot;steal&quot;</span>];</span></span><br><span class="line"><span class="javascript">            iframe.document.submit(<span class="string">&quot;transfer&quot;</span>);</span></span><br><span class="line"><span class="javascript">　　　　　　&#125;</span></span><br><span class="line"><span class="javascript">　　　　</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">　　<span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line">　　<span class="tag">&lt;<span class="name">body</span> <span class="attr">onload</span>=<span class="string">&quot;steal()&quot;</span> <span class="attr">src</span>=<span class="string">&quot;https://somebank.com&quot;</span>&gt;</span></span><br><span class="line">　　　　<span class="tag">&lt;<span class="name">iframe</span> <span class="attr">name</span>=<span class="string">&quot;steal&quot;</span> <span class="attr">display</span>=<span class="string">&quot;none&quot;</span>&gt;</span></span><br><span class="line">　　　　　　<span class="tag">&lt;<span class="name">form</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span> <span class="attr">name</span>=<span class="string">&quot;transfer&quot;</span>　<span class="attr">action</span>=<span class="string">&quot;https://somebank.com/transfer&quot;</span>&gt;</span></span><br><span class="line">　　　　　　　　<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;bankid&quot;</span> <span class="attr">value</span>=<span class="string">&quot;114514&quot;</span>&gt;</span></span><br><span class="line">　　　　　　　　<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;money&quot;</span> <span class="attr">value</span>=<span class="string">&quot;1919810&quot;</span>&gt;</span></span><br><span class="line">　　　　　　<span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">　　　　<span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br><span class="line">　　<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure><br>即使A站点不允许跨域，该处也可以用iframe构造一个同域的请求。</p>
+<h3 id="预防方式-2"><a href="#预防方式-2" class="headerlink" title="预防方式"></a>预防方式</h3><ul>
+<li>尽可能使用POST执行需要高安全性保障的接口</li>
+<li>将页面HTTP返回Header加上<code>X-Frame-Options: DENY</code>。</li>
+</ul>
+<blockquote>
+<p><code>X-Frame-Options</code>头部选项中，<code>DENY</code>是拒绝非同源页面引用该页面；<code>SAMEORIGIN</code>是允许被同源页面引用，<code>ALLOW-FROM uri</code>是允许被特定页面引用。</p>
+</blockquote>
+<ul>
+<li>设置页面HTTP返回头<code>Content-Security-Policy: script-src</code>。将设置外链js只能从本域名引用。</li>
+<li>对于支付等特别敏感的接口，强制使用验证码</li>
+<li>由于CSRF攻击中假设A站点是可信的，不存在A站点还有XSS漏洞，攻击者无法拿到A站点的Cookie。所以基于这一判断，可以对Cookie Hashing，让表单中包含一个<code>hash(cookie)</code>的<code>token</code>字段。服务器端接受表单请求的时候需要判断<code>hash(cookie) == token</code>才能继续执行，由于攻击者无法直接拿到Cookie，而且就算使用中间人攻击拿到了<code>token</code>也无法反推出<code>cookie</code>，这个方案可以彻底解决CSRF攻击。如果A页面也含有XSS漏洞，可以让攻击者拿到Cookie，可以让A页面的Cookie或者SESSION每次都变动，每次请求生成一个随机字段，并将改字段的hash渲染在form上，这样每次请求页面都会获取一个新的token，让攻击者几乎没有可能有时间伪造请求。</li>
+</ul>
+<blockquote>
+<p>参考资料：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/hyddd/archive/2009/04/09/1432744.html">https://www.cnblogs.com/hyddd/archive/2009/04/09/1432744.html</a></li>
+</ul>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" rel="tag"># 网络安全</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/04/07/Docker%E5%85%A5%E9%97%A8%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" rel="prev" title="Docker入门（一）安装与配置">
+      <i class="fa fa-chevron-left"></i> Docker入门（一）安装与配置
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/04/07/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/" rel="next" title="定时任务的几种实现方式">
+      定时任务的几种实现方式 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#XSS%E6%94%BB%E5%87%BB"><span class="nav-number">1.</span> <span class="nav-text">XSS攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E6%80%9D%E8%B7%AF"><span class="nav-number">1.1.</span> <span class="nav-text">攻击思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E6%96%B9%E5%BC%8F"><span class="nav-number">1.2.</span> <span class="nav-text">检测方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E9%98%B2%E6%96%B9%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">预防方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5"><span class="nav-number">2.</span> <span class="nav-text">SQL注入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E6%80%9D%E8%B7%AF-1"><span class="nav-number">2.1.</span> <span class="nav-text">攻击思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E6%96%B9%E5%BC%8F-1"><span class="nav-number">2.2.</span> <span class="nav-text">检测方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E9%98%B2%E6%96%B9%E5%BC%8F-1"><span class="nav-number">2.3.</span> <span class="nav-text">预防方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSRF%E6%94%BB%E5%87%BB"><span class="nav-number">3.</span> <span class="nav-text">CSRF攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E6%A1%88%E4%BE%8B"><span class="nav-number">3.1.</span> <span class="nav-text">攻击案例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E9%98%B2%E6%96%B9%E5%BC%8F-2"><span class="nav-number">3.2.</span> <span class="nav-text">预防方式</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2021/04/07/%E5%B8%B8%E8%A7%81Web%E6%94%BB%E5%87%BB%E4%B8%8E%E5%BA%94%E5%AF%B9%E6%96%B9%E5%BC%8F/";
+    this.page.identifier = "2021/04/07/常见Web攻击与应对方式/";
+    this.page.title = "常见Web攻击与应对方式";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

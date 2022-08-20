@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="正则表达式 $\to$正则表达式 正则表达式的递归定义 正则表达式实例   自动机和正则表达式 正则表达式的代数定理   有穷自动机 通过机器装置描述正则语言 用计算机编写相应算法，用于实现   正则表达式  通过表达式描述正则语言，代数表示方法，使用方便 应用广泛 grep工具（Global Regular Expression and Print) Emacs&#x2F;Vim文本编辑器 lex&#x2F;fle">
+<meta property="og:type" content="article">
+<meta property="og:title" content="形式语言与自动机理论（2）正则表达式">
+<meta property="og:url" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="正则表达式 $\to$正则表达式 正则表达式的递归定义 正则表达式实例   自动机和正则表达式 正则表达式的代数定理   有穷自动机 通过机器装置描述正则语言 用计算机编写相应算法，用于实现   正则表达式  通过表达式描述正则语言，代数表示方法，使用方便 应用广泛 grep工具（Global Regular Expression and Print) Emacs&#x2F;Vim文本编辑器 lex&#x2F;fle">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/23.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/24.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/25.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/26.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/27.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/28.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/29.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/30.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/31.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/32.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/32.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/34.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/30.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/35.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/36.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/37.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/38.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/39.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/40.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/41.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/42.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/43.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/44.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/45.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/46.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/47.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/48.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/49.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/50.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/51.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/52.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/53.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/54.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/55.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/56.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/60.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/61.png">
+<meta property="article:published_time" content="2021-01-22T13:03:32.000Z">
+<meta property="article:modified_time" content="2021-09-05T12:51:13.919Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="形式语言与自动机理论">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/23.png">
+
+<link rel="canonical" href="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>形式语言与自动机理论（2）正则表达式 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          形式语言与自动机理论（2）正则表达式
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-22 13:03:32" itemprop="dateCreated datePublished" datetime="2021-01-22T13:03:32Z">2021-01-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA/" itemprop="url" rel="index"><span itemprop="name">形式语言与自动机理论</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/01/22/形式语言与自动机理论（2）正则表达式/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>28k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>26 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h1><ul>
+<li>$\to$正则表达式<ul>
+<li>正则表达式的递归定义</li>
+<li>正则表达式实例</li>
+</ul>
+</li>
+<li>自动机和正则表达式</li>
+<li>正则表达式的代数定理</li>
+</ul>
+<ul>
+<li>有穷自动机<ul>
+<li>通过机器装置描述正则语言</li>
+<li>用计算机编写相应算法，用于实现</li>
+</ul>
+</li>
+<li><p>正则表达式</p>
+<ul>
+<li>通过表达式描述正则语言，代数表示方法，使用方便</li>
+<li>应用广泛<ul>
+<li>grep工具（Global Regular Expression and Print)</li>
+<li>Emacs/Vim文本编辑器</li>
+<li>lex/flex词法分析器</li>
+<li>各种程序设计语言Python/Perl/Haskell…</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>本文正则表达式并非POSIX正则表达式，只是一种形式化的表示</p>
+<span id="more"></span>
+</blockquote>
+</li>
+</ul>
+<p>语言的运算：<br>设$L$和$M$是两个语言，那么：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\text{并} \  L \cup M & = \lbrace w | w \in L 或 w \in M \rbrace \\
+\text{连接} \  L \cdot M & = \lbrace w | w = xy,x \in L \text{且} y \in M \rbrace \\
+\text{幂} \  L^0 & = \lbrace \epsilon \rbrace \\
+\text{}  L^1 & = L \\
+\text{}  L^n & = L^{n-1} \cdot L \\
+\text{克林闭包} \  L^{\ast} & = \bigcup_{i=0}^\infty L^i \\
+\end{aligned}</script><p>例：若有语言$L = \lbrace 0,11 \rbrace$ 和 $M = \lbrace \epsilon, 001 \rbrace$，那么：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+L \cup M & = \lbrace 0,11,001,\epsilon \rbrace \\
+LM & = \lbrace 0,0001,11,11001 \rbrace \\
+ML & = \lbrace 0,11,0010,00111 \rbrace \\
+L^0 & = \lbrace \epsilon \rbrace \\
+L^1 & = \lbrace 0,11 \rbrace \\
+L^2 & = \lbrace 00,011,110,1111 \rbrace \\
+\end{aligned}</script><p>例：对于空语言$\emptyset$，$\lbrace \epsilon \rbrace$，字母表$\Sigma$，$\Sigma^{\ast}$</p>
+<script type="math/tex; mode=display">
+\forall n \geq 1 \text{,}
+\begin{cases}
+\emptyset^0 &  \lbrace \epsilon \rbrace \\
+\emptyset^n &  \emptyset \\
+\emptyset^{\ast} &  \lbrace \epsilon \rbrace \\
+\end{cases}</script><script type="math/tex; mode=display">
+\begin{cases}
+\lbrace \epsilon \rbrace ^ 0 & = \lbrace \epsilon \rbrace \\
+\lbrace \epsilon \rbrace ^ n & = \lbrace \epsilon \rbrace \\
+\lbrace \epsilon \rbrace ^ * & = \lbrace \epsilon \rbrace \\
+\end{cases}</script><script type="math/tex; mode=display">
+\begin{cases}
+\Sigma ^ 0 & = \lbrace \epsilon \rbrace \\
+\Sigma ^ n & = \lbrace x | x \text{是} \Sigma \text{上长为} n \text{的串} \rbrace \\
+\Sigma ^ * & = \lbrace x | x \text{是} \Sigma \text{上长为任意长度的串} \rbrace \\
+\end{cases}</script><script type="math/tex; mode=display">
+\begin{cases}
+\lbrace \Sigma^{\ast} \rbrace ^ 0 & = \lbrace \epsilon \rbrace \\
+\lbrace \Sigma^{\ast} \rbrace ^ n & = \lbrace \Sigma^{\ast} \rbrace \\
+\lbrace \Sigma^{\ast} \rbrace ^ * & = \lbrace \Sigma^{\ast} \rbrace \\
+\end{cases}</script><p>四则运算表达式的递归定义</p>
+<ul>
+<li>任何数都是四则运算表达式</li>
+<li>如果$a$和$b$是四则运算表达式，那么<script type="math/tex; mode=display">
+a+b,a-b,a \times b, a \div b, (a)</script>都是四则运算表达式</li>
+</ul>
+<p>正则表达式的递归定义：<br>如果$\Sigma$是字母表，则$\Sigma$上的正则表达式递归定义为：</p>
+<ul>
+<li>$\emptyset$是一个正则表达式，表示空语言</li>
+<li>$\epsilon$是一个正则表达式，表示语言$\lbrace \epsilon \rbrace$</li>
+<li>$\forall a \in \Sigma$，$a$是一个正则表达式，表示语言$\lbrace a \rbrace$</li>
+<li>如果正则表达式$\boldsymbol{r}$和$\boldsymbol{s}$分别表示语言$R$和$S$，那么：<script type="math/tex; mode=display">
+\boldsymbol{r} + \boldsymbol{s}, \boldsymbol{rs}, \boldsymbol{r}^{\ast}, (\boldsymbol{r})</script>都是正则表达式，分别表示语言：<script type="math/tex; mode=display">
+R \cup S, R \cdot S, R^{\ast}, R</script></li>
+</ul>
+<p>正则表达式中三总运算以及括号的优先级：</p>
+<ul>
+<li>首先，“括号”的优先级最高</li>
+<li>其次，“星”运算：$\boldsymbol{r}^{\ast}$</li>
+<li>然后，“连接运算”,$\boldsymbol{rs}$,$\boldsymbol{r} \cdot \boldsymbol{s}$</li>
+<li>最后，“加”最低，$\boldsymbol{r} + \boldsymbol{s}$,$\boldsymbol{r} \cup \boldsymbol{s}$</li>
+</ul>
+<p>例：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+1 + 01^{\ast} & = 1 + (0(1^{\ast})) = \lbrace 1,0,01,011,00111,... \rbrace \\
+ & \not = 1 + (01)^{\ast} = \lbrace 1,\epsilon,01,0101,010101,... \rbrace \\
+ & \not = (1 + 01)^{\ast} = \lbrace 1,01 \rbrace ^ * \\
+ & \not = (1 + 0)1^{\ast} =\lbrace 1,0,11,01,111,011,1111,0111,... \rbrace  \\
+\end{aligned}</script><p>例:</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>$E$</th>
+<th>$\boldsymbol{L}(E)$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$\boldsymbol{a} + \boldsymbol{b}$</td>
+<td>$\boldsymbol{L}(\boldsymbol{a}) \cup \boldsymbol{L}(\boldsymbol{b}) = \lbrace a \rbrace \cup \lbrace b \rbrace = \lbrace a,b \rbrace$</td>
+</tr>
+<tr>
+<td>$ \boldsymbol{bb} $</td>
+<td>$ \boldsymbol{L}(\boldsymbol{b}) \cdot \boldsymbol{L}(\boldsymbol{b}) = \lbrace b \rbrace \cdot \lbrace b \rbrace = \lbrace bb \rbrace $</td>
+</tr>
+<tr>
+<td>$ (\boldsymbol{a} + \boldsymbol{b})(\boldsymbol{a} + \boldsymbol{b}) $</td>
+<td>$ \lbrace a,b \rbrace \lbrace a,b \rbrace = \lbrace aa,ab,ba,bb \rbrace $</td>
+</tr>
+<tr>
+<td>$ (\boldsymbol{a} + \boldsymbol{b})^{\ast}(\boldsymbol{a} + \boldsymbol{bb}) $</td>
+<td>$ \lbrace a,b \rbrace^{\ast} \lbrace a,bb \rbrace = \lbrace a,b \rbrace^{\ast} \lbrace a \rbrace \cup \lbrace a,b \rbrace^{\ast} \lbrace bb \rbrace = \lbrace w \in \lbrace a,b \rbrace^{\ast} \vert w \text{仅以a或bb结尾} \rbrace $</td>
+</tr>
+<tr>
+<td>$ \boldsymbol{1} + (\boldsymbol{01})^{\ast} $</td>
+<td>$ \lbrace 1, \epsilon, 01,0101,010101,… \rbrace  $</td>
+</tr>
+<tr>
+<td>$ (\boldsymbol{0} + \boldsymbol{1})^{\ast} \boldsymbol{01} (\boldsymbol{0} + \boldsymbol{1})^{\ast} $</td>
+<td>$ \lbrace x01y \vert x,y \in \lbrace 0,1 \rbrace^{\ast} \rbrace $</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>例：给出正则表达式$(\boldsymbol{aa})^{\ast} (\boldsymbol{bb})^{\ast} \boldsymbol{b} $定义的语言</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\boldsymbol{L}((\boldsymbol{aa})^{\ast} (\boldsymbol{bb})^{\ast} \boldsymbol{b}) & = \boldsymbol{L}((\boldsymbol{aa})^{\ast}) \cdot \boldsymbol{L}((\boldsymbol{bb})^{\ast}) \cdot \boldsymbol{L}(\boldsymbol{b}) \\
+& = (\lbrace a \rbrace \lbrace a \rbrace)^{\ast}  (\lbrace b \rbrace \lbrace b \rbrace)^{\ast} \lbrace b \rbrace \\
+& = \lbrace a^2 \rbrace \cdot \lbrace b^2 \rbrace \cdot \lbrace b \rbrace \\
+& = \lbrace a^{2n}b^{2m+1} \vert n \geq 0, m \geq 0 \rbrace \\
+\end{aligned}</script><p>例：给出正则表达式，$L = \lbrace w | w \subseteq \lbrace 0,1 \rbrace ^ {\ast} \text{且倒数第三个字符是1}$<br>如果是自动机器来描述，则很复杂，但正则表达式表示则很简洁：</p>
+<script type="math/tex; mode=display">
+(\boldsymbol{0} + \boldsymbol{1})^{\ast} \vert \boldsymbol{1} (\boldsymbol{0} + \boldsymbol{1}) (\boldsymbol{0} + \boldsymbol{1})</script><p>例：Design regular expression for $L = \lbrace w \vert w \in \lbrace 0,1 \rbrace^{\ast} \text{and $w$ has no pair of consecutive 0’s} \rbrace$<br>不允许出现连续的0，那么，就要0前后必有1，$(\boldsymbol{1} + \boldsymbol{01})^{\ast}$，但是此时还不能表示0结尾的串，于是改为$(\boldsymbol{1} + \boldsymbol{01})^{\ast} \boldsymbol{0}$，但是此时又不能表示空串了，所以最终结果为：$(\boldsymbol{1} + \boldsymbol{01})^{\ast} (\boldsymbol{0} + \epsilon)$</p>
+<ul>
+<li>$\to$正则表达式</li>
+<li>自动机和正则表达式<ul>
+<li>由自动机到正则表达式</li>
+<li>由正则表达式到自动机</li>
+</ul>
+</li>
+<li>正则表达式的代数定理</li>
+</ul>
+<h2 id="DFA到正则表达式"><a href="#DFA到正则表达式" class="headerlink" title="DFA到正则表达式"></a>DFA到正则表达式</h2><p>DFA，NFA，$\epsilon-$NFA和正则表达式在表示语言的能力上等价。<br><img src="23.png" alt=""></p>
+<ul>
+<li>任何NFA都可以不适用非确定性去模拟DFA，所以任何DFA表示的语言都可以被NFA识别；可以用子集构造法构造与NFA等价的DFA，所以任何NFA表示的语言都能被一个DFA表示，即NFA和DFA是等价的。</li>
+<li>任何$\epsilon-$NFA可以不使用空转移和非确定性去模拟一个DFA，所以任何DFA表示的语言都可以被$\epsilon-$NFA所表示；可以使用消除空转移的子集构造法构造与$\epsilon-$NFA等价的DFA，所以任何$\epsilon-$NFA表示的语言都能被一个DFA表示，即DFA和$\epsilon-$NFA是等价的。</li>
+<li>任何DFA都可以构造一个和他等价的正则表达式，即任何DFA能表示的语言都能被一个正则表达式表示；任何正则表达式表示的语言，都能被一个$\epsilon-$NFA识别，而DFA和$\epsilon-$NFA是等价的。综上，有穷自动机和正则表达式是等价的。</li>
+</ul>
+<p>由DFA到正则表达式，可以用<strong>递归表达式法</strong>或<strong>状态消除法</strong>实现  </p>
+<h3 id="递归表达式法"><a href="#递归表达式法" class="headerlink" title="递归表达式法"></a>递归表达式法</h3><p>DFA能描述的语言，可以看成是起止节点之间的所有路径，用$R_{ij}$表示$i,j$两个节点之间的全部路径，可以递归的表示为：</p>
+<p><img src="24.png" alt=""></p>
+<script type="math/tex; mode=display">
+R_{ij} = R_{ij}^{\text{不经过k}} + R_{ik}^{\text{不经过k}} (R_{kk}^{\text{不经过k}})^{\ast} R_{kj}^{\text{不经过k}}</script><blockquote>
+<p>不经过k指的是路径节点中除了端点，都不出现k</p>
+</blockquote>
+<p>定理3：若$L = \boldsymbol{L}(A)$是DFA A的语言，那么存在正则表达式$R$满足$L = \boldsymbol(R)$</p>
+<p>证明：对DFA A的状态编号，以1为开始状态，即：</p>
+<script type="math/tex; mode=display">
+A = (\lbrace 1,2...n \rbrace, \Sigma, \delta, 1, F)</script><p>设正则表达式$R_{ij}^{(k)}$表示从$i$到$j$但中间节点不超过$k$全部路径的字符串集：</p>
+<script type="math/tex; mode=display">
+R_{ij}^{(k)} = \lbrace x \vert \hat\delta(i,x) = j, \ x \text{经过的状态除了两端外都不超过k} \rbrace</script><p><img src="25.png" alt=""><br>那么，与$A = (\lbrace 1,2…n \rbrace, \Sigma, \delta, 1, F)$等价的正则表达式为：</p>
+<script type="math/tex; mode=display">
+\bigcup_{j \in F}R_{ij}^{(n)}</script><p>其递归式为</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+R_{ij}^{(k)} & = R_{ij}^{(k-1)} + R_{ik}^{(k-1)}(R_{kk}^{(k-1)})^{\ast} \cdot R_{kj}^{(k-1)} \\
+R_{ij}^{(0)} & = 
+\begin{cases}
+\lbrace a \vert \delta(q_i,a) = q_j \rbrace & i \not= j \\
+\lbrace a \vert \delta(q_i,a) = q_j \rbrace \cup \lbrace \epsilon \rbrace & i = j \\
+\end{cases}
+\end{aligned}</script><p>其中$R<em>{ij}^{(k-1)}$表示不经过$k$的，$R</em>{ik}^{(k-1)}(R<em>{kk}^{(k-1)})^{\ast} R</em>{kj}^{(k-1)}$表示经过$k$的。$k$为0时，则表示直连。</p>
+<p>下面对$k$归纳，证明可以用上递归式求得$R_{ij}^{(k)}$：</p>
+<p>归纳基础：<br>当$i \not= j, k = 0$时，即$i$到$j$没经过任何中间节点</p>
+<ul>
+<li>没有$i$到$j$的状态转移： $R_{ij}^{(0)} = \emptyset$<br><img src="26.png" alt=""></li>
+<li>有一个$i$到$j$的状态转移：$R_{ij}^{(0)} = \boldsymbol{a}$<br><img src="27.png" alt=""></li>
+<li>有多个$i$到$j$的状态转移：$R_{ij}^{(0)} = \boldsymbol{a_1} + \boldsymbol{a_2} + … + \boldsymbol{a_t}$<br><img src="28.png" alt=""></li>
+</ul>
+<p>当$i = j, k = 0$时，即$i$到自身没经过任何中间节点</p>
+<ul>
+<li>状态$i$没有到自己状态转移： $R_{ii}^{(0)} = \emptyset$<br><img src="29.png" alt=""></li>
+<li>状态$i$有一个到自身的状态转移：$R_{ii}^{(0)} = \boldsymbol{a} + \boldsymbol{\epsilon}$<br><img src="30.png" alt=""></li>
+<li>状态$i$有多个到自身的状态转移：$R_{ii}^{(0)} = \boldsymbol{a_1} + \boldsymbol{a_2} + … + \boldsymbol{a_t} + \boldsymbol{\epsilon} $<br><img src="31.png" alt=""></li>
+</ul>
+<p>即$k = 0$时：</p>
+<script type="math/tex; mode=display">
+\begin{cases}
+\lbrace a \vert \delta(q_i,a) = q_j \rbrace & i \not= j \\
+\lbrace a \vert \delta(q_i,a) = q_j \rbrace \cup \lbrace \epsilon \rbrace & i = j \\
+\end{cases}</script><p>归纳假设：<br>已知$R<em>{ij}^{(k-1)}$是从$i$到$j$但中间节点不超过$k-1$的全部路径，同理已知$R</em>{ik}^{(k-1)}$，$R<em>{kk}^{(k-1)}$和$R</em>{kj}^{(k-1)}$。</p>
+<p>归纳地推：那么$R_{ij}^{(k)}$中全部路径，可用节点$k$分为两部分</p>
+<ul>
+<li>从$i$到$j$不经过$k$的：$R<em>{ij}^{(k)} = R</em>{ij}^{(k-1)}$<br><img src="32.png" alt=""></li>
+<li>从$i$到$j$经过$k$的：$R<em>{ij}^{(k)} = R</em>{ik}^{(k-1)} (R<em>{kk}^{(k-1)})^{\ast} R</em>{kj}^{(k-1)}$<br><img src="32.png" alt=""></li>
+</ul>
+<p>因此：$R<em>{ij}^{(k)} = R</em>{ij}^{(k-1)} + R<em>{ik}^{(k-1)}(R</em>{kk}^{(k-1)})^{\ast} R_{kj}^{(k-1)}$</p>
+<p>例：将如图DFA转化为正则表达式：<br><img src="34.png" alt=""></p>
+<p>共有两个节点，先计算$R_{ij}^{(0)}$</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>$R_{ij}^(k)$</th>
+<th>$k=0$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$R_{11}^{(0)}$</td>
+<td>$\epsilon + \boldsymbol{1}$</td>
+</tr>
+<tr>
+<td>$R_{12}^{(0)}$</td>
+<td>$\boldsymbol{0}$</td>
+</tr>
+<tr>
+<td>$R_{21}^{(0)}$</td>
+<td>$\emptyset$</td>
+</tr>
+<tr>
+<td>$R_{22}^{(0)}$</td>
+<td>$\epsilon + \boldsymbol{0} + \boldsymbol{1}$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>计算$R_{ij}^{(1)}$</p>
+<script type="math/tex; mode=display">
+R_{ij}^{(1)} = R_{ij}^{(0)} + R_{i1}^{(0)} (R_{11}^{(0)})^{\ast} R_{1j}^{(0)}</script><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>$R_{ij}^{(k)}$</th>
+<th>$k=1$</th>
+<th>化简</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$R_{11}^{(1)}$</td>
+<td>$(\epsilon + \boldsymbol{1}) + (\epsilon + \boldsymbol{1}) (\epsilon + \boldsymbol{1})^{\ast} (\epsilon + \boldsymbol{1})$</td>
+<td>$\boldsymbol{1}^{\ast}$</td>
+</tr>
+<tr>
+<td>$R_{12}^{(1)}$</td>
+<td>$\boldsymbol{0} + (\epsilon + \boldsymbol{1})(\epsilon + \boldsymbol{1})^{\ast} \boldsymbol{0}$</td>
+<td>$\boldsymbol{1}^{\ast}\boldsymbol{0}$</td>
+</tr>
+<tr>
+<td>$R_{21}^{(1)}$</td>
+<td>$\emptyset + \emptyset (\epsilon + \boldsymbol{1})^{\ast} (\epsilon + \boldsymbol{1})$</td>
+<td>$\emptyset$</td>
+</tr>
+<tr>
+<td>$R_{22}^{(1)}$</td>
+<td>$\epsilon + \boldsymbol{0} + \boldsymbol{1} + \emptyset (\epsilon + \boldsymbol{1})^{\ast} \boldsymbol{0}$</td>
+<td>$\emptyset + \boldsymbol{0} + \boldsymbol{1}$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>计算$R_{ij}^{(2)}$</p>
+<script type="math/tex; mode=display">
+R_{ij}^{(2)} = R_{ij}^{(1)} + R_{i2}^{(1)} (R_{22}^{(1)})^{\ast} R_{2j}^{(1)}</script><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>$R_{ij}^(k)$</th>
+<th>$k=2$</th>
+<th>化简</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$R_{11}^{(2)}$</td>
+<td>$\boldsymbol{1}^{\ast} + \boldsymbol{1}^{\ast}\boldsymbol{0} (\epsilon + \boldsymbol{0} + \boldsymbol{1})^{\ast} \emptyset$</td>
+<td>$\boldsymbol{1}^{\ast}$</td>
+</tr>
+<tr>
+<td>$R_{12}^{(2)}$</td>
+<td>$\boldsymbol{1}^{\ast} \boldsymbol{0} + \boldsymbol{1}^{\ast} \boldsymbol{0} (\epsilon + \boldsymbol{0} + \boldsymbol{1})^{\ast} (\epsilon + \boldsymbol{0} + \boldsymbol{1})$</td>
+<td>$\boldsymbol{1}^{\ast} \boldsymbol{0} (\boldsymbol{0} + \boldsymbol{1})^{\ast}$</td>
+</tr>
+<tr>
+<td>$R_{21}^{(2)}$</td>
+<td>$\emptyset + (\epsilon + \boldsymbol{0} + \boldsymbol{1})(\epsilon + \boldsymbol{0} + \boldsymbol{1})^{\ast} \emptyset$</td>
+<td>$\emptyset$</td>
+</tr>
+<tr>
+<td>$R_{22}^{(2)}$</td>
+<td>$\epsilon + \boldsymbol{1} + \boldsymbol{1} + (\epsilon + \boldsymbol{0} + \boldsymbol{1})(\epsilon + \boldsymbol{0} + \boldsymbol{1})^{\ast} (\epsilon + \boldsymbol{0} + \boldsymbol{1})$</td>
+<td>$(\boldsymbol{0} + \boldsymbol{1})^{\ast}$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>因为只有$q<em>2$是接收状态，所以该DFA正则表达式为$R</em>{12}^{(2)} = \boldsymbol{1}^{\ast}\boldsymbol{0}(\boldsymbol{0} + \boldsymbol{1})^{\ast}$</p>
+<p><strong>几个基本的化简原则</strong>：<br>如果$\boldsymbol{r}$和$\boldsymbol{s}$是两个正则表达式：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+(\epsilon + \boldsymbol{r})^{\ast} &= \boldsymbol{r}^{\ast} \\
+(\epsilon + \boldsymbol{r}) \boldsymbol{r}^{\ast} &= \boldsymbol{r}^{\ast} \\
+\boldsymbol{r} + \boldsymbol{rs}^{\ast} &= \boldsymbol{rs}^{\ast} \\
+\emptyset\boldsymbol{r} &= \boldsymbol{r}\emptyset = \emptyset \ \text{零元} \\
+\emptyset + \boldsymbol{r} &= \boldsymbol{r} + \emptyset = \boldsymbol{r} \ \text{单位元} \\
+\end{aligned}</script><p>例：将如图DFA转换成正则表达式<br><img src="30.png" alt=""></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th></th>
+<th>$k=0$</th>
+<th>$k=1$</th>
+<th>$k=2$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$R_{11}^{(k)}$</td>
+<td>$\epsilon$</td>
+<td>$\epsilon$</td>
+<td>$(\boldsymbol{00})^{\ast}$</td>
+</tr>
+<tr>
+<td>$R_{12}^{(k)}$</td>
+<td>$\boldsymbol{0}$</td>
+<td>$\boldsymbol{0}$</td>
+<td>$\boldsymbol{0}(\boldsymbol{00})^{\ast}$</td>
+</tr>
+<tr>
+<td>$R_{13}^{(k)}$</td>
+<td>$\boldsymbol{1}$</td>
+<td>$\boldsymbol{1}$</td>
+<td>$\boldsymbol{0}^{\ast}\boldsymbol{1}$</td>
+</tr>
+<tr>
+<td>$R_{21}^{(k)}$</td>
+<td>$\boldsymbol{0}$</td>
+<td>$\boldsymbol{0}$</td>
+<td>$\boldsymbol{0}(\boldsymbol{00})^{\ast}$</td>
+</tr>
+<tr>
+<td>$R_{22}^{(k)}$</td>
+<td>$\epsilon$</td>
+<td>$\epsilon + \boldsymbol{00}$</td>
+<td>$(\boldsymbol{00})^{\ast}$</td>
+</tr>
+<tr>
+<td>$R_{23}^{(k)}$</td>
+<td>$\boldsymbol{1}$</td>
+<td>$\boldsymbol{1}+\boldsymbol{01}$</td>
+<td>$(\boldsymbol{0})^{\ast}\boldsymbol{1}$</td>
+</tr>
+<tr>
+<td>$R_{31}^{(k)}$</td>
+<td>$\emptyset$</td>
+<td>$\emptyset$</td>
+<td>$(\boldsymbol{0}+\boldsymbol{1})(\boldsymbol{00})^{\ast}\boldsymbol{0}$</td>
+</tr>
+<tr>
+<td>$R_{32}^{(k)}$</td>
+<td>$\boldsymbol{0} + \boldsymbol{1}$</td>
+<td>$\boldsymbol{0} + \boldsymbol{1}$</td>
+<td>$(\boldsymbol{0}+\boldsymbol{1})(\boldsymbol{00})^{\ast}$</td>
+</tr>
+<tr>
+<td>$R_{33}^{(k)}$</td>
+<td>$\epsilon$</td>
+<td>$\epsilon$</td>
+<td>$\epsilon + (\boldsymbol{0}+\boldsymbol{1})\boldsymbol{0}^{\ast}\boldsymbol{1}$</td>
+</tr>
+</tbody>
+</table>
+</div>
+<script type="math/tex; mode=display">
+\begin{aligned}
+R_{12}^{(3)} & = R_{12}^{(2)} + R_{13}^{(2)} (R_{33}^{(2)})^{\ast} R_{32}^{(2)} \\
+ & = \boldsymbol{0}(\boldsymbol{00})^{\ast} + \boldsymbol{0}^{\ast}\boldsymbol{1}(\epsilon + (\boldsymbol{0} + \boldsymbol{1})\boldsymbol{0}^{\ast}\boldsymbol{1})^{\ast} (\boldsymbol{0} + \boldsymbol{1}))(\boldsymbol{00})^{\ast} \\
+ & = \boldsymbol{0}(\boldsymbol{00})^{\ast} + \boldsymbol{0}^{\ast}\boldsymbol{1}((\boldsymbol{0}+\boldsymbol{1})\boldsymbol{0}^{\ast}\boldsymbol{1})^{\ast}(\boldsymbol{0}+ \boldsymbol{1})(\boldsymbol{00})^{\ast} \\
+\end{aligned}
+
+\begin{aligned}
+R_{13}^{(3)} & = R_{13}^{(2)} + R_{13}^{(2)} (R_{33}^{(2)})^{\ast} R_{33}^{(2)} \\
+ & = \boldsymbol{0}^{\ast}\boldsymbol{1} + \boldsymbol{0}^{\ast}\boldsymbol{1}(\epsilon + (\boldsymbol{0} + \boldsymbol{1})\boldsymbol{0}^{\ast}\boldsymbol{1})^{\ast}(\epsilon + (\boldsymbol{0} + \boldsymbol{1})\boldsymbol{0}^{\ast}\boldsymbol{1}) \\
+ & = \boldsymbol{0}^{\ast}\boldsymbol{1}((\boldsymbol{0} + \boldsymbol{1})\boldsymbol{0}^{\ast}\boldsymbol{1})^{\ast} \\
+\end{aligned}</script><script type="math/tex; mode=display">
+R_{12}^{(3)} + R_{13}^{(3)} =  \boldsymbol{0}^{\ast}\boldsymbol{1}((\boldsymbol{0} + \boldsymbol{1})\boldsymbol{0}^{\ast}\boldsymbol{1})^{\ast} （\epsilon + (\boldsymbol{0} + \boldsymbol{1})(\boldsymbol{00})^{\ast}) + \boldsymbol{0}(\boldsymbol{00})^{\ast} \\</script><h3 id="状态消除法"><a href="#状态消除法" class="headerlink" title="状态消除法"></a>状态消除法</h3><ul>
+<li>从DFA中逐个删除状态</li>
+<li>每次删除一个状态，用标记了正则表达式的新路径替换被删掉的路径</li>
+<li>保持自动机等价</li>
+</ul>
+<p>基本的几种情况：<br><img src="35.png" alt=""></p>
+<p>对于更一般的情况：<br><img src="36.png" alt=""><br>若要除掉S，除去loop边，S有2出2进，所以要补4条边</p>
+<blockquote>
+<p>状态递归表达式法相比，状态消除法不适合计算机来实现，而且不适用于太复杂的场景</p>
+</blockquote>
+<p>例：利用状态消除法，构造下图DFA的正则表达式。<br> <img src="37.png" alt=""></p>
+<ul>
+<li>利用空只能由，添加新的开始状态$s$和结束状态$f$。如果有多个结束状态，则全部通过空转移跳到$f$ <img src="38.png" alt=""></li>
+<li>消除状态$q_1$，添加$q_0 \to q_2$和$q_2 \to q_2$的路径 <img src="39.png" alt=""></li>
+<li>消除状态$q_0$，添加$s \to q_2$和$q_2 \to q_2$的路径 <img src="40.png" alt=""></li>
+<li><p>消除状态$q_2$，添加$s \to f$的路径 <img src="41.png" alt=""></p>
+<p>因此，该DFA对应的正则表达式是：$\boldsymbol{1}^{\ast}\boldsymbol{00}^{\ast}\boldsymbol{1}(\boldsymbol{00}^{\ast}\boldsymbol{1}+\boldsymbol{11}^{\ast}\boldsymbol{00}^{\ast}\boldsymbol{1})^{\ast}$</p>
+</li>
+</ul>
+<h2 id="正则表达式到DFA"><a href="#正则表达式到DFA" class="headerlink" title="正则表达式到DFA"></a>正则表达式到DFA</h2><p><strong>定理</strong>：正则表达式定义的语言，都可以被有穷自动机识别</p>
+<p>由正则表达式构造$\epsilon-$NFA:<br>任何正则表达式$\boldsymbol{e}$，都存在与其等价的$\epsilon-$NFA A，即$L(A) = L(e)$，并且A满足：</p>
+<ul>
+<li>仅有一个接受状态</li>
+<li>没有进入开始状态的边</li>
+<li>没有离开接受状态的边</li>
+</ul>
+<p>证明：对于正则表达式使用归纳法：</p>
+<p>归纳基础：<br> 对于$\emptyset$，有$\epsilon-$NFA <img src="42.png" alt=""></p>
+<ul>
+<li>对于$\boldsymbol{\epsilon}$，有$\epsilon-$NFA <img src="43.png" alt=""></li>
+<li>对于$\forall a \in \Sigma$，对于$\boldsymbol{a}$，有$\epsilon-$NFA <img src="44.png" alt=""></li>
+</ul>
+<p>归纳递推：若$\boldsymbol{r}$和$\boldsymbol{s}$为正则表达式，则他们对应的$\epsilon-$NFA分别为$R$和$S$:<br><img src="45.png" alt=""></p>
+<p>则正则表达式$\boldsymbol{r}+\boldsymbol{s}$，$\boldsymbol{rs}$和$\boldsymbol{r}^{\ast}$，可由$R$和$S$分别构造如下：</p>
+<ul>
+<li>对于$\boldsymbol{r}+ \boldsymbol{s}$，有$\epsilon-$NFA：<img src="46.png" alt=""></li>
+<li>对于$\boldsymbol{rs}$，有$\epsilon-$NFA：<img src="47.png" alt=""></li>
+<li>对于$\boldsymbol{r}^{\ast}$，有$\epsilon-$NFA：<img src="48.png" alt=""></li>
+</ul>
+<p>例：正则表达式$(\boldsymbol{0} + \boldsymbol{1})^{\ast} \boldsymbol{1} (\boldsymbol{0} + \boldsymbol{1})$构造为$\epsilon-$NFA。<br>根据上述规则：<br>先构造$\boldsymbol{0}$和$\boldsymbol{1}$：<img src="49.png" alt=""><br>再构造$\boldsymbol{0} + \boldsymbol{1}$：<img src="50.png" alt=""><br>再构造$(\boldsymbol{0} + \boldsymbol{1})^{\ast}$：<img src="51.png" alt=""><br>最后，组合成$(\boldsymbol{0} + \boldsymbol{1})^{\ast} \boldsymbol{1} (\boldsymbol{0} + \boldsymbol{1})$，结果如下：<img src="52.png" alt=""></p>
+<h2 id="正则表达式的代数定理"><a href="#正则表达式的代数定理" class="headerlink" title="正则表达式的代数定理"></a>正则表达式的代数定理</h2><blockquote>
+<p>用于检查一个带参数的正则表达式是否为真</p>
+</blockquote>
+<p>定义：含有变量的两个正则表达式，如果以任意语言替换其变量，二者所表示的语言仍然相同，则称这两个正则表达式等价。在这样的意义下，正则表达式满足一些代数定律。</p>
+<p>并运算：</p>
+<ul>
+<li>结合律：$(L+M)+N = L+(M+N)$</li>
+<li>交换律：$L+M=M+L$</li>
+<li>幂等律：$L+L=L$</li>
+<li>单位元：$\emptyset + L = L + \emptyset = L$</li>
+</ul>
+<p>连接运算：</p>
+<ul>
+<li>结合律：$(LM)N = L(MN)$</li>
+<li>单位元：$\epsilon L=L \epsilon = L$</li>
+<li>零元：$\emptyset L = L \emptyset = \emptyset$</li>
+<li>$LM \not= ML$</li>
+</ul>
+<p>分配律：</p>
+<ul>
+<li>$L(M+N) = LM + LN$</li>
+<li>$(M+N)L = ML + NL$</li>
+</ul>
+<p>闭包运算：</p>
+<ul>
+<li>$(L^{\ast})^{\ast} = L^{\ast}$</li>
+<li>$\emptyset ^{\ast} = \epsilon$</li>
+<li>$\epsilon^{\ast} = \epsilon$</li>
+<li>$L^{\ast} = L^{+} + \epsilon$</li>
+<li>$(\epsilon + L)^{\ast} = L^{\ast}$</li>
+</ul>
+<p>要判断表达式$E$和$F$是否等价，其中变量为$L_1,L_2,…,L_n$</p>
+<ul>
+<li>将变量替换为具体表达式，得正则表达式$\boldsymbol{r}$和$\boldsymbol{s}$，例如，替换$L_i$为$\boldsymbol{a_i}$</li>
+<li>判断$\boldsymbol{L}(\boldsymbol{r}) = \boldsymbol{L}(\boldsymbol{s})$，如果相等则$E=F$，否则$E \not= F$</li>
+</ul>
+<p>例：判断$(L+M)^{\ast} = (L^{\ast}M^{\ast})^{\ast}$<br>将$L$和$M$替换为$\boldsymbol{a}$和$\boldsymbol{b}$，因为$(\boldsymbol{a} + \boldsymbol{b})^{\ast} = (\boldsymbol{a}^{\ast}\boldsymbol{b}^{\ast})^{\ast}$，$\boldsymbol{L}((\boldsymbol{a} + \boldsymbol{b})^{\ast}) = \boldsymbol{L}((\boldsymbol{a}^{\ast}\boldsymbol{b}^{\ast})^{\ast})$，所以$(L+M)^{\ast}=(L^{\ast} M^{\ast})^{\ast}$</p>
+<p>例：判断$L+ML=(L+M)L$</p>
+<ul>
+<li>将$L$和$M$替换为$\boldsymbol{a}$和$\boldsymbol{b}$</li>
+<li>判断$\boldsymbol{a} + \boldsymbol{ba} = (\boldsymbol{a} + \boldsymbol{b})\boldsymbol{a}$</li>
+<li>因为$aa \not\in \boldsymbol{a} + \boldsymbol{ba}$，而$aa \in (\boldsymbol{a} + \boldsymbol{b})\boldsymbol{a}$</li>
+<li>所以$\boldsymbol{a} + \boldsymbol{ba} \not= (\boldsymbol{a} + \boldsymbol{b})\boldsymbol{a}$，即$ L+ML \not= (L+M)L $  </li>
+</ul>
+<blockquote>
+<p><strong>注意</strong>：这种方法仅限于判断正则表达式，否则会发生错误</p>
+</blockquote>
+<p>例：若用这种方法判断$L \cap M \cap N = L \cap M$，则$\boldsymbol{a},\boldsymbol{b},\boldsymbol{c}$替换$L,M,N$，有</p>
+<script type="math/tex; mode=display">
+\lbrace a \rbrace \cap \lbrace b \rbrace \cap \lbrace c \rbrace = \emptyset = \lbrace a \rbrace \cap \lbrace b \rbrace</script><p>而显然：</p>
+<script type="math/tex; mode=display">
+L \cap M \cap N \not= L \cap M</script><p>说明，该方法仅仅适用于检验带有连接/并/闭包的正则表达式的式子。</p>
+<h1 id="正则语言的性质"><a href="#正则语言的性质" class="headerlink" title="正则语言的性质"></a>正则语言的性质</h1><ul>
+<li>$L=\lbrace 0^m 1^n \vert m,n \geq 0 \rbrace$ 可以写作 $\boldsymbol{0}^{\ast}\boldsymbol{1}^{\ast}$，是正则语言</li>
+<li>$L=\lbrace 0^m 1^n \vert m \geq 2,n \geq 4 \rbrace$ 可以写作 $\boldsymbol{00}\boldsymbol{0}^{\ast}\boldsymbol{1111}\boldsymbol{1}^{\ast}$，是正则语言</li>
+<li>$L=\lbrace 0^n 1^n \vert n \geq 0 \rbrace$，由于有穷自动机无法记住0的数量，并匹配等量的1，所以不是正则语言</li>
+</ul>
+<p>那么，如何用形式化的方式，识别一个语言是否是正则语言呢？</p>
+<h2 id="正则语言的泵引理"><a href="#正则语言的泵引理" class="headerlink" title="正则语言的泵引理"></a>正则语言的泵引理</h2><p><strong>定理</strong>：如果语言$L$是正则的，那么存在正整数$N$，对于$\forall w \in L$，只要$\vert w \vert \geq N$就可以将$w$分成三部分$w = xyz$满足：</p>
+<ul>
+<li>$y \not= \epsilon (\vert y \vert \gt 0)$</li>
+<li>$\vert xy \vert \leq N$</li>
+<li>$\forall k \geq 0,xy^kz \in L$</li>
+</ul>
+<blockquote>
+<p>泵引理又称Pumping Lemma，$y$像泵可以不断泵出新串。只要语言$L$确定，$N$就是确定的。泵引理是正则语言的必要条件，如果一个语言不符合泵引理，那他一定不是正则语言。</p>
+</blockquote>
+<p>证明：</p>
+<ul>
+<li>如果$L$正则，那么存在有$n$个状态DFA A使得$\boldsymbol{L}(A) = L$</li>
+<li><p>取$w = a_1…a_m \in L (m \geq n)$，定义$q_i = \hat\delta(q_0, a_1…a_i)$<br><img src="53.png" alt=""></p>
+</li>
+<li><p>DFA读入$a_n$进入$q_n$，一共经历了$n+1$个状态，而DFA一共只有$n$个状态。根据鸽巢原理，必有两个状态相同，设$q_i = q_j (0 \leq i \lt j \leq n)$</p>
+</li>
+<li>那么$w=xyz$如图，且有$\forall k \lt 0,xy^kz \in L$:<br><img src="54.png" alt=""></li>
+<li>而因为$i \lt j$所以$y \not= \epsilon$，（即$\vert y \vert \gt 0$），因为$j \leq n$所以$\vert xy \vert \leq n$</li>
+</ul>
+<h3 id="泵引理的应用"><a href="#泵引理的应用" class="headerlink" title="泵引理的应用"></a>泵引理的应用</h3><p>例：证明$L_{01} = \lbrace 0^{\ast} 1^{\ast} |vert n \geq 0 \rbrace$不是正则语言。</p>
+<blockquote>
+<p>利用泵引理证明语言的非正则性，需要使用反证法。</p>
+</blockquote>
+<p><strong>证明</strong>：</p>
+<ul>
+<li>假设$L_{01}$是正则的</li>
+<li>那么，存在$N \in \mathbb{Z}^{+}$，对$\forall w \in L_{01}(\vert w \vert) \geq N)$满足泵引理</li>
+<li>从$L<em>{01}$中取出$w=0^N1^N$，显然$w \in L</em>{01}$且$\vert w \vert = 2N \leq N$</li>
+<li>那么，$w$可以被分成$w=xyz$，且$\vert xy \vert \leq N$和$y \not= \epsilon$</li>
+<li>因此$y$只能是$0^m$，且$m \gt 0$</li>
+<li>那么$xy^2z = 0^{N+m}1^N \not \in L<em>{01}$，而由泵引理$xy^2z \in L</em>{01}$，矛盾</li>
+<li>所以假设不成立，$L_{01}$不是正则</li>
+</ul>
+<p>例：证明$L_{eq} = \lbrace w \vert w \text{由数量相等的0和1构成} \rbrace$不是正则</p>
+<blockquote>
+<p>上例中已经证明了$L<em>{01}$不是正则语言，而$L</em>{01} \subseteq L<em>{eq}$，但不能说明$L</em>{eq}$也不是正则语言，因为$L_{01} \subseteq \Sigma^{\ast}$</p>
+</blockquote>
+<p><strong>证明</strong>：</p>
+<ul>
+<li>假设$L_{eq}$是正则的</li>
+<li>那么，存在$N \in \mathbb{Z}^{+}$，对$\forall w \in L_{eq}(\vert w \vert \geq N)$满足泵定理</li>
+<li>从$L<em>{eq}$中取$w = 0^N 1^N$，显然$w \in L</em>{eq}$且$\vert w \vert = 2N \geq N$</li>
+<li>那么，$w$可被分为$w = xyz$，且$\vert xy \vert \leq N$和$y \not= \epsilon$</li>
+<li>因此$y$只能是$0^m$且$m \gt 0$</li>
+<li>那么$xy^2z = 0^{N+m} 1^N \not \in L<em>{eq}$，而由泵引理$xy^2z \in L</em>{eq}$矛盾</li>
+<li>所以假设不成立，$L_{eq}$不是正则的</li>
+</ul>
+<p>例：证明$L = \lbrace 0^i1^i \vert i \gt j \rbrace$不是正则的<br><strong>证明</strong>：</p>
+<ul>
+<li>假设$L$是正则的</li>
+<li>那么，存在$N \in \mathbb{Z}^{+}$，对$\forall w \in L(\vert w \vert \geq N)$满足泵引理</li>
+<li>从$L$中取$w = 0^{N+1}1^N$，则$w \in L$且$\vert w \vert = 2N+1 \geq N$</li>
+<li>由泵引理，$w$可被分成$w = xyz$，且$\vert xy \vert \leq N$和$y \not= \epsilon$</li>
+<li>那么，$y$只能是$0^m$，且$m \geq 1$</li>
+<li>难么$xy^0z=0^{N+1-m}1^N \not\in L$，因为$N+1-m \leq N$，而由泵引理$xy^0z \in L$，矛盾</li>
+</ul>
+<blockquote>
+<p>“泵”既可以pump in，也可以pump out</p>
+</blockquote>
+<p>例：证明$L = \lbrace a^3b^nc^{n-3} | n \geq 3 \rbrace$不是正则<br><strong>证明</strong>：</p>
+<ul>
+<li>假设$L$是正则的</li>
+<li>那么，存在$N \in \mathbb{Z}^{+}$，对$\forall w \in L(\vert w \vert \geq N)$满足泵定理</li>
+<li>从$L$中取出$w = a^3b^Nc^{N-3}$，则$w \in L$且$\vert w \vert = 2N \gt N$</li>
+<li>由泵定理，$w$可被分别为$w = xyz$，且$\vert xy \vert \leq N$和$y \not= \epsilon$</li>
+<li>那么，则$y$只可能有三种情况$m \gt 0,r \gt 0,s \gt 0)$<ul>
+<li>$y=a^m$，则$xy^2z = a^{3+m}b^Nc^{N-3} \not\in L$</li>
+<li>$y=b^m$，则$xy^2z = a^{3}b^{N+m}c^{N-3} \not\in L$</li>
+<li>$y=a^rb^s$，则$xy^2z = a^{3}b^{s}a^{r}b^{N}c^{N-3} \not\in L$</li>
+</ul>
+</li>
+<li>无论$y$为何种情况，$xy^2z$都不可能再$L$中，与泵引理矛盾</li>
+<li>所以假设不成立，$L$不是正则的</li>
+</ul>
+<p><strong>注意</strong></p>
+<ul>
+<li>$L =\lbrace 0^n 1^n \vert 0 \leq n \leq 100 \rbrace$是有穷的，是正则语言</li>
+<li>$L = \lbrace 01 \rbrace $这种有限的串，并没有违反泵引理。对于有限语言，任何串的长度都不可能大于$N$，所以不能用泵引理去证明他不是正则语言。</li>
+<li>泵引理只是正则语言的<strong>必要条件</strong>，只能用来证明某个语言<strong>不是</strong>正则的。与正则语言等价的定理是<em>Myhill Nerode Theorem</em></li>
+</ul>
+<p>例：语言$L$不是正则的，但每个串都可以应用泵引理</p>
+<script type="math/tex; mode=display">
+L = \lbrace ca^nb^n \vert n \geq 1 \rbrace \cup \lbrace c^kw \vert k \not= 1,w \in \lbrace a,b \rbrace^{\ast} \rbrace</script><ul>
+<li>其中$A = \lbrace ca^nb^n \vert n \geq 1 \rbrace$ 部分不是正则的</li>
+<li>而$B = \lbrace c^kw \vert k \not= 1, w \in \lbrace a,b \rbrace^{\ast} \rbrace$ 部分是正则的</li>
+<li>而$A$的任何串$w = ca^ib^i$，都可应用泵定理，因为$w=(\epsilon)(c)(a^ib^i)$<br>重复字符$c$生成的新串都会落入$B$中。即存在符合泵引理，又不是正则的语言。</li>
+</ul>
+<h2 id="正则语言的封闭性"><a href="#正则语言的封闭性" class="headerlink" title="正则语言的封闭性"></a>正则语言的封闭性</h2><p><strong>定义</strong>：正则语言经某些运算后得到的语言任然保持正则，称正则语言在这些运算下封闭。</p>
+<p>正则语言$L$和$M$在这些运算下封闭：</p>
+<ul>
+<li>并：$L \cup M$</li>
+<li>交：$L \cap M$</li>
+<li>连接：$LM$</li>
+<li>反转：$L^R = \lbrace w^R \vert w \in L \rbrace$</li>
+<li>闭包：$L^{\ast}$</li>
+<li>同态：$h(L) = \lbrace h(w) \vert w \in L, \text{同态} h:\Sigma \to \Gamma^{\ast} \rbrace$</li>
+<li>补：$\bar{L}$</li>
+<li>逆同态：$h^{-1}(L) = \lbrace w \in \Sigma^{\ast} \vert h(w) \in L \subseteq \Gamma^{\ast}, \text{同态} h:\Sigma \to \Gamma^{\ast} \rbrace w$</li>
+<li>差：$L-M$</li>
+</ul>
+<p><strong>定理</strong>：正则语言在并，连接，闭包运算下保持封闭<br><strong>证明</strong>：由正则表达式的定义得证。语言$L=L(\boldsymbol{r})$,$M=L(\boldsymbol{s})$：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+L \cup M &= L(\boldsymbol{r} + \boldsymbol{s}) \\
+LM &= L(\boldsymbol{rs}) \\
+L^{\ast} = L(r^{\ast})
+\end{aligned}</script><p><strong>定理</strong>：如果$L$是$\Sigma^{\ast}$上的正则语言，那么$\bar{L} = \Sigma^{\ast} - L$也是正则的。<br><strong>证明</strong>：设接受$L$的DFA是：</p>
+<script type="math/tex; mode=display">
+A = (Q, \Sigma, \delta, q_0, F)</script><p>即$\boldsymbol{L}(A) = L$，构造DFA</p>
+<script type="math/tex; mode=display">
+B = (Q, \Sigma, \delta, q_0, Q - F)</script><p>则有$\bar{L} = \boldsymbol{L}(B)$，因为$\forall w \in \Sigma^{\ast}$</p>
+<script type="math/tex; mode=display">
+w \in \bar{L} \Longleftrightarrow \hat\delta(q_0,w) \not\in F \Longleftrightarrow \hat\delta(q_0,w) \in Q-F \Longleftrightarrow w \in \boldsymbol{L}(B)</script><blockquote>
+<p>注意：用这种方法求正则语言的补的时候，DFA不能有缺失状态</p>
+</blockquote>
+<p>例：若$\Sigma = \lbrace 0,1 \lbrace$，$L = \lbrace \epsilon \rbrace$的DFA如图，请给出$\bar{L}$的DFA<br><img src="55.png" alt=""><br>$\emptyset \not= \bar{\lbrace \epsilon \rbrace} = \Sigma^{+}$，应使用完整的DFA：<br><img src="56.png" alt=""><br>$\Sigma^{+} = \bar{\lbrace \epsilon \rbrace}$</p>
+<p>例：证明$L_{neq} = \lbrace w \vert w \text{由数量不相等的0和1构成} \rbrace$不是正则语言</p>
+<ul>
+<li>由泵引理不易直接证明，可以证明$\bar{L<em>{neq}}$非正则，而$\bar{L</em>{neq}} = L<em>{eq}$可以用泵引理证明非正则，所以由封闭性$L</em>{neq}$也不是正则的。</li>
+</ul>
+<p><strong>定理</strong>：若DFA $A_L$，$A_M$和$A$的定义如下：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+A_L &= (Q_L, \Sigma, \delta_L, q_L, F_L) \\
+A_M &= (Q_M, \Sigma, \delta_M, q_M, F_M) \\
+A &= (Q_L \times Q_M, \Sigma, \delta,(q_L,q_M), F_L \times F_M) \\
+\end{aligned}</script><p>其中:</p>
+<script type="math/tex; mode=display">
+\delta:(Q_L \times Q_M) \times \Sigma \to Q_L \times Q_M \\
+\delta((p,q),a) = (\delta_L(p,a),\delta_M(q,a))</script><p>则对任意$w \in \Sigma^{\ast}$:</p>
+<script type="math/tex; mode=display">
+\hat\delta((q_L,q_M),w) = (\hat\delta(q_L,w),\hat\delta(q_M,w))</script><p><strong>证明</strong>：通过对$w$的归纳来证明：</p>
+<ul>
+<li>归纳基础：当$w = \epsilon$时：<script type="math/tex; mode=display">
+\hat\delta((q_L,q_M),w) = (q_L,q_M) = (\hat\delta_L(q_L,\epsilon),\hat\delta_M(q_M,\epsilon))</script>归纳地推：当$w=xa$时，<script type="math/tex; mode=display">
+\begin{aligned}
+\hat\delta((q_L,q_M),xa) &= \delta(\hat\delta((q_L,q_M),x),a) \\
+&= \delta((\hat\delta(q_L,x),\hat\delta(q_M,x)),a) \\
+&= (\delta_L(\hat\delta_L(q_L,x),a),\delta_M(\hat\delta_M(q_M,x),a)) \\
+&= (\hat\delta_L(q_L，xa),\hat\delta_M(q_M,xa)) \\
+\end{aligned}</script></li>
+</ul>
+<p><strong>定理</strong>：如果$L,M$是正则语言，那么$L \cap M$也是正则语言</p>
+<p><strong>证明1</strong>：由$L \cap M = \bar{bar{L} \cup bar{M}}$得证</p>
+<p><strong>证明2</strong>：由上一定理，构造识别$L \cap M$的DFA A，则$\forall w \in \Sigma^{\ast}$：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+w \in L \cap M & \Longleftrightarrow \hat\delta_L(q_L,w) \in F_L \land \hat\delta_M(q_M,w) \in F_M \\
+& \Longleftrightarrow (\hat\delta_L(q_L,w), \hat\delta_M(q_M,w)) \in F_L \times F_M \\
+& \Longleftrightarrow \hat\delta((q_L,q_M),w) \in F_L \times F_M \\
+& \Longleftrightarrow w \in \boldsymbol{L}(A) \\
+\end{aligned}</script><p>例：如果已知语言$L<em>{01} = \lbrace 0^n1^n \vert n \geq 0 \rbrace $不是正则的，请用封闭性证明语言$L</em>{eq} = \lbrace w \vert w \text{由数量相等的0和1构成} \rbrace$也不是正则的</p>
+<p><strong>证明</strong>：</p>
+<ul>
+<li>首先，因为$\boldsymbol{0}^{\ast}\boldsymbol{1}^{\ast}$是正则语言</li>
+<li>而$L<em>{01} = \boldsymbol{L}(\boldsymbol{0}^{\ast}\boldsymbol{1}^{\ast}) \cap L</em>{eq}$</li>
+<li>如果$L_{eq}$是正则的，$L{01}$必然也是正则的</li>
+<li>因为已知$L<em>{01}$不是正则的，所以$L</em>{eq}$一定不是正则的</li>
+</ul>
+<p>例：如果$L_1$和$L_2$都不是正则语言，那么$L_1 \cap L_2$一定不是正则的吗？</p>
+<p>令$L_1 = \lbrace 0^n1^n \vert n \geq \rbrace$，$L_2 = \lbrace a^nb^n \vert n \geq \rbrace$。显然两者都不是正则语言，但$L_1 \cap L_2 = \lbrace \epsilon \rbrace$是正则语言</p>
+<p><strong>定理</strong>：如果$L$和$M$都是正则语言，那么$L-M$也是正则的。</p>
+<p><strong>证明</strong>：$L-M = L \cap \bar{M}$显然是正则的</p>
+<p><strong>定义</strong>：字符串$w = a_1a_2 \dots a_n$的反转，记为$w^R$，定义为：</p>
+<script type="math/tex; mode=display">
+w^R = a_n a_{n-1} \dots a_1</script><p>语言$L$的反转，记为$L^R$，定义为：</p>
+<script type="math/tex; mode=display">
+L^R = \lbrace w^R \in \Sigma^{\ast} \vert w \in L \rbrace</script><p><strong>定理</strong>：如果一个语言$L$是正则的，$L^R$也是正则的。</p>
+<p>对正则表达式$E$的结构归纳，往证$\boldsymbol{L}(E^R)=(\boldsymbol{L}(E))^R$（构造出反转语言对应的正则表达式$\boldsymbol{E}^R$。</p>
+<p>例：语言$L$及其反转$L^R$，分别是：</p>
+<script type="math/tex; mode=display">
+L = \lbrace w \in \lbrace 0,1 \rbrace^{\ast} \vert w \text{ ends in 01} \rbrace
+L^R = \lbrace w \in \lbrace 0,1 \rbrace^{\ast} \vert w \text{ starts with 10} \rbrace</script><p>正则表达式为：</p>
+<script type="math/tex; mode=display">
+L = (\boldsymbol{0} + \boldsymbol{1})^{\ast}\boldsymbol{01}
+L^R = \boldsymbol{10}(\boldsymbol{0}+\boldsymbol{1})^{\ast}</script><p>定理<strong>证明</strong>：  </p>
+<ul>
+<li><p>归纳基础：</p>
+<ul>
+<li>当$E = \emptyset$时，有$\emptyset^R = \emptyset$</li>
+<li>当$E = \boldsymbol{\epsilon}$时，有$\boldsymbol{\epsilon}^R = \epsilon$</li>
+<li>当$\forall a \in \Sigma$，当$E = \boldsymbol{a}$时，有$\boldsymbol{a}^R = \boldsymbol{a}$<br>都满足$\boldsymbol{L}(E^R)=(\boldsymbol{L}(E))^R$，因此命题成立。</li>
+</ul>
+</li>
+<li><p>归纳递推：</p>
+<ul>
+<li>当$E = E_1 + E_2$时，有$(E_1 + E_2)^R = E_1^R + E_2^R$<script type="math/tex; mode=display">
+\begin{aligned}
+(\boldsymbol{L}(E_1+ E_2))^R &= (\boldsymbol{L}(E_1) \cup \boldsymbol{L}(E_2))^R \\
+&= \lbrace w^R \vert w \in \boldsymbol{L}(E_1) \cup w \in \boldsymbol{L}(E_2) \rbrace \\
+&= (\boldsymbol{L}(E_1))^R \cup (\boldsymbol{L}(E_2))^R \\
+&= \boldsymbol{L}(E_1^R) \cup \boldsymbol{L}(E_2^R) \\
+&= \boldsymbol{L}(E_1^R + E_2^R)
+\end{aligned}</script></li>
+<li>当$E=E_1E_2$时，有$(E_1E_2)^R = E_2^R E_1^R$<script type="math/tex; mode=display">
+\begin{aligned}
+(\boldsymbol{L}(E_1 E_2))^R &= (\boldsymbol{L}(E_1)\boldsymbol{L}(E_2))^R \\
+&= \lbrace w_1w_2 \vert w_1 \in \boldsymbol{L}(E_1),w_2 \in \boldsymbol{L}(E_2) \rbrace^R \\
+&= \lbrace (w_1w_2)^R \vert w_1 \in \boldsymbol{L}(E_1),w_2 \in \boldsymbol{L}(E_2) \rbrace \\
+&= \lbrace w_2^Rw_1^R \vert w_1 \in \boldsymbol{L}(E_1),w_2 \in \boldsymbol{L}(E_2) \rbrace \\
+&= \lbrace w_2^R \vert w_2 \in \boldsymbol{L}(E_2) \rbrace \lbrace w_1^R \vert w_1 \in \boldsymbol{L}(E_1) \rbrace \\
+&= (\boldsymbol{L}(E_2))^R (\boldsymbol{L}(E_1))^R \\
+&= \boldsymbol{L}(E_2^R)\boldsymbol{L}(E_1^R) = \boldsymbol{L}(E_2^RE_1^R) \\
+\end{aligned}</script></li>
+<li>当$E = E_1^{\ast}$时，有$(E_1^{\ast})^R = (E_1^R)^{\ast}$<script type="math/tex; mode=display">
+\begin{aligned}
+(\boldsymbol{L}(E_1^{\ast}))^R &= \lbrace w_1w_2 \dots w_n \vert n \geq 0, w_i \in \boldsymbol{L}(E_1) \rbrace^R \\
+&= \lbrace (w_1w_2 \dots w_n)^R \vert n \geq 0, w_i \in \boldsymbol{L}(E_1) \rbrace \\
+&= \lbrace w_1^Rw_2^R \dots w_n^R \vert n \geq 0, w_i \in \boldsymbol{L}(E_1) \rbrace \\
+&= \lbrace w_1^Rw_2^R \dots w_n^R \vert n \geq 0, w_i^R \in \boldsymbol{L}(E_1^R) \rbrace \\
+&= \lbrace w_1w_2 \dots w_n \vert n \geq 0, w_i \in \boldsymbol{L}(E_1^R) \rbrace \\
+&= \boldsymbol{L}((E_1^R)^{\ast}) \\
+\end{aligned}</script></li>
+</ul>
+<p>都满足$\boldsymbol{L}(E^R)=(\boldsymbol{L}(E))^R$，因此命题成立，所以$L^R$也是正则语言</p>
+</li>
+</ul>
+<p><strong>定义</strong>：若$\Sigma$和$\Gamma$是两个字符集，同态定义为函数$h:\Sigma \to \Gamma^{\ast}$</p>
+<script type="math/tex; mode=display">
+\forall a \in \Sigma,h(a) \in \Gamma^{\ast}</script><p>扩展$h$的定义到字符串：</p>
+<script type="math/tex; mode=display">
+h(\epsilon) = \epsilon  \\
+h(xa) = h(x)h(a)</script><p>再将$h$拓展到语言，对$\forall L \subseteq \Sigma^{\ast}$</p>
+<script type="math/tex; mode=display">
+h(L) = \lbrace h(w) \vert w \in L \rbrace</script><p>例：若$\Sigma = \lbrace 0,1 \rbrace, \Gamma = \lbrace a,b \rbrace的同态函数$h$为：</p>
+<script type="math/tex; mode=display">
+h(0) = ab, \ h(1) = \epsilon</script><p>则$\Sigma$上的字符串0011在$h$的作用下</p>
+<script type="math/tex; mode=display">
+h(0011) = h(0)h(0)h(1)h(1) = abab\epsilon\epsilon = abab</script><p>语言$L = \boldsymbol{1}^{\ast}\boldsymbol{0}+\boldsymbol{0}^{\ast}\boldsymbol{1}$，在$h$的作用下，$h(L)$为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+h(\boldsymbol{1}^{\ast}\boldsymbol{0}+\boldsymbol{0}^{\ast}\boldsymbol{1}) &= 
+(h(\boldsymbol{1}))^{\ast} h(\boldsymbol{0}) + (h(\boldsymbol{0}))^{\ast} h(\boldsymbol{1}) \\
+&= (\epsilon)^{\ast}(ab)+(ab)^{\ast}(\epsilon) \\
+&= (ab)^{\ast} \\
+\end{aligned}</script><p><strong>定理（同态的封闭性）</strong>：<br>若$L$是字母表$\Sigma$上的正则语言，$h$是$\Sigma$上的同态，则$h(L)$也是正则的</p>
+<p>若$L$的正则表达式为$E$，即$L = \boldsymbol{L}(E)$，按如下规则构造表达式$h(E)$</p>
+<script type="math/tex; mode=display">
+h(\emptyset) = \emptyset \\
+h(\boldsymbol{\epsilon}) = \boldsymbol{\epsilon} \\
+\forall a \in \Sigma,h(\boldsymbol{a}) = h(a)</script><script type="math/tex; mode=display">
+h(\boldsymbol{r}+\boldsymbol{s}) = h(\boldsymbol{r}) + h(\boldsymbol{s}) \\
+h(\boldsymbol{rs}) = h(\boldsymbol{r})h(\boldsymbol{s}) \\
+h(\boldsymbol{r}^{\ast}) = (h(\boldsymbol{r}))^{\ast}</script><p>往证$\boldsymbol{L}(h(E)) = h(\boldsymbol{L}(E))$，而$h(E)$显然也是正则表达式，因此$h(L)$是正则</p>
+<p><strong>证明</strong>：对$E$的结构归纳，往证$\boldsymbol{L}(h(E)) = h(\boldsymbol{L}(E))$，归纳基础：</p>
+<ul>
+<li>当$E = \epsilon$时<script type="math/tex; mode=display">
+h(\boldsymbol{L}(\boldsymbol{\epsilon})) = h(\lbrace \epsilon \rbrace) = \lbrace \epsilon \rbrace = \boldsymbol{L}(\boldsymbol{\epsilon}) = \boldsymbol{L}(h(\boldsymbol{\epsilon}))</script></li>
+<li>当$E=\emptyset$<script type="math/tex; mode=display">
+h(\boldsymbol{L}(\emptyset)) = h(\emptyset) = \emptyset = \boldsymbol{L}(\emptyset) = \boldsymbol{L}(h(\emptyset))</script></li>
+<li>$\forall a \in \Sigma$，当$E=\boldsymbol{a}$时<script type="math/tex; mode=display">
+h(\boldsymbol{L}(\boldsymbol{a})) = h(\lbrace a \rbrace) = \lbrace h(a) \rbrace = \boldsymbol{L}(h(a)) = \boldsymbol{L}(h(\boldsymbol{a}))</script>所以命题成立<br>归纳对推，假设对正则表达式$F,G$分别有：<script type="math/tex; mode=display">
+\boldsymbol{L}(h(F)) = h(\boldsymbol{L}(F)), \ \boldsymbol{L}(h(G)) = h(\boldsymbol{L}(G))</script></li>
+<li>当$E=F+G$时：<script type="math/tex; mode=display">
+\begin{aligned}
+h(\boldsymbol{L}(F+G)) &= h(\boldsymbol{L}(F) \cup \boldsymbol{L}(G)) \\
+&= h(\boldsymbol{L}(F)) \cup h(\boldsymbol{L}(G)) \\
+&= \boldsymbol{L}(h(F)) \cup \boldsymbol{L}(h(G)) \\
+&= \boldsymbol{L}(h(F)+h(G)) \\
+&= \boldsymbol{L}(h(F+G)) \\
+\end{aligned}</script></li>
+<li>当$E =FG$,$E=F^{\ast}$同理</li>
+</ul>
+<p><strong>定义</strong>：若$h$是字母表$\Sigma$到$\Gamma$的同态，且$L$识别$\Gamma$上的语言，那么使$h(w) \in L$的$w(w \in \Sigma^{\ast})$的集合，称为语言$L$的$h$逆，记为$h^{-1}(L)$，即：</p>
+<script type="math/tex; mode=display">
+h^{-1}(L) = \lbrace w \in \Sigma^{\ast} \vert h(w) \in L \rbrace</script><p><strong>证明</strong>：由L的DFA $A=(Q, \Sigma, \delta, q_0, F)$，构造识别$h^{-1}(L)$的DFA。</p>
+<script type="math/tex; mode=display">
+B = (Q, \Sigma, \delta^{\prime}, q_0, F)</script><p>其中$\delta^{\prime}(q,a) = \hat\delta(q,h(a))$,<br><img src="" alt=""><br>为证明$\boldsymbol{L}(B) = h^{-1}(L)$，先证明$\hat\delta^{\prime}(q,w)=\hat\delta(q,h(w))$<br>对$w$归纳，往证$\hat\delta^{\prime}(q,w)=\hat\delta(q,h(w))$</p>
+<ul>
+<li>归纳基础：若$w=\epsilon$：<script type="math/tex; mode=display">
+\hat\delta(q,h(\epsilon)) = \hat\delta(q,\epsilon)) = q = \hat\delta^{\prime}(q,\epsilon)</script></li>
+<li>归纳递推：若$w=xa$<script type="math/tex; mode=display">
+\begin{aligned}
+\hat\delta^{\prime}(q,xa) &= \delta^{\prime}(\delta^{\prime}(q,x),a) \\ 
+&= \delta^{\prime}(\hat\delta(q,h(x)),a) \\
+&= \hat\delta(\hat\delta(q,h(x)),h(a)) \\
+&= \hat\delta(q,h(x)h(a)) \\
+&= \hat\delta(q,h(xa))
+\end{aligned}</script></li>
+</ul>
+<p>所以$\forall w \in \Sigma^{\ast}, \hat\delta^{\prime}(q_0,w)=\hat\delta(q_0,h(w)) \in F$，即$w$被$B$接受当且仅当$h(w)$被$A$接受，$B$是识别$h^{-1}(L)$的DFA，因此$h^{-1}(L)$是正则的。</p>
+<p>例：证明$L = \lbrace 0^n 1^{2n} \vert n \geq 0 \rbrace$不是正则语言。</p>
+<p><strong>证明</strong>：设同态$h : \lbrace 0,1 \rbrace \to \lbrace 0,1 \rbrace^{\ast}$为：</p>
+<script type="math/tex; mode=display">
+h(0)=10 \\
+h(1)=11 \\</script><p>那么，$h^{-1}(L) = \lbrace 0^n 1^n \vert n \geq 0 \rbrace = L<em>{01}$，因为$L</em>{01}$不是正则的，由封闭性，$L$也不是正则的</p>
+<p>例：若语言$L=(\boldsymbol{00}+\boldsymbol{1})^{\ast}$，同态$h:\lbrace a,b \rbrace \to \lbrace 0,1 \rbrace^{\ast}$为：</p>
+<script type="math/tex; mode=display">
+h(a) = 01 , \ \ h(b) = 10</script><p>证明$h^{-1}(L)=(\boldsymbol{ba})^{\ast}$</p>
+<p><strong>证明</strong>：往证$h(w) \in L \Longleftrightarrow w = (ba)^n$<br>$(\Leftarrow)$若$w=(ba)^n$，而$h(ba)=10001$，因此$h(w)=(1001)^n \in L$<br>$(\Rightarrow)$若$h(w) \in L$，假设$w \not\in (\boldsymbol{ba})^{\ast}$，则只能有四种情况：</p>
+<ul>
+<li>$w$以$a$开头，则$h(w)$以01开头，显然$h(w) \not\in (\boldsymbol{00}+\boldsymbol{1})^{\ast}$</li>
+<li>$w$以$b$结尾，则$h(w)$以10结尾，显然$h(w) \not\in (\boldsymbol{00}+\boldsymbol{1})^{\ast}$</li>
+<li>$w$有连续的a，即$w=xaay$，即$h(w)=z1010v$，则显然$h(w) \not\in (\boldsymbol{00}+\boldsymbol{1})^{\ast}$</li>
+<li>$w$有连续的b，即$w=xbby$，即$h(w)=z1010v$，则显然$h(w) \not\in (\boldsymbol{00}+\boldsymbol{1})^{\ast}$<br>因此$w$只能是$(ba)^n$，$n \geq 0$的形式</li>
+</ul>
+<h2 id="正则语言的判定性质"><a href="#正则语言的判定性质" class="headerlink" title="正则语言的判定性质"></a>正则语言的判定性质</h2><p>正则语言，或任何语言，典型的3个判定问题：</p>
+<ul>
+<li>以某种形式化模型描述的语言是否为空，是否无穷</li>
+<li>某个特定的串$w$是否属于所描述的语言</li>
+<li>以两种方式描述的语言是否是相同的?——语言的等价性</li>
+</ul>
+<p><strong>定理</strong>：具有$n$个状态的有穷自动机M接受的集合$S$</p>
+<ul>
+<li>$S$是非空的，当且仅当M接受某个长度小于$n$的串</li>
+<li>$S$是无穷的，当且仅当M接受某个长度为$m$的串，$n \leq m \lt 2n$</li>
+</ul>
+<p>所以，对于正则语言：</p>
+<ul>
+<li>存在算法，判断其是否为空，只需要检查全部长度小于$n$的串</li>
+<li>存在算法，判断其是否无穷，只需检查全部长度由$n$到$2n-1$的串</li>
+</ul>
+<p><strong>证明</strong>：设接受正则语言$S$的DFA为M<br>先证明“<strong>$S$是非空的，当且仅当M接受某个长度小于$n$的串</strong>”</p>
+<ul>
+<li>必要性：显然成立</li>
+<li>充分性：<ul>
+<li>如果$S$非空，设$w$是M接受的串长中长度最小者之一</li>
+<li>必然$\vert w \vert \lt n$，否则由泵引理$w=xyz$接受$xz$更短</li>
+</ul>
+</li>
+</ul>
+<p>再证明“<strong>$S$是无穷的，当且仅当M接受某个长度为$m$的串，$n \leq m \lt 2n$</strong>”</p>
+<ul>
+<li>必要性：由泵定理，显然成立</li>
+<li>充分性：<ul>
+<li>如果$S$无穷，假设没有长度在$[n,2n-1)$之间的串</li>
+<li>那么取$w=\boldsymbol{L}(M)$是长度$\geq 2n$中最小者之一</li>
+<li>由泵定理$w=xyz$，且M会接受更短的串$xz$</li>
+<li>于是，或者$w$不是长度最小的，或者长度$n$到$2n-1$之间有被接受的串，因此假设不成立</li>
+</ul>
+</li>
+</ul>
+<p><strong>定理</strong>：存在算法，判定两个有穷自动机是否等价（接受语言相同）</p>
+<p><strong>证明</strong>：</p>
+<ul>
+<li>设$M_1$和$M_2$是分别接受$L_1$和$L_2$的有穷自动机</li>
+<li>则$(L_1 \cap \bar{L_2}) \cup (\bar{L_1} \cap L_2)$是正则的，所以可被某个有穷自动机$M_3$接受</li>
+<li>而$M_3$接受某个串，当且仅当$L_1 \not= L_2$</li>
+<li>由于存在算法判断$\boldsymbol{L}(M_3)$是否为空，因此得证$</li>
+</ul>
+<h2 id="自动机的最小化"><a href="#自动机的最小化" class="headerlink" title="自动机的最小化"></a>自动机的最小化</h2><p><strong>定义</strong>：DFA $A=(Q, \Sigma, \delta, q_0, F)$中两个状态$p$和$q$，对$\forall w \in \Sigma^{\ast}$：</p>
+<script type="math/tex; mode=display">
+\hat\delta(p,w) \in F \Longleftrightarrow \hat\delta(q,w) \in F</script><p>则称这两个状态是等价的，否则称为可区分的。</p>
+<ul>
+<li>将DFA中等价状态找出经行合并，就能找出最小的DFA</li>
+<li>等价性只要求$\hat\delta(p,w)$和$\hat\delta(q,w)$同时在或者不在$F$中，而不必是相同状态</li>
+</ul>
+<p><strong>填表算法</strong>:<br>递归寻找DFA中全部的可区分状态对：</p>
+<ul>
+<li>如果$p \in F$且$q \not\in F$，则(p,q)是可区分的</li>
+<li>$\exists a \in \Sigma$，如果：<script type="math/tex; mode=display">
+(r=\delta(p,a), s=\delta(q,a))</script>是可区分的，则$(p,q)$是可区分的</li>
+</ul>
+<p><strong>定理</strong>：<br>如果填表算法不能区分两个状态，则这两个状态是等价的</p>
+<p>例：用填表算法找到如图DFA中全部可区分状态对<br><img src="60.png" alt=""></p>
+<p>标记终态和非终态之间的状态对：</p>
+<script type="math/tex; mode=display">
+\lbrace C \rbrace \times \lbrace A,B,D,E,F,G,H \rbrace</script><p>标记所有经过字符0到终态和非终态的状态对：</p>
+<script type="math/tex; mode=display">
+\lbrace D,F \rbrace \times \lbrace A,B,C,E,G,H \rbrace</script><p>标记所有经过字符1到终态和非终态的状态对：</p>
+<script type="math/tex; mode=display">
+\lbrace B,H \rbrace \times \lbrace A,C,D,E,F,G \rbrace</script><p>此时还有$(A,E),(A,G),(B,H),(D,F),(E,G)$未标记，只需逐个检查:</p>
+<ul>
+<li>$(A,G)$是可区分的，因为经串01到可区分的$(C,E)$</li>
+<li>$(E,G)$是可区分的，因为经串10到可区分的$(C,H)$<br>而$(A,E),(B,H)和(D,F)$在经很短的字符串后，都会到达相同状态，因此都是等价的</li>
+</ul>
+<p>根据等价状态，将状态集划分成块，构造等价的最小化DFA<br><img src="61.png" alt=""></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA/" rel="tag"># 形式语言与自动机理论</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%881%EF%BC%89%E6%9C%89%E7%A9%B7%E8%87%AA%E5%8A%A8%E6%9C%BA/" rel="prev" title="形式语言与自动机理论（1）有穷自动机">
+      <i class="fa fa-chevron-left"></i> 形式语言与自动机理论（1）有穷自动机
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/01/27/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%883%EF%BC%89%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E6%96%87%E6%B3%95/" rel="next" title="形式语言与自动机理论（3）上下文无关文法">
+      形式语言与自动机理论（3）上下文无关文法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">正则表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#DFA%E5%88%B0%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">DFA到正则表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%92%E5%BD%92%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B3%95"><span class="nav-number">1.1.1.</span> <span class="nav-text">递归表达式法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E6%B6%88%E9%99%A4%E6%B3%95"><span class="nav-number">1.1.2.</span> <span class="nav-text">状态消除法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%88%B0DFA"><span class="nav-number">1.2.</span> <span class="nav-text">正则表达式到DFA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E4%BB%A3%E6%95%B0%E5%AE%9A%E7%90%86"><span class="nav-number">1.3.</span> <span class="nav-text">正则表达式的代数定理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E8%AF%AD%E8%A8%80%E7%9A%84%E6%80%A7%E8%B4%A8"><span class="nav-number">2.</span> <span class="nav-text">正则语言的性质</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E8%AF%AD%E8%A8%80%E7%9A%84%E6%B3%B5%E5%BC%95%E7%90%86"><span class="nav-number">2.1.</span> <span class="nav-text">正则语言的泵引理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%B5%E5%BC%95%E7%90%86%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">2.1.1.</span> <span class="nav-text">泵引理的应用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E8%AF%AD%E8%A8%80%E7%9A%84%E5%B0%81%E9%97%AD%E6%80%A7"><span class="nav-number">2.2.</span> <span class="nav-text">正则语言的封闭性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E8%AF%AD%E8%A8%80%E7%9A%84%E5%88%A4%E5%AE%9A%E6%80%A7%E8%B4%A8"><span class="nav-number">2.3.</span> <span class="nav-text">正则语言的判定性质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%9A%84%E6%9C%80%E5%B0%8F%E5%8C%96"><span class="nav-number">2.4.</span> <span class="nav-text">自动机的最小化</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2021/01/22/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%882%EF%BC%89%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/";
+    this.page.identifier = "2021/01/22/形式语言与自动机理论（2）正则表达式/";
+    this.page.title = "形式语言与自动机理论（2）正则表达式";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

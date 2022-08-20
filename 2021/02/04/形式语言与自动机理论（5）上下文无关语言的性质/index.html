@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="上下文无关语言的泵引理定理33：如果语言$L$是CFL，那么存在正整数$N$，对$\forall z \in L$，只要$\vert z \vert \geq N$，就可以将$z$分为五部分$z&#x3D;uvwxy$满足  $vx \not&#x3D; \epsilon$（或$\vert vx \vert \gt 0$） $\vert vwx \vert \leq N$ $\forall i \geq 0,wv^i">
+<meta property="og:type" content="article">
+<meta property="og:title" content="形式语言与自动机理论（5）上下文无关语言的性质">
+<meta property="og:url" content="http://xuranus.github.io/2021/02/04/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%885%EF%BC%89%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E8%AF%AD%E8%A8%80%E7%9A%84%E6%80%A7%E8%B4%A8/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="上下文无关语言的泵引理定理33：如果语言$L$是CFL，那么存在正整数$N$，对$\forall z \in L$，只要$\vert z \vert \geq N$，就可以将$z$分为五部分$z&#x3D;uvwxy$满足  $vx \not&#x3D; \epsilon$（或$\vert vx \vert \gt 0$） $\vert vwx \vert \leq N$ $\forall i \geq 0,wv^i">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/04/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%885%EF%BC%89%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E8%AF%AD%E8%A8%80%E7%9A%84%E6%80%A7%E8%B4%A8/100.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/04/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%885%EF%BC%89%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E8%AF%AD%E8%A8%80%E7%9A%84%E6%80%A7%E8%B4%A8/101.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/04/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%885%EF%BC%89%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E8%AF%AD%E8%A8%80%E7%9A%84%E6%80%A7%E8%B4%A8/102.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/02/04/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%885%EF%BC%89%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E8%AF%AD%E8%A8%80%E7%9A%84%E6%80%A7%E8%B4%A8/103.png">
+<meta property="article:published_time" content="2021-02-03T17:15:47.000Z">
+<meta property="article:modified_time" content="2021-09-05T12:51:13.919Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="形式语言与自动机理论">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2021/02/04/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%885%EF%BC%89%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E8%AF%AD%E8%A8%80%E7%9A%84%E6%80%A7%E8%B4%A8/100.png">
+
+<link rel="canonical" href="http://xuranus.github.io/2021/02/04/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%885%EF%BC%89%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E8%AF%AD%E8%A8%80%E7%9A%84%E6%80%A7%E8%B4%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>形式语言与自动机理论（5）上下文无关语言的性质 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/02/04/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%885%EF%BC%89%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E8%AF%AD%E8%A8%80%E7%9A%84%E6%80%A7%E8%B4%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          形式语言与自动机理论（5）上下文无关语言的性质
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-03 17:15:47" itemprop="dateCreated datePublished" datetime="2021-02-03T17:15:47Z">2021-02-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA/" itemprop="url" rel="index"><span itemprop="name">形式语言与自动机理论</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/02/04/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%885%EF%BC%89%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E8%AF%AD%E8%A8%80%E7%9A%84%E6%80%A7%E8%B4%A8/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/02/04/形式语言与自动机理论（5）上下文无关语言的性质/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>8.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="上下文无关语言的泵引理"><a href="#上下文无关语言的泵引理" class="headerlink" title="上下文无关语言的泵引理"></a>上下文无关语言的泵引理</h2><p><strong>定理33</strong>：如果语言$L$是CFL，那么存在正整数$N$，对$\forall z \in L$，只要$\vert z \vert \geq N$，就可以将$z$分为五部分$z=uvwxy$满足</p>
+<ul>
+<li>$vx \not= \epsilon$（或$\vert vx \vert \gt 0$）</li>
+<li>$\vert vwx \vert \leq N$</li>
+<li>$\forall i \geq 0,wv^iwx^iy \in L$</li>
+</ul>
+<p><strong>证明</strong>：</p>
+<ol>
+<li>设CNF格式CFG $G$中变元数$\vert V \vert = m$，令$N = 2^m$，若有$z \in L(G)$，且$\vert z \vert \geq N$</li>
+<li>则$z$的派生树内节点是二叉树，最长路径长度至少$m+1$，节点至少$m+2$</li>
+<li>该路径下由上之上$m+1$个节点中，必有两个$T_2$和$T_1$标记了相同的变元$A$</li>
+<li>若标记$T_2$产物为$w$，且是$T_1$的子树，$T_1$的产物可记为$vwx$，则有$A \underset{}{\stackrel{\ast}{\Rightarrow}} vAx$和$A \underset{}{\stackrel{\ast}{\Rightarrow}} w$</li>
+<li>那么$\forall i \geq 0, A \underset{}{\stackrel{\ast}{\Rightarrow}} v^iwx^i$。不妨设$z=wvwxy$，则$S \underset{}{\stackrel{\ast}{\Rightarrow}} uAy \underset{}{\stackrel{\ast}{\Rightarrow}} uv^iwx^iy$</li>
+<li>$T_1$路径长不超过$m+1$，那么$T_1$产物长度不超过$2^m$，所以$\vert vwx \vert \leq 2^m$</li>
+<li>$T_2$必在$T_1$的左/右儿子中，所以$v$和$x$不可能同时为空，即$vx \not= \epsilon$<br><img src="100.png" alt=""><span id="more"></span>
+</li>
+</ol>
+<h3 id="泵引理应用"><a href="#泵引理应用" class="headerlink" title="泵引理应用"></a>泵引理应用</h3><p>例1：证明$L=\lbrace 0^n1^n2^n \vert n \geq 1 \rbrace$不是上下文无关语言</p>
+<p><strong>证明</strong>：</p>
+<ol>
+<li>假设$L$是CFL，那么存在整数$N$，对$\forall z \in L(\vert z \vert \geq N)$满足泵引理</li>
+<li>从$L$中取$z=0^N1^N2^N$，则显然$z \in L$且$\vert z \vert = 3N \geq N$</li>
+<li>由泵引理，$z$可被分为$z=uvwxy$，且有$\vert vwx \vert \leq N$和$vx \not= \epsilon$</li>
+<li>那么$vwx$可能<ul>
+<li>只包含0，1或2，那么$uwy \not\in L$</li>
+<li>只包含0和1，或只包含1和2，那么也有$uwy \not\in L$</li>
+</ul>
+</li>
+<li>与泵定理$uwy=uv^0wx^0y \in L$矛盾，假设不成立</li>
+<li>$L$不是上下文无关的</li>
+</ol>
+<p>例2：证明$L = \lbrace ww \vert w \in \lbrace 0,1 \rbrace^{\ast} \rbrace$不是上下文无关的。</p>
+<p>【错误的证明】：假设$L$是CFL，取$z=0^N10^N1$，那么$z=uvwxy$为<br><img src="101.png" alt=""><br>则对任意$i \geq 0$，有$uv^iwx^iy \in L$，满足泵定理</p>
+<p>【正确的证明】假设$L$是CFL。取$z=0^N1^N0^N1^N$，将$z$分为$z=uvwxy$时</p>
+<ol>
+<li>若$vwx$在$z$中点的一侧，$uv^0wx^0y$显然不可能属于$L$</li>
+<li>若$vwx$包括$z$中点，那么$uv^0wx^0y$为$0^N1^j0^j1^N$，也不可能属于$L$<br>所以，假设不成立，$L$不是CFL。</li>
+</ol>
+<h2 id="上下文无关语言的封闭性"><a href="#上下文无关语言的封闭性" class="headerlink" title="上下文无关语言的封闭性"></a>上下文无关语言的封闭性</h2><h3 id="代换的封闭性"><a href="#代换的封闭性" class="headerlink" title="代换的封闭性"></a>代换的封闭性</h3><p><strong>定义</strong>：两个字母表$\Sigma$到$\Gamma$的函数$s:\Sigma \to 2^{\Gamma^{\ast}}$称为代换，$\Sigma$中一个字符$a$在$s$的作用下为$\Gamma$上的一个语言$L_a$，即</p>
+<script type="math/tex; mode=display">
+s(a)=L_\alpha</script><p>扩展$s$的定义到字符串</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+s(\epsilon) &= \boldsymbol{\epsilon} \\
+s(xa) &= s(x)s(a)
+\end{aligned}</script><p>再扩展$h$到语言，对$\forall L \subseteq \Sigma^{\ast}$</p>
+<script type="math/tex; mode=display">
+s(L) = \bigcup_{x \in L}s(x)</script><p><strong>定理34</strong>：如果$\Sigma$上的CFL $L$和代换$s$，且每个$a \in \Sigma$的$s(a)$都是CFL，那么$s(L)$也是CFL</p>
+<p><strong>构造方法</strong><br>设CFL $L$的文法$G=(V,T,P,S)$，每个$s(\alpha)$的文法$G<em>\alpha=(V</em>\alpha,T<em>\alpha,P</em>\alpha,S_\alpha)$，那么$s(L)$的文法可以构造为</p>
+<script type="math/tex; mode=display">
+G^{\prime} = (V^{\prime},T^{\prime},P^{\prime},S)</script><ol>
+<li>$V^{\prime} = V \cup (\bigcup_{a \in T}V_a)$</li>
+<li>$T^{\prime} = \bigcup_{a \in T} T_a$</li>
+<li>$P_{\prime}$包括每个$P_a$和$P$中产生式，但是要将$P$的产生式中每个终结符$a$均替换为文法$G_a$的开始符号$S_a$</li>
+</ol>
+<p>证明：对$\forall w \in s(L)$，那么一定存在某个$x = a_1 a_2 \dots a_n \in L$，使</p>
+<script type="math/tex; mode=display">
+w \in s(x) = s(a_1)s(a_2) \dots s(a_n)</script><p>那么$w$可以分为$w = w_1 w_2 \dots w_n$，且$w_i \in s(a_i)$，即</p>
+<script type="math/tex; mode=display">
+S_{a_i} \underset{G_{a_i}}{\stackrel{\ast}{\Longrightarrow}} w_i</script><p>由于$S \underset{\ast}{\stackrel{G}{\Rightarrow}} x = a_1 a_2 \dots a_n$，所以</p>
+<script type="math/tex; mode=display">
+S \underset{G}{\stackrel{\ast}{\Rightarrow}} S_{a_1} S_{a_2} \dots S_{a_n} \underset{G}{\stackrel{\ast}{\Rightarrow}} w_1 w_2 \dots w_n = w</script><p>所以$w \in \boldsymbol{L}(G^{\prime})$，即$s(L) \subseteq \boldsymbol{L}(G^{\prime})$</p>
+<p>因为$G^{\prime}$的终结符仅能由每个$S_a$派生，因此对$\forall w \in \boldsymbol{L}(G^{\prime})$有</p>
+<script type="math/tex; mode=display">
+S \underset{G}{\stackrel{\ast}{\Rightarrow}} \alpha = S_{a_1}S_{a_2}  \dots S_{a_n} \underset{G}{\stackrel{\ast}{\Rightarrow}} w</script><p>因为$G^{\prime}$中每个$S_a$在$G$中是终结符$a$，所以</p>
+<script type="math/tex; mode=display">
+S \underset{G}{\stackrel{\ast}{\Rightarrow}} a_1 a_2 \dots a_n = x \in L</script><p>又因为$\alpha = S<em>{a_1}S</em>{a<em>2}  \dots S</em>{a<em>n} \underset{G}{\stackrel{\ast}{\Rightarrow}} w = w_1 \dots w_n$，所以$S</em>{a_i} \underset{G}{\stackrel{\ast}{\Rightarrow}} w_i$，即$w_i \in s(a_i)$，那么</p>
+<script type="math/tex; mode=display">
+w = w_1 w_2 \dots w_n \in s(a_1)s(s_2)\dots s(a_n) = s(a_1 a_2 \dots a_n) = s(x) \subset s(L)</script><p>所以$w \in s(L)$，即$\boldsymbol{L}(G^{\prime}) \subseteq s(L)$，因此$\boldsymbol{L}(G^{\prime}) = s(L)$</p>
+<p>例3：设$L = \lbrace w \in \lbrace a,b \rbrace^{\ast} \vert w有相等个数的a和b \rbrace$，代换</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+s(a) &= L_a = \lbrace 0^n1^n \vert n \geq 1 \rbrace \\
+s(b) &= L_b = \lbrace ww^R \vert w \in (\boldsymbol{0}+ \boldsymbol{1})^{\ast} \rbrace
+\end{aligned}</script><p>求$s(L)$的文法</p>
+<p>解：设计$L$的文法为：</p>
+<script type="math/tex; mode=display">
+S \to aSbS \vert bSaS \vert \epsilon</script><p>$L_a$的文法为：</p>
+<script type="math/tex; mode=display">
+S_a \to 0S_a1 \vert 01</script><p>$L_b$的文法为：</p>
+<script type="math/tex; mode=display">
+S_b \to 0S_b0 \vert 1S_b1 \vert \epsilon</script><p>那么$s(L)$的文法为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+S &\to S_a S S_b S \vert S_b S S_a S \vert \epsilon \\
+S_a &\to 0S_a1 \vert 01 \\
+S_b &\to 0S_b0 \vert 1S_b1 \vert \epsilon
+\end{aligned}</script><h3 id="并-连接-闭包-同态-逆同态-反转的封闭性"><a href="#并-连接-闭包-同态-逆同态-反转的封闭性" class="headerlink" title="并/连接/闭包/同态/逆同态/反转的封闭性"></a>并/连接/闭包/同态/逆同态/反转的封闭性</h3><p><strong>定理</strong>：上下文无关语言在并，连接，闭包，正闭包，同态下封闭</p>
+<p><strong>证明1</strong>：设$\Sigma=\lbrace 0,1 \rbrace$，$L_1,L_2$是任意CFL，定义代换</p>
+<script type="math/tex; mode=display">
+s(1) = L_1, \ s(2) = L_2</script><p>语言$\lbrace 1,2 \rbrace, \lbrace 12 \rbrace, \lbrace 1 \rbrace^{\ast}$和$\lbrace 1 \rbrace^{+}$显然都是CFL，那么</p>
+<ol>
+<li>由$s(\lbrace 1,2 \rbrace)=s(1) \cup s(2) = L_1 \cup L_2$，所以运算封闭</li>
+<li>由$s(\lbrace 12 \rbrace) = s(12) = s(\epsilon)s(1)s(2)=L_1 L_2$，所以连接运算封闭</li>
+<li>闭包和正闭包运算封闭，因为<script type="math/tex; mode=display">
+\begin{aligned}
+s(\lbrace 1 \rbrace^{\ast}) &= s(\lbrace \epsilon,1,11,\dots \rbrace) \\
+&= s(\epsilon) \cup s(1) \cup s(11) \cup \dots \\
+&= \lbrace \epsilon \rbrace \cup s(1) \cup s(1)s(1) \cup \dots \\
+&=L_1^{\ast}
+\end{aligned}</script>若$h$是$\Gamma$上的同态，$L$是$\Sigma$上的CFL，对$\forall a \in \Sigma$令代换$s^{\prime} = \lbrace h(a) \rbrace$，则<script type="math/tex; mode=display">
+h(L) = \lbrace h(w) \vert w \in L \rbrace = \bigcup_{w \in L}\lbrace h(w) \rbrace = \bigcup_{w \in L}s^{\prime}(w) = s^{\prime}(L)</script>所以同态封闭</li>
+</ol>
+<p><strong>证明2</strong>：用文法证明并/连接/闭包的封闭性。设CFL $L_1,L_2$文法分别为</p>
+<script type="math/tex; mode=display">
+G_1 = (V_1,T_1,P_1,S_1), \ G_2=(V_2,T_2,P_2,S_2)</script><p>那么，分别构造</p>
+<ol>
+<li>$L_1 \cup L_2$的文法为<script type="math/tex; mode=display">
+G_{union}=(V_1 \cup V_2 \cup \lbrace S \rbrace,T_1 \cup T_2, P_1 \cup P_2 \cup \lbrace S \to S_1 \vert S_2 \rbrace, S)</script></li>
+<li>$L_1L_2$的文法为<script type="math/tex; mode=display">
+G_{concat} = (V_1 \cup V_2 \cup \lbrace S \rbrace, T_1 \cup T_2, P_1 \cup P_2 \cup \lbrace S \to S_1 S_2 \rbrace, S)</script></li>
+<li>$L_1^{\ast}$的文法为<script type="math/tex; mode=display">
+G_{closure} = (V_1 \cup \lbrace S \rbrace, T_1,P_1 \cup \lbrace S \to S_1 S \vert \epsilon \rbrace, S)</script>再证明所构造的文法的正确性，略</li>
+</ol>
+<p><strong>定理36</strong>：如果$L$是CFL，那么$L^R$也是CFL</p>
+<p><strong>证明</strong>：设$L$的文法$G=(V,T,P,S)$，构造文法</p>
+<script type="math/tex; mode=display">
+G^{\prime} = (V,T,\lbrace A \to \alpha^R \vert A \to \alpha \in P \rbrace, S)</script><p>则$L(G^{\prime})=L^R$，证明略</p>
+<p><strong>定理37</strong>：如果$L$是字母表$\Delta$上的CFL，$h$是字母表$\Sigma$到$\Delta^{\ast}$的同态，那么$h^{-1}(L)$也是CFL</p>
+<p><strong>证明</strong>：设PDA $P=(Q,\Delta,\Gamma,\delta,q_0,Z_0,F), \boldsymbol{L}(P)=L$<br>构造$\boldsymbol{L}(P^{\prime})=h^{\prime}(L)$的PDA</p>
+<script type="math/tex; mode=display">
+P^{\prime} = (Q^{\prime},\Sigma,\Gamma,\delta^{\prime},[q_0,\bar{\epsilon}],Z_0,F \times \lbrace \bar{\epsilon} \rbrace)</script><p>在$P^{\prime}$的状态中，使用缓冲，暂存字符$a \in \Sigma$的同态字符$a \in \Sigma$的同态串$h(a)$的后缀</p>
+<ol>
+<li>$Q^{\prime} \subset Q \times \Delta^{\ast}$：状态$[q,\bar{x}]$中的$\bar{x}$为缓冲</li>
+<li>设$q \in Q$，那么$\delta^{\prime}$定义如下<ul>
+<li>$\forall [q,\bar{\epsilon}] \in Q \times \lbrace \bar{\epsilon}, \forall a \in \Sigma, \forall X \in T$<script type="math/tex; mode=display">
+\delta^{\prime}([q,\bar{\epsilon}],a,X) = \lbrace([q,h(a)],X) \rbrace</script></li>
+<li>若$\delta(q,\bar{a},X)=\lbrace (p_1,\beta_1),(p_2,\beta_2) \dots (p_k,\beta_k) \rbrace$，则<script type="math/tex; mode=display">
+\delta^{\prime}([q,\overline{ax}],\epsilon,X) = \lbrace ([p_1,\bar{x}],\beta_1),([p_2,\bar{x}],\beta_2),\dots,([p_k,\bar{x}],\beta_k)</script>这里$\bar{a} \in \Delta \cup \lbrace \bar{\epsilon} \rbrace$，$\bar{x}$是某个$h(a)$的后缀</li>
+</ul>
+</li>
+</ol>
+<h3 id="交和补运算不封闭"><a href="#交和补运算不封闭" class="headerlink" title="交和补运算不封闭"></a>交和补运算不封闭</h3><p><strong>CFL对交运算不封闭</strong><br>因为语言</p>
+<script type="math/tex; mode=display">
+L_1 = \lbrace 0^n1^n2^i \vert n \geq 1,i \geq 1 \rbrace \\
+L_2 = \lbrace 0^i1^n2^n \vert n \geq 1,i \geq 1 \rbrace</script><p>都是CFL，而</p>
+<script type="math/tex; mode=display">
+L_1 \cap L_2 = \lbrace 0^n1^n2^n \vert n \geq 1 \rbrace</script><p>不是CFL</p>
+<p><strong>CFL对补运算不封闭</strong><br>因为$L_1 \cap L_2 = \overline{\overline{L_1} \cup \overline{L_2}}$</p>
+<p><strong>定理38</strong>：若$L$是CFL且$R$是正则语言，则$L \cap R$是CFL</p>
+<p><strong>证明</strong>：<br>设DFA $D=(Q_1,\Sigma,\delta_1,p_1,F_1)$且$\boldsymbol{L}(D) = R$，PDA $P=(Q_2,\Sigma,\Gamma,\delta_2,q_2,Z_0,F_2)$，且$\boldsymbol{L}(P)=L$。构造PDA</p>
+<script type="math/tex; mode=display">
+P^{\prime} = (Q_1 \times Q_2,\Sigma,\Gamma,\delta,[q_1,q_2],Z_0,F_1 \times F_2)</script><p>其中$\delta$为：</p>
+<script type="math/tex; mode=display">
+\delta([p,q],a,Z)=
+\begin{cases}
+\lbrace([p,s],\beta) \vert (s,\beta) \in \delta_2(q,a,Z) \rbrace & a=\epsilon \\
+\lbrace([r,s],\beta) \vert r=\delta_1(p,a) \land (s,\beta) \in \delta_2(q,a,Z) \rbrace & a \not= \epsilon
+\end{cases}</script><p>再往证$\boldsymbol{L}(P^{\prime})=L \cap R$，略。</p>
+<h3 id="封闭性的运用"><a href="#封闭性的运用" class="headerlink" title="封闭性的运用"></a>封闭性的运用</h3><p>例4：请证明语言$L$不是CFL</p>
+<script type="math/tex; mode=display">
+L = \lbrace w \in \lbrace a,b,c \rbrace^{\ast} \vert n_a(w) = n_b(w) = n_c(w) \rbrace</script><p>其中$n_a(w)$表示$w$中$a$的个数</p>
+<p><strong>证明</strong>：</p>
+<ol>
+<li>因为$\boldsymbol{a}^{\ast}\boldsymbol{b}^{\ast}\boldsymbol{c}^{\ast}$是正则语言</li>
+<li>而$L \cap \boldsymbol{a}^{\ast}\boldsymbol{b}^{\ast}\boldsymbol{c}^{\ast} = \lbrace a^n b^n c^n \vert n \geq 0 \rbrace$不是CFL</li>
+<li>由CFL与正则语言的交还是CFL，所以$L$不可能是CFL</li>
+</ol>
+<h2 id="上下文无关语言的判定性质"><a href="#上下文无关语言的判定性质" class="headerlink" title="上下文无关语言的判定性质"></a>上下文无关语言的判定性质</h2><p><strong>可判定的CFL问题</strong></p>
+<ul>
+<li>空性：只需判断文法的开始符号$S$是否为非产生的</li>
+<li>有穷性和无穷性<ul>
+<li>用不带无用符号的CNF的产生式画有向图</li>
+<li>变元为顶点，若有$A \to BC$，则$A$到$B$和$C$各画一条有向边</li>
+<li>检察图中是否有循环</li>
+</ul>
+</li>
+<li>成员性：利用CNF范式，有CYK算法检查串$w$是否属于$L$</li>
+</ul>
+<p>**$CYK^1$算法</p>
+<ul>
+<li>CNF $G=(V,T,P,S)$，以$O(n^3)$时间检查”$w=a_1 a_2 \dots a_n \in \boldsymbol{L}(G)$?”</li>
+<li>以动态规划的方式，在表中由下至上逐行计算$X<em>{ij}$，再检查”$S \in X</em>{1n}$?”<script type="math/tex; mode=display">
+ X_{ij} = \lbrace A \in V \vert A \underset{}{\stackrel{\ast}{\Rightarrow}} a_i a_{i+1} \dots a_j, 1 \leq i \leq j \leq n \rbrace</script></li>
+<li>计算首行<script type="math/tex; mode=display">
+ X_{ii} = \lbrace A \vert A \to a_i \in P \rbrace</script></li>
+<li>计算其他<script type="math/tex; mode=display">
+ X_{ij} = \lbrace A \vert i \leq k \lt j, BC \in X_{ik}X_{k+1,j}, A \to BC \in P \rbrace</script> <img src="102.png" alt=""></li>
+</ul>
+<p>例5：CNF $G$如下，用CYK算法判断$bababaa \in \boldsymbol{L}(G)$</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+S &\to AB \vert BC \\
+A &\to BA \vert a \\
+B &\to CC \vert b \\
+C &\to AB \vert a
+\end{aligned}</script><p><img src="103.png" alt=""></p>
+<p>因为$S \in X_16 = \lbrace S,A \rbrace$，所以$bbabaa \in \boldsymbol{L}(G)$</p>
+<p><strong>不可判定的CFL问题</strong>  </p>
+<ul>
+<li>判断CFG $G$是否歧义的?</li>
+<li>判断CFL是否固有歧义的?</li>
+<li>两个CFL的交是否为空？</li>
+<li>两个CFL是否相同？</li>
+<li>判断CFL的补是否为空？尽管有算法判断CFL是否为空</li>
+<li>判断CFL是否等于$\Sigma$</li>
+</ul>
+<h2 id="乔姆斯基文法体系"><a href="#乔姆斯基文法体系" class="headerlink" title="乔姆斯基文法体系"></a>乔姆斯基文法体系</h2><p>如果文法$G=(V,T,P,S)$，符号串$\alpha \in (V \cup T)^{\ast} V (V \cup T)^{\ast}$，$\beta \in (V \cup T)^{\ast}$，产生式都形如</p>
+<script type="math/tex; mode=display">
+\alpha \to \beta</script><p>即每个产生式的左部$\alpha$中部至少要有一个变元，那么：</p>
+<ol>
+<li>称$G$为0型文法或短语结构文法</li>
+<li>若$\vert \beta \vert \geq \vert \alpha \vert$，称$G$称为1型文法或上下文有关文法</li>
+<li>若$\alpha \in V$，称$G$为2型文法或上下文无关文法</li>
+<li>若$\alpha \to \beta$都形如$A \to aB$或$A \to a$，称$G$为3型文法或正则文法</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA/" rel="tag"># 形式语言与自动机理论</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/01/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%884%EF%BC%89%E4%B8%8B%E6%8E%A8%E8%87%AA%E5%8A%A8%E6%9C%BA/" rel="prev" title="形式语言与自动机理论（4）下推自动机">
+      <i class="fa fa-chevron-left"></i> 形式语言与自动机理论（4）下推自动机
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/04/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%886%EF%BC%89%E5%9B%BE%E7%81%B5%E6%9C%BA%E4%B8%8E%E4%B8%8D%E5%8F%AF%E5%88%A4%E5%AE%9A%E6%80%A7/" rel="next" title="形式语言与自动机理论（6）图灵机与不可判定性">
+      形式语言与自动机理论（6）图灵机与不可判定性 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E8%AF%AD%E8%A8%80%E7%9A%84%E6%B3%B5%E5%BC%95%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">上下文无关语言的泵引理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%B5%E5%BC%95%E7%90%86%E5%BA%94%E7%94%A8"><span class="nav-number">1.1.</span> <span class="nav-text">泵引理应用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E8%AF%AD%E8%A8%80%E7%9A%84%E5%B0%81%E9%97%AD%E6%80%A7"><span class="nav-number">2.</span> <span class="nav-text">上下文无关语言的封闭性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E6%8D%A2%E7%9A%84%E5%B0%81%E9%97%AD%E6%80%A7"><span class="nav-number">2.1.</span> <span class="nav-text">代换的封闭性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6-%E8%BF%9E%E6%8E%A5-%E9%97%AD%E5%8C%85-%E5%90%8C%E6%80%81-%E9%80%86%E5%90%8C%E6%80%81-%E5%8F%8D%E8%BD%AC%E7%9A%84%E5%B0%81%E9%97%AD%E6%80%A7"><span class="nav-number">2.2.</span> <span class="nav-text">并&#x2F;连接&#x2F;闭包&#x2F;同态&#x2F;逆同态&#x2F;反转的封闭性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A4%E5%92%8C%E8%A1%A5%E8%BF%90%E7%AE%97%E4%B8%8D%E5%B0%81%E9%97%AD"><span class="nav-number">2.3.</span> <span class="nav-text">交和补运算不封闭</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%81%E9%97%AD%E6%80%A7%E7%9A%84%E8%BF%90%E7%94%A8"><span class="nav-number">2.4.</span> <span class="nav-text">封闭性的运用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E8%AF%AD%E8%A8%80%E7%9A%84%E5%88%A4%E5%AE%9A%E6%80%A7%E8%B4%A8"><span class="nav-number">3.</span> <span class="nav-text">上下文无关语言的判定性质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%94%E5%A7%86%E6%96%AF%E5%9F%BA%E6%96%87%E6%B3%95%E4%BD%93%E7%B3%BB"><span class="nav-number">4.</span> <span class="nav-text">乔姆斯基文法体系</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2021/02/04/%E5%BD%A2%E5%BC%8F%E8%AF%AD%E8%A8%80%E4%B8%8E%E8%87%AA%E5%8A%A8%E6%9C%BA%E7%90%86%E8%AE%BA%EF%BC%885%EF%BC%89%E4%B8%8A%E4%B8%8B%E6%96%87%E6%97%A0%E5%85%B3%E8%AF%AD%E8%A8%80%E7%9A%84%E6%80%A7%E8%B4%A8/";
+    this.page.identifier = "2021/02/04/形式语言与自动机理论（5）上下文无关语言的性质/";
+    this.page.title = "形式语言与自动机理论（5）上下文无关语言的性质";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

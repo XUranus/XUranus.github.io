@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="Octave为GNU项目下的开源软件,可以快速实现算法的一种原型语言。在线Web地址： Octave is a free open source software under the GNU prject,which can rapidly implement algorithm.  Online version: octave-online Installation on Archlinux：s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Octave Language Learning">
+<meta property="og:url" content="http://xuranus.github.io/2019/11/26/octave%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="Octave为GNU项目下的开源软件,可以快速实现算法的一种原型语言。在线Web地址： Octave is a free open source software under the GNU prject,which can rapidly implement algorithm.  Online version: octave-online Installation on Archlinux：s">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2019/11/26/octave%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Screenshot_20191126_174816.png">
+<meta property="og:image" content="http://xuranus.github.io/2019/11/26/octave%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Screenshot_20191126_175626.png">
+<meta property="og:image" content="http://xuranus.github.io/2019/11/26/octave%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Screenshot_20191126_194545.png">
+<meta property="og:image" content="http://xuranus.github.io/2019/11/26/octave%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Screenshot_20191126_194645.png">
+<meta property="og:image" content="http://xuranus.github.io/2019/11/26/octave%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Screenshot_20191126_194901.png">
+<meta property="article:published_time" content="2019-11-25T22:13:30.000Z">
+<meta property="article:modified_time" content="2021-09-05T12:51:13.909Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="数据科学">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2019/11/26/octave%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/Screenshot_20191126_174816.png">
+
+<link rel="canonical" href="http://xuranus.github.io/2019/11/26/octave%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Octave Language Learning | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/11/26/octave%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Octave Language Learning
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-11-25 22:13:30" itemprop="dateCreated datePublished" datetime="2019-11-25T22:13:30Z">2019-11-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/11/26/octave%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/26/octave学习笔记/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>7.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Octave为GNU项目下的开源软件,可以快速实现算法的一种原型语言。在线Web地址：</p>
+<p>Octave is a free open source software under the GNU prject,which can rapidly implement algorithm. </p>
+<p>Online version: <a target="_blank" rel="noopener" href="https://octave-online.net/">octave-online</a></p>
+<p>Installation on Archlinux：<code>sudo pacman -S octave</code>,enter the shell：<code>octave</code>,shows the following:</p>
+<span id="more"></span>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GNU Octave, version 5.1.0</span><br><span class="line">Copyright (C) 2019 John W. Eaton and others.</span><br><span class="line">This is free software; see the source code for copying conditions.</span><br><span class="line">There is ABSOLUTELY NO WARRANTY; not even for MERCHANTABILITY or</span><br><span class="line">FITNESS FOR A PARTICULAR PURPOSE.  For details, type &#x27;warranty&#x27;.</span><br><span class="line"></span><br><span class="line">Octave was configured for &quot;x86_64-pc-linux-gnu&quot;.</span><br><span class="line"></span><br><span class="line">Additional information about Octave is available at https://www.octave.org.</span><br><span class="line"></span><br><span class="line">Please contribute if you find this software useful.</span><br><span class="line">For more information, visit https://www.octave.org/get-involved.html</span><br><span class="line"></span><br><span class="line">Read https://www.octave.org/bugs.html to learn how to submit bug reports.</span><br><span class="line">For information about changes from previous versions, type &#x27;news&#x27;.</span><br><span class="line"></span><br><span class="line">octave:1&gt; </span><br></pre></td></tr></table></figure>
+<h2 id="Basic-opeation"><a href="#Basic-opeation" class="headerlink" title="Basic opeation"></a>Basic opeation</h2><h3 id="common-variables"><a href="#common-variables" class="headerlink" title="common variables"></a>common variables</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">octave:5&gt; 1+1</span><br><span class="line">ans =  2</span><br><span class="line">octave:6&gt; 3-6</span><br><span class="line">ans = -3</span><br><span class="line">octave:7&gt; 5*3</span><br><span class="line">ans =  15</span><br><span class="line">octave:8&gt; 4/5</span><br><span class="line">ans =  0.80000</span><br><span class="line">octave:9&gt; 1==2 %false</span><br><span class="line">ans = 0</span><br><span class="line">octave:10&gt; 1==1 %true</span><br><span class="line">ans = 1</span><br><span class="line">octave:11&gt; 1 &amp;&amp; 0 % AND</span><br><span class="line">ans = 0</span><br><span class="line">octave:12&gt; 1 || 0 % OR</span><br><span class="line">ans = 1</span><br></pre></td></tr></table></figure>
+<p>use <code>PS1()</code> to change the default prompt:<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">octave:14&gt; PS1(&#x27;( つ•̀ω•́)つ &#x27;)</span><br><span class="line">( つ•̀ω•́)つ A = [1,2,3;4,5,6;7,8,9]</span><br><span class="line">A =</span><br><span class="line"></span><br><span class="line">   1   2   3</span><br><span class="line">   4   5   6</span><br><span class="line">   7   8   9</span><br><span class="line">( つ•̀ω•́)つ PS1(&#x27;&gt;&gt;&#x27;)</span><br><span class="line">&gt;&gt;</span><br></pre></td></tr></table></figure></p>
+<p>semicolon supress output<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt; a = 3</span><br><span class="line">a =  3</span><br><span class="line">&gt;&gt; a = 3;</span><br><span class="line">&gt;&gt; a</span><br><span class="line">a = 3</span><br><span class="line">&gt;&gt; a;</span><br></pre></td></tr></table></figure></p>
+<p><code>disp()</code> is used to display,<code>sprintf()</code> is used to format string output:<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;pi = 3.1415926;</span><br><span class="line">&gt;&gt;disp(pi)</span><br><span class="line"> 3.1416</span><br><span class="line">&gt;&gt;disp(sprintf(&#x27;pi is: %0.2f&#x27;,pi))</span><br><span class="line">pi is: 3.14</span><br></pre></td></tr></table></figure><br><code>format [long|short]</code> is used to change the precision.</p>
+<h3 id="matrix-and-vector"><a href="#matrix-and-vector" class="headerlink" title="matrix and vector"></a>matrix and vector</h3><p>A is a 3x2 matrix,x is a 3x1 vector,y is a 1x3 vector.<br><code>ones()</code> returns a matrix with all elements 1.<br><code>zeros()</code> returns a matrix with all elements 0.<br><code>rand()</code> returns a matrix with all elements random number.<br><code>eye()</code> returns a identity matrix.<br><code>size()</code> returns the size of the matrix.<br><code>length()</code> returns the larger dimension of the matrix,for vector it returns the length of it.<br><code>A(x,y)</code> returns the <code>A[x][y]</code> element.<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;A = [1,2,3;4,5,6]</span><br><span class="line">A =</span><br><span class="line"></span><br><span class="line">   1   2   3</span><br><span class="line">   4   5   6</span><br><span class="line"></span><br><span class="line">&gt;&gt;A(1,3)</span><br><span class="line">ans =  3</span><br><span class="line"></span><br><span class="line">&gt;&gt;A(2,:) % means every element along that column/row</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   4   5   6</span><br><span class="line"></span><br><span class="line">&gt;&gt;A(:,[1,2])</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   1   2</span><br><span class="line">   4   5</span><br><span class="line"></span><br><span class="line">&gt;&gt;size(A)</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   2   3</span><br><span class="line"></span><br><span class="line">&gt;&gt;x = [3;4;5]</span><br><span class="line">x =</span><br><span class="line"></span><br><span class="line">   3</span><br><span class="line">   4</span><br><span class="line">   5</span><br><span class="line"></span><br><span class="line">&gt;&gt;y = [1,2,3]</span><br><span class="line">y =</span><br><span class="line"></span><br><span class="line">   1   2   3</span><br><span class="line"></span><br><span class="line">&gt;&gt;v = 1:6 </span><br><span class="line">v =</span><br><span class="line"></span><br><span class="line">   1   2   3   4   5   6</span><br><span class="line"></span><br><span class="line">&gt;&gt;v = [1 2 3 4]</span><br><span class="line">v =</span><br><span class="line"></span><br><span class="line">   1   2   3   4</span><br><span class="line"></span><br><span class="line">&gt;&gt;length(A)</span><br><span class="line">ans =  3</span><br><span class="line">&gt;&gt;length(v)</span><br><span class="line">ans =  4</span><br><span class="line"></span><br><span class="line">&gt;&gt;ones(2,3)</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   1   1   1</span><br><span class="line">   1   1   1</span><br><span class="line"></span><br><span class="line">&gt;&gt;eye(3)</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">Diagonal Matrix</span><br><span class="line"></span><br><span class="line">   1   0   0</span><br><span class="line">   0   1   0</span><br><span class="line">   0   0   1</span><br><span class="line"></span><br><span class="line">&gt;&gt;A = [A,[7;8]] % append a column to matrix</span><br><span class="line">A =</span><br><span class="line"></span><br><span class="line">   1   2   3   7</span><br><span class="line">   4   5   6   8</span><br><span class="line"></span><br><span class="line">&gt;&gt;A(:) % put all elements of A into a single vector</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   1</span><br><span class="line">   4</span><br><span class="line">   2</span><br><span class="line">   5</span><br><span class="line">   3</span><br><span class="line">   6</span><br><span class="line">   7</span><br><span class="line">   8</span><br><span class="line"></span><br><span class="line">&gt;&gt;A = [A;[9,10,11,12]] % append a row to the matrix</span><br><span class="line">A =</span><br><span class="line"></span><br><span class="line">    1    2    3    7</span><br><span class="line">    4    5    6    8</span><br><span class="line">    1    2    3    4</span><br><span class="line">    9   10   11   12</span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<p>use <code>hist()</code> to plot a histogram<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;w = randn(1,10000)</span><br><span class="line">&gt;&gt;hist(w)</span><br></pre></td></tr></table></figure></p>
+<h2 id="Data-Persist"><a href="#Data-Persist" class="headerlink" title="Data Persist"></a>Data Persist</h2><p>use <code>help &lt;cmd&gt;</code> to refer to the manual of cmd<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;help eye</span><br><span class="line">&gt;&gt;help rand</span><br></pre></td></tr></table></figure></p>
+<p>use <code>pwd</code> to get present working directory,use <code>cd</code> to change directory,<code>ls</code> to list the files:<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;pwd</span><br><span class="line">ans = /home/xuranus</span><br><span class="line">&gt;&gt;cd ~/Desktop/</span><br><span class="line">&gt;&gt;pwd</span><br><span class="line">ans = /home/xuranus/Desktop</span><br></pre></td></tr></table></figure></p>
+<p>use <code>who</code> to list all the variable in current working space while <code>whos</code> list the detail. <code>save(filename)</code> can save all the data to the disk,when the second variable is speified like <code>save(&#39;xxx&#39;,v)</code>,only the specified variable v will be persisted .<code>clear</code> can clear all the data,and then we use <code>who</code>again to check if there exists any variable(of course there doesn’t).By using <code>load(filename)</code> we can restore the variable we cleared from file.<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;who</span><br><span class="line">Variables in the current scope:</span><br><span class="line">A    a    ans  p    pi   v    w    x    y</span><br><span class="line">&gt;&gt;save(&#x27;test1.dat&#x27;)</span><br><span class="line">&gt;&gt;ls</span><br><span class="line">test.dat</span><br><span class="line">&gt;&gt;clear</span><br><span class="line">&gt;&gt;who</span><br><span class="line">&gt;&gt;load(&#x27;test1.dat&#x27;)</span><br><span class="line">&gt;&gt;whos</span><br><span class="line">Variables in the current scope:</span><br><span class="line"></span><br><span class="line">   Attr Name        Size                     Bytes  Class</span><br><span class="line">   ==== ====        ====                     =====  ===== </span><br><span class="line">        A           2x3                         48  double</span><br><span class="line">        a           1x1                          8  double</span><br><span class="line">        ans         1x21                        21  char</span><br><span class="line">        p           3x1                         24  double</span><br><span class="line">        pi          1x1                          8  double</span><br><span class="line">        v           1x4                         32  double</span><br><span class="line">        w           1x10000                  80000  double</span><br><span class="line">        x           3x1                         24  double</span><br><span class="line">        y           1x3                         24  double</span><br><span class="line"></span><br><span class="line">Total is 10042 elements using 80189 bytes</span><br></pre></td></tr></table></figure></p>
+<h2 id="Computing-On-Data"><a href="#Computing-On-Data" class="headerlink" title="Computing On Data"></a>Computing On Data</h2><p><code>.</code> denotes element wise operation,which is different from common matrix arthmetic operation.<br><code>pinv()</code> returns the reverse of A.<br><code>A&#39;</code> means transpose of matrix A.<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; A = [1 2; 3 4; 5 6]</span><br><span class="line">A =</span><br><span class="line"></span><br><span class="line">   1   2</span><br><span class="line">   3   4</span><br><span class="line">   5   6</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; B = [4 5 6;7 8 9]</span><br><span class="line">B =</span><br><span class="line"></span><br><span class="line">   4   5   6</span><br><span class="line">   7   8   9</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; A&#x27;</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   1   3   5</span><br><span class="line">   2   4   6</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; A*B</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   18   21   24</span><br><span class="line">   40   47   54</span><br><span class="line">   62   73   84</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; A.*B</span><br><span class="line">error: product: nonconformant arguments (op1 is 3x2, op2 is 2x3)</span><br><span class="line">&gt;&gt;&gt; C = [6 7 8;9 10 11]</span><br><span class="line">C =</span><br><span class="line"></span><br><span class="line">    6    7    8</span><br><span class="line">    9   10   11</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; B.*C</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   24   35   48</span><br><span class="line">   63   80   99</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; B./C</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   0.66667   0.71429   0.75000</span><br><span class="line">   0.77778   0.80000   0.81818</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; B.+C</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   10   12   14</span><br><span class="line">   16   18   20</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; A.^2 % element-wise square</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">    1    4</span><br><span class="line">    9   16</span><br><span class="line">   25   36</span><br></pre></td></tr></table></figure><br>when a single parameter function applied to vector or matrix, it performs an element-wise operation.<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; v = 1:6</span><br><span class="line">v =</span><br><span class="line"></span><br><span class="line">   1   2   3   4   5   6</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; log(v)</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   0.00000   0.69315   1.09861   1.38629   1.60944   1.79176</span><br></pre></td></tr></table></figure><br>the use of <code>max(vector)</code>:<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt; A</span><br><span class="line">A =</span><br><span class="line"></span><br><span class="line">   1   2</span><br><span class="line">   3   4</span><br><span class="line">   5   6</span><br><span class="line"></span><br><span class="line">&gt;&gt; v = 1:6</span><br><span class="line">v =</span><br><span class="line"></span><br><span class="line">   1   2   3   4   5   6</span><br><span class="line"></span><br><span class="line">&gt;&gt; max(v) % return the maximum number</span><br><span class="line">ans =  6</span><br><span class="line">&gt;&gt; [num,index] = max(v) % return the maximum number and corresponding index</span><br><span class="line">num =  6</span><br><span class="line">index =  6</span><br><span class="line">&gt;&gt; max(A)</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   5   6</span><br><span class="line"></span><br><span class="line">&gt;&gt; v&gt;3 % return each element is larger than 3 or not</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">  0  0  0  1  1  1</span><br><span class="line"></span><br><span class="line">octave:10&gt; find(v&gt;3) % filter the element larger than 3</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   4   5   6</span><br></pre></td></tr></table></figure><br><code>magic()</code> returns a nxn matrix whose row, column, diagnoal add up to the same thing.<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt; magic(3)</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   8   1   6</span><br><span class="line">   3   5   7</span><br><span class="line">   4   9   2</span><br></pre></td></tr></table></figure></p>
+<p><code>prod()</code> returns the product of vector.<br><code>sum()</code> return the sum of the vector.<br><code>ceil()</code> means get rounded up while <code>floor()</code> means get rounded down.<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; v = [1 6 4 3.5]</span><br><span class="line">v =</span><br><span class="line"></span><br><span class="line">   1.0000   6.0000   4.0000   3.5000</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; prod(v) </span><br><span class="line">ans =  84</span><br><span class="line">&gt;&gt;&gt; sum(v)</span><br><span class="line">ans =  14.500</span><br><span class="line">&gt;&gt;&gt; floor(v)</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   1   6   4   3</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; ceil(v)</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   1   6   4   4</span><br></pre></td></tr></table></figure></p>
+<p><code>max(A1,A2)</code> returns a new matrix ,every element of which is the larger one.<br><code>max(A,[],1)</code> compares the first dimension(the column) and returns a vector ,the ith element is the maximum in the ith column.<br>if you need to find the maximum number in A,you can type <code>max(max(A))</code> or <code>max(A(:))</code><br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; A = magic(3)</span><br><span class="line">A =</span><br><span class="line"></span><br><span class="line">   8   1   6</span><br><span class="line">   3   5   7</span><br><span class="line">   4   9   2</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; B = A&#x27;</span><br><span class="line">B =</span><br><span class="line"></span><br><span class="line">   8   3   4</span><br><span class="line">   1   5   9</span><br><span class="line">   6   7   2</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; max(A,B)</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   8   3   6</span><br><span class="line">   3   5   9</span><br><span class="line">   6   9   2</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; max(A,[],1)</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   8   9   7</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; max(A,[],2)</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   8</span><br><span class="line">   7</span><br><span class="line">   9</span><br></pre></td></tr></table></figure><br><code>sum(A)</code> and <code>sum(A,1)</code> returns the sum of each column in matrix A.<br><code>sum(A,2)</code> return the sum of each row in matrix.<br>if we need to calculate sum of all elements in A, we can use <code>sum(sum(A))</code> or <code>sum(A(:))</code><br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt;&gt; A</span><br><span class="line">A =</span><br><span class="line"></span><br><span class="line">   17   24    1    8   15</span><br><span class="line">   23    5    7   14   16</span><br><span class="line">    4    6   13   20   22</span><br><span class="line">   10   12   19   21    3</span><br><span class="line">   11   18   25    2    9</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; sum(A)</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   65   65   65   65   65</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; sum(A,1)</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   65   65   65   65   65</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; sum(A,2)</span><br><span class="line">ans =</span><br><span class="line"></span><br><span class="line">   65</span><br><span class="line">   65</span><br><span class="line">   65</span><br><span class="line">   65</span><br><span class="line">   65</span><br></pre></td></tr></table></figure></p>
+<h2 id="Plotting-Data"><a href="#Plotting-Data" class="headerlink" title="Plotting Data"></a>Plotting Data</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt; t = [0:0.01:0.98]; % vector t from 0 - 0.98 step 0.01</span><br><span class="line">&gt;&gt; y = sin(2*pi*4*t); % vector y</span><br><span class="line">&gt;&gt; plot(t,y)</span><br><span class="line">&gt;&gt; close % close the plotting window</span><br></pre></td></tr></table></figure>
+<p><img src="Screenshot_20191126_174816.png" alt=""></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt; t = [0:0.01:0.98]; % vector t from 0 - 0.98 step 0.01</span><br><span class="line">&gt;&gt; y1 = sin(2*pi*4*t); % vector y</span><br><span class="line">&gt;&gt; plot(t,y1);</span><br><span class="line">&gt;&gt; hold on % wait for another plot</span><br><span class="line">&gt;&gt; y2 = cos(2*pi*4*t);</span><br><span class="line">&gt;&gt; plot(t,y2)</span><br><span class="line">&gt;&gt; ylabel(&#x27;value&#x27;)</span><br><span class="line">&gt;&gt; xlabel(&#x27;time&#x27;)</span><br><span class="line">&gt;&gt; legend(&#x27;sin&#x27;,&#x27;cos&#x27;) % legend</span><br><span class="line">&gt;&gt; title(&#x27;my plot&#x27;)</span><br><span class="line">&gt;&gt; print -dpng &#x27;myplot.png&#x27; % save to file</span><br><span class="line">&gt;&gt; close</span><br></pre></td></tr></table></figure>
+<p><img src="Screenshot_20191126_175626.png" alt=""></p>
+<p>if you want to plot figure in mutiple windows:<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt; figure(1);plot(t,y1);</span><br><span class="line">&gt;&gt; figure(2);plot(t,y2);</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt; subplot(1,2,1) % divides plot a 1x2 grid,acesss the 1st element</span><br><span class="line">&gt;&gt; plot(t,y1)</span><br><span class="line">&gt;&gt; subplot(1,2,2)</span><br><span class="line">&gt;&gt; plot(t,y2)</span><br><span class="line">&gt;&gt; axis([0.5 1 -1 1])</span><br></pre></td></tr></table></figure>
+<p><img src="Screenshot_20191126_194545.png" alt=""></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt; A = magic(5)</span><br><span class="line">A =</span><br><span class="line"></span><br><span class="line">   17   24    1    8   15</span><br><span class="line">   23    5    7   14   16</span><br><span class="line">    4    6   13   20   22</span><br><span class="line">   10   12   19   21    3</span><br><span class="line">   11   18   25    2    9</span><br><span class="line"></span><br><span class="line">&gt;&gt; imagesc(A)</span><br><span class="line">&gt;&gt; imagesc(A),colorbar,colormap gray % comma chaining of function call</span><br></pre></td></tr></table></figure>
+<p><img src="Screenshot_20191126_194645.png" alt=""><br><img src="Screenshot_20191126_194901.png" alt=""></p>
+<h2 id="Control-Statement"><a href="#Control-Statement" class="headerlink" title="Control Statement"></a>Control Statement</h2><h3 id="for"><a href="#for" class="headerlink" title="for"></a>for</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt; v = 1:10</span><br><span class="line">&gt;&gt; for i=1:10,</span><br><span class="line">&gt;   v(i) = 2^i;</span><br><span class="line">&gt; end;</span><br><span class="line">&gt;&gt; v</span><br><span class="line">v =</span><br><span class="line">      2      4      8     16     32     64    128    256    512   1024</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">v = zeros(10, 1);</span><br><span class="line">for i = 1:10</span><br><span class="line">  for j = 1:10</span><br><span class="line">    v(i) = v(i) + A(i, j) * x(j);</span><br><span class="line">  end</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<h3 id="while"><a href="#while" class="headerlink" title="while"></a>while</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt; v = 1:10</span><br><span class="line">&gt;&gt; while i&lt;=5,</span><br><span class="line">&gt;   v(i) = 100</span><br><span class="line">&gt;   i = i+1;</span><br><span class="line">&gt; end;</span><br><span class="line">&gt;&gt; v</span><br><span class="line">v = </span><br><span class="line">    100    100    100    100    100     6    7    8    9   10</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt; v = 1:10</span><br><span class="line">&gt;&gt; while true,</span><br><span class="line">&gt;    v(i) = 100</span><br><span class="line">&gt;    i = i+1;</span><br><span class="line">&gt;    if i == 6,</span><br><span class="line">&gt;      break;</span><br><span class="line">&gt;    end;</span><br><span class="line">&gt; end;</span><br><span class="line">&gt;&gt; v</span><br><span class="line">v = </span><br><span class="line">    100    100    100    100    100     6    7    8    9   10</span><br></pre></td></tr></table></figure>
+<h3 id="if"><a href="#if" class="headerlink" title="if"></a>if</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt; v = 1:10</span><br><span class="line">v =</span><br><span class="line"></span><br><span class="line">    1    2    3    4    5    6    7    8    9   10</span><br><span class="line"></span><br><span class="line">&gt;&gt; if v(1)==1,</span><br><span class="line">&gt;   disp(&#x27;value is one&#x27;);</span><br><span class="line">&gt; elseif v(1)==2,</span><br><span class="line">&gt;   disp(&#x27;value is two&#x27;);</span><br><span class="line">&gt; end;</span><br><span class="line">value is one</span><br></pre></td></tr></table></figure>
+<h2 id="functions"><a href="#functions" class="headerlink" title="functions"></a>functions</h2><p>define a octave function and write to file <code>squareAndCube.m</code> (function name must correspond to filename):<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">function [y1,y2] = squareAndCube(x)</span><br><span class="line"></span><br><span class="line">y1 = x^2;</span><br><span class="line">y2 = x^3;</span><br><span class="line"></span><br><span class="line">end;</span><br></pre></td></tr></table></figure><br>enter the octave shell:<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&gt;&gt; addpath(&#x27;path to the file&#x27;)</span><br><span class="line">&gt;&gt; squareAndCube(4)</span><br><span class="line">ans =  16</span><br></pre></td></tr></table></figure></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%A7%91%E5%AD%A6/" rel="tag"># 数据科学</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/11/26/mongodb%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="prev" title="MongoDB学习笔记">
+      <i class="fa fa-chevron-left"></i> MongoDB学习笔记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/01/15/Archlinux%E4%BD%BF%E7%94%A8%E6%97%A5%E5%BF%97/" rel="next" title="Archlinux使用日志">
+      Archlinux使用日志 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Basic-opeation"><span class="nav-number">1.</span> <span class="nav-text">Basic opeation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#common-variables"><span class="nav-number">1.1.</span> <span class="nav-text">common variables</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#matrix-and-vector"><span class="nav-number">1.2.</span> <span class="nav-text">matrix and vector</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Data-Persist"><span class="nav-number">2.</span> <span class="nav-text">Data Persist</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Computing-On-Data"><span class="nav-number">3.</span> <span class="nav-text">Computing On Data</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Plotting-Data"><span class="nav-number">4.</span> <span class="nav-text">Plotting Data</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Control-Statement"><span class="nav-number">5.</span> <span class="nav-text">Control Statement</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#for"><span class="nav-number">5.1.</span> <span class="nav-text">for</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#while"><span class="nav-number">5.2.</span> <span class="nav-text">while</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#if"><span class="nav-number">5.3.</span> <span class="nav-text">if</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#functions"><span class="nav-number">6.</span> <span class="nav-text">functions</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2019/11/26/octave%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/";
+    this.page.identifier = "2019/11/26/octave学习笔记/";
+    this.page.title = "Octave Language Learning";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

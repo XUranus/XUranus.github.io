@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="本文为icourse哈工大课程《大数据算法》笔记  大数据算法概述大数据4个V Volume：数据规模大 Variet：数据类型多，多源异构 Velocity：处理速度快 Value：基于深度分析的新价值  大数据上问题求解计算问题的过程 先判断是否可以计算。一个普通数据量上都不能计算的问题，在大数据上，也不可计算 判断在现有的资源约束下，时间约束下，数据量下，是否是能行可计算 算法分析与设计">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据算法（1）亚线性算法">
+<meta property="og:url" content="http://xuranus.github.io/2021/03/17/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%881%EF%BC%89%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="本文为icourse哈工大课程《大数据算法》笔记  大数据算法概述大数据4个V Volume：数据规模大 Variet：数据类型多，多源异构 Velocity：处理速度快 Value：基于深度分析的新价值  大数据上问题求解计算问题的过程 先判断是否可以计算。一个普通数据量上都不能计算的问题，在大数据上，也不可计算 判断在现有的资源约束下，时间约束下，数据量下，是否是能行可计算 算法分析与设计">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2021/03/17/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%881%EF%BC%89%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95/1.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/03/17/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%881%EF%BC%89%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95/2.png">
+<meta property="og:image" content="http://xuranus.github.io/2021/03/17/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%881%EF%BC%89%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95/3.png">
+<meta property="article:published_time" content="2021-03-17T14:57:47.000Z">
+<meta property="article:modified_time" content="2021-09-05T12:51:13.916Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="大数据">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2021/03/17/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%881%EF%BC%89%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95/1.png">
+
+<link rel="canonical" href="http://xuranus.github.io/2021/03/17/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%881%EF%BC%89%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>大数据算法（1）亚线性算法 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/03/17/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%881%EF%BC%89%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          大数据算法（1）亚线性算法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-17 14:57:47" itemprop="dateCreated datePublished" datetime="2021-03-17T14:57:47Z">2021-03-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">大数据算法</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/03/17/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%881%EF%BC%89%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/17/大数据算法（1）亚线性算法/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>8.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>本文为icourse哈工大课程<a target="_blank" rel="noopener" href="https://www.icourse163.org/learn/HIT-10001">《大数据算法》</a>笔记</p>
+</blockquote>
+<h1 id="大数据算法概述"><a href="#大数据算法概述" class="headerlink" title="大数据算法概述"></a>大数据算法概述</h1><h2 id="大数据4个V"><a href="#大数据4个V" class="headerlink" title="大数据4个V"></a>大数据4个V</h2><ul>
+<li>Volume：数据规模大</li>
+<li>Variet：数据类型多，多源异构</li>
+<li>Velocity：处理速度快</li>
+<li>Value：基于深度分析的新价值</li>
+</ul>
+<h2 id="大数据上问题求解计算问题的过程"><a href="#大数据上问题求解计算问题的过程" class="headerlink" title="大数据上问题求解计算问题的过程"></a>大数据上问题求解计算问题的过程</h2><ol>
+<li>先判断是否可以计算。一个普通数据量上都不能计算的问题，在大数据上，也不可计算</li>
+<li>判断在现有的<strong>资源约束</strong>下，<strong>时间约束</strong>下，<strong>数据量</strong>下，是否是<strong>能行可计算</strong></li>
+<li>算法分析与设计</li>
+<li>编程实现算法(Hadoop/Spark)</li>
+<li>软件系统构造</li>
+</ol>
+<span id="more"></span>
+<h2 id="大数据算法定义"><a href="#大数据算法定义" class="headerlink" title="大数据算法定义"></a>大数据算法定义</h2><p>在给定的<strong>资源约束</strong>下，以大数据为输入，在给定<strong>时间约束</strong>内可以生成满足给定<strong>约束结果</strong>的计算。</p>
+<p>大数据算法<strong>可以不是</strong></p>
+<ul>
+<li>精确算法：很多情况下，在有限资源下，可以选择舍弃精度换时间</li>
+<li>内存算法：难以在内存中存储全部数据，有时候考虑外存和多级存储器</li>
+<li>串行算法：大数据可以考虑在多台机器上执行</li>
+<li>仅在电子计算机上运行的算法：可以有人来参与到程序的执行</li>
+</ul>
+<p>大数据<strong>不仅是</strong>：</p>
+<ul>
+<li>云计算：大数据还可以在一些计算能力弱的平台上进行（如手机）</li>
+<li>MapReduce：除了并行模型，还有很多其他大数据的编程模型，如设计亚线性算法，或者引入人的参与</li>
+<li>大数据分析与挖掘的算法：一些基础问题，例如排序于查找，在大数据环境下都需要重新设计</li>
+</ul>
+<p>大数据中的两个特点Volume和Velocity决定了大数据算法的设计。我们希望扫描数据$O(n)$或者$O(logn)$时间来解决问题。</p>
+<h2 id="大数据算法设计难度"><a href="#大数据算法设计难度" class="headerlink" title="大数据算法设计难度"></a>大数据算法设计难度</h2><ul>
+<li>访问全部数据时间太长<ul>
+<li>读取部分数据（时间亚线性算法）</li>
+</ul>
+</li>
+<li>数据难以放入内存计算<ul>
+<li>将数据存储到磁盘（外存算法）</li>
+<li>仅基于少量数据进行计算（空间亚线性算法）</li>
+</ul>
+</li>
+<li>单个计算机难以保存全部数据，计算需要整体数据<ul>
+<li>并行处理（并行算法）</li>
+</ul>
+</li>
+<li>计算机计算能力或者知识不足<ul>
+<li>人来参与（众包算法）</li>
+</ul>
+</li>
+</ul>
+<h2 id="大数据算法设计技术"><a href="#大数据算法设计技术" class="headerlink" title="大数据算法设计技术"></a>大数据算法设计技术</h2><ul>
+<li>精确算法：大数据在精确计算上的应用</li>
+<li>并行算法</li>
+<li>近似算法：牺牲一部分精确性，在多项式时间内，给出精确性，并控制误差</li>
+<li>随机算法：利用随机化的方法，进行抽样</li>
+<li>在线算法/数据流算法：当数据源源不断时，在有限时间和空间内得到结果</li>
+<li>外存算法：当数据无法存储在内存时</li>
+<li>面向新型体系结构的算法：GPU大规模并行</li>
+<li>现代优化算法：蚁群算法，模拟退火，进化算法</li>
+</ul>
+<h2 id="大数据算法分析"><a href="#大数据算法分析" class="headerlink" title="大数据算法分析"></a>大数据算法分析</h2><ul>
+<li>时间空间复杂性分析：和传统算法分析一致</li>
+<li>IO复杂性分析：大数据算法区别于传统内存算法，IO会直接影响算法性能</li>
+<li>结果质量分析：（在得不到精确解时，要分析近似比；对于数据流算法，分析competitive radio，即知道整个数据集和只知道当前情况下，算法结果的区别）</li>
+<li>通讯复杂性：区别于传统单机结构，大数据的多机并行执行涉及到通讯复杂性问题</li>
+</ul>
+<h1 id="亚线性算法"><a href="#亚线性算法" class="headerlink" title="亚线性算法"></a>亚线性算法</h1><p>时间/空间/能量/通讯/IO消耗是：$o(输入规模)$</p>
+<ol>
+<li><p>亚线性时间算法</p>
+<ul>
+<li>亚线性时间近似算法</li>
+<li>例：给一个社交网络，在不访问所有节点的情况下，求平均每个节点的度</li>
+<li>性质检测算法</li>
+</ul>
+</li>
+<li><p>亚线性空间算法</p>
+<ul>
+<li>面向源源不断的数据流</li>
+<li>例：对一个几乎无限长的序列，不保存所有数字情况下，求中位数</li>
+</ul>
+</li>
+</ol>
+<h2 id="水库抽样（空间亚线性算法）"><a href="#水库抽样（空间亚线性算法）" class="headerlink" title="水库抽样（空间亚线性算法）"></a>水库抽样（空间亚线性算法）</h2><p>输入：一组数据，大小未知<br>输出：这组数据的$k$个均匀抽样<br>要求：</p>
+<ol>
+<li>仅扫描一次数据</li>
+<li>空间复杂度$O(k)$，即：不能保存所有数据</li>
+<li>扫描到数据前$n$个数字时候$(n&gt;k)$，保存当前已扫描数据的$k$个均匀抽样</li>
+</ol>
+<p>算法：</p>
+<ol>
+<li>申请一个长度为$k$的数组$A$保存抽样</li>
+<li>保存首先接收到的$k$个元素</li>
+<li>当接收到第$i$个新元素的$t$时，以$k/i$的概率随机替换$A$中的元素(即：生成$[1,i]$间的随机数$j$,若$j \leq k$,则以$t$替换$A[j]$)</li>
+</ol>
+<p>性质</p>
+<ol>
+<li><p>该采样是均匀的<br>第$i$个数被第一次选中的概率是$\frac{k}{i}$，之后第$i+1$次中，第$i$个数依旧不会替换的概率是$(1- \frac{1}{i+1})$。依此类推，第$i$个数在第$n$个数到来后，依旧被保留在抽样中的概率是：</p>
+<script type="math/tex; mode=display">
+\frac{k}{i} \times (1- \frac{1}{i+1}) \times (1-\frac{1}{i+2}) \times \dots \times (1-\frac{1}{n}) = \frac{k}{n}</script><p>它和$i$是无关的，即每个数字无论到来的次序，被保留的概率均等，所以采样是均匀的。</p>
+</li>
+<li><p>空间复杂度$O(k)$</p>
+</li>
+</ol>
+<h2 id="平面图直径计算（时间亚线性算法）"><a href="#平面图直径计算（时间亚线性算法）" class="headerlink" title="平面图直径计算（时间亚线性算法）"></a>平面图直径计算（时间亚线性算法）</h2><p>输入：$m$个顶点的平面图，任意两点之间的距离存储在矩阵$D$中，即点到点的距离是$D_{ij}$</p>
+<ul>
+<li>输入大小是:<script type="math/tex; mode=display">n=m^2</script></li>
+<li>最大的$D_{ij}$是图的直径</li>
+<li>点之间的距离对称且满足三角不等式</li>
+</ul>
+<p>输出：图的直径和距离最大的$D_{ij}$<br>要求：运行时间为$o(n)$，不能遍历所有数据  </p>
+<p>无法在要求的时间内得到精确解，寻找近似算法</p>
+<p>近似算法：</p>
+<ol>
+<li>任意选择$k \leq m$</li>
+<li>选择使得$D_{kl}$最大的$l$</li>
+<li>输出$D_{kl}$和$(k,l)$</li>
+</ol>
+<p>该算法只访问了矩阵一行数据，显然不能精确计算结果，但是我们可以分析他的误差范围，假设$D_{ij}$是最优解，根据三角不等式：</p>
+<script type="math/tex; mode=display">
+D_{ij} \leq D_{ik} + D_{kj}</script><p>又因为$D_{kl}$在矩阵$k$行/列中最大，所以</p>
+<script type="math/tex; mode=display">
+D_{ij} \leq D_{ik} + D_{kj} \leq D_{kl} + D_{kl} = 2D_{kl}</script><p>即</p>
+<script type="math/tex; mode=display">
+D_{ij} \leq 2D_{kl}</script><p>因此<strong>近似比2</strong></p>
+<p>运行时间</p>
+<script type="math/tex; mode=display">O(m)=O(\sqrt{n})=o(n)</script><h3 id="近似算法"><a href="#近似算法" class="headerlink" title="近似算法"></a>近似算法</h3><ul>
+<li>什么是近似算法<ul>
+<li>近似算法是用来解决优化问题</li>
+<li>能够给出优化问题的一个<strong>近似优化</strong>解的算法</li>
+</ul>
+</li>
+<li>近似算法解的近似度<ul>
+<li>问题每一个可能的解都具有一个代价</li>
+<li>问题的优化解决可能具有最大或者最小代价</li>
+<li>我们希望寻找问题的一个误差最小的近似优化解</li>
+</ul>
+</li>
+<li>我们需要分析近似解代价和优化解代价的差距<ul>
+<li>Ratio Bound（近似比）</li>
+<li>相对误差</li>
+<li>$(1+\epsilon)$-近似</li>
+</ul>
+</li>
+</ul>
+<h4 id="Ratio-Bound"><a href="#Ratio-Bound" class="headerlink" title="Ratio Bound"></a>Ratio Bound</h4><p>设A是一个优化问题的近似算法，A具有Ratio Bound $p(n)$，如果</p>
+<script type="math/tex; mode=display">
+max \lbrace \frac{C}{C^*},\frac{C^*}{C} \rbrace \leq P(n)</script><p>其中$n$是输入大小，$C$是A产生的近似解的代价，$C^{\ast}$是最优化解的代价。取$max$是为了应对最大化和最小化问题，使得结果$Ratio \text{总是} \geq 1$，$Ratio$越小越好。</p>
+<ul>
+<li>最大化问题中，往往$C \leq C^{\ast}$，所以取$Ratio=\frac{C^{\ast}}{C}$</li>
+<li>最小化问题中，往往$C \geq C^{\ast}$，所以取$Ratio=\frac{C}{C^{\ast}}$</li>
+</ul>
+<h4 id="相对误差"><a href="#相对误差" class="headerlink" title="相对误差"></a>相对误差</h4><p>近似算法的<strong>相对误差</strong>定义为：</p>
+<script type="math/tex; mode=display">
+\frac{\vert C - C^{\ast} \vert}{C^{\ast}}</script><p><strong>相对误差界</strong>定义为：</p>
+<script type="math/tex; mode=display">
+\frac{\vert C - C^{\ast} \vert}{C^{\ast}} \leq \epsilon(n)</script><h2 id="全0数组判定（时间亚线性判定算法）"><a href="#全0数组判定（时间亚线性判定算法）" class="headerlink" title="全0数组判定（时间亚线性判定算法）"></a>全0数组判定（时间亚线性判定算法）</h2><p>输入：包含$n$个元素的0，1数组$A$<br>输出：$A$中的元素是否全是0<br>要求：运行时间为$o(n)$</p>
+<h3 id="判定问题的近似求解"><a href="#判定问题的近似求解" class="headerlink" title="判定问题的近似求解"></a>判定问题的近似求解</h3><ul>
+<li>输入<strong>满足</strong>某种性质或者<strong>远非满足</strong>此性质</li>
+</ul>
+<p>判定问题的近似解的定义：输入满足某种性质或者远非满足此性质</p>
+<h3 id="epsilon-远离"><a href="#epsilon-远离" class="headerlink" title="$\epsilon$-远离"></a>$\epsilon$-远离</h3><p>对于输入串$x$，如果从$x$到串的集合$L$中任意字符串的汉明距离至少为$\epsilon \vert x \vert$,则$x$是$\epsilon$-远离$L$的</p>
+<blockquote>
+<p>在信息理论中，Hamming Distance 表示两个<strong>等长</strong>字符串在对应位置上不同字符的数目</p>
+</blockquote>
+<h3 id="算法描述"><a href="#算法描述" class="headerlink" title="算法描述"></a>算法描述</h3><ol>
+<li>在$A$中随机独立抽取$s=\frac{2}{\epsilon}$个位置上的元素</li>
+<li>检查抽样，若不包含1则输出“是”，否则输出“否”</li>
+</ol>
+<h3 id="精确性分析"><a href="#精确性分析" class="headerlink" title="精确性分析"></a>精确性分析</h3><ul>
+<li>如果$A$是全0数组，始终输出“是”</li>
+<li>如果A是$\epsilon$-远离的，此时每位数为1的概率是$\epsilon$，不为1的概率是$1-\epsilon$。可以得到出错的概率小于$\frac{1}{3}$：<script type="math/tex; mode=display">
+{Pr[error]=Pr[抽样中没有1] \leq(1-\epsilon)^s\approx e^{-\epsilon s}=e^{-2}\leq \frac 1 3 }</script></li>
+</ul>
+<p>运行时间$O(s)$</p>
+<h3 id="证据引理"><a href="#证据引理" class="headerlink" title="证据引理"></a>证据引理</h3><p>如果一次测试以大于等于$p$的概率获得一个证据，那么$s=\frac{2}{p}$轮测试得到的证据概率大于等于$\frac{2}{3}$</p>
+<p>对于一个判定问题$L$，其查询复杂性$q(n)$和近似参数$\epsilon$的性质测试算法是一个随机算法，其满足对于给定$L$的是一个实例$x$，最多进行$q(\vert x \vert)$次查询，并满足下述性质：</p>
+<ul>
+<li>如果$x$在$L$中，该算法最少$\frac {2} {3}$的概率返回“是”</li>
+<li>如果$x$是$\epsilon$-远离L的，该算法以最少$\frac {2} {3}$的概率返回“否”</li>
+</ul>
+<h1 id="亚线性算法例析"><a href="#亚线性算法例析" class="headerlink" title="亚线性算法例析"></a>亚线性算法例析</h1><h2 id="数据流中频繁元素（空间亚线性）"><a href="#数据流中频繁元素（空间亚线性）" class="headerlink" title="数据流中频繁元素（空间亚线性）"></a>数据流中频繁元素（空间亚线性）</h2><h3 id="数据流模型"><a href="#数据流模型" class="headerlink" title="数据流模型"></a>数据流模型</h3><ul>
+<li>数据是流动的，只能顺序的扫描一次或几次，复杂度不超过$O(n)$，需要能快速处理新到来的元素</li>
+<li>数据可能是无限的，内存有限的。内存通常取$O(log^{k}n)$或$O(n^{\alpha}) \  \forall\alpha \lt 1$</li>
+<li>希望维护一个中间内存结果（概要）来给出相关性质的一个有效估计</li>
+<li>数据流模型适用于大数据（顺序扫描数据仅一次，内存亚线性）</li>
+</ul>
+<h3 id="数据流常见运算"><a href="#数据流常见运算" class="headerlink" title="数据流常见运算"></a>数据流常见运算</h3><p>常见的求数据流的$min$，$max$，$sum$通过比较大小和累加可以只借由一个寄存器$s$实现。此处的“概要”$s$是可以合并的：多个流放到不同的$s$里，最后可以通过比较$s$大小或求和合并。</p>
+<h3 id="频繁元素求解问题"><a href="#频繁元素求解问题" class="headerlink" title="频繁元素求解问题"></a>频繁元素求解问题</h3><p><strong>问题</strong>：给出一个序列$L = x_1,x_2,…$，求出现最多次的元素。令：</p>
+<ul>
+<li>$m$：数据流中元素个数</li>
+<li>$n$：不同元素数量</li>
+</ul>
+<p>频繁元素求解在搜索引擎优化问题中有广泛应用。求解该种问题基于一个假设：<br><strong>Zipf</strong>原则：典型的频率分布是高度倾斜的，只有少数元素是频繁元素。</p>
+<p><strong>精确解</strong>：每个元素设置计数器，处理每个元素时增加对应元素的计数器。当内存只能提供$k$个计数器，$k &lt;&lt; n$，问题就来了。 </p>
+<p><strong>近似算法(MG算法)</strong>：<br>Misra Gries算法：<br>处理每个收到的元素$x$：</p>
+<ul>
+<li>如果已经给$x$分配了计数器，增加计数</li>
+<li>如果没有给$x$分配计数器，但计数器个数小于$k$，为$x$分配计数器，并设为1</li>
+<li>否则，所有计数器减1，删除值为0的计数器</li>
+</ul>
+<p>为了防止计数器减少导致的频繁元素出现次数计数减少，计：</p>
+<ul>
+<li>整个结构的权重（计数器的和）记作$m^{\prime}$</li>
+<li>整个数据流的权重（全部元素的数量）是$m$</li>
+<li>每次计数器降低会减少$k$个计数，然后新输入元素此次出现，实际上少计入了$k+1$次元素，所以最多有$\frac{m-m^{\prime}}{k+1}$轮减少计数</li>
+</ul>
+<p>即：估计值与真实值差最多是$\frac{m-m^{\prime}}{k+1}$，当数据流中元素总数远大于$\frac{m-m^{\prime}}{k+1}$，得到一个好的估计。</p>
+<p>错误的界限和$k$成反比。计算时，可以记录$m$和$m^{\prime}$，然后估算出与真实值的误差。由于$zipf$原则，该算法长期有效。</p>
+<h2 id="最小生成树计数（时间亚线性的计算问题）"><a href="#最小生成树计数（时间亚线性的计算问题）" class="headerlink" title="最小生成树计数（时间亚线性的计算问题）"></a>最小生成树计数（时间亚线性的计算问题）</h2><p>一般的求最小生成树的算法（贪心算法）是复杂度为$mlog(n)$的prime和kruskal算法，而大数据业务中尽可能实现线性或亚线性算法。</p>
+<p><strong>输入</strong>：无向有权联通图$G=(V,E)$，其顶点的度最大为$D$，边上的权来自整数集合$\lbrace 1,2,\dots,w \rbrace$<br><strong>输出</strong>：图$G$的最小生成树的权重<br><img src="1.png" alt=""></p>
+<p>可以利用特定子图联通分量的数量估计最小生成树的权重。假设所有边权重都是1或2，最小生成树的权重可以表示为</p>
+<script type="math/tex; mode=display">
+\text{最小生成树的权重} = \sharp N_1+\sharp N_2</script><p>其中$\sharp N_i$是最小生成树中权重至少为$i$的的边的数量。因为最小生成树是连通图，$\sharp N_1$等于最小生成树边的数量，等于$n-1$，即：</p>
+<script type="math/tex; mode=display">
+\text{最小生成树的权重}=n-1+\sharp N_2</script><p>如果把权重为2的边都去掉，最小生成树会变成由权重为1的边构成的若干个连通分量（单个节点也算一个连通分量），即：</p>
+<script type="math/tex; mode=display">
+\text{最小生成树的权重} = n-1+\text{权重为1的边构成的导出子图的连通分量数}-1</script><p>对于一般情况：</p>
+<ul>
+<li>$G_i$：$G$中包含所有权重小于等于$i$的边的子图</li>
+<li>$C_i$：$G_i$中连通分量的个数</li>
+<li>最小生成树权重大于$i$的边数为$C_i-1$</li>
+</ul>
+<p>即：$\sharp_i$=最小生成树权重大于$i$的边数=图$G$中包含权重小于等于$i$的边的子图中的联通分量的个数-1</p>
+<p>因此，最小生成树（Minimal Spanning Tree）的权重（weight）应该是：</p>
+<script type="math/tex; mode=display">
+W_{MST}(G)=n-w+\Sigma_{i=1}^{w-1}C_i</script><p><strong>证明</strong>：<br>令$\beta<em>i$为MST中权重大于$i$的边的个数，显然：每一条MST的边对$W</em>{MST}$的贡献为1，每个权重为$i(i \gt 1)$的边额外贡献了$i-1$。即：</p>
+<script type="math/tex; mode=display">
+W_{MST} = \sum_{i=0}^{w-1} \beta_i = \sum_{i=0}^{w-1}(C_i-1) = -w + \sum_{i=0}^{w-1} c_i = n - w + \sum_{i=1}^{w-1} c_i</script><p>所以要近似计算$W_{MST}$，只需要估算$c_i$：</p>
+<h3 id="基础算法：联通分量个数的估计"><a href="#基础算法：联通分量个数的估计" class="headerlink" title="基础算法：联通分量个数的估计"></a>基础算法：联通分量个数的估计</h3><ul>
+<li><strong>输入</strong>：图$G=(V,E)$，有$n$个顶点，表示为邻接矩阵，节点最大度为$d$</li>
+<li><strong>输出</strong>：联通分量个数</li>
+<li>精确解时间复杂性：$\Omega(dn)$</li>
+</ul>
+<p>算法：利用随机化方法，估计联通分量个数$\sharp CC$</p>
+<ul>
+<li>$\sharp CC \pm \epsilon n$的概率$\ge \frac{2}{3}$</li>
+<li>运行时间和$n$无关  </li>
+</ul>
+<p>思路：</p>
+<ol>
+<li>设$C$为连通分量个数</li>
+<li>对于每个节点$u$，$n_u$表示$u$所在的连通分量节点数</li>
+<li>对于每个联通分量$A$，$\Sigma_{u \in A} \frac{1}{n_u} = 1$</li>
+<li>故对于整个图$V$，有：$\Sigma_{u \in V} \frac{1}{n_u} = C$</li>
+<li>通过估计抽样顶点的$n_u$来估计这个和$C$<ul>
+<li>如果$u$所在的联通分量很小，其规模可以通过BFS估计</li>
+<li>如果$u$所在的连通分量很大，$\frac{1}{n_u}$很小，对和$C$的贡献很小</li>
+<li>可以在几步内完成BFS</li>
+</ul>
+</li>
+<li>令$\hat n_u = min \lbrace n_u, \frac {2}{\epsilon} \rbrace$<ul>
+<li>当节点数$n_u$小于$\frac {2}{\epsilon}$，$\hat n_u = n_u$</li>
+<li>否则，$\hat n_u = \frac {2}{\epsilon}$，因此$0 \lt \frac {1}{\hat n_u} - \frac {1}{n_u} \lt \frac{1}{\hat n_u} = \frac{\epsilon}{2}$</li>
+</ul>
+</li>
+<li>在这种情况下，对$C$的估计<script type="math/tex; mode=display">
+C^{\prime} = \sum \frac {1} {\hat n_u}</script></li>
+<li>则$\vert C^{\prime} - C \vert = \vert \Sigma(\frac{1}{\hat n_u} - \frac{1}{n_u}) \vert \lt \frac {n \epsilon}{2}$</li>
+</ol>
+<p>估计联通分量个数的伪码：<br><img src="2.png" alt=""></p>
+<p>该算法循环$\frac{1}{\epsilon^2}$次，每次循环最多执行$\frac{2}{\epsilon}$次（做BFS），然后还是维护$L$的有序性，需要用到一个平衡二叉树来保持$L$。所以运行时间为$O(\frac{d}{\epsilon^3} log \frac {1}{\epsilon})$</p>
+<p>接下来分析抽样和遍历每个点精确求BFS的结果查大于$\frac{\epsilon n}{2}$概率是小于$\frac{1}{3}$的，即：</p>
+<script type="math/tex; mode=display">
+Pr[\vert \bar{C} - \hat C] \gt \frac {\epsilon n}{2}] \leq \frac{1}{3}</script><p>来说明估计值和真实值相差过大的概率很小。</p>
+<ul>
+<li>对于采样种的第$i$个节点$u$，令$Y_i = \frac {1} {\hat n_u}$</li>
+<li>$Y=\Sigma_{i=1}^s Y_i = \frac {s \bar{C}}{n}$</li>
+<li>$E[Y] = \Sigma<em>{i=1}^s E[Y_i] = sE[Y_1] = s \times \frac{1}{n} \Sigma</em>{u \in V} \frac{1}{\hat{n_v}} = \frac{s \hat C}{n}$</li>
+</ul>
+<script type="math/tex; mode=display">
+Pr[\vert \bar{C} - \hat C] \vert \gt \frac{\epsilon n}{2}] 
+= Pr[\vert \frac{n}{s} Y - \frac{n}{s} E[Y] \vert \gt \frac{\epsilon n}{2}] 
+= Pr[\vert Y - E[Y] \vert] \gt \frac{\epsilon s}{2}</script><p><strong>Hoeffding界</strong>：<br>$Y<em>1,Y_2\dots Y_s$为$[0,1]$区间内独立同分布的随机变量，令$Y=\Sigma</em>{i=1}^{s} Y_i$，则$Pr[\vert Y - E[Y] \vert \geq \delta] \leq 2e^{\frac {-2\delta^{2}}{s}}$</p>
+<script type="math/tex; mode=display">
+Pr[\vert \bar{C} - \hat C] \vert \gt \frac{\epsilon n}{2}] = Pr[\vert Y - E[Y]] \gt \frac{\epsilon s}{2}] \leq 2e^{-\frac{\epsilon^2 s}{2}}</script><script type="math/tex; mode=display">
+s = \theta(\frac{1}{\epsilon^2}) \Rightarrow Pr[\vert \bar{C} - \hat C] \vert \gt \frac{\epsilon n}{2}] \leq \frac{1}{3}</script><script type="math/tex; mode=display">Pr[\vert \bar{C} - \hat C] \vert \gt \frac{\epsilon n}{2}] \leq \frac{1}{3}</script><script type="math/tex; mode=display">
+\vert \bar{C} - C \vert \leq \frac{\epsilon n}{2}</script><p>因此，下列事件发生的概率大于$\frac {2}{3}$:</p>
+<script type="math/tex; mode=display">
+\vert \bar{C} - C \vert \leq \bar{C} - \hat C \vert + \vert \hat C - C \vert \leq \frac {\epsilon n}{2} + \frac {\epsilon n}{2} = \epsilon n</script><p>综上所述，有$n$个顶点的图中，若其顶点的度至多为$d$，则其连通分量的估计误差最多为$\pm \epsilon n$</p>
+<p><img src="3.png" alt=""></p>
+<p>分析：</p>
+<ul>
+<li>假设$C_i$的估计都是正确的，$\vert \bar{C_i} - C_i \vert \leq \frac{\epsilon}{w} n$，则<script type="math/tex; mode=display">
+\vert \hat w_{MST} - w_{MST} \vert = \vert \Sigma_{i=1}^{w-1}(\bar{C_i} - C_i) \vert \leq \Sigma_{i=1}^{w-1} \vert \bar{C_i} - C_i \vert \leq w \frac{\epsilon}{w} n = \epsilon n</script><ul>
+<li>$Pr[所有w-次估计都正确] \geq (\frac{2}{3})^{w-1}$</li>
+<li>这还不够好，可以通过CC算法，取合适的$s$值，使每一轮的错误概率$\leq \frac{1}{3w}$，应当取多少</li>
+</ul>
+</li>
+</ul>
+<p><strong>乘近似</strong>：  </p>
+<ul>
+<li>对于MST的代价，可以从加的近似导出乘法的近似<script type="math/tex; mode=display">
+W_{MST} \geq n-1 \Rightarrow w_{MST} \geq \frac{n}{2} (n \geq 2)</script></li>
+<li>$\epsilon n$加近似<script type="math/tex; mode=display">
+w_{MST} - \epsilon n \leq \hat w_{MST} \leq w_{MST} + \epsilon n</script></li>
+<li>$(1 \pm 2\epsilon)$乘近似<script type="math/tex; mode=display">
+w_{MST}(1-2\epsilon) \leq w_{MST} - \epsilon n \leq \hat w_{MST} \leq w_{MST} + \epsilon n \leq w_{MST}(1+2\epsilon)</script></li>
+</ul>
+<h2 id="序列有序的判定（时间亚线性算法的判定问题）"><a href="#序列有序的判定（时间亚线性算法的判定问题）" class="headerlink" title="序列有序的判定（时间亚线性算法的判定问题）"></a>序列有序的判定（时间亚线性算法的判定问题）</h2><p><strong>输入</strong>：$n$个数的数组，$x_1,x_2,\dots,x_n$<br><strong>输出</strong>：这个数组是否有序?</p>
+<p>常规算法需要访问$n$个数，时间复杂度$\Omega(n)$</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/" rel="tag"># 大数据</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/15/MySQL%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5%E7%9A%84%E5%B8%B8%E7%94%A8%E6%96%B9%E5%BC%8F/" rel="prev" title="MySQL数据导入的常用方式">
+      <i class="fa fa-chevron-left"></i> MySQL数据导入的常用方式
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/18/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%882%EF%BC%89%E5%A4%96%E5%AD%98%E7%AE%97%E6%B3%95/" rel="next" title="大数据算法（2）外存算法">
+      大数据算法（2）外存算法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">大数据算法概述</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E6%95%B0%E6%8D%AE4%E4%B8%AAV"><span class="nav-number">1.1.</span> <span class="nav-text">大数据4个V</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E6%95%B0%E6%8D%AE%E4%B8%8A%E9%97%AE%E9%A2%98%E6%B1%82%E8%A7%A3%E8%AE%A1%E7%AE%97%E9%97%AE%E9%A2%98%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">大数据上问题求解计算问题的过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%E5%AE%9A%E4%B9%89"><span class="nav-number">1.3.</span> <span class="nav-text">大数据算法定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1%E9%9A%BE%E5%BA%A6"><span class="nav-number">1.4.</span> <span class="nav-text">大数据算法设计难度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1%E6%8A%80%E6%9C%AF"><span class="nav-number">1.5.</span> <span class="nav-text">大数据算法设计技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90"><span class="nav-number">1.6.</span> <span class="nav-text">大数据算法分析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">亚线性算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B0%B4%E5%BA%93%E6%8A%BD%E6%A0%B7%EF%BC%88%E7%A9%BA%E9%97%B4%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95%EF%BC%89"><span class="nav-number">2.1.</span> <span class="nav-text">水库抽样（空间亚线性算法）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B3%E9%9D%A2%E5%9B%BE%E7%9B%B4%E5%BE%84%E8%AE%A1%E7%AE%97%EF%BC%88%E6%97%B6%E9%97%B4%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95%EF%BC%89"><span class="nav-number">2.2.</span> <span class="nav-text">平面图直径计算（时间亚线性算法）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%91%E4%BC%BC%E7%AE%97%E6%B3%95"><span class="nav-number">2.2.1.</span> <span class="nav-text">近似算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Ratio-Bound"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">Ratio Bound</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%B8%E5%AF%B9%E8%AF%AF%E5%B7%AE"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">相对误差</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A80%E6%95%B0%E7%BB%84%E5%88%A4%E5%AE%9A%EF%BC%88%E6%97%B6%E9%97%B4%E4%BA%9A%E7%BA%BF%E6%80%A7%E5%88%A4%E5%AE%9A%E7%AE%97%E6%B3%95%EF%BC%89"><span class="nav-number">2.3.</span> <span class="nav-text">全0数组判定（时间亚线性判定算法）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A4%E5%AE%9A%E9%97%AE%E9%A2%98%E7%9A%84%E8%BF%91%E4%BC%BC%E6%B1%82%E8%A7%A3"><span class="nav-number">2.3.1.</span> <span class="nav-text">判定问题的近似求解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#epsilon-%E8%BF%9C%E7%A6%BB"><span class="nav-number">2.3.2.</span> <span class="nav-text">$\epsilon$-远离</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%8F%8F%E8%BF%B0"><span class="nav-number">2.3.3.</span> <span class="nav-text">算法描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B2%BE%E7%A1%AE%E6%80%A7%E5%88%86%E6%9E%90"><span class="nav-number">2.3.4.</span> <span class="nav-text">精确性分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%81%E6%8D%AE%E5%BC%95%E7%90%86"><span class="nav-number">2.3.5.</span> <span class="nav-text">证据引理</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95%E4%BE%8B%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">亚线性算法例析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%B5%81%E4%B8%AD%E9%A2%91%E7%B9%81%E5%85%83%E7%B4%A0%EF%BC%88%E7%A9%BA%E9%97%B4%E4%BA%9A%E7%BA%BF%E6%80%A7%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">数据流中频繁元素（空间亚线性）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%B5%81%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.1.1.</span> <span class="nav-text">数据流模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%B5%81%E5%B8%B8%E8%A7%81%E8%BF%90%E7%AE%97"><span class="nav-number">3.1.2.</span> <span class="nav-text">数据流常见运算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%91%E7%B9%81%E5%85%83%E7%B4%A0%E6%B1%82%E8%A7%A3%E9%97%AE%E9%A2%98"><span class="nav-number">3.1.3.</span> <span class="nav-text">频繁元素求解问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91%E8%AE%A1%E6%95%B0%EF%BC%88%E6%97%B6%E9%97%B4%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%9A%84%E8%AE%A1%E7%AE%97%E9%97%AE%E9%A2%98%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">最小生成树计数（时间亚线性的计算问题）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95%EF%BC%9A%E8%81%94%E9%80%9A%E5%88%86%E9%87%8F%E4%B8%AA%E6%95%B0%E7%9A%84%E4%BC%B0%E8%AE%A1"><span class="nav-number">3.2.1.</span> <span class="nav-text">基础算法：联通分量个数的估计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E6%9C%89%E5%BA%8F%E7%9A%84%E5%88%A4%E5%AE%9A%EF%BC%88%E6%97%B6%E9%97%B4%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95%E7%9A%84%E5%88%A4%E5%AE%9A%E9%97%AE%E9%A2%98%EF%BC%89"><span class="nav-number">3.3.</span> <span class="nav-text">序列有序的判定（时间亚线性算法的判定问题）</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2021/03/17/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%881%EF%BC%89%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95/";
+    this.page.identifier = "2021/03/17/大数据算法（1）亚线性算法/";
+    this.page.title = "大数据算法（1）亚线性算法";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="研究大牛的作品是接近大牛的必要步骤——膜Linus Torvalds  版本控制的发展历史创建一个README.md文件，写入两行文字:Git is a distributed, open source version control system.You can install git on Linux using binary release.我们将它作为这个文件的第一个版本，之后有一天，我">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Git的发展历史">
+<meta property="og:url" content="http://xuranus.github.io/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Git%E5%BF%AB%E7%85%A7%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="研究大牛的作品是接近大牛的必要步骤——膜Linus Torvalds  版本控制的发展历史创建一个README.md文件，写入两行文字:Git is a distributed, open source version control system.You can install git on Linux using binary release.我们将它作为这个文件的第一个版本，之后有一天，我">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Git%E5%BF%AB%E7%85%A7%E6%9C%BA%E5%88%B6/cvs.png">
+<meta property="og:image" content="http://xuranus.github.io/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Git%E5%BF%AB%E7%85%A7%E6%9C%BA%E5%88%B6/git1.png">
+<meta property="article:published_time" content="2022-07-03T21:35:21.000Z">
+<meta property="article:modified_time" content="2022-07-10T13:42:33.959Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="Git">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Git%E5%BF%AB%E7%85%A7%E6%9C%BA%E5%88%B6/cvs.png">
+
+<link rel="canonical" href="http://xuranus.github.io/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Git%E5%BF%AB%E7%85%A7%E6%9C%BA%E5%88%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>深入理解Git的发展历史 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Git%E5%BF%AB%E7%85%A7%E6%9C%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入理解Git的发展历史
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-07-03 21:35:21" itemprop="dateCreated datePublished" datetime="2022-07-03T21:35:21Z">2022-07-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-07-10 13:42:33" itemprop="dateModified" datetime="2022-07-10T13:42:33Z">2022-07-10</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Git%E5%BF%AB%E7%85%A7%E6%9C%BA%E5%88%B6/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/04/深入理解Git快照机制/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>研究大牛的作品是接近大牛的必要步骤——膜Linus Torvalds</p>
+</blockquote>
+<h2 id="版本控制的发展历史"><a href="#版本控制的发展历史" class="headerlink" title="版本控制的发展历史"></a>版本控制的发展历史</h2><p>创建一个<code>README.md</code>文件，写入两行文字:<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Git is a distributed, open source version control system.</span><br><span class="line">You can install git on Linux using binary release.</span><br></pre></td></tr></table></figure><br>我们将它作为这个文件的第一个版本，之后有一天，我想再对它做一点修改：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Git is a distributed, open source version control system.</span><br><span class="line">You can install git on Linux, Windows using binary release.</span><br><span class="line">Or you can compile from source code.</span><br></pre></td></tr></table></figure><br>在版本控制系统还没有出现之前，人们总是用不同的文件名来区分不同的文件版本。如果想未来能回滚到之前的版本，此时只能用<code>README_2.md</code>来去分它。随着版本越来越多，文件名越来越长，管理大量版本的文件成为了噩梦。</p>
+<span id="more"></span>
+<p>1991-2002之间，即使CVS工具已经出现，但Linus一直使用<code>diff</code>和<code>patch</code>管理源码。<code>diff</code>和<code>patch</code>是对源码版本控制的两个最基本的概念。如今依然可以在Linux上直接使用这两个命令。<code>diff</code>是一个对比目录和文本文件差异的工具，在Linux上使用<code>diff -u README.md README_2.md</code>可以看到如下输出：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--- README.md   2022-07-10 15:56:19.638578324 +0800</span><br><span class="line">+++ README_2.md 2022-07-10 15:58:49.333566672 +0800</span><br><span class="line">@@ -1,2 +1,3 @@</span><br><span class="line"> Git is a distributed, open source version control system.</span><br><span class="line">-You can install git on Linux using binary release.</span><br><span class="line">+You can install git on Linux, Windows using binary release.</span><br><span class="line">+Or you can compile from source code.</span><br></pre></td></tr></table></figure><br>输出中详细说明了两个文件修改时间的差异，内容的差异。<code>README.md</code>相比<code>README_2.md</code>修改了一行，新增了一行，此时不难发现<code>diff</code>输出中包含了两个版本之间切换的充分信息。<code>patch</code>是一个文件版本修改工具，<code>patch</code>可以将一个旧版本的文件依据一个diff文件修改成新一个版本的，也可以将一个新版本的文件恢复到旧版本。将刚才的<code>diff</code>输出保存成文件<code>diff.txt</code>：<code>diff -u README.md READMD_2.md &gt; diff.txt</code>，然后使用<code>patch README.md diff.txt</code>就可以将<code>READMD.md</code>修改成新版本，而用<code>patch -R READMD_2.md diff.txt</code>就可以将新版本的<code>README_2.md</code>切换成老版本。</p>
+<pre class="mermaid">flowchart LR
+  v1(README.md) ---->| patch README.md diff.txt| v2(README_2.md)
+  v2 ---->| patch -R README_2.md diff.txt| v1
+  subgraph R [version 2]
+    v2
+  end
+  subgraph L [version 1]
+    v1
+  end</pre>
+
+<p>最早的版本控制工具RCS(Revision Control System)就是基于<code>diff</code>和<code>patch</code>实现了版本管理。通过在<strong>本地</strong>管理各个版本的diff文件，对外提供一套版本控制接口从而实现版本控制。</p>
+<pre class="mermaid">flowchart LR
+  subgraph computer [diff files]
+    v1(version 1)
+    v1 --> v2(version 2)
+    v2 --> v3(version 3)
+  end
+  file(File) --> v1</pre>
+
+<p>CVS(Concurrent Versions System)于1985年诞生，是第一个被大规模应用的<strong>集中式</strong>版本控制工具，CVS使得多人协作开发成为可能。但CVS不支持原子化的提交，多人同时提交时可能会出现数据不完整的问题，于是SVN(Subversion)诞生了，它可以看作是改进版的SVN，实现了原子化的提交并优化了性能。但SVN还是集中式的版本控制工具，由于集中式的版本控制工具提交代码需要用到网络传输，导致延迟很大，提交需要排队；其次，集中式的存储导致服务器容易因为单点故障和黑客攻击丢失数据。</p>
+<pre class="mermaid">flowchart LR
+  Host1 --network--> Server
+  Host2 --network--> Server
+  Host3 --network--> Server
+subgraph Host1 [Host1]
+  F1(File)
+end
+subgraph Host2 [Host2]
+  F2(File)
+end
+subgraph Host3 [Host3]
+  F3(File)
+end
+subgraph Server [Remote Server]
+  ServerRepo
+end
+subgraph ServerRepo [Version Control Repo]
+  v1(version 1) --> v2(version 2)
+  v2 --> v3(version 3)
+  v3 --> v4(version 4)
+end</pre>
+
+<p>Linus坚定的反对使用集中式的版本控制工具，选择使用商业版的分布式版本控制工具BitKeeper，并于2005年开发<strong>分布式</strong>的版本控制工具Git，之后就一直使用Git来管理Linux源码。Git在每台设备上都有一个本地仓库，所以提交代码不涉及网络传输，只有将代码同步到服务器上才需要网络传输。由于分布式的设计，每台设备都可以作为服务器，有效的避免了单点故障和黑客攻击带来的数据损失。</p>
+<pre class="mermaid">flowchart LR
+subgraph Local2 [Host2]
+  LocalRepo2
+end
+subgraph LocalRepo2 [Local Git Repo]
+  l2v1(version 1) --> l2v2(version 2)
+  l2v2 --> l2v3(version 3)
+end
+subgraph Server [Remote Git Server]
+  ServerRepo
+end
+subgraph ServerRepo [Git Repo]
+  v1(version 1) --> v2(version 2)
+  v2 --> v3(version 3)
+end
+subgraph Local1 [Host1]
+  LocalRepo1
+end
+subgraph LocalRepo1 [Local Git Repo]
+  l1v1(version 1) --> l1v2(version 2)
+  l1v2 --> l1v3(version 3)
+end
+
+Local1 <--> Server
+Local1 <----> Local2
+Local2 <----> Server</pre>
+
+
+<h2 id="Git快照机制"><a href="#Git快照机制" class="headerlink" title="Git快照机制"></a>Git快照机制</h2><p>Git最大的特点就是快，除了得益于分布式的设计（本地代码仓），还得益于它独特的<strong>快照机制</strong>。<strong>分布式版本控制工具和集中式版本控制工具最主要的区别就是其对待数据的方式。</strong></p>
+<p>CVS、SVN等工具将文件的版本看作文件相对于原始版本的累计差异，存储版本也是存储原始版本文件已经各个版本的文件变更列表。</p>
+<p><img src="cvs.png" alt=""></p>
+<p>这种实现方式存在的问题就是，后续版本的信息依赖之前所有版本的信息，如果丢失一个版本的信息，后续的版本数据都会失效。获取某个版本的数据需要从第一个版本叠加计算之后的变更信息，所以性能较差。</p>
+<p><img src="git1.png" alt=""><br>Git则是记录和组装一系列快照流的微型系统，只关心文件数据的整体是否发生变化，而不是具体的文件内容。每次commit的时候保存一次快照，而每个快照都包含了<strong>完整</strong>的数据。相比与计算文件变更的叠加结果，创建快照和读取快照都是可以一瞬间完成，这就是为什么Git的性能如此之强的原因。</p>
+<p>关于文件快照的原理我将在另一篇博客中再做详细说明：<a href="/2022/07/10/深入理解文件快照">深入理解文件快照</a></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.baidu.com/link?url=9ySRiVFk6cGZ7rRgaa5KzKLb2XjdVCwqbMB6tSVpiiHvghlNzd9nqkWReEic8Uxk1cjS3T8sRCjh5g2JhT3RuZ9vls5MmNN9Cmbz9seZGgi&amp;wd=&amp;eqid=8276908800031d630000000662ca9c0c">Git快照原理</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/27680108/answer/2300327037">如何理解git的快照？</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_40085040/article/details/109061495">浅谈对“快照“的理解 — 深入Git第一篇</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Git/" rel="tag"># Git</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3C-%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/" rel="prev" title="深入理解C++ 智能指针">
+      <i class="fa fa-chevron-left"></i> 深入理解C++ 智能指针
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/07/04/C-%E5%B8%B8%E7%94%A8STL%E6%8A%80%E5%B7%A7/" rel="next" title="C++常用STL技巧">
+      C++常用STL技巧 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E7%9A%84%E5%8F%91%E5%B1%95%E5%8E%86%E5%8F%B2"><span class="nav-number">1.</span> <span class="nav-text">版本控制的发展历史</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Git%E5%BF%AB%E7%85%A7%E6%9C%BA%E5%88%B6"><span class="nav-number">2.</span> <span class="nav-text">Git快照机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Git%E5%BF%AB%E7%85%A7%E6%9C%BA%E5%88%B6/";
+    this.page.identifier = "2022/07/04/深入理解Git快照机制/";
+    this.page.title = "深入理解Git的发展历史";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

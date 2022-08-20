@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="ggplot2是R语言中比较新的一个包，核心理念是将绘图与数据分离，数据相关的绘图与数据无关的绘图分离，按图层作图，保有命令式作图的调整函数，使其更具灵活性，将常见的统计变换融入到了绘图中  安装与使用install.packages(&quot;ggplot2&quot;)library(ggplot2) qplot入门数据集选取：diamonds 例：钻石价格和重量的关系qplot(cara">
+<meta property="og:type" content="article">
+<meta property="og:title" content="R语言学习（五）ggplot2">
+<meta property="og:url" content="http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="ggplot2是R语言中比较新的一个包，核心理念是将绘图与数据分离，数据相关的绘图与数据无关的绘图分离，按图层作图，保有命令式作图的调整函数，使其更具灵活性，将常见的统计变换融入到了绘图中  安装与使用install.packages(&quot;ggplot2&quot;)library(ggplot2) qplot入门数据集选取：diamonds 例：钻石价格和重量的关系qplot(cara">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/Screenshot_20181030_210932.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/Screenshot_20181030_211435.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/Screenshot_20181030_212340.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/Screenshot_20181030_212633.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/Screenshot_20181030_214055.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/Screenshot_20181030_215301.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/Screenshot_20181030_222230.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/Screenshot_20181030_222518.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/Screenshot_20181030_225421.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/Screenshot_20181030_225524.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/Screenshot_20181031_155121.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/Screenshot_20181031_155325.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/Screenshot_20181031_191747.png">
+<meta property="og:image" content="http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/Screenshot_20181031_193230.png">
+<meta property="article:published_time" content="2018-10-30T21:00:33.000Z">
+<meta property="article:modified_time" content="2021-09-05T12:51:13.902Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="R语言">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/Screenshot_20181030_210932.png">
+
+<link rel="canonical" href="http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>R语言学习（五）ggplot2 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          R语言学习（五）ggplot2
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-10-30 21:00:33" itemprop="dateCreated datePublished" datetime="2018-10-30T21:00:33Z">2018-10-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">R语言学习</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/10/31/R语言学习（五）ggplot/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>7.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>ggplot2是R语言中比较新的一个包，核心理念是将绘图与数据分离，数据相关的绘图与数据无关的绘图分离，按图层作图，保有命令式作图的调整函数，使其更具灵活性，将常见的统计变换融入到了绘图中</p>
+</blockquote>
+<h2 id="安装与使用"><a href="#安装与使用" class="headerlink" title="安装与使用"></a>安装与使用</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;ggplot2&quot;)</span><br><span class="line">library(ggplot2)</span><br></pre></td></tr></table></figure>
+<h2 id="qplot入门"><a href="#qplot入门" class="headerlink" title="qplot入门"></a>qplot入门</h2><p>数据集选取：diamonds</p>
+<p>例：钻石价格和重量的关系<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">qplot(carat, price, data = diamonds)</span><br><span class="line">qplot(log(carat), log(price), data = diamonds) #曲线性</span><br></pre></td></tr></table></figure></p>
+<span id="more"></span>
+<h3 id="颜色，大小，形状属性"><a href="#颜色，大小，形状属性" class="headerlink" title="颜色，大小，形状属性"></a>颜色，大小，形状属性</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">qplot(carat, price, data = dsmall, colour = color)</span><br><span class="line">qplot(carat, price, data = dsmall, shape = cut)</span><br></pre></td></tr></table></figure>
+<p><img src="Screenshot_20181030_210932.png" alt="Screenshot_20181030_210932.png"></p>
+<p>alpha用来创建半透明的颜色，其取值从0（完全透明）到1（完全不透明）<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">qplot(carat, price, data = diamonds, alpha = I(1/10))</span><br><span class="line">qplot(carat, price, data = diamonds, alpha = I(1/100))</span><br><span class="line">qplot(carat, price, data = diamonds, alpha = I(1/200))</span><br></pre></td></tr></table></figure><br><img src="Screenshot_20181030_211435.png" alt="Screenshot_20181030_211435.png"></p>
+<h3 id="几何对象geom"><a href="#几何对象geom" class="headerlink" title="几何对象geom"></a>几何对象geom</h3><p>通过设置几何对象，qplot几乎可以画出任何一种图形</p>
+<ul>
+<li>geom = “point” 散点图（默认选项）</li>
+<li>geom = “smooth” 拟合平滑曲线</li>
+<li>geom = “boxplot” 箱线图</li>
+<li>geom = “path” 或 geom = “line” 数据点间绘制连线</li>
+</ul>
+<p>对于一维的分布，geom的选择由变量类型指定</p>
+<ul>
+<li>连续变量<ul>
+<li>geom = “histogram” 直方图（一维数据默认选项）</li>
+<li>geom = “freqpoly” 频率多边形</li>
+<li>geom = “density” 密度曲线</li>
+</ul>
+</li>
+<li>离散变量<ul>
+<li>geom = “bar” 条形图</li>
+</ul>
+</li>
+</ul>
+<p>如果在散点图中有非常多的数据点，那么数据展示的趋势可能并不明显。在这种情况下应该在图中添加一条平滑曲线。利用c()将多个几何对象组成一个向量传递给geom。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">qplot(carat, price, data = dsmall, geom = c(&quot;point&quot;,&quot;smooth&quot;)) #采样数据集</span><br><span class="line">qplot(carat, price, data = diamonds, geom = c(&quot;point&quot;,&quot;smooth&quot;)) #完整数据集</span><br></pre></td></tr></table></figure><br><img src="Screenshot_20181030_212340.png" alt="Screenshot_20181030_212340.png"></p>
+<p>箱线图和扰动图<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">qplot(color, price / carat, data = diamonds, geom = &quot;jitter&quot;) #扰动点图</span><br><span class="line">qplot(color, price / carat, data = diamonds, geom = &quot;boxplot&quot;) #箱线图</span><br></pre></td></tr></table></figure><br><img src="Screenshot_20181030_212633.png" alt="Screenshot_20181030_212633.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">qplot(carat, data = diamonds, geom = &quot;histogram&quot;) #直方图</span><br><span class="line">qplot(carat, data = diamonds, geom = &quot;density&quot;) #密度曲线</span><br></pre></td></tr></table></figure>
+<p><img src="Screenshot_20181030_214055.png" alt="Screenshot_20181030_214055.png"></p>
+<ul>
+<li>对于密度曲线图，adjust参数控制曲线平滑程度（取值越大越平滑）。</li>
+<li>对于直方图，通过binwidth参数设定组距来调节平滑度。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">qplot(carat, data = diamonds, geom = &quot;histogram&quot;,binwidth = 1, xlim = c(0,3)) #横坐标只显示0到3</span><br><span class="line">qplot(carat, data = diamonds, geom = &quot;histogram&quot;,binwidth = 0.1, xlim = c(0,3))</span><br><span class="line">qplot(carat, data = diamonds, geom = &quot;histogram&quot;,binwidth = 0.01, xlim = c(0,3))</span><br></pre></td></tr></table></figure>
+<p><img src="Screenshot_20181030_215301.png" alt="Screenshot_20181030_215301.png"></p>
+<p>要在不同分组之间对分布进行对比，只需再加上一个图形映射（aesthetic mapping）<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">qplot(carat, data = diamonds, geom = &quot;density&quot;,colour = color)</span><br><span class="line">qplot(carat, data = diamonds, geom =&quot;histogram&quot;, fill = color)</span><br></pre></td></tr></table></figure><br><img src="Screenshot_20181030_222230.png" alt="Screenshot_20181030_222230.png"></p>
+<p>如果数据已经进行了汇总，或者想用其他方式对数据进行分组处理，那么可以使用weight几何对象。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">qplot(color, data = diamonds, geom = &quot;bar&quot;) #下例是按重量加权的条形图；纵坐标改为crart</span><br><span class="line">qplot(color, data = diamonds, geom = &quot;bar&quot;,weight = carat) + scale_y_continuous(&quot;carat&quot;)</span><br></pre></td></tr></table></figure><br><img src="Screenshot_20181030_222518.png" alt="Screenshot_20181030_222518.png"></p>
+<p>线条图和路径图常用于可视化时间序列数据。</p>
+<ul>
+<li>线条图的x轴一般是时间，它展示了单个变量随时间变化的情况。<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">qplot(date, unemploy / pop, data = economics,geom = &quot;line&quot;) #失业比例</span><br><span class="line">qplot(date, uempmed, data = economics, geom = &quot;line&quot;) #失业时间（星期数）中位数</span><br></pre></td></tr></table></figure>
+<img src="Screenshot_20181030_225421.png" alt="Screenshot_20181030_225421.png"></li>
+<li>路径图展示了两个变量随时间联动的情况，时间反映在点的顺序上。<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">year &lt;- function(x) as.POSIXlt(x)$year + 1900</span><br><span class="line">qplot(unemploy / pop, uempmed, data = economics, geom = &quot;path&quot;, colour = year(date))</span><br></pre></td></tr></table></figure>
+<img src="Screenshot_20181030_225524.png" alt="Screenshot_20181030_225524.png"></li>
+</ul>
+<h3 id="分面"><a href="#分面" class="headerlink" title="分面"></a>分面</h3><p>除了利用颜色和形状来比较不同分组，还可以用分面：将数据分割成若干子集，然<br>后创建一个图形的矩阵。</p>
+<p><code>qplot()</code>默认的分面方法是拆分成若干个窗格，通过形如<code>facets = row-var ~ col_var</code>的表达式进行指定。如果只想指定一行或一列，可以使用<code>.</code>作为占位符，例<code>row-var ~ .</code>会创建一个单列多行的图形矩阵。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#针对属性color，创建单列多行分面</span><br><span class="line">qplot(carat, data = diamonds, facets = color ~ .,geom = &quot;histogram&quot;, binwidth = 0.1, xlim = c(0, 3))</span><br><span class="line"></span><br><span class="line">#..density..表示将密度（density: p就roportions of the whole）而不是频数映射到y轴。使用密度可以使得比较不同组的分布时不会受该组样本量大小的影响。</span><br><span class="line">qplot(carat, ..density.., data = diamonds, facets = color ~ ., geom = &quot;histogram&quot;, binwidth = 0.1, xlim = c(0, 3))</span><br></pre></td></tr></table></figure>
+<h3 id="其他选项"><a href="#其他选项" class="headerlink" title="其他选项"></a>其他选项</h3><ul>
+<li>xlim, ylim：设置x轴和y轴的显示区间，例如，xlim=c(0, 20) 和 ylim=c(-0.9,-0.5)</li>
+<li>log：log=”x” 表示对x轴取对数；log=”xy”表示对x轴和y轴都取对数。</li>
+<li>main：图形主标题。可以是字符串也可以是数学表达式。</li>
+<li>xlab, ylab：设置x和y轴的标签文字，可以是字符串或数学表达式。</li>
+</ul>
+<h2 id="图层语法"><a href="#图层语法" class="headerlink" title="图层语法"></a>图层语法</h2><p>散点图中，每个观测的数据都用一个点来表示。每个点的属性有横坐标、纵坐标、大小、颜色、形状，这些属性称之为图形属性（aesthetics，直译为“美学”）</p>
+<p>图层语法（layered grammar)将一张图定义为以下组件的组合：</p>
+<ul>
+<li>一个默认数据集和一组从变量到图形属性（aesthetics）的映射。</li>
+<li>一个或多个图层。每个图层都由一个几何对象、一个统计转换、一个位置调整，以及一个可选的从变量到图形属性的映射。</li>
+<li>一个标度：每个图形属性映射都对应一个标度。</li>
+<li>一个坐标系统。</li>
+<li><p>分面设定。</p>
+</li>
+<li><p>从数据单位（如英里每加仑、汽缸数）转换成电脑可以识别的物理单位（如像素和颜色），这个转换过程称之为标度变换（scaling）。</p>
+</li>
+<li>根据点的位置（x和y）来确定它在图中的位置，是由坐标系统决定的，被称作coord。</li>
+</ul>
+<h3 id="增加组件"><a href="#增加组件" class="headerlink" title="增加组件"></a>增加组件</h3><p>增加组件的例子：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">qplot(displ, hwy, data=mpg, facets = . ~ year) + geom_smooth()</span><br></pre></td></tr></table></figure><br>先分面，再添加一个平滑曲线</p>
+<h3 id="图层"><a href="#图层" class="headerlink" title="图层"></a>图层</h3><p>图层的作用是在图上生成我们能理解的对象。<br>一个图层由四部分组成：</p>
+<ul>
+<li>数据和图形属性的映射</li>
+<li>统计转换</li>
+<li>一种几何对象</li>
+<li>一个位置调整（即一种位置调整的方式）</li>
+</ul>
+<h3 id="标度"><a href="#标度" class="headerlink" title="标度"></a>标度</h3><ul>
+<li>标度控制数据到图形属性的映射。图上每一个图形属性都对应着一个标度。</li>
+<li>每个标度都作用于图中所有的数据，以确保数据到图形属性映射的一致性。</li>
+<li>图为四种不同scales的图例。<br><img src="Screenshot_20181031_155121.png" alt="Screenshot_20181031_155121.png"><br>一个标度就是含有一组参数的函数。其逆函数被用来绘制参照对象，通过参照对象你才能读出图中的隐含信息。参照对象可以是坐标轴（位置标度），或者是图例</li>
+</ul>
+<h3 id="坐标系"><a href="#坐标系" class="headerlink" title="坐标系"></a>坐标系</h3><p>坐标系（coordinate system）简称为coord，用于将对象的位置映射到图形的平面上。</p>
+<ul>
+<li>位置通常由两个坐标(x,y)决定，三维及以上尚未在ggplot2中实现。</li>
+<li>笛卡尔坐标系是最常用的二维坐标系，极坐标系和地图投影用的相对较少。<br><img src="Screenshot_20181031_155325.png" alt="Screenshot_20181031_155325.png"></li>
+</ul>
+<h3 id="绘图方式"><a href="#绘图方式" class="headerlink" title="绘图方式"></a>绘图方式</h3><p>绘图有两种方式</p>
+<ul>
+<li>一步到位式：利用<code>qplot()</code></li>
+<li><p>利用<code>ggplot()</code>函数和图层函数逐步作图。</p>
+<ul>
+<li><code>print()</code> 将图形呈现到屏幕上。</li>
+<li><code>ggsave()</code> 将图形保存在磁盘上。</li>
+<li><code>summary()</code> 简单查看图形的结构。</li>
+<li>首先给出图形的默认设置，然后给出每个图层的信息。</li>
+<li><p><code>save()</code> 把图形的缓存副本（一个图形对象的完整副本）保存到磁盘，稍后可用<code>load()</code>来重现该图。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">p &lt;- qplot(displ, hwy, data = mpg, colour = factor(cyl))</span><br><span class="line">summary(p) # Save plot object to disk</span><br><span class="line">save(p, file = &quot;plot.rdata&quot;)</span><br><span class="line">rm(p) #删除p</span><br><span class="line"># Load from disk</span><br><span class="line">load(&quot;plot.rdata&quot;)</span><br><span class="line">print(p)</span><br><span class="line"># Save png to disk</span><br><span class="line">ggsave(&quot;plot.png&quot;, width = 5, height = 5)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="用图层构建对象"><a href="#用图层构建对象" class="headerlink" title="用图层构建对象"></a>用图层构建对象</h2><p><code>qplot()</code>只能只用一个数据集来做图形映射，为了解决这个问题，需要引入图层。</p>
+</li>
+</ul>
+<p><code>qplot()</code>使用了很多默认的参数，如果要手动绘图，则需要使用<code>ggplot()</code>，<code>ggplot()</code>函数中包含了两个主要参数：数据和图形属性映射。数据是data.frame或者data.table，图形属性的设定类似<code>qplot()</code>，包含在一个<code>aes()</code>函数里<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">p &lt;- ggplot(diamonds, aes(carat, price, colour = cut)) #此时显示的图还是空，需要设立几何对象</span><br><span class="line">p &lt;- p + layer(geom =&quot;point&quot;,stat=&quot;identity&quot;,position=&quot;identity&quot;)</span><br></pre></td></tr></table></figure></p>
+<h3 id="图层参数"><a href="#图层参数" class="headerlink" title="图层参数"></a>图层参数</h3><p>图层的设立参数有：<code>layer(geom, params, stat, data, mapping, position)</code><br>例：<code>ggplot()</code>绘制条形图：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">p &lt;- ggplot(diamonds, aes(x = carat))</span><br><span class="line">p &lt;- p + layer(</span><br><span class="line">    geom = &quot;bar&quot;,</span><br><span class="line">    params = list(fill = &quot;steelblue&quot;, binwidth = 2),</span><br><span class="line">    stat = &quot;bin&quot;,</span><br><span class="line">    position=&quot;identity&quot;</span><br><span class="line">)</span><br></pre></td></tr></table></figure></p>
+<h3 id="快捷函数（short-cut）"><a href="#快捷函数（short-cut）" class="headerlink" title="快捷函数（short cut）"></a>快捷函数（short cut）</h3><p>图层的参数设定细致但过于繁琐。可以用快捷函数（shortcut)来简化之前的代码。</p>
+<ul>
+<li>每一个几何对象都对应一个默认的统计变换和位置参数，而每一个统计变换都对应着一个默认的几何对象参数，所以对于一个图层我们只需设定stat或geom参数即可。</li>
+<li>上页图可用以下代码生成：<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">p+geom_histogram(binwidth = 2, fill = &quot;steelblue&quot;)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>所有的快捷函数都有相同的形式：以geom或stat开头。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">geom_XXX(mapping, data, ..., geom, position) – stat_XXX(mapping, data, ..., stat, position)</span><br></pre></td></tr></table></figure><br>参数：</p>
+<ul>
+<li>mapping：图形属性映射，通过aes()设定。</li>
+<li>data：可以修改默认数据集</li>
+<li>geom或stat参数，如上例中的<code>binwidth = 2, fill = &quot;steelblue&quot;</code> </li>
+<li>position：选择一种调整对象重合的方式。</li>
+</ul>
+<h3 id="从qplot-到ggplot"><a href="#从qplot-到ggplot" class="headerlink" title="从qplot()到ggplot()"></a>从qplot()到ggplot()</h3><p>例一：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">qplot(sleep_rem / sleep_total, awake, data = msleep)</span><br><span class="line">#等价于</span><br><span class="line">ggplot(msleep, aes(sleep_rem / sleep_total, awake)) + geom_point()</span><br></pre></td></tr></table></figure><br>例二，也可以给qplot加图层:：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">qplot(sleep_rem / sleep_total, awake, data = msleep) + geom_smooth()</span><br><span class="line">#等价于</span><br><span class="line">ggplot(msleep, aes(sleep_rem / sleep_total, awake)) + geom_point() + geom_smooth()</span><br></pre></td></tr></table></figure></p>
+<h3 id="图形变量"><a href="#图形变量" class="headerlink" title="图形变量"></a>图形变量</h3><p>图形对象可以存储到一个变量里。<code>summary()</code>可以查看图形的结构。首先给出图形的默认设置，然后给出每个图层的信息。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">p &lt;- ggplot(msleep, aes(sleep_rem / sleep_total,awake))</span><br><span class="line">summary(p)</span><br><span class="line">p &lt;- p + geom_point()</span><br><span class="line">summary(p)</span><br></pre></td></tr></table></figure><br>+运算符可以看作图层叠加计算</p>
+<p>同时，图层函数<code>geom_XXX()</code>也可以作为变量存储</p>
+<h3 id="图和图层"><a href="#图和图层" class="headerlink" title="图和图层"></a>图和图层</h3><p>默认的图形属性映射可以在图形对象初始化时设定，或者之后用“+”修改。<br>例：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">p &lt;- ggplot(mtcars, aes(x = mpg, y = wt))</span><br><span class="line">p + geom_point() – p + geom_point(aes(colour = factor(cyl))) #用factor(cyl)修改颜色</span><br><span class="line">p + geom_point(aes(y = disp)) #用disp修改y坐标值</span><br></pre></td></tr></table></figure><br>aes的修改是叠加的，直接对新变量赋值会增加aes属性，对已有属性赋值会修改属性，赋NULL会删除属性</p>
+<h3 id="分组"><a href="#分组" class="headerlink" title="分组"></a>分组</h3><p>所有离散型变量的交互作用被设计为分组的默认值。但如果没能正确分组或图中没有离散型变量，就需要自定义分组结构。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">library(nlme)</span><br><span class="line">qplot(age, height, data=Oxboys, group = Subject,geom=&quot;line&quot;) #指定Subject（每个男孩）为分组标量，每条线对应一个男孩。</span><br></pre></td></tr></table></figure></p>
+<h3 id="匹配图形属性和图形对象-7-3"><a href="#匹配图形属性和图形对象-7-3" class="headerlink" title="匹配图形属性和图形对象*7.3"></a>匹配图形属性和图形对象*7.3</h3><p>对于连续型变量，如果希望线段平稳地从一种图形属性变换到另一种图形属性，可以使用线性插值法。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">xgrid &lt;- with(df, seq(min(x), max(x), length = 50))</span><br><span class="line">interp &lt;- data.frame(</span><br><span class="line">x = xgrid,</span><br><span class="line">y = approx(df$x, df$y, xout = xgrid)$y,</span><br><span class="line">colour = approx(df$x, df$colour, xout = xgrid)$y</span><br><span class="line">)</span><br><span class="line">qplot(x, y, data = df, colour = colour, size = I(5)) + geom_line(data =</span><br><span class="line">interp, size = 2)</span><br></pre></td></tr></table></figure><br><img src="Screenshot_20181031_191747.png" alt="Screenshot_20181031_191747.png"></p>
+<h2 id="工具箱"><a href="#工具箱" class="headerlink" title="工具箱"></a>工具箱</h2><h3 id="图层叠加策略"><a href="#图层叠加策略" class="headerlink" title="图层叠加策略"></a>图层叠加策略</h3><p>图层有三种：</p>
+<ol>
+<li>用于展示数据本身（data）。<ul>
+<li>辨识数据的整体结构、局部结构、离群点。</li>
+<li>在数据探索的初始阶段，本层通常是唯一的图层。</li>
+</ul>
+</li>
+<li>用于展示数据的统计摘要（summary）<ul>
+<li>用于展示模型的预测效果。</li>
+<li>绘制在数据层之上。</li>
+</ul>
+</li>
+<li>用以添加额外的元数据（metadata）、上下文信息和注解<ul>
+<li>元数据层展示背景上下文，帮助我们理解原始数据。元数据既可以作为前景也可以作为背景。地图经常作为空间数据的背景层。背景元数据不应影响主数据展示，因此它往往被放置在主<br>数据下层，配色不能突出，“想看就看看到，不想看就看不到”</li>
+<li>元数据也可以用来强调数据中的重要特征，比如为离群点加上解释性的标签。这时元数据图层是最后绘制的图层。</li>
+</ul>
+</li>
+</ol>
+<p>*7.4未完待续</p>
+<h2 id="标度，坐标轴和图例"><a href="#标度，坐标轴和图例" class="headerlink" title="标度，坐标轴和图例"></a>标度，坐标轴和图例</h2><ul>
+<li>标度（scale）控制着数据到图形属性的映射。标度将数据转化为视觉上可以感知的东西：大小、颜色、位置、形状。</li>
+<li>标度也提供了读图时所使用的工具：坐标轴和图例，它们称为引导元素（用于允许读者从图形属性空间到数据空间进行反向映射）。</li>
+<li>每一种标度都是从数据空间的某个区域（标度的定义域）到图形属性的某个区域（标度的值域）的一个函数</li>
+</ul>
+<p>执行标度的过程分三步：变换（transform）、训练（training）、映射（mapping）。</p>
+<ul>
+<li>图形中的每一个图形属性都需要一个标度。</li>
+<li>通常ggplot2将自动添加一个默认的标度。</li>
+<li>标度分四类：位置标度、颜色标度、手动离散型标度、同一型标度。</li>
+</ul>
+<p>例：改变标度<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">p &lt;- qplot(sleep_total, sleep_cycle, data = msleep, colour = vore) #左上图 </span><br><span class="line">p + scale_colour_hue() #右上图，显式添加默认标度，跟左上图一样  </span><br><span class="line">p + scale_colour_hue(&quot;What does\nit eat?&quot;, breaks = c(&quot;herbi&quot;, &quot;carni&quot;, &quot;omni&quot;, NA), labels = c(&quot;plants&quot;, &quot;meat&quot;, &quot;both&quot;, &quot;don&#x27;t know&quot;)) #左下图： 修改了默认标度的参数：改变 了图例的外观。</span><br><span class="line">p + scale_colour_brewer(palette= &quot;Set1&quot;) #右下图：使用了不同的标度：改变了点的颜色</span><br></pre></td></tr></table></figure><br><img src="Screenshot_20181031_193230.png" alt="Screenshot_20181031_193230.png"></p>
+<p>*7.5未完待续</p>
+<h2 id="定位"><a href="#定位" class="headerlink" title="定位"></a>定位</h2>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/R%E8%AF%AD%E8%A8%80/" rel="tag"># R语言</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/10/24/Archlinux%E9%85%8D%E7%BD%AEtensorflow/" rel="prev" title="Archlinux配置tensorflow">
+      <i class="fa fa-chevron-left"></i> Archlinux配置tensorflow
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/11/01/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98/" rel="next" title="数据挖掘">
+      数据挖掘 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E4%B8%8E%E4%BD%BF%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">安装与使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#qplot%E5%85%A5%E9%97%A8"><span class="nav-number">2.</span> <span class="nav-text">qplot入门</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%9C%E8%89%B2%EF%BC%8C%E5%A4%A7%E5%B0%8F%EF%BC%8C%E5%BD%A2%E7%8A%B6%E5%B1%9E%E6%80%A7"><span class="nav-number">2.1.</span> <span class="nav-text">颜色，大小，形状属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%A0%E4%BD%95%E5%AF%B9%E8%B1%A1geom"><span class="nav-number">2.2.</span> <span class="nav-text">几何对象geom</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E9%9D%A2"><span class="nav-number">2.3.</span> <span class="nav-text">分面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E9%80%89%E9%A1%B9"><span class="nav-number">2.4.</span> <span class="nav-text">其他选项</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E5%B1%82%E8%AF%AD%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">图层语法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E7%BB%84%E4%BB%B6"><span class="nav-number">3.1.</span> <span class="nav-text">增加组件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E5%B1%82"><span class="nav-number">3.2.</span> <span class="nav-text">图层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E5%BA%A6"><span class="nav-number">3.3.</span> <span class="nav-text">标度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9D%90%E6%A0%87%E7%B3%BB"><span class="nav-number">3.4.</span> <span class="nav-text">坐标系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%98%E5%9B%BE%E6%96%B9%E5%BC%8F"><span class="nav-number">3.5.</span> <span class="nav-text">绘图方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E5%9B%BE%E5%B1%82%E6%9E%84%E5%BB%BA%E5%AF%B9%E8%B1%A1"><span class="nav-number">4.</span> <span class="nav-text">用图层构建对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E5%B1%82%E5%8F%82%E6%95%B0"><span class="nav-number">4.1.</span> <span class="nav-text">图层参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%AB%E6%8D%B7%E5%87%BD%E6%95%B0%EF%BC%88short-cut%EF%BC%89"><span class="nav-number">4.2.</span> <span class="nav-text">快捷函数（short cut）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8Eqplot-%E5%88%B0ggplot"><span class="nav-number">4.3.</span> <span class="nav-text">从qplot()到ggplot()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E5%BD%A2%E5%8F%98%E9%87%8F"><span class="nav-number">4.4.</span> <span class="nav-text">图形变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E5%92%8C%E5%9B%BE%E5%B1%82"><span class="nav-number">4.5.</span> <span class="nav-text">图和图层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%BB%84"><span class="nav-number">4.6.</span> <span class="nav-text">分组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8C%B9%E9%85%8D%E5%9B%BE%E5%BD%A2%E5%B1%9E%E6%80%A7%E5%92%8C%E5%9B%BE%E5%BD%A2%E5%AF%B9%E8%B1%A1-7-3"><span class="nav-number">4.7.</span> <span class="nav-text">匹配图形属性和图形对象*7.3</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7%E7%AE%B1"><span class="nav-number">5.</span> <span class="nav-text">工具箱</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E5%B1%82%E5%8F%A0%E5%8A%A0%E7%AD%96%E7%95%A5"><span class="nav-number">5.1.</span> <span class="nav-text">图层叠加策略</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E5%BA%A6%EF%BC%8C%E5%9D%90%E6%A0%87%E8%BD%B4%E5%92%8C%E5%9B%BE%E4%BE%8B"><span class="nav-number">6.</span> <span class="nav-text">标度，坐标轴和图例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%BD%8D"><span class="nav-number">7.</span> <span class="nav-text">定位</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/";
+    this.page.identifier = "2018/10/31/R语言学习（五）ggplot/";
+    this.page.title = "R语言学习（五）ggplot2";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

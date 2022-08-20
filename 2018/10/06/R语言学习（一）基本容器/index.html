@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="R语言是一门数据处理语言，本文记录R语言学习的过程和一些注意点  基本数据结构对于数据集行和列的不同术语：  统计学：观测(observation)&#x2F;变量(variable) 数据分析师：记录(record)&#x2F;字段(field) 机器学习与数据挖掘：示例(example)&#x2F;属性(attribute)  R的数据结构包括向量，数组，数据框和列表，R可以处理的数据类型成为模式(modes)，包括数值">
+<meta property="og:type" content="article">
+<meta property="og:title" content="R语言学习（一）基本容器">
+<meta property="og:url" content="http://xuranus.github.io/2018/10/06/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E6%9C%AC%E5%AE%B9%E5%99%A8/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="R语言是一门数据处理语言，本文记录R语言学习的过程和一些注意点  基本数据结构对于数据集行和列的不同术语：  统计学：观测(observation)&#x2F;变量(variable) 数据分析师：记录(record)&#x2F;字段(field) 机器学习与数据挖掘：示例(example)&#x2F;属性(attribute)  R的数据结构包括向量，数组，数据框和列表，R可以处理的数据类型成为模式(modes)，包括数值">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-10-05T22:30:09.000Z">
+<meta property="article:modified_time" content="2021-09-05T12:51:13.902Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="R语言">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://xuranus.github.io/2018/10/06/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E6%9C%AC%E5%AE%B9%E5%99%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>R语言学习（一）基本容器 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/10/06/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E6%9C%AC%E5%AE%B9%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          R语言学习（一）基本容器
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-10-05 22:30:09" itemprop="dateCreated datePublished" datetime="2018-10-05T22:30:09Z">2018-10-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">R语言学习</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2018/10/06/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E6%9C%AC%E5%AE%B9%E5%99%A8/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/10/06/R语言学习（一）基本容器/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>10k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>R语言是一门数据处理语言，本文记录R语言学习的过程和一些注意点</p>
+</blockquote>
+<h2 id="基本数据结构"><a href="#基本数据结构" class="headerlink" title="基本数据结构"></a>基本数据结构</h2><p>对于数据集行和列的不同术语：</p>
+<ul>
+<li>统计学：观测(observation)/变量(variable)</li>
+<li>数据分析师：记录(record)/字段(field)</li>
+<li>机器学习与数据挖掘：示例(example)/属性(attribute)</li>
+</ul>
+<p>R的数据结构包括向量，数组，数据框和列表，R可以处理的数据类型成为模式(modes)，包括数值型，字符型，布尔型，复数型和原生型（字节）</p>
+<p>向量，矩阵，数组的本质是数组，唯独分别是一维，二维，更高，三者必须有相同的模式，而列表每一个元素可以是不同类型，是一个广义表。</p>
+<span id="more"></span>
+<h3 id="向量-Vector"><a href="#向量-Vector" class="headerlink" title="向量(Vector)"></a>向量(Vector)</h3><p>创建：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">a &lt;- c(1,2,3,4,5)</span><br><span class="line">b &lt;- c(&quot;one&quot;,&quot;two&quot;,&quot;three&quot;)</span><br><span class="line">d &lt;- c(1:10)</span><br></pre></td></tr></table></figure><br>其中d是1~10的数组成的数组，R中<code>a:b</code>表示a～b的连续数组成的向量，自动推导升降序。</p>
+<p>访问可以通过方括号里下标访问返回一个元素，也可以访问一个向量构成的下标，返回一个子向量<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">a[3]</span><br><span class="line">a[c(1,3,5)</span><br><span class="line">a(1:3)</span><br></pre></td></tr></table></figure></p>
+<h3 id="矩阵-Matrix"><a href="#矩阵-Matrix" class="headerlink" title="矩阵(Matrix)"></a>矩阵(Matrix)</h3><h4 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h4><p>矩阵构造至少要有三个参数，第一个是一维向量，第二三是行列元素数目，第三和第四可选，分别是是否按行填充（默认按列）和两个维度的属性名（包含了两个向量的list）<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">matrix &lt;- matrix(vector,nrow=number_of_rows,ncol=number_of_columns,byrow=logical_value,dimnames=list(char_vector_rownames,char_vector_colnames))</span><br></pre></td></tr></table></figure><br>例子：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cells &lt;- c(1,26,24,68)</span><br><span class="line">rnames &lt;- c(&quot;R1&quot;, &quot;R2&quot;)</span><br><span class="line">cnames &lt;- c(&quot;C1&quot;, &quot;C2&quot;)</span><br><span class="line">mymatrix &lt;- matrix(cells, nrow=2, ncol=2, byrow=TRUE,</span><br><span class="line">dimnames=list(rnames, cnames))</span><br><span class="line">mymatrix</span><br></pre></td></tr></table></figure></p>
+<h4 id="访问"><a href="#访问" class="headerlink" title="访问"></a>访问</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">m[1,2]</span><br><span class="line">m[2,]</span><br><span class="line">m[,3]</span><br><span class="line">m[1,c(1,3)]</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>R中忽略某个位置的参数而使用逗号直接隔开，则该缺省属性视为通配符</p>
+</blockquote>
+<h3 id="数组-Arrays"><a href="#数组-Arrays" class="headerlink" title="数组(Arrays)"></a>数组(Arrays)</h3><p>数组的维度可以大于2,可以理解为高维度的矩阵</p>
+<h4 id="创建-1"><a href="#创建-1" class="headerlink" title="创建"></a>创建</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">myarray &lt;- array(vector,dimensions,dimnames)</span><br></pre></td></tr></table></figure>
+<p>其中vector包含了数组中的数据,dimensions是一个数值型向量,给出了各个维度下标的最大值,而dimnames是可选的、各维度名称标签的列表。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">dim1 &lt;- c(&quot;A1&quot;, &quot;A2&quot;)</span><br><span class="line">dim2 &lt;- c(&quot;B1&quot;, &quot;B2&quot;, &quot;B3&quot;)</span><br><span class="line">dim3 &lt;- c(&quot;C1&quot;, &quot;C2&quot;, &quot;C3&quot;, &quot;C4&quot;)</span><br><span class="line">z &lt;- array(1:24, c(2,3,4),dimnames=list(dim1, dim2, dim3))</span><br><span class="line">z</span><br></pre></td></tr></table></figure></p>
+<h4 id="访问-1"><a href="#访问-1" class="headerlink" title="访问"></a>访问</h4><p>访问类似矩阵，<code>z[1,2,3]</code>可以具体对一个元素访问，也可以空缺某个参数或者填入向量，返回一个子数组</p>
+<h3 id="数据框-DataFrames"><a href="#数据框-DataFrames" class="headerlink" title="数据框(DataFrames)"></a>数据框(DataFrames)</h3><h4 id="创建-2"><a href="#创建-2" class="headerlink" title="创建"></a>创建</h4><p>通过传入若干个向量的变长参数，每个属性的名称即为对应向量名<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">patientID &lt;- c(1, 2, 3, 4)</span><br><span class="line">age &lt;- c(25, 34, 28, 52)</span><br><span class="line">diabetes &lt;- c(&quot;Type1&quot;, &quot;Type2&quot;, &quot;Type1&quot;, &quot;Type1&quot;)</span><br><span class="line">status &lt;- c(&quot;Poor&quot;, &quot;Improved&quot;, &quot;Excellent&quot;, &quot;Poor&quot;)</span><br><span class="line">patientdata &lt;- data.frame(patientID, age, diabetes,status)</span><br><span class="line">patientdata</span><br></pre></td></tr></table></figure></p>
+<h4 id="访问-2"><a href="#访问-2" class="headerlink" title="访问"></a>访问</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">patientdata[1:2] #选取第1、2列</span><br><span class="line">patientdata[c(&quot;diabetes&quot;,&quot;status&quot;)]</span><br><span class="line">patientdata[2,] #选取第2行</span><br><span class="line">patientdata$age #选取age列</span><br><span class="line">patientdata$age[2] #选取age列的第二个</span><br></pre></td></tr></table></figure>
+<p><code>$</code>表示选取数据框中某个特定变量，相当于一般计算机语言中的<code>.</code></p>
+<h4 id="搜索路径"><a href="#搜索路径" class="headerlink" title="搜索路径"></a>搜索路径</h4><p>比如，刚刚建立好上述patientdata的数据框后，可以访问age和status变量，则说明age和status在当前R的搜索路径中，此时执行<code>rm age</code>和<code>rm status</code>则将这两个变量从搜索路径中删除，此时执行<code>plot(age,status)</code>来画图则会失败</p>
+<h4 id="attach-detach-函数"><a href="#attach-detach-函数" class="headerlink" title="attach()/detach()函数"></a>attach()/detach()函数</h4><p><code>attach()</code>函数可以吧一个数据框添加到当前的搜索路径中：<code>attach(patientdata)</code>,则此时<code>age</code>和<code>status</code>则有在搜索路径中了，此时<code>plot(age,status)</code>又可以使用了</p>
+<p><code>detach()</code>函数可以将数据框从搜索路径中移除，当<code>detach()</code>造成数据对象重名时,原始对象将取得优先权。</p>
+<h4 id="with-函数"><a href="#with-函数" class="headerlink" title="with()函数"></a>with()函数</h4><p>针对某一个数据框操作，可以用<code>with()</code>,不需要担心名称的冲突，这样可以避免频繁的<code>atach()</code>和<code>detach()</code><br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">with(patientdata,&#123;</span><br><span class="line">plot(patientID,age)</span><br><span class="line">plot(patientID,status)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure><br>当语句只有一条时，可以省略大括号</p>
+<h4 id="因子-Factors"><a href="#因子-Factors" class="headerlink" title="因子(Factors)"></a>因子(Factors)</h4><ul>
+<li>数据类型分为：<ul>
+<li>类别(nominal:糖尿病类型)</li>
+<li>有序(ordinal:病情好中坏)</li>
+<li>连续型(continuous:年龄)</li>
+</ul>
+</li>
+<li>在R中,类别变量和有序变量称为因子。因子在R中非常重要,因为它决定了数据的<strong>分析方式</strong>以及如何进行<strong>视觉呈现</strong>。<h4 id="factor-函数"><a href="#factor-函数" class="headerlink" title="factor()函数"></a>factor()函数</h4>函数factor()以一个整数向量的形式存储类别值。<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">diabetes &lt;- c(&quot;Type1&quot;, &quot;Type2&quot;,&quot;Type1&quot;,&quot;Type1&quot;)</span><br><span class="line">str(diabetes) #str()函数会输出一个R对象的结构</span><br><span class="line">#输出:chr [1:4] &quot;Type1&quot; &quot;Type2&quot; &quot;Type1&quot; &quot;Type1&quot;</span><br><span class="line">diabetes &lt;- factor(diabetes)</span><br><span class="line">str(diabetes)</span><br><span class="line">#输出:Factor w/ 2 levels &quot;Type1&quot;,&quot;Type2&quot;: 1 2 1 1</span><br></pre></td></tr></table></figure>
+对于字符类型的向量，因子的水平依据字典序创建，可以指定level选项来覆盖默认排序<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">status &lt;- factor(status,order=TRUE,levels=c(&quot;Poor&quot;,&quot;Improved&quot;,&quot;Excellent&quot;))</span><br></pre></td></tr></table></figure>
+<strong>如果用字符向量创建数据框，R会将字符向量转换为因子，可以手动取消：最后一个参数设置为：stringAsFactors=FALSE</strong></li>
+</ul>
+<h3 id="列表-List"><a href="#列表-List" class="headerlink" title="列表(List)"></a>列表(List)</h3><p>列表就是一些对象的有序集合。列表中可<br>能是若干向量、矩阵、数据框,甚至其他<br>列表的组合。例:<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">g &lt;- &quot;My First List&quot;</span><br><span class="line">h &lt;- c(25, 26, 18, 39)</span><br><span class="line">j &lt;- matrix(1:10, nrow=5)</span><br><span class="line">k &lt;- c(&quot;one&quot;, &quot;two&quot;, &quot;three&quot;)</span><br><span class="line">mylist &lt;- list(title=g, ages=h,j, k)</span><br><span class="line">mylist</span><br></pre></td></tr></table></figure><br>列表是一个有下标的多类型的广义容器</p>
+<h4 id="关于NA"><a href="#关于NA" class="headerlink" title="关于NA"></a>关于NA</h4><p>NA(Not Available),NaN(Not a Number),分别表示缺失值和不可能存在的值（例如除0的结果）。<br>将一个值赋给某个向量、矩阵、数组或列表中一个不存在的元素时,R将自动扩展这个数据结构以容纳新值,空缺的部分由<code>NA</code>填补;当访问一个容器不存在的位置的元素时，也会返回<code>NA</code>。</p>
+<ul>
+<li>函数<code>is.na()</code>用以检测缺失值是否存在。<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">y &lt;- c(1, 2, 3, NA)</span><br><span class="line">#then the function</span><br><span class="line">is.na(y)</span><br><span class="line">#returns c(FALSE, FALSE, FALSE, TRUE)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>缺失值参与函数计算和四则运算结果依然是缺失值，多数的数值函数都有一个<code>na.rm=TRUE</code>选项</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">x &lt;- c(1, 2, NA, 3)</span><br><span class="line">y &lt;- sum(x, na.rm=TRUE)</span><br></pre></td></tr></table></figure>
+<p><code>na.omit()</code>可以删除所有含缺失数据的行:<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">newdata &lt;- na.omit(olddataframe)</span><br></pre></td></tr></table></figure></p>
+<p><strong>注意：R中容器下标从1开始</strong></p>
+<h2 id="数据的导入"><a href="#数据的导入" class="headerlink" title="数据的导入"></a>数据的导入</h2><h4 id="edit-键盘输入"><a href="#edit-键盘输入" class="headerlink" title="edit()键盘输入"></a>edit()键盘输入</h4><p><code>edit()</code>会调用一个允许手动输入数据的文本编辑器<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">patientdata &lt;- edit(patientdata)</span><br></pre></td></tr></table></figure><br><code>edit()</code>是基于对象的一个副本进行修改的，返回徐改后的副本</p>
+<h4 id="从带分隔符的文本-csv-导入数据"><a href="#从带分隔符的文本-csv-导入数据" class="headerlink" title="从带分隔符的文本(*.csv)导入数据"></a>从带分隔符的文本(*.csv)导入数据</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mydataframe &lt;- read.table(file,header=logical_value,sep=&quot;delimiter&quot;,row.names=&quot;name&quot;)</span><br></pre></td></tr></table></figure>
+<p><code>read.table()</code>从带分隔符的文本文件中导入数据，<code>header</code>表明首行是否包含了变量名，<code>sep</code>指定分隔符，<code>row.names</code>是一个可选参数，用以指定一个或多个标识符。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">flights &lt;- read.table(&quot;flights14.csv&quot;, header=TRUE, sep=&quot;,&quot;)</span><br></pre></td></tr></table></figure>
+<p><strong>默认情况下,字符型变量将转换为因子</strong></p>
+<h4 id="从Excel中导入"><a href="#从Excel中导入" class="headerlink" title="从Excel中导入"></a>从Excel中导入</h4><p>读取一个Excel文件的最好方式,就是在<br>Excel中将其导出为一个逗号分隔文件<br>(csv),再使用上一页的方式导入R中。</p>
+<h4 id="导入XML数据"><a href="#导入XML数据" class="headerlink" title="导入XML数据"></a>导入XML数据</h4><p>R的XML包:<br>– 可用来解析处理XML或是HTML数据<br>– 还可以抓取网页数据<br>– 最重要两个函数是xmlTreeParse()和getNodeSet(),前者负责抓取页面数据并形成树状结构,后者对抓取的数据根据XPath语法来选取特定的节点集合。</p>
+<h4 id="导入SPSS数据"><a href="#导入SPSS数据" class="headerlink" title="导入SPSS数据"></a>导入SPSS数据</h4><p>SPSS数据集可以通过foreign包中的函数<code>read.spss()</code>导入到R中,也可以使用<code>Hmisc</code><br>包中的<code>spss.get()</code>函数。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;Hmisc&quot;)</span><br><span class="line">library(Hmisc)</span><br><span class="line">mydataframe &lt;- spss.get(&quot;mydata.sav&quot;,</span><br><span class="line">use.value.labels=TRUE)</span><br></pre></td></tr></table></figure><br>mydata.sav是要导入的SPSS数据文件,<code>use.value.labels=TRUE</code>表示让函数将带有值标签的变量导入为R中水平对应相同的因子,<code>mydataframe</code>是导入后的R数据框。</p>
+<h4 id="导入SAS数据"><a href="#导入SAS数据" class="headerlink" title="导入SAS数据"></a>导入SAS数据</h4><p>SAS的版本更新可能会导致R中导入SAS数据集的函数失效。可以采用以下方法:</p>
+<ol>
+<li>以在SAS中使用PROC EXPORT将SAS数据<br>集保存为一个逗号分隔的文本文件</li>
+<li>再使用处理csv的方法</li>
+</ol>
+<h4 id="访问数据库管理系统"><a href="#访问数据库管理系统" class="headerlink" title="访问数据库管理系统"></a>访问数据库管理系统</h4><p>例：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">library(RODBC) #使用微软ODBC接口</span><br><span class="line">myconn &lt;-odbcConnect(&quot;mydsn&quot;, uid=&quot;Rob&quot;,pwd=&quot;aardvark&quot;)</span><br><span class="line">crimedat &lt;- sqlFetch(myconn, Crime)</span><br><span class="line">#sqlFetch()将Crime表复制到R数据框crimedat中</span><br><span class="line">pundat &lt;- sqlQuery(myconn, &quot;select * from Punishment&quot;) </span><br><span class="line">#sqlQuery()非常强大,因为其中可以插入任意的有效SQL语句</span><br><span class="line">close(myconn)</span><br></pre></td></tr></table></figure></p>
+<h2 id="数据处理"><a href="#数据处理" class="headerlink" title="数据处理"></a>数据处理</h2><h3 id="变量与运算符"><a href="#变量与运算符" class="headerlink" title="变量与运算符"></a>变量与运算符</h3><p>R是弱类型语言，类似python，动态类型变量，使用<code>&lt;-</code>赋值，对于数据框，添加新属性和json操作类似，直接给某个属性赋值</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>+</code></td>
+<td>加</td>
+</tr>
+<tr>
+<td><code>-</code></td>
+<td>减</td>
+</tr>
+<tr>
+<td><code>*</code></td>
+<td>乘</td>
+</tr>
+<tr>
+<td><code>\</code></td>
+<td>除</td>
+</tr>
+<tr>
+<td><code>^或**</code></td>
+<td>求幂</td>
+</tr>
+<tr>
+<td><code>x%%y</code></td>
+<td>取余</td>
+</tr>
+<tr>
+<td><code>x%/%y</code></td>
+<td>整除</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="变量冲编码"><a href="#变量冲编码" class="headerlink" title="变量冲编码"></a>变量冲编码</h3><p>举例：一个调查问卷的数据框<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">manager &lt;- c(1, 2, 3, 4, 5)</span><br><span class="line">date &lt;- c(&quot;10/24/08&quot;, &quot;10/28/08&quot;, &quot;10/1/08&quot;, &quot;10/12/08&quot;, &quot;5/1/09&quot;)</span><br><span class="line">country &lt;- c(&quot;US&quot;, &quot;US&quot;, &quot;UK&quot;, &quot;UK&quot;, &quot;UK&quot;)</span><br><span class="line">gender &lt;- c(&quot;M&quot;, &quot;F&quot;, &quot;F&quot;, &quot;M&quot;, &quot;F&quot;)</span><br><span class="line">age &lt;- c(32, 45, 25, 39, 99) #99代表年龄缺失</span><br><span class="line">q1 &lt;- c(5, 3, 3, 3, 2)</span><br><span class="line">q2 &lt;- c(4, 5, 5, 3, 2)</span><br><span class="line">q3 &lt;- c(5, 2, 5, 4, 1)</span><br><span class="line">q4 &lt;- c(5, 5, 5, NA, 2)</span><br><span class="line">q5 &lt;- c(5, 5, 2, NA, 1)</span><br><span class="line">leadership &lt;- data.frame(manager, date, country, gender, age, q1, q2,</span><br><span class="line">q3, q4, q5, stringsAsFactors=FALSE)</span><br></pre></td></tr></table></figure><br>变量冲编码是指修改容器中的数据，例如：<br><code>leadership$agecat[leader$age&gt;75] &lt;- &quot;Elder&quot;</code>表示将leadership中age&gt;75查询对应的agecat赋值为”Elder”，R中的<code>[]</code>用途类似定于表示限定，类似sql的where语句。</p>
+<p>使用<code>within()</code>可以简化语法，对于leadership 数据框修改：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">leadership &lt;- within(leadership,&#123;</span><br><span class="line">agecat &lt;- NA</span><br><span class="line">agecat[age &gt; 75] &lt;- &quot;Elder&quot;</span><br><span class="line">agecat[age &gt;= 55 &amp; age &lt;= 75] &lt;- &quot;Middle Aged&quot;</span><br><span class="line">agecat[age &lt; 55] &lt;- &quot;Young&quot; &#125;)</span><br></pre></td></tr></table></figure><br><strong>注意within()也是基于副本操作，所以需要使用赋值语句来保存变化值，某一个成员都被赋成NA则该属性被视作删除</strong></p>
+<h3 id="变量重命名"><a href="#变量重命名" class="headerlink" title="变量重命名"></a>变量重命名</h3><p><code>fix()</code>可以调用一个交互式的编辑器,单击变量名,然后在弹出的对话框中将其重命名。例如:<code>fix(leadership)</code></p>
+<p>只用edit(X)在窗口中编辑修改X,关闭窗口后X没有改变,应使用 <code>Y&lt;- edit(X)</code>;使用<code>fix(X)</code>在窗口中编辑修改X,关闭窗口后X就是修改后的值,不必使用<code>Y &lt;- fix(X)</code>。</p>
+<p>也可使用<code>reshape</code>报提供的<code>rename()</code>函数:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">install.packages(&quot;reshape&quot;) #先安装包</span><br><span class="line">library(reshape)</span><br><span class="line">leadership &lt;- rename(leadership,</span><br><span class="line">c(manager=&quot;managerID&quot;, date=&quot;testDate&quot;)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>方法三则是使用<code>names()</code>函数，该函数返回一个向量，包含了数据框的所有元素名称，对他操作则视作对数据框内元素名称的操作</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#查看所有变量名</span><br><span class="line">names(leadership)</span><br><span class="line">#将第二个变量重命名</span><br><span class="line">names(leadership)[2] &lt;- &quot;testDate&quot;</span><br><span class="line">#将q1到q5重命名为item1到item5</span><br><span class="line">names(leadership)[6:10] &lt;- c(&quot;item1&quot;,&quot;item2&quot;, &quot;item3&quot;, &quot;item4&quot;, &quot;item5&quot;)</span><br></pre></td></tr></table></figure>
+<h3 id="日期值"><a href="#日期值" class="headerlink" title="日期值"></a>日期值</h3><p><code>as.Date(x,&quot;input_format&quot;)</code>函数用于将字符串类型转化为日期类型，x是时间字符串，input_format是时间格式字符串（具体查阅ppt-3.23）</p>
+<p>日期值的默认输入格式为<code>yyyy-mm-dd</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mydates &lt;- as.Date(c(&quot;2007-06-22&quot;, &quot;2004-02-13&quot;))</span><br></pre></td></tr></table></figure>
+<p>在leadership数据集中,日期是以<br><code>mm/dd/yy</code>的格式编码为字符型变量的。需要转化:<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">leadership$date &lt;- as.Date(leadership$date,&quot;%m/%d/%y&quot;)</span><br></pre></td></tr></table></figure></p>
+<p><code>Sys.Date()</code>可以返回当天日期，<code>date()</code>可以返回当前日期和时间，<code>format(x,format=&quot;output_format&quot;)</code>和<code>as.Date()</code>类似，后者基于副本操作返回新值，前者直接修改变量。</p>
+<p>Date类型支持加减法，<code>difftime(date1, date2, units=&quot;weeks&quot;)</code>用于计算周数，<code>as.character(dates)</code>返回一个字符串，用于把日期转化为字符串。</p>
+<h3 id="数据类型转换"><a href="#数据类型转换" class="headerlink" title="数据类型转换"></a>数据类型转换</h3><p>判断是数据类型：R提供了形如is.DataType()的函数，例如<code>is.numeric()</code>,<code>is.character()</code>,<code>is.vector()</code>,<code>is.matrix</code>,<code>is.data.frame()</code>,他们返回True或者False.</p>
+<p>数据类型转化：R提供类似as.DataType()的函数，例如<code>as.numeric()</code>,<code>as.character()</code>,<code>as.vector()</code>,<code>as.matrix</code>,<code>as.data.frame()</code>他们转化原类型，返回新类型。</p>
+<h3 id="数据排序"><a href="#数据排序" class="headerlink" title="数据排序"></a>数据排序</h3><p>使用<code>order()</code>函数对一个数据框进行排序。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">newdata &lt;- leadership[order(leadership$age),]</span><br></pre></td></tr></table></figure>
+<p>在排序变量的前边加一个减号即可得到降<br>序的排序结果。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">newdata &lt;- leadership[order(-leadership$age),]</span><br></pre></td></tr></table></figure><br>多变量排序：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">newdata &lt;- leadership[order(leadership$gender,leadership$age),]</span><br></pre></td></tr></table></figure></p>
+<h3 id="数据集的合并"><a href="#数据集的合并" class="headerlink" title="数据集的合并"></a>数据集的合并</h3><p>数据集的合并用于增加变量或者增加观测</p>
+<ul>
+<li><p>横向合并：使用<code>merge()</code>函数，如果有一个或多个共同变量，则进行内联。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">total &lt;- merge(dataframe1,dataframe2,by=&quot;ID&quot;)</span><br><span class="line">total &lt;- merge(dataframe1,dataframe2,by=c(&quot;ID&quot;,&quot;Country&quot;))</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>横向合并：如果不需要指定一个公共索引，则可以直接使用<code>cbind()</code>函数</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">total &lt;- cbind(dataframe1,dataframe2)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>纵向合并：<code>rbind()</code>函数，两个数据框必须有相同的变量</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">total &lt;- rbind(dataframeA,dataframeB)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="数据集的子集"><a href="#数据集的子集" class="headerlink" title="数据集的子集"></a>数据集的子集</h3><p>可以通过下标选取数据的方式获得子集：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">newdata &lt;- leadership[, c(6:10)]</span><br></pre></td></tr></table></figure></p>
+<p>剔除数据：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">myvars &lt;- names(leadership) %in% c(&quot;q3&quot;, &quot;q4&quot;)</span><br><span class="line">newdata&lt;-leadership[!myvars]</span><br></pre></td></tr></table></figure><br>其中myvars是一个只包含布尔类型的变量的向量，传入<code>[]</code>中，返回对应为True的子数据框。</p>
+<p>选取变量时采用逻辑型向量注意:<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">leadership[c(TRUE, FALSE, FALSE),]</span><br><span class="line"># 如果行数大于3:会得到1、4、7、10、1316......行</span><br><span class="line">leadership[c(TRUE, FALSE),]</span><br><span class="line"># 如果行数大于2:会得到1、3、5、7......行</span><br></pre></td></tr></table></figure></p>
+<p>例如：删除第七和第八个变量<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">newdata &lt;- leadership(c(-7,-8))</span><br></pre></td></tr></table></figure></p>
+<p>也可以这样删除：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">leadership$q3 &lt;- NULL</span><br></pre></td></tr></table></figure></p>
+<p><code>[]</code>表示限定，用于选入观测：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">newdata &lt;- leadership[leadership$gender==&quot;M&quot;</span><br><span class="line">&amp;leadership$age &gt; 30,]</span><br></pre></td></tr></table></figure></p>
+<p><code>subset()</code>函数使用来选择变量和观测的最简单方法:<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">newdata &lt;- subset(leadership, age &gt;= 35 | age &lt; 24, select=c(q1, q2, q3, q4))</span><br><span class="line">newdata &lt;- subset(leadership, gender==&quot;M&quot; &amp; age &gt; 25, select=gender:q4)</span><br></pre></td></tr></table></figure></p>
+<h3 id="随机抽样"><a href="#随机抽样" class="headerlink" title="随机抽样"></a>随机抽样</h3><p><code>sample()</code>可以从数据集中（有放回或无放回地）抽取大小为n的一个随机样本<br>例：从leadership数据集中随机抽取一个大小为3的样本<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mysample &lt;- leadership[sample(1:nrow(leadership),3,replace=FALSE)]</span><br></pre></td></tr></table></figure></p>
+<h3 id="SQL语句操作数据框"><a href="#SQL语句操作数据框" class="headerlink" title="SQL语句操作数据框"></a>SQL语句操作数据框</h3><p>安装sqldf数据包，<code>install.packages(&quot;sqldf&quot;)</code><br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">library(sqldf)</span><br><span class="line">newdf &lt;- sqldf(&quot;select * from .....&quot;)</span><br></pre></td></tr></table></figure></p>
+<h3 id="数据框的转置"><a href="#数据框的转置" class="headerlink" title="数据框的转置"></a>数据框的转置</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cars &lt;- mtcars[1:5,1:4]</span><br><span class="line">t(car) #对car转置</span><br></pre></td></tr></table></figure>
+<h3 id="分类汇总"><a href="#分类汇总" class="headerlink" title="分类汇总"></a>分类汇总</h3><p>分类汇总的函数为<code>aggregate(x, by, FUN)</code>，其中x是待分类汇总的数据对象;by是一个<br>变量名组成的列表,用于对原有观测进行分类;FUN是用来计算描述性统计量的函数,它将被用来计算新观测中的值。例：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">options(digits=3) #保留3位有效数字</span><br><span class="line">attach(mtcars)</span><br><span class="line">aggdata &lt;-aggregate(mtcars, by=list(cyl,gear),FUN=mean, na.rm=TRUE)</span><br></pre></td></tr></table></figure></p>
+<h3 id="Reshape包"><a href="#Reshape包" class="headerlink" title="Reshape包"></a>Reshape包</h3><p>reshape包是一套整合和重构数据集的万能工具。首先将数据melt，使每一行都是一个唯一的标识符—变量组合，然后将数据cast为任何形状，在重铸过程中，可以使用任何函数对数据进行整合。</p>
+<p>首先<code>library(reshape2)</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">md &lt;- melt(mydata,id=c(&quot;ID&quot;,&quot;Time&quot;)) #融化数据</span><br></pre></td></tr></table></figure>
+<p>之后<code>newdata &lt;- cast(md,formula,FUN)</code>，md是已经融化的数据，formula是想要的最后结果，FUN是可选的函数</p>
+<p>例子：根据id求x1平均值<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cast(md,id~x1,mean)</span><br></pre></td></tr></table></figure></p>
+<h3 id="条件与循环"><a href="#条件与循环" class="headerlink" title="条件与循环"></a>条件与循环</h3><p>类似c语言的if else语法，注意else的匹配，<code>&#125; else &#123;</code>需要出现在同一行。<br>R中特有函数<code>if(cond,statement1,statement2)</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">switch(i,</span><br><span class="line">happy = &quot;I am glad you are happy&quot;,</span><br><span class="line">afraid = &quot;There is nothing to fear&quot;,</span><br><span class="line">sad = &quot;Cheer up&quot;,</span><br><span class="line">angry = &quot;Calm down now&quot;</span><br><span class="line">) # 返回一个最终的结果</span><br></pre></td></tr></table></figure>
+<p>循环：<code>for(variable in seq) statement</code>, <code>while(cond) statement</code></p>
+<h3 id="自定义函数"><a href="#自定义函数" class="headerlink" title="自定义函数"></a>自定义函数</h3><p>例子：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mydate &lt;- function(type=&quot;long&quot;) &#123; # 默认参数</span><br><span class="line">  switch(type,</span><br><span class="line">  long = format(Sys.time(), &quot;%A %B %d %Y&quot;),</span><br><span class="line">  short = format(Sys.time(), &quot;%m-%d-%y&quot;),</span><br><span class="line">  cat(type, &quot;is not a recognized type\n&quot;))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/R%E8%AF%AD%E8%A8%80/" rel="tag"># R语言</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/09/29/Archlinux%E4%B8%8BRStudio%E7%9A%84%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/" rel="prev" title="Archlinux下RStudio的问题汇总">
+      <i class="fa fa-chevron-left"></i> Archlinux下RStudio的问题汇总
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/10/07/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%8C%EF%BC%89%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/" rel="next" title="R语言学习（二）数据可视化">
+      R语言学习（二）数据可视化 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">基本数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%91%E9%87%8F-Vector"><span class="nav-number">1.1.</span> <span class="nav-text">向量(Vector)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%A9%E9%98%B5-Matrix"><span class="nav-number">1.2.</span> <span class="nav-text">矩阵(Matrix)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA"><span class="nav-number">1.2.1.</span> <span class="nav-text">创建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE"><span class="nav-number">1.2.2.</span> <span class="nav-text">访问</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E7%BB%84-Arrays"><span class="nav-number">1.3.</span> <span class="nav-text">数组(Arrays)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA-1"><span class="nav-number">1.3.1.</span> <span class="nav-text">创建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE-1"><span class="nav-number">1.3.2.</span> <span class="nav-text">访问</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%A1%86-DataFrames"><span class="nav-number">1.4.</span> <span class="nav-text">数据框(DataFrames)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA-2"><span class="nav-number">1.4.1.</span> <span class="nav-text">创建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE-2"><span class="nav-number">1.4.2.</span> <span class="nav-text">访问</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E8%B7%AF%E5%BE%84"><span class="nav-number">1.4.3.</span> <span class="nav-text">搜索路径</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#attach-detach-%E5%87%BD%E6%95%B0"><span class="nav-number">1.4.4.</span> <span class="nav-text">attach()&#x2F;detach()函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#with-%E5%87%BD%E6%95%B0"><span class="nav-number">1.4.5.</span> <span class="nav-text">with()函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%A0%E5%AD%90-Factors"><span class="nav-number">1.4.6.</span> <span class="nav-text">因子(Factors)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#factor-%E5%87%BD%E6%95%B0"><span class="nav-number">1.4.7.</span> <span class="nav-text">factor()函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%97%E8%A1%A8-List"><span class="nav-number">1.5.</span> <span class="nav-text">列表(List)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E4%BA%8ENA"><span class="nav-number">1.5.1.</span> <span class="nav-text">关于NA</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%9A%84%E5%AF%BC%E5%85%A5"><span class="nav-number">2.</span> <span class="nav-text">数据的导入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#edit-%E9%94%AE%E7%9B%98%E8%BE%93%E5%85%A5"><span class="nav-number">2.0.1.</span> <span class="nav-text">edit()键盘输入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8E%E5%B8%A6%E5%88%86%E9%9A%94%E7%AC%A6%E7%9A%84%E6%96%87%E6%9C%AC-csv-%E5%AF%BC%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="nav-number">2.0.2.</span> <span class="nav-text">从带分隔符的文本(*.csv)导入数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8EExcel%E4%B8%AD%E5%AF%BC%E5%85%A5"><span class="nav-number">2.0.3.</span> <span class="nav-text">从Excel中导入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5XML%E6%95%B0%E6%8D%AE"><span class="nav-number">2.0.4.</span> <span class="nav-text">导入XML数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5SPSS%E6%95%B0%E6%8D%AE"><span class="nav-number">2.0.5.</span> <span class="nav-text">导入SPSS数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5SAS%E6%95%B0%E6%8D%AE"><span class="nav-number">2.0.6.</span> <span class="nav-text">导入SAS数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.0.7.</span> <span class="nav-text">访问数据库管理系统</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">数据处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E4%B8%8E%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">3.1.</span> <span class="nav-text">变量与运算符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E5%86%B2%E7%BC%96%E7%A0%81"><span class="nav-number">3.2.</span> <span class="nav-text">变量冲编码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E9%87%8D%E5%91%BD%E5%90%8D"><span class="nav-number">3.3.</span> <span class="nav-text">变量重命名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E6%9C%9F%E5%80%BC"><span class="nav-number">3.4.</span> <span class="nav-text">日期值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="nav-number">3.5.</span> <span class="nav-text">数据类型转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%8E%92%E5%BA%8F"><span class="nav-number">3.6.</span> <span class="nav-text">数据排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E5%90%88%E5%B9%B6"><span class="nav-number">3.7.</span> <span class="nav-text">数据集的合并</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E5%AD%90%E9%9B%86"><span class="nav-number">3.8.</span> <span class="nav-text">数据集的子集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%8F%E6%9C%BA%E6%8A%BD%E6%A0%B7"><span class="nav-number">3.9.</span> <span class="nav-text">随机抽样</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E8%AF%AD%E5%8F%A5%E6%93%8D%E4%BD%9C%E6%95%B0%E6%8D%AE%E6%A1%86"><span class="nav-number">3.10.</span> <span class="nav-text">SQL语句操作数据框</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%A1%86%E7%9A%84%E8%BD%AC%E7%BD%AE"><span class="nav-number">3.11.</span> <span class="nav-text">数据框的转置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%B1%BB%E6%B1%87%E6%80%BB"><span class="nav-number">3.12.</span> <span class="nav-text">分类汇总</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reshape%E5%8C%85"><span class="nav-number">3.13.</span> <span class="nav-text">Reshape包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E4%B8%8E%E5%BE%AA%E7%8E%AF"><span class="nav-number">3.14.</span> <span class="nav-text">条件与循环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%87%BD%E6%95%B0"><span class="nav-number">3.15.</span> <span class="nav-text">自定义函数</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">493k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">7:28</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2018/10/06/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E6%9C%AC%E5%AE%B9%E5%99%A8/";
+    this.page.identifier = "2018/10/06/R语言学习（一）基本容器/";
+    this.page.title = "R语言学习（一）基本容器";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
