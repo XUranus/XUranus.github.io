@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">125</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/08/21/NAS%E5%8D%8F%E8%AE%AE%E5%88%9D%E6%8E%A2-1/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/02/19/%E7%A8%80%E7%96%8F%E6%96%87%E4%BB%B6%E7%AE%80%E4%BB%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -220,7 +220,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/08/21/NAS%E5%8D%8F%E8%AE%AE%E5%88%9D%E6%8E%A2-1/" class="post-title-link" itemprop="url">NAS协议初探</a>
+            <a href="/2023/02/19/%E7%A8%80%E7%96%8F%E6%96%87%E4%BB%B6%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">Sparse File简介</a>
         </h2>
 
         <div class="post-meta">
@@ -231,7 +231,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-08-20 21:10:53 / 修改时间：13:10:53" itemprop="dateCreated datePublished" datetime="2022-08-20T21:10:53Z">2022-08-20</time>
+              <time title="创建时间：2023-02-19 10:52:28 / 修改时间：13:20:11" itemprop="dateCreated datePublished" datetime="2023-02-19T10:52:28Z">2023-02-19</time>
             </span>
 
           
@@ -243,8 +243,194 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2022/08/21/NAS%E5%8D%8F%E8%AE%AE%E5%88%9D%E6%8E%A2-1/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/08/21/NAS协议初探-1/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2023/02/19/%E7%A8%80%E7%96%8F%E6%96%87%E4%BB%B6%E7%AE%80%E4%BB%8B/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/02/19/稀疏文件简介/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Linux上<code>/dev/nvme0n1p2</code>对应的大小只有234GB，但是可以快速创建一个超过卷自身大小的文件<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">╭─xuranus@Thanos ~/workspace </span><br><span class="line">╰─$ df -h</span><br><span class="line">Filesystem      Size  Used Avail Use% Mounted on</span><br><span class="line">dev             7.8G     0  7.8G   0% /dev</span><br><span class="line">run             7.8G  1.6M  7.8G   1% /run</span><br><span class="line">/dev/nvme0n1p2  234G  196G   26G  89% /</span><br><span class="line">tmpfs           7.8G  172M  7.6G   3% /dev/shm</span><br><span class="line">tmpfs           7.8G   21M  7.8G   1% /tmp</span><br><span class="line">/dev/nvme0n1p1  500M  114M  386M  23% /boot</span><br><span class="line">tmpfs           1.6G   76K  1.6G   1% /run/user/1000</span><br></pre></td></tr></table></figure><br><code>dd if=/dev/zero bs=1M count=1 of=sparsefile seek=1000000</code>以1MB为单位，从1000000的位置，即offset = 1M * 1000000处写入一个1M的数据块。用<code>ll -h</code>可以看到文件空间占用达到了977GB，这里的977GB是逻辑占用、即文件系统API会返回的文件大小，也是用户和应用程序感知到的文件大小。如果使用<code>du -hs</code>查看文件大小，可以看到依然占用1MB，这是因为<code>du</code>是按照占用block大小计算的，统计的是物理占用。<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">╭─xuranus@Thanos ~/workspace </span><br><span class="line">╰─$ dd <span class="keyword">if</span>=/dev/zero bs=1M count=1 of=sparsefile seek=1000000          </span><br><span class="line">1+0 records <span class="keyword">in</span></span><br><span class="line">1+0 records out</span><br><span class="line">1048576 bytes (1.0 MB, 1.0 MiB) copied, 0.00405439 s, 259 MB/s</span><br><span class="line">╭─xuranus@Thanos ~/workspace </span><br><span class="line">╰─$ ll -h sparsefile </span><br><span class="line">-rw-r--r-- 1 xuranus xuranus 977G Feb 19 10:50 sparsefile</span><br><span class="line">╭─xuranus@Thanos ~/workspace</span><br><span class="line">╰─$ du -hs sparsefile          </span><br><span class="line">1.0M    sparsefile</span><br></pre></td></tr></table></figure><br>这种物理占用和逻辑占用不一致的特殊文件就是稀疏文件（Sparse File）,又称“空洞文件”。稀疏文件需要特定文件系统的支持，例如NTFS、Ext4等就支持稀疏文件。<br>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/02/19/%E7%A8%80%E7%96%8F%E6%96%87%E4%BB%B6%E7%AE%80%E4%BB%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/11/27/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7Json%E5%BA%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/27/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7Json%E5%BA%93/" class="post-title-link" itemprop="url">用C++实现一个轻量级Json库</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-27 09:18:02" itemprop="dateCreated datePublished" datetime="2022-11-27T09:18:02Z">2022-11-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-28 14:20:04" itemprop="dateModified" datetime="2022-11-28T14:20:04Z">2022-11-28</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2022/11/27/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7Json%E5%BA%93/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/11/27/用C-实现一个轻量级Json库/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>50</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>项目地址<a target="_blank" rel="noopener" href="https://github.com/XUranus/minijson">https://github.com/XUranus/minijson</a></p>
+</blockquote>
+<h3 id="接口设计"><a href="#接口设计" class="headerlink" title="接口设计"></a>接口设计</h3><h3 id="解析器"><a href="#解析器" class="headerlink" title="解析器"></a>解析器</h3><p>反序列化</p>
+<h3 id=""><a href="#" class="headerlink" title=" "></a> </h3>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/11/07/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/07/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/" class="post-title-link" itemprop="url">汇编语言</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-11-06 16:25:16 / 修改时间：08:25:16" itemprop="dateCreated datePublished" datetime="2022-11-06T16:25:16Z">2022-11-06</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2022/11/07/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/11/07/汇编语言/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -290,7 +476,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/08/15/CPP%E4%B8%AD%E7%9A%84%E5%87%A0%E7%A7%8Dcast/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/11/07/%E6%8E%A2%E7%A7%98%E6%96%87%E4%BB%B6%E9%94%81/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -304,7 +490,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/08/15/CPP%E4%B8%AD%E7%9A%84%E5%87%A0%E7%A7%8Dcast/" class="post-title-link" itemprop="url">C++中的几种cast</a>
+            <a href="/2022/11/07/%E6%8E%A2%E7%A7%98%E6%96%87%E4%BB%B6%E9%94%81/" class="post-title-link" itemprop="url">探秘文件锁</a>
         </h2>
 
         <div class="post-meta">
@@ -313,138 +499,9 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-08-14 18:11:03" itemprop="dateCreated datePublished" datetime="2022-08-14T18:11:03Z">2022-08-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-20 14:23:59" itemprop="dateModified" datetime="2022-08-20T14:23:59Z">2022-08-20</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2022/08/15/CPP%E4%B8%AD%E7%9A%84%E5%87%A0%E7%A7%8Dcast/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/08/15/CPP中的几种cast/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>2.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>C++虽然集成了C语言的explict cast和implict case策略，但是作为一门更现代的语言，C++额外提供了一些类型检查，如检查指针和基础类型的转换，基类和派生类的转换等来提高编程的安全性。<br>主要有<code>const_cast</code>,<code>reinterpret_cast</code>,<code>static_cast</code>,<code>dynamic_cast</code>。其中<code>const_cast</code>主要用于处理<code>const</code>修饰，功能单一，可以看作一类，其他三类可以看作另一类。</p>
-<h2 id="const-cast"><a href="#const-cast" class="headerlink" title="const_cast"></a>const_cast</h2><p><code>const_cast</code>一般用于强制修改一个类型的<strong>读写权限</strong>，例如实现常量到变量引用的转换，以实现修改一些常量的目的。<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> v = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">int</span> &amp;mutv = std::<span class="keyword">const_cast</span>&lt;<span class="keyword">int</span>&amp;&gt;(v);</span><br><span class="line">mutv++;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *p = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">int</span> *mutp = std::<span class="keyword">const_cast</span>&lt;<span class="keyword">int</span>*&gt;(p);</span><br><span class="line">(*mutp)++;</span><br></pre></td></tr></table></figure></p>
-<h2 id="reinterpret-cast"><a href="#reinterpret-cast" class="headerlink" title="reinterpret_cast"></a>reinterpret_cast</h2><p>几乎什么都可以转，可以看作是<strong>内存层面上的转化</strong>，是最为接近C风格的<strong>强制转换</strong>。<code>reinterpret_cast</code>在<code>static_cast</code>基础上支持更<strong>宽松</strong>的类型转换，例如支持指针和基础类型的相互转换。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">100</span>;</span><br><span class="line">    <span class="keyword">void</span> *ptr = <span class="keyword">reinterpret_cast</span>&lt;<span class="keyword">void</span>*&gt;(i); <span class="comment">// int =&gt; void*</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>这类强制转换表面上看起来功能强大什么都能转，但是转化不够明确，不能进行错误检查，容易出错，所以尽可能不要用</p>
-</blockquote>
-<h2 id="static-cast"><a href="#static-cast" class="headerlink" title="static_cast"></a>static_cast</h2><p><code>static_cast</code>用于各类<strong>隐式转换</strong>：</p>
-<ul>
-<li>非<code>const</code>和<code>const</code>类之间的相互转换</li>
-<li>基础类型<code>int</code>,<code>unsignn int</code>,<code>float</code>之间的相互转换，转换符合C的转换规则。</li>
-<li>任何指针类之间的相互转换</li>
-<li>对于多态，只支持派生类的<strong>值</strong>向基类的<strong>值</strong>的<strong>单向</strong>转化。（如果是指针，可以双向转换，但是不安全。）</li>
-</ul>
-<blockquote>
-<p>不支持指针和基础类型<code>int</code>,<code>float</code>等之间的相互转换</p>
-</blockquote>
-<p>普通的强制转换，基类&lt;—&gt;派生类，int &lt;—&gt; double等等。遵循C的隐式转换规则。<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Base</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="built_in">Base</span>() &#123; std::cout &lt;&lt; <span class="string">&quot;Base construct&quot;</span> &lt;&lt; std::endl;&#125;</span><br><span class="line">        <span class="built_in">Base</span>(<span class="keyword">const</span> Base&amp; base) &#123; std::cout &lt;&lt; <span class="string">&quot;Base copy construct&quot;</span> &lt;&lt; std::endl;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Derive</span>:</span> <span class="keyword">public</span> Base &#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="built_in">Derive</span>() &#123; std::cout &lt;&lt; <span class="string">&quot;Derive construct&quot;</span> &lt;&lt; std::endl; &#125;</span><br><span class="line">        <span class="built_in">Derive</span>(<span class="keyword">const</span> Derive&amp; derive) &#123; std::cout &lt;&lt; <span class="string">&quot;Derive copy construct&quot;</span> &lt;&lt; std::endl;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">float</span> f = <span class="number">3.14</span>;</span><br><span class="line">    <span class="keyword">int</span>* ptr = &amp;i;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> ci = <span class="keyword">static_cast</span>&lt;<span class="keyword">const</span> <span class="keyword">int</span>&gt;(i);</span><br><span class="line">    <span class="keyword">int</span> ici = <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(ci);</span><br><span class="line">    std::cout &lt;&lt; <span class="keyword">static_cast</span>&lt;<span class="keyword">float</span>&gt;(i) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(f) &lt;&lt; std::endl;</span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; static_cast&lt;int*&gt;(i) &lt;&lt; std::endl; // compile error</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; static_cast&lt;int&gt;(ptr) &lt;&lt; std::endl; // compile error</span></span><br><span class="line"></span><br><span class="line">    Base base;</span><br><span class="line">    Derive derive;  </span><br><span class="line">    <span class="comment">// Derive derive2 = static_cast&lt;Derive&gt;(base); // compile error</span></span><br><span class="line">    Base base2 = <span class="keyword">static_cast</span>&lt;Base&gt;(derive);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>输出：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1</span><br><span class="line">3</span><br><span class="line">Base construct</span><br><span class="line">Base construct</span><br><span class="line">Derive construct</span><br><span class="line">Base copy construct</span><br></pre></td></tr></table></figure></p>
-<h2 id="dynamic-cast"><a href="#dynamic-cast" class="headerlink" title="dynamic_cast"></a>dynamic_cast</h2><p>用于动态类型转换，只能用于含有虚函数的类，用于类层次之间的向上和向下转换，只能转指针或引用，如果是非法的对于指针返回NULL，对于引用抛异常。它通过判断在执行到该语句的时候变量的运行时类型 和要转换的类型是否相同来判断是否能够向下转换。</p>
-<p>最为严格的强制转换，只能进行指针或者引用类型转换，而且要求满足转换安全。即只允许派生类类型向基类类型转换，否则抛出异常</p>
-<h2 id="lexical-cast"><a href="#lexical-cast" class="headerlink" title="lexical_cast"></a>lexical_cast</h2><h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_46210273/article/details/121147406">C++ 四种cast 详解</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/jiaomubai/article/details/99689461">C++四种cast及其使用</a></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/08/07/universal%E4%B8%8E%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/07/universal%E4%B8%8E%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/" class="post-title-link" itemprop="url">universal reference与完美转发</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-07 09:32:17" itemprop="dateCreated datePublished" datetime="2022-08-07T09:32:17Z">2022-08-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-14 08:14:17" itemprop="dateModified" datetime="2022-08-14T08:14:17Z">2022-08-14</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C-%E4%B9%8B%E5%B7%A6%E5%80%BC%E5%8F%B3%E5%80%BC/" itemprop="url" rel="index"><span itemprop="name">C++之左值右值</span></a>
-                </span>
+              <time title="创建时间：2022-11-06 16:22:00 / 修改时间：08:22:00" itemprop="dateCreated datePublished" datetime="2022-11-06T16:22:00Z">2022-11-06</time>
             </span>
 
           
@@ -456,8 +513,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2022/08/07/universal%E4%B8%8E%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/08/07/universal与完美转发/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2022/11/07/%E6%8E%A2%E7%A7%98%E6%96%87%E4%BB%B6%E9%94%81/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/11/07/探秘文件锁/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -466,106 +523,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>3.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>声明一个模板函数<code>func()</code>，在<code>main()</code>中调用它：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(T&amp;&amp; v)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> v;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>在<code>main()</code>中调用它：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">1</span>;</span><br><span class="line">    func&lt;<span class="keyword">int</span>&gt;(a); <span class="comment">// compile error</span></span><br><span class="line">    func&lt;<span class="keyword">int</span>&gt;(std::<span class="built_in">move</span>(a));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>可以看到<code>func&lt;int&gt;(a)</code>这一行编译报错：<code>error: cannot bind rvalue reference of type ‘int&amp;&amp;’ to lvalue of type ‘int’</code>，原因显而易见：<code>int func(T&amp;&amp; v)</code>被特化成了<code>int func(int&amp;&amp; v)</code>，只接受右值。<br>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/08/07/universal%E4%B8%8E%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/21/NAS%E5%8D%8F%E8%AE%AE%E5%88%9D%E6%8E%A2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/07/21/NAS%E5%8D%8F%E8%AE%AE%E5%88%9D%E6%8E%A2/" class="post-title-link" itemprop="url">NAS协议初探</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-07-20 21:36:08" itemprop="dateCreated datePublished" datetime="2022-07-20T21:36:08Z">2022-07-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-20 13:12:49" itemprop="dateModified" datetime="2022-08-20T13:12:49Z">2022-08-20</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2022/07/21/NAS%E5%8D%8F%E8%AE%AE%E5%88%9D%E6%8E%A2/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/21/NAS协议初探/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>621</span>
+              <span>0</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -583,28 +541,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="NFS"><a href="#NFS" class="headerlink" title="NFS"></a>NFS</h2><h3 id="NFS挂载"><a href="#NFS挂载" class="headerlink" title="NFS挂载"></a>NFS挂载</h3><h2 id="CIFS"><a href="#CIFS" class="headerlink" title="CIFS"></a>CIFS</h2><h3 id="SMB和NFS的区别"><a href="#SMB和NFS的区别" class="headerlink" title="SMB和NFS的区别"></a>SMB和NFS的区别</h3><h3 id="CIFS挂载"><a href="#CIFS挂载" class="headerlink" title="CIFS挂载"></a>CIFS挂载</h3><p>CentOS 5.2 里没有 smbmount 这个命令了。并且 ，samba 3.0 以后都用cifs了，没有 smbfs 一说了。</p>
-<p>挂载指令：</p>
-<p>mount -t cifs //hostname/Public /var/www/html/1/NAS -o username=xxxx,password=xxxx</p>
-<p>注意：源必须精确到目录</p>
-<p>卸载指令：</p>
-<p>umount /var/www/html/1/NAS</p>
-<p>开机自动挂载到远程SMB的方法：</p>
-<p>将挂载命令写入：/etc/fstab</p>
-<p>//hostname/share /localfloder cifs default,username=用户名,password=密码</p>
-<p>当共享资源是 WIN98 或允许 GUEST 共享时，可以省略 username 部分。\</p>
-<p>先，安装软件:</p>
-<p>apt-get install smbfs</p>
-<p>命令</p>
-<p>smbmount //hostname/directory /home/my/mount/dir -o username=username,pass=passpord,iocharset=utf8</p>
-<p>在上面的命令里</p>
-<p>//hostname/directory 就是windows的共享路径，hostname为其IP</p>
-<p>/home/my/mount/dir 就是本地的挂载目录，</p>
-<p>-o 参数是表示后面还有很多参数，参数之间以”,”(不含引号)隔开</p>
-<p>user表示用户名</p>
-<p>pass表示密码</p>
-<p>iocharset=utf8，可以避免中文乱码</p>
-
+          
       
     </div>
 
@@ -623,7 +560,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/17/C-%E7%9A%84%E4%B8%89%E4%BA%94%E6%B3%95%E5%88%99/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/11/07/%E6%B7%B1%E5%85%A5%E4%BA%86%E8%A7%A3NFS%E5%8D%8F%E8%AE%AE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -637,7 +574,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/07/17/C-%E7%9A%84%E4%B8%89%E4%BA%94%E6%B3%95%E5%88%99/" class="post-title-link" itemprop="url">C++的三五法则与拷贝移动语义</a>
+            <a href="/2022/11/07/%E6%B7%B1%E5%85%A5%E4%BA%86%E8%A7%A3NFS%E5%8D%8F%E8%AE%AE/" class="post-title-link" itemprop="url">深入了解NFS协议</a>
         </h2>
 
         <div class="post-meta">
@@ -646,24 +583,9 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-07-17 14:58:09" itemprop="dateCreated datePublished" datetime="2022-07-17T14:58:09Z">2022-07-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-07 01:29:53" itemprop="dateModified" datetime="2022-08-07T01:29:53Z">2022-08-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C-%E4%B9%8B%E5%B7%A6%E5%80%BC%E5%8F%B3%E5%80%BC/" itemprop="url" rel="index"><span itemprop="name">C++之左值右值</span></a>
-                </span>
+              <time title="创建时间：2022-11-06 16:20:24 / 修改时间：08:20:24" itemprop="dateCreated datePublished" datetime="2022-11-06T16:20:24Z">2022-11-06</time>
             </span>
 
           
@@ -675,8 +597,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2022/07/17/C-%E7%9A%84%E4%B8%89%E4%BA%94%E6%B3%95%E5%88%99/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/17/C-的三五法则/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2022/11/07/%E6%B7%B1%E5%85%A5%E4%BA%86%E8%A7%A3NFS%E5%8D%8F%E8%AE%AE/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/11/07/深入了解NFS协议/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -685,13 +607,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>6.4k</span>
+              <span>0</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>6 分钟</span>
+              <span>1 分钟</span>
             </span>
 
         </div>
@@ -703,17 +625,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>我们先来看一个<code>matrix</code>类在C++中如何实现：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">matrix</span> &#123;</span></span><br><span class="line">  <span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int</span> nrow, ncol;</span><br><span class="line">    <span class="keyword">double</span>** value;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">matrix</span>(<span class="keyword">int</span> r, <span class="keyword">int</span> c);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>首先定义字段，在<code>matrix</code>中定义了行数<code>nrow</code>和列数<code>ncol</code>，以及指向存储数据的指针<code>value</code>。然后定义构造函数<code>matrix int r, int c)</code>。由于<code>matrix</code>有一个指针字段<code>value</code>，指向的数据需要在堆上动态分配，所以<code>matrix</code>类型的对象在拷贝时需要注意深浅拷贝的问题，在栈上对象离开作用域则需要考虑析构的问题，所以我们还需要显式地或隐式地指定了<code>matrix</code>类型的对象在<strong>拷贝</strong>、<strong>赋值</strong>和<strong>销毁</strong>时的行为。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/07/17/C-%E7%9A%84%E4%B8%89%E4%BA%94%E6%B3%95%E5%88%99/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
+          
       
     </div>
 
@@ -731,7 +643,7 @@
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -799,7 +711,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-count">125</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -839,7 +751,7 @@
 <div class="copyright">
   
   &copy; 2017 – 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -848,12 +760,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">493k</span>
+    <span title="站点总字数">500k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:28</span>
+    <span title="站点阅读时长">7:35</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>

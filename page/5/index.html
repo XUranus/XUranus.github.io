@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">125</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/01/22/%E6%A0%91%E8%8E%93%E6%B4%BE%E6%90%AD%E5%BB%BAKodi%E6%9C%BA%E9%A1%B6%E7%9B%92/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Git%E5%BF%AB%E7%85%A7%E6%9C%BA%E5%88%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -220,7 +220,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/01/22/%E6%A0%91%E8%8E%93%E6%B4%BE%E6%90%AD%E5%BB%BAKodi%E6%9C%BA%E9%A1%B6%E7%9B%92/" class="post-title-link" itemprop="url">树莓派搭建Kodi机顶盒</a>
+            <a href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Git%E5%BF%AB%E7%85%A7%E6%9C%BA%E5%88%B6/" class="post-title-link" itemprop="url">深入理解Git的发展历史</a>
         </h2>
 
         <div class="post-meta">
@@ -230,14 +230,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-01-22 08:45:55" itemprop="dateCreated datePublished" datetime="2022-01-22T08:45:55Z">2022-01-22</time>
+              <time title="创建时间：2022-07-03 21:35:21" itemprop="dateCreated datePublished" datetime="2022-07-03T21:35:21Z">2022-07-03</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-24 02:51:34" itemprop="dateModified" datetime="2022-01-24T02:51:34Z">2022-01-24</time>
+                <time title="修改时间：2022-07-10 13:42:33" itemprop="dateModified" datetime="2022-07-10T13:42:33Z">2022-07-10</time>
               </span>
 
           
@@ -249,8 +249,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2022/01/22/%E6%A0%91%E8%8E%93%E6%B4%BE%E6%90%AD%E5%BB%BAKodi%E6%9C%BA%E9%A1%B6%E7%9B%92/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/01/22/树莓派搭建Kodi机顶盒/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Git%E5%BF%AB%E7%85%A7%E6%9C%BA%E5%88%B6/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/04/深入理解Git快照机制/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -259,13 +259,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>2.3k</span>
+              <span>3.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>2 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -278,13 +278,12 @@
 
       
           <blockquote>
-<p>老家的机顶盒到期了，但其低劣的画质和残缺的功能放在2022年实在难以让我为其续费，正好家里装了无线网，打算用闲置的树莓派3B+顶替一下电视盒子</p>
+<p>研究大牛的作品是接近大牛的必要步骤——膜Linus Torvalds</p>
 </blockquote>
-<p>树莓派作为家庭影音系统的最佳解决方案是Kodi，可以通过刷入LibreELEC系统来使用Kodi。</p>
-<p>LibreELEC简单来说就是最小限度满足Kodi运行的Linux，LibreELEC是把精简版Linux与kodi集成的媒体中心系统，速度快，cpu占用率低，非常适合性能较差的主机。</p>
+<h2 id="版本控制的发展历史"><a href="#版本控制的发展历史" class="headerlink" title="版本控制的发展历史"></a>版本控制的发展历史</h2><p>创建一个<code>README.md</code>文件，写入两行文字:<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Git is a distributed, open source version control system.</span><br><span class="line">You can install git on Linux using binary release.</span><br></pre></td></tr></table></figure><br>我们将它作为这个文件的第一个版本，之后有一天，我想再对它做一点修改：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Git is a distributed, open source version control system.</span><br><span class="line">You can install git on Linux, Windows using binary release.</span><br><span class="line">Or you can compile from source code.</span><br></pre></td></tr></table></figure><br>在版本控制系统还没有出现之前，人们总是用不同的文件名来区分不同的文件版本。如果想未来能回滚到之前的版本，此时只能用<code>README_2.md</code>来去分它。随着版本越来越多，文件名越来越长，管理大量版本的文件成为了噩梦。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/01/22/%E6%A0%91%E8%8E%93%E6%B4%BE%E6%90%AD%E5%BB%BAKodi%E6%9C%BA%E9%A1%B6%E7%9B%92/#more" rel="contents">
+              <a class="btn" href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Git%E5%BF%AB%E7%85%A7%E6%9C%BA%E5%88%B6/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -308,7 +307,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/01/15/%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E6%95%B4%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3C-%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -322,7 +321,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/01/15/%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E6%95%B4%E7%90%86/" class="post-title-link" itemprop="url">学习资源整理</a>
+            <a href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3C-%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/" class="post-title-link" itemprop="url">深入理解C++ 智能指针</a>
         </h2>
 
         <div class="post-meta">
@@ -332,14 +331,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-01-15 11:00:42" itemprop="dateCreated datePublished" datetime="2022-01-15T11:00:42Z">2022-01-15</time>
+              <time title="创建时间：2022-07-03 21:34:43" itemprop="dateCreated datePublished" datetime="2022-07-03T21:34:43Z">2022-07-03</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-14 08:41:21" itemprop="dateModified" datetime="2022-08-14T08:41:21Z">2022-08-14</time>
+                <time title="修改时间：2022-07-17 05:57:33" itemprop="dateModified" datetime="2022-07-17T05:57:33Z">2022-07-17</time>
               </span>
 
           
@@ -351,8 +350,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2022/01/15/%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E6%95%B4%E7%90%86/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/01/15/学习资源整理/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3C-%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/04/深入理解C-智能指针/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -361,7 +360,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>598</span>
+              <span>0</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -379,16 +378,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>这个时代要学个东西网上资源丰富而又良莠不齐，映像里大多数培训班直播喜欢东拉西扯视频质量贼差，而有些用爱发电的UP做的教程往往PPT做的特别精致。</p>
-<p>这里搜集一些本人学过的精品资源，每一个都是宝藏。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/15/%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E6%95%B4%E7%90%86/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
+          
       
     </div>
 
@@ -407,7 +397,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/01/10/Hexo-Next%E5%AE%9A%E5%88%B6%E5%8C%96/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3std-allocator/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -421,7 +411,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/01/10/Hexo-Next%E5%AE%9A%E5%88%B6%E5%8C%96/" class="post-title-link" itemprop="url">Hexo-Next定制化</a>
+            <a href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3std-allocator/" class="post-title-link" itemprop="url">深入理解std::allocator<T></a>
         </h2>
 
         <div class="post-meta">
@@ -431,14 +421,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-01-10 14:43:04" itemprop="dateCreated datePublished" datetime="2022-01-10T14:43:04Z">2022-01-10</time>
+              <time title="创建时间：2022-07-03 21:34:17" itemprop="dateCreated datePublished" datetime="2022-07-03T21:34:17Z">2022-07-03</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-06-27 14:49:31" itemprop="dateModified" datetime="2022-06-27T14:49:31Z">2022-06-27</time>
+                <time title="修改时间：2022-07-17 02:00:48" itemprop="dateModified" datetime="2022-07-17T02:00:48Z">2022-07-17</time>
               </span>
 
           
@@ -450,8 +440,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2022/01/10/Hexo-Next%E5%AE%9A%E5%88%B6%E5%8C%96/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/01/10/Hexo-Next定制化/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3std-allocator/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/04/深入理解std-allocator/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -460,13 +450,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>6.5k</span>
+              <span>3.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>6 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -478,12 +468,21 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>之前折腾了不少Hexo的玩法，也写过零星的几篇Hexo文章，为了便于查阅这里做个整合。</p>
-<p>自从迁移到<a target="_blank" rel="noopener" href="https://github.com/theme-next/hexo-theme-next">Next</a>主题后就发觉这也许是实用性最好的Hexo主题，以后大概率不会更换其他主题，所以以后一些个性化修改也只基于他。</p>
-<p>博客项目目录：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">_config.yml # Hexo主配置</span><br><span class="line">public/</span><br><span class="line">source/</span><br><span class="line">  _drafts/</span><br><span class="line">  _posts/</span><br><span class="line">themes/</span><br><span class="line">  next/</span><br><span class="line">    _config.yml # Next主题配置</span><br></pre></td></tr></table></figure></p>
+          <p>请求堆上分配内存需要操作系统的参与，频繁的向请求内存开销很大。为了优化这个问题，可以把预先分配一部分内存放在池子里。</p>
+<p>C++在堆上创建对象一般是用<code>new</code>，<code>new</code>的执行包含了两个过程：</p>
+<ol>
+<li>分配内存</li>
+<li>初始化对象</li>
+</ol>
+<p>而<code>delete</code>的执行也包含了两个过程：</p>
+<ol>
+<li>对象析构</li>
+<li>释放内存</li>
+</ol>
+<p>当创建单个对象的时候，我们拥有构造对象所需的值，我们通常希望内存分配和对象初始化组合在一起；但是连续分配一堆对象的时候，我们往往希望分配内存和对象初始化分离，先分配一大快内存，在需要时再按需执行对象的初始化，此时如果将内存分配和对象初始化放在一起则会导致不必要的性能开销。例如<code>new std::vector&lt;T&gt;(10)</code>，我们希望只分配10个<code>T</code>类型的空间，而不执行<code>T</code>的默认构造方法，只有在<code>emplace_back</code>的时候才对内存初始化。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/01/10/Hexo-Next%E5%AE%9A%E5%88%B6%E5%8C%96/#more" rel="contents">
+              <a class="btn" href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3std-allocator/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -507,7 +506,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/01/08/SpringBoot%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/04/ASAN%E3%80%81TSAN%E3%80%81UBSAN%E3%80%81KASAN%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -521,7 +520,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/01/08/SpringBoot%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">SpringBoot学习笔记</a>
+            <a href="/2022/07/04/ASAN%E3%80%81TSAN%E3%80%81UBSAN%E3%80%81KASAN%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">ASAN、TSAN、UBSAN、KASAN使用总结</a>
         </h2>
 
         <div class="post-meta">
@@ -530,16 +529,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-01-07 20:26:33" itemprop="dateCreated datePublished" datetime="2022-01-07T20:26:33Z">2022-01-07</time>
+              <time title="创建时间：2022-07-03 16:01:44 / 修改时间：13:00:45" itemprop="dateCreated datePublished" datetime="2022-07-03T16:01:44Z">2022-07-03</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-12 02:02:13" itemprop="dateModified" datetime="2022-01-12T02:02:13Z">2022-01-12</time>
-              </span>
 
           
   
@@ -550,8 +543,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2022/01/08/SpringBoot%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/01/08/SpringBoot学习笔记/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2022/07/04/ASAN%E3%80%81TSAN%E3%80%81UBSAN%E3%80%81KASAN%E4%BD%BF%E7%94%A8%E6%80%BB%E7%BB%93/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/04/ASAN、TSAN、UBSAN、KASAN使用总结/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -560,13 +553,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>7k</span>
+              <span>0</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>6 分钟</span>
+              <span>1 分钟</span>
             </span>
 
         </div>
@@ -578,15 +571,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="起步"><a href="#起步" class="headerlink" title="起步"></a>起步</h2><h3 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h3><p>在IDEA中选择File-&gt;New-&gt;Project-&gt;Spring Initializr，勾选Web/Spring Web。或者File-&gt;New-&gt;Module，创建一个Maven项目。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/08/SpringBoot%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
+          
       
     </div>
 
@@ -605,7 +590,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/02/%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -619,7 +604,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/" class="post-title-link" itemprop="url">MIUI微信8.0数据导出</a>
+            <a href="/2022/07/02/%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="post-title-link" itemprop="url">远程调试环境搭建</a>
         </h2>
 
         <div class="post-meta">
@@ -629,14 +614,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-10-06 17:13:08" itemprop="dateCreated datePublished" datetime="2021-10-06T17:13:08Z">2021-10-06</time>
+              <time title="创建时间：2022-07-02 15:28:30" itemprop="dateCreated datePublished" datetime="2022-07-02T15:28:30Z">2022-07-02</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-12 02:04:53" itemprop="dateModified" datetime="2022-01-12T02:04:53Z">2022-01-12</time>
+                <time title="修改时间：2022-07-17 05:57:29" itemprop="dateModified" datetime="2022-07-17T05:57:29Z">2022-07-17</time>
               </span>
 
           
@@ -648,8 +633,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/10/07/MIUI微信8-0数据导出/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2022/07/02/%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/02/远程调试环境搭建/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -658,7 +643,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>4.1k</span>
+              <span>4.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -677,15 +662,15 @@
 
       
           <blockquote>
-<p>多年不再联系的朋友X偶然加了我微信，发了一条消息后又撤回了，很想知道她发了什么但又不好意思问，于是打算从微信的本地数据库找点线索。</p>
+<p>由于平时一直使用Arch Linux环境写代码，但是公司只给用Windows，对Windows MinGW开发环境的场景觉得很不顺手。由于业务是Linux业务，在本地开发无法编译，需要使用远程编译机编译。这种模式使得调试程序只能远端编译后，在远端不使用GDB，而GDB命令行不仅难用还有高昂的学习成本。最近新发现一写远程开发/调试的方案，再次整理出来以应付C++跨平台开发的场景。</p>
 </blockquote>
-<p>手机是红米K30 Pro(MIUI 12.5)，微信版本8.0。由于手机没有Root，不能用ADB直接拿到数据，所以用MIUI的备份功能备份微信。</p>
-<p><img src="1.jpg" alt=""></p>
-<p>只单独备份微信一个APP，USB链接后在<code>MIUI/backup/ALlBackup</code>中拿到微信的备份包，可以用7zip打开并导出<code>apps</code>文件夹。</p>
-<p>微信数据一般存放于SQlite的<code>db</code>文件中，搜索<code>*.db</code>文件可以发现<code>apps/com.tencent.mm/r/MicroMsg/ee1da3ae2100e09165c2e52382cfe79f</code>下有个挺大的<code>EnMicroMsg.db</code>文件，应该就是它了。对于有多个登录帐号的手机，每个账号对应一个<code>apps/com.tencent.mm/r/MicroMsg/&#123;你的帐号的hash&#125;</code>文件夹，里面存放数据库和一些资源文件。</p>
+<h2 id="创建样例程序"><a href="#创建样例程序" class="headerlink" title="创建样例程序"></a>创建样例程序</h2><ul>
+<li>本机环境：Windows X64</li>
+<li>远端环境：Linux（Armbian）aarch64</li>
+<li>本地IDE: VSCode<br>创建一个CMake项目用于演示：<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.</span><br><span class="line">├── build/</span><br><span class="line">├── CMakeLists.txt</span><br><span class="line">├── include/</span><br><span class="line">│   └── Student.h</span><br><span class="line">└── src/</span><br><span class="line">    ├── main.cpp</span><br><span class="line">    └── Student.cpp</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/#more" rel="contents">
+              <a class="btn" href="/2022/07/02/%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -708,7 +693,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -776,7 +761,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-count">125</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -816,7 +801,7 @@
 <div class="copyright">
   
   &copy; 2017 – 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -825,12 +810,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">493k</span>
+    <span title="站点总字数">500k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:28</span>
+    <span title="站点阅读时长">7:35</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
@@ -904,59 +889,6 @@ if (document.querySelectorAll('pre.mermaid').length) {
   
 
   
-      
-
-<script>
-  if (typeof MathJax === 'undefined') {
-    window.MathJax = {
-      loader: {
-        source: {
-          '[tex]/amsCd': '[tex]/amscd',
-          '[tex]/AMScd': '[tex]/amscd'
-        }
-      },
-      tex: {
-        inlineMath: {'[+]': [['$', '$']]},
-        tags: 'ams'
-      },
-      options: {
-        renderActions: {
-          findScript: [10, doc => {
-            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
-              const display = !!node.type.match(/; *mode=display/);
-              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
-              const text = document.createTextNode('');
-              node.parentNode.replaceChild(text, node);
-              math.start = {node: text, delim: '', n: 0};
-              math.end = {node: text, delim: '', n: 0};
-              doc.math.push(math);
-            });
-          }, '', false],
-          insertedScript: [200, () => {
-            document.querySelectorAll('mjx-container').forEach(node => {
-              let target = node.parentNode;
-              if (target.nodeName.toLowerCase() === 'li') {
-                target.parentNode.classList.add('has-jax');
-              }
-            });
-          }, '', false]
-        }
-      }
-    };
-    (function () {
-      var script = document.createElement('script');
-      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
-      script.defer = true;
-      document.head.appendChild(script);
-    })();
-  } else {
-    MathJax.startup.document.state(0);
-    MathJax.texReset();
-    MathJax.typeset();
-  }
-</script>
-
-    
 
   
 

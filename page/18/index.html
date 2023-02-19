@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">125</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/11/09/ettercap%E5%AE%9E%E7%8E%B0dns%E6%B1%A1%E6%9F%93/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/05/06/wifi%E7%BD%91%E5%8D%A1%E7%9A%84%E5%9D%91/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -220,7 +220,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/11/09/ettercap%E5%AE%9E%E7%8E%B0dns%E6%B1%A1%E6%9F%93/" class="post-title-link" itemprop="url">Ettercap实现dns污染</a>
+            <a href="/2019/05/06/wifi%E7%BD%91%E5%8D%A1%E7%9A%84%E5%9D%91/" class="post-title-link" itemprop="url">ArchLinux下WiFi网卡的坑</a>
         </h2>
 
         <div class="post-meta">
@@ -230,7 +230,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-11-08 16:51:31" itemprop="dateCreated datePublished" datetime="2018-11-08T16:51:31Z">2018-11-08</time>
+              <time title="创建时间：2019-05-05 19:16:27" itemprop="dateCreated datePublished" datetime="2019-05-05T19:16:27Z">2019-05-05</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -249,8 +249,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2018/11/09/ettercap%E5%AE%9E%E7%8E%B0dns%E6%B1%A1%E6%9F%93/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/11/09/ettercap实现dns污染/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2019/05/06/wifi%E7%BD%91%E5%8D%A1%E7%9A%84%E5%9D%91/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/05/06/wifi网卡的坑/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -259,7 +259,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>570</span>
+              <span>618</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -277,15 +277,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <ul>
-<li>测试环境：ArchLinux</li>
-</ul>
-<p>ettercap是一个内网嗅探工具，Kali中自带，ArchLinux下可以用pacman安装：<code>sudo pacman -S ettercap</code>，也可以用安装图形界面版本：<code>sudo pacman -S ettercap-gtk</code>，笔者采用的是图形界面版本</p>
-<p><code>Alt</code>+空格，输入ettercap，输入密码即可。<br><img src="Screenshot_20181108_183218.png" alt=""></p>
-<p>先编辑<code>/etc/ettercap/etter.dns</code>配置文件，这里填写DNS污染规则<br><img src="Screenshot_20181108_184529.png" alt=""><br>比如这里的两行就是让所有<code>ipgw.neu.edu.cn</code>指向127.0.0.1（会导致别人上不了网）</p>
+          <p>Archlinux下笔记本wifi用着用着忽然失效了，但插入外置网卡可以使用，原以为是网卡坏了，但换成windows发现可以使用。</p>
+<p>输入<code>ifconfig</code>发现没有网卡，输入<code>ip link</code> :<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">wlp2s0: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc mq state DOWN mode DEFAULT group default qlen 1000</span><br><span class="line">link/ether ae:e3:e0:2b:fb:ca brd ff:ff:ff:ff:ff:ff</span><br></pre></td></tr></table></figure></p>
+<p>发现wlp2s0没有开启，<code>ip link set wlp2s0 up</code> ,结果state依然是DOWN，此时重新安装<code>networkManager</code>,还是没有解决问题，此时怀疑应该是配置问题：<br><code>sudo vim /etc/NetworkManager/NetworkManager.conf</code>,发现unmanaged-devices中有wlp2s0:</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/11/09/ettercap%E5%AE%9E%E7%8E%B0dns%E6%B1%A1%E6%9F%93/#more" rel="contents">
+              <a class="btn" href="/2019/05/06/wifi%E7%BD%91%E5%8D%A1%E7%9A%84%E5%9D%91/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -309,7 +306,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/05/04/Nginx%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -323,7 +320,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">设计模式</a>
+            <a href="/2019/05/04/Nginx%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">Nginx学习笔记</a>
         </h2>
 
         <div class="post-meta">
@@ -333,7 +330,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-11-05 14:02:37" itemprop="dateCreated datePublished" datetime="2018-11-05T14:02:37Z">2018-11-05</time>
+              <time title="创建时间：2019-05-03 22:33:33" itemprop="dateCreated datePublished" datetime="2019-05-03T22:33:33Z">2019-05-03</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -352,8 +349,317 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/11/05/设计模式/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2019/05/04/Nginx%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/05/04/Nginx学习笔记/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="基本选项"><a href="#基本选项" class="headerlink" title="基本选项"></a>基本选项</h2><p><code>nginx -h</code>打印出的内容几乎已经告诉我们如何使用nginx：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Options:</span><br><span class="line">  -?,-h         : this help</span><br><span class="line">  -v            : show version and exit</span><br><span class="line">  -V            : show version and configure options then exit</span><br><span class="line">  -t            : test configuration and exit</span><br><span class="line">  -T            : test configuration, dump it and exit</span><br><span class="line">  -q            : suppress non-error messages during configuration testing</span><br><span class="line">  -s signal     : send signal to a master process: stop, quit, reopen, reload</span><br><span class="line">  -p prefix     : set prefix path (default: /usr/local/nginx/)</span><br><span class="line">  -c filename   : set configuration file (default: /usr/local/nginx/nginx.conf)</span><br><span class="line">  -g directives : set global directives out of configuration file</span><br></pre></td></tr></table></figure></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/05/04/Nginx%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/05/01/Nginx%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/05/01/Nginx%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" class="post-title-link" itemprop="url">Nginx安装与配置</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-04-30 20:04:48" itemprop="dateCreated datePublished" datetime="2019-04-30T20:04:48Z">2019-04-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/05/01/Nginx%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/05/01/Nginx安装与配置/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>实验楼nginx课程练习地址：<a target="_blank" rel="noopener" href="https://www.shiyanlou.com/courses/95">Nginx实战</a></p>
+</blockquote>
+<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>Nnginx 是一款高性能的 HTTP 和反向代理服务器软件，第一个开源版本诞生于 2004 年,虽然诞生较晚但经过十多年的发展,已经成为非常流行的 web 服务器软件。</p>
+<h2 id="为什么选择-Nginx"><a href="#为什么选择-Nginx" class="headerlink" title="为什么选择 Nginx"></a>为什么选择 Nginx</h2><h3 id="Nginx-和-Apache-相同点"><a href="#Nginx-和-Apache-相同点" class="headerlink" title="Nginx 和 Apache 相同点"></a>Nginx 和 Apache 相同点</h3><ul>
+<li>同是 HTTP 服务器软件，都采用<strong>模块化</strong>结构设计</li>
+<li>支持通用语言接口，如 PHP、Python 等</li>
+<li>支持正向代理和反向代理</li>
+<li>支持虚拟主机及 ssl 加密传输</li>
+<li>支持缓存及压缩传输</li>
+<li>支持 URL 重写</li>
+<li>模块多,扩展性强</li>
+<li>多平台支持</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/05/01/Nginx%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/03/02/%E8%87%AA%E5%B7%B1%E5%86%99%E4%B8%AAJVM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/03/02/%E8%87%AA%E5%B7%B1%E5%86%99%E4%B8%AAJVM/" class="post-title-link" itemprop="url">自己写个JVM</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-03-02 15:08:35" itemprop="dateCreated datePublished" datetime="2019-03-02T15:08:35Z">2019-03-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/03/02/%E8%87%AA%E5%B7%B1%E5%86%99%E4%B8%AAJVM/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/03/02/自己写个JVM/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>寒假看《自己动手写JVM》和《java虚拟机精讲》写了一个半成品JVM，C++实现，项目地址：<a target="_blank" rel="noopener" href="https://github.com/XUranus/JVM">JVM</a>。</p>
+<p>首先是字节码解析，主要是常量池，字段的解析，除了几个涉及到Annotation属性外，基本都实现了解析，Attribute_Annotation_xxx涉及到的一些结构体嵌套太复杂了，暂时先没做（不影响运行）</p>
+<p>然后是运行时数据区（RDTA），主要涉及到线程，java虚拟机栈（Stack），方法帧（Frame），本地变量（Local Variables），操作数栈（Operand Stack）。都是简单的数据结构。<br>之后实现100多条基本字节码指令，const,load,store,math之类的。自此已经可以通过hack运行一些简单的单函数class文件。<br>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/03/02/%E8%87%AA%E5%B7%B1%E5%86%99%E4%B8%AAJVM/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/" class="post-title-link" itemprop="url">HBase实现搜索引擎</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-12-22 16:40:16" itemprop="dateCreated datePublished" datetime="2018-12-22T16:40:16Z">2018-12-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/12/23/hbase实现搜索引擎/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -380,321 +686,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><h2 id="什么是模式"><a href="#什么是模式" class="headerlink" title="什么是模式"></a>什么是模式</h2><p>在一个环境中对一个问题的解决方案就是模式</p>
-<h2 id="为什么需要模式"><a href="#为什么需要模式" class="headerlink" title="为什么需要模式"></a>为什么需要模式</h2><p>有经验的程序员会复用过去问题中的解决方案。结构优良的面向对象系统有类和对象的迭代模式。对过去模式的知识的学习让一个开发者效率更高而且让设计变得更活且可复用。</p>
-<p>Benefits Of Design Patterns<br>Capture expertise and make it accessible to<br>non-experts in a standard form<br>n Facilitate communication among developers<br>by providing a common language<br>n Make it easier to reuse successful designs<br>and avoid alternatives that diminish<br>reusability<br>n Facilitate design modifications<br>n Improve design documentation<br>Improve design understandability</p>
+          <h1 id="静态搜索引擎"><a href="#静态搜索引擎" class="headerlink" title="静态搜索引擎"></a>静态搜索引擎</h1><p>上一节已经配置了一个hadoop+spark集群，xuranus@172.17.11.40 为本机，在本机NAT下六个节点：</p>
+<h2 id="集群说明"><a href="#集群说明" class="headerlink" title="集群说明"></a>集群说明</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">xuranusMaster@172.16.173.136</span><br><span class="line">xuranusSlave1@172.16.173.137</span><br><span class="line">xuranusSlave2@172.16.173.138</span><br><span class="line">zookeeper001@172.16.173.139</span><br><span class="line">zookeeper002@172.16.173.140</span><br><span class="line">zookeeper003@172.16.173.141</span><br></pre></td></tr></table></figure>
+<p>Hbase部署在172.16.173.136～139上。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/11/05/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/11/03/jupyter-notebook%E7%9A%84%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/11/03/jupyter-notebook%E7%9A%84%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">jupyter notebook的使用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-11-03 14:13:08" itemprop="dateCreated datePublished" datetime="2018-11-03T14:13:08Z">2018-11-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2018/11/03/jupyter-notebook%E7%9A%84%E4%BD%BF%E7%94%A8/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/11/03/jupyter-notebook的使用/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>812</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>Jupyter Notebook（此前被称为 IPython notebook）是一个交互式笔记本，支持运行 40 多种编程语言。</p>
-</blockquote>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><ul>
-<li>环境：Archlinux</li>
-<li>包管理:conda</li>
-</ul>
-<p>conda中已经自带jupyter的包，如果不用conda，也可以用pip<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo pip install jupyter</span><br></pre></td></tr></table></figure><br>运行：<code>jupyter notebook</code>，弹出浏览器即可使用了</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/11/03/jupyter-notebook%E7%9A%84%E4%BD%BF%E7%94%A8/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/11/02/Archlinux%E4%BD%BF%E7%94%A8Anaconda/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/11/02/Archlinux%E4%BD%BF%E7%94%A8Anaconda/" class="post-title-link" itemprop="url">Archlinux使用Anaconda</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-11-02 12:36:59" itemprop="dateCreated datePublished" datetime="2018-11-02T12:36:59Z">2018-11-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2018/11/02/Archlinux%E4%BD%BF%E7%94%A8Anaconda/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/11/02/Archlinux使用Anaconda/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>1.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>conda是python的另一个包管理器，和pip并不通用 </p>
-</blockquote>
-<h1 id="Anaconda的安装"><a href="#Anaconda的安装" class="headerlink" title="Anaconda的安装"></a>Anaconda的安装</h1><p>首先Arch上已经安装了Python 3.7.1和python-pip，此时控制台输入Python，输出如下：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Python 3.7.1 (default, Oct 22 2018, 10:41:28) </span><br><span class="line">[GCC 8.2.1 20180831] on linux</span><br><span class="line">Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.</span><br><span class="line">&gt;&gt;&gt; </span><br></pre></td></tr></table></figure><br>之后安装Anaconda</p>
-<p>通过pacman：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo pacman -S anaconda</span><br></pre></td></tr></table></figure><br>然后将<code>/opt/anaconda/bin</code>添加到<code>PATH</code>环境变量中</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/11/02/Archlinux%E4%BD%BF%E7%94%A8Anaconda/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/11/02/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/11/02/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/" class="post-title-link" itemprop="url">Python学习笔记（一）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-11-02 11:47:32" itemprop="dateCreated datePublished" datetime="2018-11-02T11:47:32Z">2018-11-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2018/11/02/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/11/02/Python学习笔记（一）/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>5.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>学习过程：Python入门 -&gt; pandas -&gt;scikit-learn</p>
-<p>主要任务：学习SciPy</p>
-<p><a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/4b07be3c64483b48b280f35e.html">data.Frame学习网址</a></p>
-<p><a target="_blank" rel="noopener" href="http://www.runoob.com/python3/python3-tutorial.html">python3学习网址</a></p>
-<h2 id="Python入门-Python3"><a href="#Python入门-Python3" class="headerlink" title="Python入门(Python3)"></a>Python入门(Python3)</h2><h2 id="基本输入输出"><a href="#基本输入输出" class="headerlink" title="基本输入输出"></a>基本输入输出</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">a = <span class="built_in">input</span>(<span class="string">&quot;input number&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;number is&quot;</span>,a)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="number">123</span>,<span class="number">456</span>,sep=<span class="string">&quot;#&quot;</span>,end=<span class="string">&quot;=&quot;</span>) <span class="comment">#设置分隔符和结尾符</span></span><br><span class="line"><span class="comment">#输出： 123#456=</span></span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/11/02/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/#more" rel="contents">
+              <a class="btn" href="/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -717,7 +714,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/17/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><span class="page-number current">18</span><a class="page-number" href="/page/19/">19</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/19/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/17/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><span class="page-number current">18</span><a class="page-number" href="/page/19/">19</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/19/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -785,7 +782,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-count">125</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -825,7 +822,7 @@
 <div class="copyright">
   
   &copy; 2017 – 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -834,12 +831,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">493k</span>
+    <span title="站点总字数">500k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:28</span>
+    <span title="站点阅读时长">7:35</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>

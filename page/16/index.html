@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">125</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/05/06/wifi%E7%BD%91%E5%8D%A1%E7%9A%84%E5%9D%91/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/11/22/%E5%AF%B9react%E5%AD%A6%E4%B9%A0%E7%9A%84%E4%B8%80%E7%82%B9%E6%B7%B1%E5%85%A5/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -220,7 +220,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/05/06/wifi%E7%BD%91%E5%8D%A1%E7%9A%84%E5%9D%91/" class="post-title-link" itemprop="url">ArchLinux下WiFi网卡的坑</a>
+            <a href="/2019/11/22/%E5%AF%B9react%E5%AD%A6%E4%B9%A0%E7%9A%84%E4%B8%80%E7%82%B9%E6%B7%B1%E5%85%A5/" class="post-title-link" itemprop="url">对React学习的一点深入</a>
         </h2>
 
         <div class="post-meta">
@@ -230,7 +230,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-05-05 19:16:27" itemprop="dateCreated datePublished" datetime="2019-05-05T19:16:27Z">2019-05-05</time>
+              <time title="创建时间：2019-11-21 22:36:12" itemprop="dateCreated datePublished" datetime="2019-11-21T22:36:12Z">2019-11-21</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -249,8 +249,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2019/05/06/wifi%E7%BD%91%E5%8D%A1%E7%9A%84%E5%9D%91/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/05/06/wifi网卡的坑/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2019/11/22/%E5%AF%B9react%E5%AD%A6%E4%B9%A0%E7%9A%84%E4%B8%80%E7%82%B9%E6%B7%B1%E5%85%A5/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/22/对react学习的一点深入/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -259,13 +259,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>618</span>
+              <span>11k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>1 分钟</span>
+              <span>10 分钟</span>
             </span>
 
         </div>
@@ -277,12 +277,14 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>Archlinux下笔记本wifi用着用着忽然失效了，但插入外置网卡可以使用，原以为是网卡坏了，但换成windows发现可以使用。</p>
-<p>输入<code>ifconfig</code>发现没有网卡，输入<code>ip link</code> :<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">wlp2s0: &lt;BROADCAST,MULTICAST&gt; mtu 1500 qdisc mq state DOWN mode DEFAULT group default qlen 1000</span><br><span class="line">link/ether ae:e3:e0:2b:fb:ca brd ff:ff:ff:ff:ff:ff</span><br></pre></td></tr></table></figure></p>
-<p>发现wlp2s0没有开启，<code>ip link set wlp2s0 up</code> ,结果state依然是DOWN，此时重新安装<code>networkManager</code>,还是没有解决问题，此时怀疑应该是配置问题：<br><code>sudo vim /etc/NetworkManager/NetworkManager.conf</code>,发现unmanaged-devices中有wlp2s0:</p>
+          <p>之前在react官网上囫囵吞枣学了react的一点基础知识，就急不可耐的写了很多代码（人脸识别，云笔记，实训的医院管理系统前端。。。），结果遇到了很多坑。react是一门很复杂的技术，而我缺乏系统的学习，正好看到一本《深入浅出react和redux》的电子书，借此深入学习react。</p>
+<h2 id="props和state"><a href="#props和state" class="headerlink" title="props和state"></a>props和state</h2><p>react天然具有高内聚，低耦合的特征（样式，内容，交互内封装一个组件中）。<code>props</code>看作外部的接口，<code>state</code>看作自己的内部状态，两者改变都会导致组件的重新渲染。react组件开发应合理划分组件的边界，将高内聚（交互频繁）的部分合并为一个组件，组件和组件中间保证低耦合（低信息交换）</p>
+<h2 id="props类型约束与初始化"><a href="#props类型约束与初始化" class="headerlink" title="props类型约束与初始化"></a>props类型约束与初始化</h2><p>假设一个组件名字是Counter（计数器），有string类型的<code>caption</code>，number类型的<code>initValue</code>，其中<code>caption</code>必须被申明，且必须是string类型，<code>initValue</code>必须是number类型，需要有默认值。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Counter</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="comment">//.... Counter组建的定义</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* Counter的props类型约束 */</span></span><br><span class="line">Counter.propTypes = &#123;</span><br><span class="line">  <span class="attr">caption</span>: PropTypes.string.isRequired,</span><br><span class="line">  <span class="attr">initValue</span>: PropTypes.number,</span><br><span class="line">  <span class="attr">onUpdate</span>: PropTypes.func</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* Counter的props初始化 */</span></span><br><span class="line">Counter.defaultProps = &#123;</span><br><span class="line">  <span class="attr">initValue</span>: <span class="number">0</span> <span class="comment">//如果没有声明，初始化为0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果违背了约束条件，则会在console中产生warning，有效避免了调试找bug的困难。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2019/05/06/wifi%E7%BD%91%E5%8D%A1%E7%9A%84%E5%9D%91/#more" rel="contents">
+              <a class="btn" href="/2019/11/22/%E5%AF%B9react%E5%AD%A6%E4%B9%A0%E7%9A%84%E4%B8%80%E7%82%B9%E6%B7%B1%E5%85%A5/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -306,7 +308,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/05/04/Nginx%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/06/26/%E5%AE%88%E6%8A%A4%E5%85%A8%E4%B8%96%E7%95%8C%E6%9C%80%E5%A5%BD%E7%9A%84%E7%83%A4%E7%AE%B1-systemd%E5%AD%A6%E4%B9%A0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -320,7 +322,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/05/04/Nginx%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">Nginx学习笔记</a>
+            <a href="/2019/06/26/%E5%AE%88%E6%8A%A4%E5%85%A8%E4%B8%96%E7%95%8C%E6%9C%80%E5%A5%BD%E7%9A%84%E7%83%A4%E7%AE%B1-systemd%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">守护全世界最好的烤箱--systemd学习</a>
         </h2>
 
         <div class="post-meta">
@@ -330,7 +332,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-05-03 22:33:33" itemprop="dateCreated datePublished" datetime="2019-05-03T22:33:33Z">2019-05-03</time>
+              <time title="创建时间：2019-06-26 11:48:12" itemprop="dateCreated datePublished" datetime="2019-06-26T11:48:12Z">2019-06-26</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -349,8 +351,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2019/05/04/Nginx%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/05/04/Nginx学习笔记/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2019/06/26/%E5%AE%88%E6%8A%A4%E5%85%A8%E4%B8%96%E7%95%8C%E6%9C%80%E5%A5%BD%E7%9A%84%E7%83%A4%E7%AE%B1-systemd%E5%AD%A6%E4%B9%A0/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/06/26/守护全世界最好的烤箱-systemd学习/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -359,105 +361,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="基本选项"><a href="#基本选项" class="headerlink" title="基本选项"></a>基本选项</h2><p><code>nginx -h</code>打印出的内容几乎已经告诉我们如何使用nginx：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Options:</span><br><span class="line">  -?,-h         : this help</span><br><span class="line">  -v            : show version and exit</span><br><span class="line">  -V            : show version and configure options then exit</span><br><span class="line">  -t            : test configuration and exit</span><br><span class="line">  -T            : test configuration, dump it and exit</span><br><span class="line">  -q            : suppress non-error messages during configuration testing</span><br><span class="line">  -s signal     : send signal to a master process: stop, quit, reopen, reload</span><br><span class="line">  -p prefix     : set prefix path (default: /usr/local/nginx/)</span><br><span class="line">  -c filename   : set configuration file (default: /usr/local/nginx/nginx.conf)</span><br><span class="line">  -g directives : set global directives out of configuration file</span><br></pre></td></tr></table></figure></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/05/04/Nginx%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/05/01/Nginx%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/05/01/Nginx%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/" class="post-title-link" itemprop="url">Nginx安装与配置</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-04-30 20:04:48" itemprop="dateCreated datePublished" datetime="2019-04-30T20:04:48Z">2019-04-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/05/01/Nginx%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/05/01/Nginx安装与配置/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>4k</span>
+              <span>4.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -476,22 +380,18 @@
 
       
           <blockquote>
-<p>实验楼nginx课程练习地址：<a target="_blank" rel="noopener" href="https://www.shiyanlou.com/courses/95">Nginx实战</a></p>
+<p>不想开斗鱼APP推送，如何在pc端收到hanser直播的通知呢？本人是linux的深度使用者，这就需要写一个守护进程在后台监测了。</p>
 </blockquote>
-<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>Nnginx 是一款高性能的 HTTP 和反向代理服务器软件，第一个开源版本诞生于 2004 年,虽然诞生较晚但经过十多年的发展,已经成为非常流行的 web 服务器软件。</p>
-<h2 id="为什么选择-Nginx"><a href="#为什么选择-Nginx" class="headerlink" title="为什么选择 Nginx"></a>为什么选择 Nginx</h2><h3 id="Nginx-和-Apache-相同点"><a href="#Nginx-和-Apache-相同点" class="headerlink" title="Nginx 和 Apache 相同点"></a>Nginx 和 Apache 相同点</h3><ul>
-<li>同是 HTTP 服务器软件，都采用<strong>模块化</strong>结构设计</li>
-<li>支持通用语言接口，如 PHP、Python 等</li>
-<li>支持正向代理和反向代理</li>
-<li>支持虚拟主机及 ssl 加密传输</li>
-<li>支持缓存及压缩传输</li>
-<li>支持 URL 重写</li>
-<li>模块多,扩展性强</li>
-<li>多平台支持</li>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>平时常用的mysql，httpd，nginx都是守护进程（daemon），可以被systemctl命令管理，例如<code>sudo systemctl start XXX</code>可以启动一个守护进程，<code>sudo systemctl stop XXX</code>则是关闭。</p>
+<p>本人环境Archlinux，arch已经从service迁移到了systemd，关于systemd资料如下</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/Systemd/User#Writing_user_units">ArchWiki的官方讲解</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.centos.bz/2018/03/systemd-%E7%BC%96%E5%86%99%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86%E8%84%9A%E6%9C%AC/">systemd 编写服务管理脚本</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.centosdoc.com/system/201.html">SYSTEMD启动脚本详解</a></li>
 </ul>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2019/05/01/Nginx%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/#more" rel="contents">
+              <a class="btn" href="/2019/06/26/%E5%AE%88%E6%8A%A4%E5%85%A8%E4%B8%96%E7%95%8C%E6%9C%80%E5%A5%BD%E7%9A%84%E7%83%A4%E7%AE%B1-systemd%E5%AD%A6%E4%B9%A0/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -515,7 +415,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/03/02/%E8%87%AA%E5%B7%B1%E5%86%99%E4%B8%AAJVM/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/06/11/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Clojure/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -529,7 +429,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2019/03/02/%E8%87%AA%E5%B7%B1%E5%86%99%E4%B8%AAJVM/" class="post-title-link" itemprop="url">自己写个JVM</a>
+            <a href="/2019/06/11/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Clojure/" class="post-title-link" itemprop="url">七周七语言之-Clojure</a>
         </h2>
 
         <div class="post-meta">
@@ -539,7 +439,120 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2019-03-02 15:08:35" itemprop="dateCreated datePublished" datetime="2019-03-02T15:08:35Z">2019-03-02</time>
+              <time title="创建时间：2019-06-10 18:22:35" itemprop="dateCreated datePublished" datetime="2019-06-10T18:22:35Z">2019-06-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E3%80%8A%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E3%80%8B/" itemprop="url" rel="index"><span itemprop="name">《七周七语言》</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/06/11/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Clojure/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/06/11/七周七语言之-Clojure/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>4.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>Clojure是一门运行在JVM上的lisp方言。</p>
+</blockquote>
+<h2 id="Common-Lisp"><a href="#Common-Lisp" class="headerlink" title="Common Lisp"></a>Common Lisp</h2><p>common lisp安装<code>sudo pacman -S common-lisp</code>,选择[1]的<code>clisp</code>实现，输入<code>clisp</code>进入交互shell环境。</p>
+<h2 id="Clojure安装"><a href="#Clojure安装" class="headerlink" title="Clojure安装"></a>Clojure安装</h2><ul>
+<li>环境：Archlinux </li>
+<li>jdk: 12<br>首先安装clojure语言，使用pacman安装会找不到类途径，于是我还是手动安装了。官网提供的<a target="_blank" rel="noopener" href="https://www.clojure.org/guides/getting_started">安装方式</a><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -O https://download.clojure.org/install/linux-install-1.10.1.447.sh</span><br><span class="line">sudo chmod +x linux-install-1.10.1.447.sh </span><br><span class="line">sudo ./linux-install-1.10.1.447.sh </span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/06/11/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Clojure/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/06/09/%E6%A0%A1%E5%9B%AD%E7%BD%91%E4%B8%8B%E7%9A%84ipv6%E4%BB%A3%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/06/09/%E6%A0%A1%E5%9B%AD%E7%BD%91%E4%B8%8B%E7%9A%84ipv6%E4%BB%A3%E7%90%86/" class="post-title-link" itemprop="url">校园网下的ipv6代理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-06-09 06:22:30" itemprop="dateCreated datePublished" datetime="2019-06-09T06:22:30Z">2019-06-09</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -558,8 +571,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2019/03/02/%E8%87%AA%E5%B7%B1%E5%86%99%E4%B8%AAJVM/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/03/02/自己写个JVM/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2019/06/09/%E6%A0%A1%E5%9B%AD%E7%BD%91%E4%B8%8B%E7%9A%84ipv6%E4%BB%A3%E7%90%86/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/06/09/校园网下的ipv6代理/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -568,7 +581,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>1k</span>
+              <span>968</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -586,12 +599,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>寒假看《自己动手写JVM》和《java虚拟机精讲》写了一个半成品JVM，C++实现，项目地址：<a target="_blank" rel="noopener" href="https://github.com/XUranus/JVM">JVM</a>。</p>
-<p>首先是字节码解析，主要是常量池，字段的解析，除了几个涉及到Annotation属性外，基本都实现了解析，Attribute_Annotation_xxx涉及到的一些结构体嵌套太复杂了，暂时先没做（不影响运行）</p>
-<p>然后是运行时数据区（RDTA），主要涉及到线程，java虚拟机栈（Stack），方法帧（Frame），本地变量（Local Variables），操作数栈（Operand Stack）。都是简单的数据结构。<br>之后实现100多条基本字节码指令，const,load,store,math之类的。自此已经可以通过hack运行一些简单的单函数class文件。<br>
+          <p>本人坐标东北某三本985，最近赶上学校网络系统大换代，于是帐号就被恶意盗用了，月初60G的流量就给我用掉了70G……这两年网速越来越快，视频画质越来越好，动辄看个直播就是几个G，25快60G是真的不够用的，每个月流量费超出得几十甚至上百。加之这次帐号盗用事件，我便确定了不再用校园网。但奈何隔壁联通的CNC PPPoE太不安全，还卡，还dns污染，于是我又想起了ipv6代理。</p>
+<p>目前，教育网基本你已经覆盖ipv6，在我们学校。ipv6的流量不计费，得益于这一点，某些能被解析v6地址的网站（google全家桶）是可以在教育网下使用的，但是国内的网站大部分不行。于是我们需要一个ipv6的shaodowsocks代理，找一台ipv6服务器。</p>
+<p>之前我玩vulter的时候，就搭过ipv6的梯子，但最短半天就被封，而且vulter时常抽风，10M最高的带宽，还顶着高ping，使用很不稳定，就弃了。最近我用google搜ss，居然无意搜到一个ipv6的shadowsocks帐号提供商：<a target="_blank" rel="noopener" href="https://home.shadowsocks.ch/aff.php?aff=26899">链接地址</a>。<br>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2019/03/02/%E8%87%AA%E5%B7%B1%E5%86%99%E4%B8%AAJVM/#more" rel="contents">
+              <a class="btn" href="/2019/06/09/%E6%A0%A1%E5%9B%AD%E7%BD%91%E4%B8%8B%E7%9A%84ipv6%E4%BB%A3%E7%90%86/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -615,7 +628,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/06/05/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Ruby/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -629,7 +642,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/" class="post-title-link" itemprop="url">HBase实现搜索引擎</a>
+            <a href="/2019/06/05/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Ruby/" class="post-title-link" itemprop="url">七周七语言之-Ruby</a>
         </h2>
 
         <div class="post-meta">
@@ -639,7 +652,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-12-22 16:40:16" itemprop="dateCreated datePublished" datetime="2018-12-22T16:40:16Z">2018-12-22</time>
+              <time title="创建时间：2019-06-05 10:30:36" itemprop="dateCreated datePublished" datetime="2019-06-05T10:30:36Z">2019-06-05</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -648,6 +661,15 @@
                 <span class="post-meta-item-text">更新于</span>
                 <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
               </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E3%80%8A%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E3%80%8B/" itemprop="url" rel="index"><span itemprop="name">《七周七语言》</span></a>
+                </span>
+            </span>
 
           
   
@@ -658,8 +680,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/12/23/hbase实现搜索引擎/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2019/06/05/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Ruby/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/06/05/七周七语言之-Ruby/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -668,13 +690,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>13k</span>
+              <span>6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>12 分钟</span>
+              <span>5 分钟</span>
             </span>
 
         </div>
@@ -686,12 +708,18 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="静态搜索引擎"><a href="#静态搜索引擎" class="headerlink" title="静态搜索引擎"></a>静态搜索引擎</h1><p>上一节已经配置了一个hadoop+spark集群，xuranus@172.17.11.40 为本机，在本机NAT下六个节点：</p>
-<h2 id="集群说明"><a href="#集群说明" class="headerlink" title="集群说明"></a>集群说明</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">xuranusMaster@172.16.173.136</span><br><span class="line">xuranusSlave1@172.16.173.137</span><br><span class="line">xuranusSlave2@172.16.173.138</span><br><span class="line">zookeeper001@172.16.173.139</span><br><span class="line">zookeeper002@172.16.173.140</span><br><span class="line">zookeeper003@172.16.173.141</span><br></pre></td></tr></table></figure>
-<p>Hbase部署在172.16.173.136～139上。</p>
+          <blockquote>
+<p>最近突然有兴趣翻开了队友从队里順来的一本书Bruce.A.Tate的《七周七语言 理解多种编程范式》，正好实训划水无事可干，打算写一个系列，涉及Ruby Lo Prolog Scala Erlang Clojure Haskell,对他们的特性，编程模型做一个简要的理解。语法一笔带过，日后详细学习的日后再补上</p>
+</blockquote>
+<h1 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h1><ul>
+<li>环境：Archlinux</li>
+<li>编辑器：VsCode</li>
+<li><a target="_blank" rel="noopener" href="https://www.runoob.com/ruby/ruby-tutorial.html">菜鸟教程Ruby</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.ruby-lang.org/zh_cn/">Ruby官方中文文档</a></li>
+</ul>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/12/23/hbase%E5%AE%9E%E7%8E%B0%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/#more" rel="contents">
+              <a class="btn" href="/2019/06/05/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Ruby/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -714,7 +742,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/15/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><span class="page-number current">16</span><a class="page-number" href="/page/17/">17</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/17/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/15/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><span class="page-number current">16</span><a class="page-number" href="/page/17/">17</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/17/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -782,7 +810,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-count">125</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -822,7 +850,7 @@
 <div class="copyright">
   
   &copy; 2017 – 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -831,12 +859,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">493k</span>
+    <span title="站点总字数">500k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:28</span>
+    <span title="站点阅读时长">7:35</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>

@@ -30,9 +30,8 @@
 <meta property="og:image" content="http://xuranus.github.io/2021/03/29/Samba%E6%8B%B7%E8%B4%9D%E6%96%87%E4%BB%B6%E7%9A%84pre-allowcate%E6%9C%BA%E5%88%B6/2.png">
 <meta property="og:image" content="http://xuranus.github.io/2021/03/29/Samba%E6%8B%B7%E8%B4%9D%E6%96%87%E4%BB%B6%E7%9A%84pre-allowcate%E6%9C%BA%E5%88%B6/1.png">
 <meta property="og:image" content="http://xuranus.github.io/2021/03/29/Samba%E6%8B%B7%E8%B4%9D%E6%96%87%E4%BB%B6%E7%9A%84pre-allowcate%E6%9C%BA%E5%88%B6/3.png">
-<meta property="og:image" content="https://wiki.samba.org/index.php/Linux_Performance">
 <meta property="article:published_time" content="2021-03-29T14:26:05.000Z">
-<meta property="article:modified_time" content="2021-09-05T12:51:13.906Z">
+<meta property="article:modified_time" content="2023-02-19T07:36:14.616Z">
 <meta property="article:author" content="XUranus">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
@@ -137,7 +136,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">125</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -245,7 +244,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+                <time title="修改时间：2023-02-19 07:36:14" itemprop="dateModified" datetime="2023-02-19T07:36:14Z">2023-02-19</time>
               </span>
 
           
@@ -292,7 +291,7 @@
 <p>再次对比了本机的正常压缩包和损坏的压缩包，发现大小竟然也一致。结合文件尾部的<code>00</code>，说明文件可能是先分配空白空间，再顺序写入的，所以大文件的拷贝会很长时间都不会发生大小变化，让Python程序误以为上传已经完成。为了验证这个猜想，我又准备了一个40G左右的压缩包<code>test.jar</code>，用以下程序试试输出文件大小：</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">size = <span class="number">0</span></span><br><span class="line">tictok = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    new_size = os.path.getsize(<span class="string">&quot;test.rar&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> new_size &gt; size:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;size changed from &#123;0&#125; to &#123;1&#125;&quot;</span>.<span class="built_in">format</span>(size, new_size))</span><br><span class="line">        size = new_size</span><br><span class="line">        tictok = <span class="number">0</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;size remain unchanged for &#123;0&#125; sec&quot;</span>.<span class="built_in">format</span>(tictok))</span><br><span class="line">        tictok += <span class="number">2</span></span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
 <p>上传文件后立刻启动脚本，打出的日志如下：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">size changed from 0 to 43234952351</span><br><span class="line">size remain unchanged for 0 sec</span><br><span class="line">size remain unchanged for 2 sec</span><br><span class="line">size remain unchanged for 4 sec</span><br><span class="line">......</span><br></pre></td></tr></table></figure><br>日志显示从第一秒文件大小就已经是43234952351字节（42G），之后文件大小从没变过，说明：<strong>samba拷贝文件的过程存在某种预分配（pre-allowcate）策略</strong>。</p>
-<p>查到Samba的拷贝机支持确实如此：<img src="https://wiki.samba.org/index.php/Linux_Performance" alt="https://wiki.samba.org/index.php/Linux_Performance">，预分配可以有效减少碎片化问题。</p>
+<p>查到Samba的拷贝机支持确实如此：<a target="_blank" rel="noopener" href="https://wiki.samba.org/index.php/Linux_Performance">https://wiki.samba.org/index.php/Linux_Performance</a>，预分配可以有效减少碎片化问题。</p>
 <p>是否只是samba的拷贝文件存在这只机制呢？再Linux上用<code>copy</code>命令从其他目录拷贝文件到当前目录，Python监听文件大小变化的日志如下：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">size changed from 0 to 121765888</span><br><span class="line">size changed from 121765888 to 386793472</span><br><span class="line">size changed from 386793472 to 650248192</span><br><span class="line">size changed from 650248192 to 915275776</span><br><span class="line">size changed from 915275776 to 1179254784</span><br><span class="line">size changed from 1179254784 to 1440612352</span><br><span class="line">size changed from 1440612352 to 1705377792</span><br><span class="line">size changed from 1705377792 to 1969356800</span><br><span class="line">size changed from 1969356800 to 2234384384</span><br><span class="line">size changed from 2234384384 to 2499149824</span><br><span class="line">......</span><br></pre></td></tr></table></figure><br>文件不再是从一开始就固定大小的了。同理测试windows：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">size changed from 0 to 43234952351</span><br><span class="line">size remain unchanged for 0 sec</span><br><span class="line">size remain unchanged for 2 sec</span><br><span class="line">size remain unchanged for 4 sec</span><br><span class="line">size remain unchanged for 6 sec</span><br><span class="line">size remain unchanged for 8 sec</span><br><span class="line">size remain unchanged for 10 sec</span><br></pre></td></tr></table></figure><br>文件大小也是复制时就预先分配好的！说明文件的复制策略也许和平台/文件系统相关。Ext4采用的Extending Allocate策略相对于NTFS的Preallocate更容易产生碎片化问题。</p>
 <p>连续分配的好处是会让分配的block较为集中，减少机械硬盘寻道的时间。</p>
 <blockquote>
@@ -415,7 +414,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-count">125</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -455,7 +454,7 @@
 <div class="copyright">
   
   &copy; 2017 – 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -464,12 +463,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">493k</span>
+    <span title="站点总字数">500k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:28</span>
+    <span title="站点阅读时长">7:35</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>

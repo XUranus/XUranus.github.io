@@ -20,20 +20,19 @@
     var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="NFSNFS挂载CIFSSMB和NFS的区别CIFS挂载CentOS 5.2 里没有 smbmount 这个命令了。并且 ，samba 3.0 以后都用cifs了，没有 smbfs 一说了。 挂载指令： mount -t cifs &#x2F;&#x2F;hostname&#x2F;Public &#x2F;var&#x2F;www&#x2F;html&#x2F;1&#x2F;NAS -o username&#x3D;xxxx,password&#x3D;xxxx 注意：源必须精确到目录 卸载指">
+  <meta name="description" content="Blog of XUranus">
 <meta property="og:type" content="article">
-<meta property="og:title" content="NAS协议初探">
-<meta property="og:url" content="http://xuranus.github.io/2022/07/21/NAS%E5%8D%8F%E8%AE%AE%E5%88%9D%E6%8E%A2/index.html">
+<meta property="og:title" content="汇编语言">
+<meta property="og:url" content="http://xuranus.github.io/2022/11/07/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/index.html">
 <meta property="og:site_name" content="XUranus">
-<meta property="og:description" content="NFSNFS挂载CIFSSMB和NFS的区别CIFS挂载CentOS 5.2 里没有 smbmount 这个命令了。并且 ，samba 3.0 以后都用cifs了，没有 smbfs 一说了。 挂载指令： mount -t cifs &#x2F;&#x2F;hostname&#x2F;Public &#x2F;var&#x2F;www&#x2F;html&#x2F;1&#x2F;NAS -o username&#x3D;xxxx,password&#x3D;xxxx 注意：源必须精确到目录 卸载指">
+<meta property="og:description" content="Blog of XUranus">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-07-20T21:36:08.000Z">
-<meta property="article:modified_time" content="2022-08-20T13:12:49.231Z">
+<meta property="article:published_time" content="2022-11-06T16:25:16.000Z">
+<meta property="article:modified_time" content="2022-11-06T08:25:16.222Z">
 <meta property="article:author" content="XUranus">
-<meta property="article:tag" content="NAS">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://xuranus.github.io/2022/07/21/NAS%E5%8D%8F%E8%AE%AE%E5%88%9D%E6%8E%A2/">
+<link rel="canonical" href="http://xuranus.github.io/2022/11/07/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">
 
 
 <script id="page-configurations">
@@ -46,7 +45,7 @@
   };
 </script>
 
-  <title>NAS协议初探 | XUranus</title>
+  <title>汇编语言 | XUranus</title>
   
 
 
@@ -132,7 +131,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">125</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -210,7 +209,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/21/NAS%E5%8D%8F%E8%AE%AE%E5%88%9D%E6%8E%A2/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/11/07/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -223,7 +222,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          NAS协议初探
+          汇编语言
         </h1>
 
         <div class="post-meta">
@@ -232,16 +231,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-07-20 21:36:08" itemprop="dateCreated datePublished" datetime="2022-07-20T21:36:08Z">2022-07-20</time>
+              <time title="创建时间：2022-11-06 16:25:16 / 修改时间：08:25:16" itemprop="dateCreated datePublished" datetime="2022-11-06T16:25:16Z">2022-11-06</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-20 13:12:49" itemprop="dateModified" datetime="2022-08-20T13:12:49Z">2022-08-20</time>
-              </span>
 
           
   
@@ -252,8 +245,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2022/07/21/NAS%E5%8D%8F%E8%AE%AE%E5%88%9D%E6%8E%A2/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/21/NAS协议初探/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2022/11/07/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/11/07/汇编语言/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -262,7 +255,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>621</span>
+              <span>0</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -280,28 +273,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="NFS"><a href="#NFS" class="headerlink" title="NFS"></a>NFS</h2><h3 id="NFS挂载"><a href="#NFS挂载" class="headerlink" title="NFS挂载"></a>NFS挂载</h3><h2 id="CIFS"><a href="#CIFS" class="headerlink" title="CIFS"></a>CIFS</h2><h3 id="SMB和NFS的区别"><a href="#SMB和NFS的区别" class="headerlink" title="SMB和NFS的区别"></a>SMB和NFS的区别</h3><h3 id="CIFS挂载"><a href="#CIFS挂载" class="headerlink" title="CIFS挂载"></a>CIFS挂载</h3><p>CentOS 5.2 里没有 smbmount 这个命令了。并且 ，samba 3.0 以后都用cifs了，没有 smbfs 一说了。</p>
-<p>挂载指令：</p>
-<p>mount -t cifs //hostname/Public /var/www/html/1/NAS -o username=xxxx,password=xxxx</p>
-<p>注意：源必须精确到目录</p>
-<p>卸载指令：</p>
-<p>umount /var/www/html/1/NAS</p>
-<p>开机自动挂载到远程SMB的方法：</p>
-<p>将挂载命令写入：/etc/fstab</p>
-<p>//hostname/share /localfloder cifs default,username=用户名,password=密码</p>
-<p>当共享资源是 WIN98 或允许 GUEST 共享时，可以省略 username 部分。\</p>
-<p>先，安装软件:</p>
-<p>apt-get install smbfs</p>
-<p>命令</p>
-<p>smbmount //hostname/directory /home/my/mount/dir -o username=username,pass=passpord,iocharset=utf8</p>
-<p>在上面的命令里</p>
-<p>//hostname/directory 就是windows的共享路径，hostname为其IP</p>
-<p>/home/my/mount/dir 就是本地的挂载目录，</p>
-<p>-o 参数是表示后面还有很多参数，参数之间以”,”(不含引号)隔开</p>
-<p>user表示用户名</p>
-<p>pass表示密码</p>
-<p>iocharset=utf8，可以避免中文乱码</p>
-
+        
     </div>
 
     
@@ -309,9 +281,6 @@
     
 
       <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/NAS/" rel="tag"># NAS</a>
-          </div>
 
         
 
@@ -319,12 +288,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/07/17/C-%E7%9A%84%E4%B8%89%E4%BA%94%E6%B3%95%E5%88%99/" rel="prev" title="C++的三五法则与拷贝移动语义">
-      <i class="fa fa-chevron-left"></i> C++的三五法则与拷贝移动语义
+    <a href="/2022/11/07/%E6%8E%A2%E7%A7%98%E6%96%87%E4%BB%B6%E9%94%81/" rel="prev" title="探秘文件锁">
+      <i class="fa fa-chevron-left"></i> 探秘文件锁
     </a></div>
       <div class="post-nav-item">
-    <a href="/2022/08/07/universal%E4%B8%8E%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/" rel="next" title="universal reference与完美转发">
-      universal reference与完美转发 <i class="fa fa-chevron-right"></i>
+    <a href="/2022/11/27/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7Json%E5%BA%93/" rel="next" title="用C++实现一个轻量级Json库">
+      用C++实现一个轻量级Json库 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -394,7 +363,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#NFS"><span class="nav-number">1.</span> <span class="nav-text">NFS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NFS%E6%8C%82%E8%BD%BD"><span class="nav-number">1.1.</span> <span class="nav-text">NFS挂载</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CIFS"><span class="nav-number">2.</span> <span class="nav-text">CIFS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SMB%E5%92%8CNFS%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">2.1.</span> <span class="nav-text">SMB和NFS的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CIFS%E6%8C%82%E8%BD%BD"><span class="nav-number">2.2.</span> <span class="nav-text">CIFS挂载</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -410,7 +378,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-count">125</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -450,7 +418,7 @@
 <div class="copyright">
   
   &copy; 2017 – 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -459,12 +427,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">493k</span>
+    <span title="站点总字数">500k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:28</span>
+    <span title="站点阅读时长">7:35</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
@@ -553,9 +521,9 @@ if (document.querySelectorAll('pre.mermaid').length) {
 </script>
 <script>
   var disqus_config = function() {
-    this.page.url = "http://xuranus.github.io/2022/07/21/NAS%E5%8D%8F%E8%AE%AE%E5%88%9D%E6%8E%A2/";
-    this.page.identifier = "2022/07/21/NAS协议初探/";
-    this.page.title = "NAS协议初探";
+    this.page.url = "http://xuranus.github.io/2022/11/07/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/";
+    this.page.identifier = "2022/11/07/汇编语言/";
+    this.page.title = "汇编语言";
     };
   NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
     if (window.DISQUS) {

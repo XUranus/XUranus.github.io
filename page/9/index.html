@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">115</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">125</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/01/underfined%E4%B8%8Enull%E7%9A%84%E5%8C%BA%E5%88%AB/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/06/18/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%A6%82%E4%BD%95%E5%94%A4%E8%B5%B7%E6%9C%AC%E5%9C%B0%E7%A8%8B%E5%BA%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -220,7 +220,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/04/01/underfined%E4%B8%8Enull%E7%9A%84%E5%8C%BA%E5%88%AB/" class="post-title-link" itemprop="url">underfined与null的区别</a>
+            <a href="/2021/06/18/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%A6%82%E4%BD%95%E5%94%A4%E8%B5%B7%E6%9C%AC%E5%9C%B0%E7%A8%8B%E5%BA%8F/" class="post-title-link" itemprop="url">浏览器如何唤起本地程序</a>
         </h2>
 
         <div class="post-meta">
@@ -230,7 +230,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-04-01 10:00:41" itemprop="dateCreated datePublished" datetime="2021-04-01T10:00:41Z">2021-04-01</time>
+              <time title="创建时间：2021-06-17 16:35:54" itemprop="dateCreated datePublished" datetime="2021-06-17T16:35:54Z">2021-06-17</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -249,8 +249,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2021/04/01/underfined%E4%B8%8Enull%E7%9A%84%E5%8C%BA%E5%88%AB/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/01/underfined与null的区别/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2021/06/18/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%A6%82%E4%BD%95%E5%94%A4%E8%B5%B7%E6%9C%AC%E5%9C%B0%E7%A8%8B%E5%BA%8F/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/06/18/浏览器如何唤起本地程序/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -259,7 +259,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>1.9k</span>
+              <span>2.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -277,120 +277,17 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>在javascript中<code>undefined</code>和<code>null</code>都可以表示空，不存在，他们之间有什么联系和区别呢？</p>
-</blockquote>
-<p><strong><code>undefined</code>和<code>null</code>作为条件的时候都等价于<code>false</code></strong><br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="literal">undefined</span>) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="literal">true</span>)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="literal">false</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// false</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="literal">true</span>)</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="literal">false</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//false</span></span><br></pre></td></tr></table></figure><br>用松散比较判等的时候，JavaScript默认<code>undefined == null</code>，而严格比较时，由于类型不一致<code>undefined !== null</code>。<code>typeof undefined</code>的结果是<code>&#39;undefined&#39;</code>，而<code>typeof null</code>的结果是<code>&#39;Object&#39;</code>。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/04/01/underfined%E4%B8%8Enull%E7%9A%84%E5%8C%BA%E5%88%AB/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/03/30/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%9A%84%E5%87%A0%E7%A7%8D%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/03/30/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%9A%84%E5%87%A0%E7%A7%8D%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/" class="post-title-link" itemprop="url">分布式ID的几种生成方案</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-03-30 11:53:59" itemprop="dateCreated datePublished" datetime="2021-03-30T11:53:59Z">2021-03-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2021/03/30/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%9A%84%E5%87%A0%E7%A7%8D%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/30/分布式ID的几种生成方案/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>12k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>11 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>分布式系统中往往涉及生成唯一ID的业务：例如多个模块产生一类数据库的记录，需要保证记录的ID互不冲突。较优的ID生成规则往往需要满足：</p>
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>之前遇到这样一个场景：某个Web项目，业务中需要上传特别大的文件(&gt;20G)以及特别多文件的文件夹(&gt;10,000个)。如果选用浏览器直接上传会遇到以下问题：</p>
 <ul>
-<li>唯一性：生成的ID全局上唯一，冲突的概率几乎为0</li>
-<li>有序性：生成的ID按照某种规则有序，便于数据库的插入和排序</li>
-<li>可用性：在高并发下依然能正确生成唯一的ID</li>
-<li>高性能：每次生成唯一ID的相应速度要快</li>
-<li>自主性：不依赖中心认证即可自主生成唯一的ID</li>
-<li>安全性：不暴露系统和业务相关信息</li>
+<li>离开页面上传中断</li>
+<li>出错后无法断点续传</li>
+<li>无法暂停任务</li>
 </ul>
-<p>这里总结一下主要的ID生成方案。<br>
+<p>一旦失败就需要重传，时间成本极高，浏览器直接上传的用户体验极差。这种场景就需要用到本地上传器：由前端唤起一个本地上传程序，将文件拷贝到远端的的SMB服务器中，本地程序通过HTTP接口同步上传状态。上传业务流程是这样的：</p>
+<p><img src="smb.png" alt=""><br>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/03/30/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%9A%84%E5%87%A0%E7%A7%8D%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/#more" rel="contents">
+              <a class="btn" href="/2021/06/18/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%A6%82%E4%BD%95%E5%94%A4%E8%B5%B7%E6%9C%AC%E5%9C%B0%E7%A8%8B%E5%BA%8F/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -414,7 +311,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/03/29/Samba%E6%8B%B7%E8%B4%9D%E6%96%87%E4%BB%B6%E7%9A%84pre-allowcate%E6%9C%BA%E5%88%B6/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/23/%E5%89%8D%E7%AB%AF%E4%B8%AD%E7%9A%84%E5%87%A0%E7%B1%BB%E5%AD%98%E5%82%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -428,7 +325,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/03/29/Samba%E6%8B%B7%E8%B4%9D%E6%96%87%E4%BB%B6%E7%9A%84pre-allowcate%E6%9C%BA%E5%88%B6/" class="post-title-link" itemprop="url">Samba拷贝文件的pre-allowcate机制</a>
+            <a href="/2021/04/23/%E5%89%8D%E7%AB%AF%E4%B8%AD%E7%9A%84%E5%87%A0%E7%B1%BB%E5%AD%98%E5%82%A8/" class="post-title-link" itemprop="url">前端中的几类存储</a>
         </h2>
 
         <div class="post-meta">
@@ -438,7 +335,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-03-29 14:26:05" itemprop="dateCreated datePublished" datetime="2021-03-29T14:26:05Z">2021-03-29</time>
+              <time title="创建时间：2021-04-23 09:24:11" itemprop="dateCreated datePublished" datetime="2021-04-23T09:24:11Z">2021-04-23</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -457,8 +354,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2021/03/29/Samba%E6%8B%B7%E8%B4%9D%E6%96%87%E4%BB%B6%E7%9A%84pre-allowcate%E6%9C%BA%E5%88%B6/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/29/Samba拷贝文件的pre-allowcate机制/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2021/04/23/%E5%89%8D%E7%AB%AF%E4%B8%AD%E7%9A%84%E5%87%A0%E7%B1%BB%E5%AD%98%E5%82%A8/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/23/前端中的几类存储/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -467,13 +364,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>2.4k</span>
+              <span>5.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>2 分钟</span>
+              <span>5 分钟</span>
             </span>
 
         </div>
@@ -485,11 +382,17 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>最近的项目出现了samba的文件拷贝的BUG，项目主要流程是：windows端通过samba协议拷贝一个文件夹到Linux的samba server上，Linux的samba server所在节点运行着一个Python程序，它监听者文件大小的变化，一旦文件夹大小60秒不变，就判断文件上传完成，开始对文件进行处理。</p>
-<p>起初上传包含大量小文件的文件夹并没有出现问题，但是传大文件（压缩包）的时候，会发现文件损坏无法解压。起初我以为是压缩包太大，多个任务的压缩包一起解压造成内存不够，于是设置了失败重新解压的机制。但是后来发现实际上一个大文件也会造成解压失败，日志显示重新解压了几百次，还是失败。之后又是设计解压重试时间间隔，还是失败。于是把传上去解压失败的压缩包拷贝到本地，发现打不开，文件真的损坏了！于是突发奇想，用Hex Editor查看了一下文件结构：<br><img src="2.png" alt=""></p>
+          <p>由于HTTP的无状态性，Web开发中最基本的维护页面状态的手段就是Cookie和Session，其中Cookie存在前端，Session存在后端。</p>
+<p>Chrome开发者工具的Application中除了Cookie之外还有其他几种存储：<br><img src="1.png" alt=""></p>
+<ul>
+<li>LocalStorage</li>
+<li>SessionStorage</li>
+<li>IndexedDB</li>
+<li>Web SQL</li>
+</ul>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/03/29/Samba%E6%8B%B7%E8%B4%9D%E6%96%87%E4%BB%B6%E7%9A%84pre-allowcate%E6%9C%BA%E5%88%B6/#more" rel="contents">
+              <a class="btn" href="/2021/04/23/%E5%89%8D%E7%AB%AF%E4%B8%AD%E7%9A%84%E5%87%A0%E7%B1%BB%E5%AD%98%E5%82%A8/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -513,7 +416,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/03/29/H5%E4%B8%AD%E7%9A%84%E5%AA%92%E4%BD%93%E5%B1%95%E7%A4%BA%E4%B8%8E%E4%B8%8B%E8%BD%BD/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/22/%E6%97%A5%E5%BF%97%E5%A4%84%E7%90%86%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%90%AD%E5%BB%BA/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -527,7 +430,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/03/29/H5%E4%B8%AD%E7%9A%84%E5%AA%92%E4%BD%93%E5%B1%95%E7%A4%BA%E4%B8%8E%E4%B8%8B%E8%BD%BD/" class="post-title-link" itemprop="url">H5中的媒体展示与下载</a>
+            <a href="/2021/04/22/%E6%97%A5%E5%BF%97%E5%A4%84%E7%90%86%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%90%AD%E5%BB%BA/" class="post-title-link" itemprop="url">日志处理系统的搭建</a>
         </h2>
 
         <div class="post-meta">
@@ -537,7 +440,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-03-29 13:08:19" itemprop="dateCreated datePublished" datetime="2021-03-29T13:08:19Z">2021-03-29</time>
+              <time title="创建时间：2021-04-22 15:24:27" itemprop="dateCreated datePublished" datetime="2021-04-22T15:24:27Z">2021-04-22</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -556,8 +459,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2021/03/29/H5%E4%B8%AD%E7%9A%84%E5%AA%92%E4%BD%93%E5%B1%95%E7%A4%BA%E4%B8%8E%E4%B8%8B%E8%BD%BD/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/29/H5中的媒体展示与下载/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2021/04/22/%E6%97%A5%E5%BF%97%E5%A4%84%E7%90%86%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%90%AD%E5%BB%BA/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/22/日志处理系统的搭建/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -566,7 +469,111 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>4.9k</span>
+              <span>3.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>服务运行的过程中就会不断产生日志，日志的常见用途有：</p>
+<ul>
+<li>查看某个时间段的错误原因</li>
+<li>分析某个接口的召回率</li>
+<li>记录接口的输入输出参数，在升级接口的时候做回归测试</li>
+</ul>
+<p>对于单点服务的日志只需要用<code>awk</code>，<code>grep</code>命令即可获取需要的信息，但在分布式系统中，管理分布在各个节点的日志就会变得很麻烦，需要有一个系统采集各个节点的日志几种储存。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/04/22/%E6%97%A5%E5%BF%97%E5%A4%84%E7%90%86%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%90%AD%E5%BB%BA/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/07/Linux%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%89%8B%E5%86%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/07/Linux%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%89%8B%E5%86%8C/" class="post-title-link" itemprop="url">Linux常用工具手册</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-07 14:31:55" itemprop="dateCreated datePublished" datetime="2021-04-07T14:31:55Z">2021-04-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/04/07/Linux%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%89%8B%E5%86%8C/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/07/Linux常用工具手册/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>4.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -585,12 +592,14 @@
 
       
           <blockquote>
-<p>最近看到项目里有个模块叫download，用node编写，用作中间件，改变HTTP Response的Header以下载文件，于是打算在本文对H5种媒体的展示或下载方式做一个简单的归纳。</p>
+<p>整理多而杂的常用工具，以备日后查找用</p>
 </blockquote>
-<p>首先<code>npx create_react_app media-demo</code>创建一个测试媒体类型展示的React Demo，我们打算在<code>Download.jsx</code>种实现一个简单的图片展示和下载模块。首先上代码：<br><figure class="highlight jsx"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">const</span> url = <span class="string">&quot;https://img.moegirl.org.cn/common/f/ff/YJSNPI_Ascii_Art..png&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Download</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&#123;url&#125;</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&#123;url&#125;</span>&gt;</span>link<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Download;</span><br></pre></td></tr></table></figure></p>
+<h2 id="route"><a href="#route" class="headerlink" title="route"></a>route</h2><p><code>route</code>用于查看路由表<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ route</span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">default         DESKTOP-N0ED40G 0.0.0.0         UG    100    0        0 eth0</span><br><span class="line">link-local      0.0.0.0         255.255.0.0     U     1000   0        0 eth0</span><br><span class="line">172.19.80.0     0.0.0.0         255.255.240.0   U     100    0        0 eth0</span><br></pre></td></tr></table></figure><br><code>Destination</code>，<code>Gateway</code>，<code>Genmask</code>分别表示目的网络号，网关，子网掩码。例如要访问<code>172.19.89.119</code>，按行与<code>Genmask</code>向与，结果是<code>172.19.80.0</code>，与第三行<code>Destination</code>相匹配，所以选择第三行配置。如果访问某个IP找不到匹配的路由项，则选<code>default</code>（第一行）。</p>
+<p><code>Flags</code>中<code>U</code>表示<code>used</code>，<code>G</code>表示<code>Gateway</code>，<code>H</code>表示<code>Host</code>。<code>Iface</code>表示路由对应的网卡。</p>
+<p>添加一条路由：<code>route add -net 10.0.0.0/24 dev ens160</code></p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/03/29/H5%E4%B8%AD%E7%9A%84%E5%AA%92%E4%BD%93%E5%B1%95%E7%A4%BA%E4%B8%8E%E4%B8%8B%E8%BD%BD/#more" rel="contents">
+              <a class="btn" href="/2021/04/07/Linux%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%89%8B%E5%86%8C/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -614,7 +623,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/03/18/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%884%EF%BC%89%E4%BC%97%E5%8C%85%E7%AE%97%E6%B3%95/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/07/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -628,7 +637,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/03/18/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%884%EF%BC%89%E4%BC%97%E5%8C%85%E7%AE%97%E6%B3%95/" class="post-title-link" itemprop="url">大数据算法（4）众包算法</a>
+            <a href="/2021/04/07/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/" class="post-title-link" itemprop="url">定时任务的几种实现方式</a>
         </h2>
 
         <div class="post-meta">
@@ -638,24 +647,15 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-03-18 14:58:28" itemprop="dateCreated datePublished" datetime="2021-03-18T14:58:28Z">2021-03-18</time>
+              <time title="创建时间：2021-04-07 14:31:32" itemprop="dateCreated datePublished" datetime="2021-04-07T14:31:32Z">2021-04-07</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-29 05:54:02" itemprop="dateModified" datetime="2021-05-29T05:54:02Z">2021-05-29</time>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
               </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">大数据算法</span></a>
-                </span>
-            </span>
 
           
   
@@ -666,8 +666,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2021/03/18/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%884%EF%BC%89%E4%BC%97%E5%8C%85%E7%AE%97%E6%B3%95/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/18/大数据算法（4）众包算法/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2021/04/07/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/07/定时任务的几种实现方式/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -676,13 +676,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>4</span>
+              <span>19k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>1 分钟</span>
+              <span>17 分钟</span>
             </span>
 
         </div>
@@ -694,7 +694,21 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="众包算法"><a href="#众包算法" class="headerlink" title="众包算法"></a>众包算法</h1>
+          <h2 id="crontab"><a href="#crontab" class="headerlink" title="crontab"></a>crontab</h2><p>Linux的crontab是系统自带的实现定时任务的模块，后台以守护进程的形式被<code>systemd</code>管理。crontab根据crontab表达式来配置一个定时任务，标准unix版本的crontab表达式是一个空格分割的5段字符串：<code>分 时 日 月 星</code>（分钟，小时，某日，某月，某年），一些其他的版本可能有7段：<code>秒 分 时 日 月 星 年</code>，此处以5段式表达式为准。</p>
+<p>基本用法：<code>crontab [-u user] &#123; -l | -r | -e &#125;</code>。<code>root</code>权限下<code>-u</code>可以指定他人的时程，不填默认设置自己的时程。</p>
+<ul>
+<li><code>-e</code> : 编辑器来设定时程表</li>
+<li><code>-r</code> : 删除目前的时程表</li>
+<li><code>-l</code> : 列出目前的时程表</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/04/07/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -712,7 +726,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -780,7 +794,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-count">125</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -820,7 +834,7 @@
 <div class="copyright">
   
   &copy; 2017 – 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -829,12 +843,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">493k</span>
+    <span title="站点总字数">500k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:28</span>
+    <span title="站点阅读时长">7:35</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
