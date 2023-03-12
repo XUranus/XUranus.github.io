@@ -20,19 +20,21 @@
     var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="Blog of XUranus">
+  <meta name="description" content="Windows Server 2008以上的版本，管理员可以通过卷影副本服务（VSS）在指定的卷上创建备份的副本。副本类似于快照(Snapshot)，可以基于快照将卷恢复到之前某个版本，也可基于快照做一致性备份。因此，它可以极大保护服务器的数据安全。  项目完整地址见https:&#x2F;&#x2F;github.com&#x2F;XUranus&#x2F;Win32VSSWrapper">
 <meta property="og:type" content="article">
-<meta property="og:title" content="汇编语言">
-<meta property="og:url" content="http://xuranus.github.io/2022/11/07/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/index.html">
+<meta property="og:title" content="Windows卷影副本概述">
+<meta property="og:url" content="http://xuranus.github.io/2023/02/28/Windows%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC%E6%A6%82%E8%BF%B0/index.html">
 <meta property="og:site_name" content="XUranus">
-<meta property="og:description" content="Blog of XUranus">
+<meta property="og:description" content="Windows Server 2008以上的版本，管理员可以通过卷影副本服务（VSS）在指定的卷上创建备份的副本。副本类似于快照(Snapshot)，可以基于快照将卷恢复到之前某个版本，也可基于快照做一致性备份。因此，它可以极大保护服务器的数据安全。  项目完整地址见https:&#x2F;&#x2F;github.com&#x2F;XUranus&#x2F;Win32VSSWrapper">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-11-06T16:25:16.000Z">
-<meta property="article:modified_time" content="2022-11-06T08:25:16.222Z">
+<meta property="article:published_time" content="2023-02-28T12:57:29.000Z">
+<meta property="article:modified_time" content="2023-03-11T11:03:32.448Z">
 <meta property="article:author" content="XUranus">
+<meta property="article:tag" content="文件系统">
+<meta property="article:tag" content="快照">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://xuranus.github.io/2022/11/07/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">
+<link rel="canonical" href="http://xuranus.github.io/2023/02/28/Windows%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC%E6%A6%82%E8%BF%B0/">
 
 
 <script id="page-configurations">
@@ -45,7 +47,7 @@
   };
 </script>
 
-  <title>汇编语言 | XUranus</title>
+  <title>Windows卷影副本概述 | XUranus</title>
   
 
 
@@ -131,7 +133,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">125</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">114</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -209,7 +211,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/11/07/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/02/28/Windows%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC%E6%A6%82%E8%BF%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -222,7 +224,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          汇编语言
+          Windows卷影副本概述
         </h1>
 
         <div class="post-meta">
@@ -231,10 +233,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-11-06 16:25:16 / 修改时间：08:25:16" itemprop="dateCreated datePublished" datetime="2022-11-06T16:25:16Z">2022-11-06</time>
+              <time title="创建时间：2023-02-28 12:57:29" itemprop="dateCreated datePublished" datetime="2023-02-28T12:57:29Z">2023-02-28</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-03-11 11:03:32" itemprop="dateModified" datetime="2023-03-11T11:03:32Z">2023-03-11</time>
+              </span>
 
           
   
@@ -245,8 +253,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2022/11/07/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/11/07/汇编语言/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2023/02/28/Windows%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC%E6%A6%82%E8%BF%B0/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/02/28/Windows卷影副本概述/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -255,13 +263,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>0</span>
+              <span>2.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -273,7 +281,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        
+        <p>Windows Server 2008以上的版本，管理员可以通过卷影副本服务（VSS）在<strong>指定的</strong>卷上创建备份的副本。副本类似于快照(Snapshot)，可以基于快照将卷恢复到之前某个版本，也可基于快照做一致性备份。因此，它可以极大保护服务器的数据安全。</p>
+<blockquote>
+<p>项目完整地址见<a target="_blank" rel="noopener" href="https://github.com/XUranus/Win32VSSWrapper">https://github.com/XUranus/Win32VSSWrapper</a></p>
+</blockquote>
+<span id="more"></span>
+<h2 id="卷操作"><a href="#卷操作" class="headerlink" title="卷操作"></a>卷操作</h2><h2 id="使用cmd管理卷影副本"><a href="#使用cmd管理卷影副本" class="headerlink" title="使用cmd管理卷影副本"></a>使用cmd管理卷影副本</h2><p>使用管理员权限进入cmd<br>卷影副本命令<code>vssadmin</code>用于在命令行管理卷影副本<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\WINDOWS\system32&gt;vssadmin</span><br><span class="line">vssadmin 1.1 - 卷影复制服务管理命令行工具</span><br><span class="line">(C) 版权所有 2001-2013 Microsoft Corp.</span><br><span class="line"></span><br><span class="line">---- 支持的命令 ----</span><br><span class="line"></span><br><span class="line">Delete Shadows        - 删除卷影副本</span><br><span class="line">List Providers        - 列出已注册的卷影副本提供程序</span><br><span class="line">List Shadows          - 列出现有卷影副本</span><br><span class="line">List ShadowStorage    - 列出卷影副本存储关联</span><br><span class="line">List Volumes          - 列出可以进行卷影副本处理的卷</span><br><span class="line">List Writers          - 列出订阅的卷影副本写入程序</span><br><span class="line">Resize ShadowStorage  - 调整卷影副本存储关联的大小</span><br></pre></td></tr></table></figure></p>
+<p>列出所有卷影副本<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\WINDOWS\system32&gt;vssadmin list shadows</span><br><span class="line">vssadmin 1.1 - 卷影复制服务管理命令行工具</span><br><span class="line">(C) 版权所有 2001-2013 Microsoft Corp.</span><br><span class="line"></span><br><span class="line">卷影副本集 ID: &#123;d85162e7-db49-4035-956e-465e1a7f3747&#125; 的内容</span><br><span class="line">   在创建时间: 2023/1/17 13:46:05 含有 1 个卷影副本</span><br><span class="line">      卷影副本 ID: &#123;f8bf1cfc-ddab-47ad-8156-3f1f45f70641&#125;</span><br><span class="line">         原始卷: (C:)\\?\Volume&#123;a501f5cc-311e-423c-bc58-94a6c1b6b509&#125;\</span><br><span class="line">         卷影副本卷: \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1</span><br><span class="line">         源起机器: DESKTOP-TODPNBO</span><br><span class="line">         服务机器: DESKTOP-TODPNBO</span><br><span class="line">         提供程序: &#x27;Microsoft Software Shadow Copy provider 1.0&#x27;</span><br><span class="line">         类型: ClientAccessibleWriters</span><br><span class="line">         属性: 持续, 客户端可访问, 无自动释放, 差异, 自动还原</span><br><span class="line"></span><br><span class="line">卷影副本集 ID: &#123;1abe303d-eb32-445a-ae78-72432980191b&#125; 的内容</span><br><span class="line">   在创建时间: 2023/1/18 23:38:42 含有 1 个卷影副本</span><br><span class="line">      卷影副本 ID: &#123;5fee2842-be4e-4477-86c6-1c0c28221a4f&#125;</span><br><span class="line">         原始卷: (C:)\\?\Volume&#123;a501f5cc-311e-423c-bc58-94a6c1b6b509&#125;\</span><br><span class="line">         卷影副本卷: \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy2</span><br><span class="line">         源起机器: DESKTOP-TODPNBO</span><br><span class="line">         服务机器: DESKTOP-TODPNBO</span><br><span class="line">         提供程序: &#x27;Microsoft Software Shadow Copy provider 1.0&#x27;</span><br><span class="line">         类型: ClientAccessibleWriters</span><br><span class="line">         属性: 持续, 客户端可访问, 无自动释放, 差异, 自动还原</span><br><span class="line"></span><br><span class="line">C:\WINDOWS\system32&gt;vssadmin list shadowstorage</span><br><span class="line">vssadmin 1.1 - 卷影复制服务管理命令行工具</span><br><span class="line">(C) 版权所有 2001-2013 Microsoft Corp.</span><br><span class="line"></span><br><span class="line">卷影副本存储关联</span><br><span class="line">   卷: (C:)\\?\Volume&#123;a501f5cc-311e-423c-bc58-94a6c1b6b509&#125;\</span><br><span class="line">   卷影副本存储卷: (C:)\\?\Volume&#123;a501f5cc-311e-423c-bc58-94a6c1b6b509&#125;\</span><br><span class="line">   已用卷影副本存储空间: 1.80 GB (0%)</span><br><span class="line">   分配的卷影副本存储空间: 2.16 GB (0%)</span><br><span class="line">   最大卷影副本存储空间: 4.75 GB (2%)</span><br></pre></td></tr></table></figure></p>
+<p>默认情况下，Windows Server 2008的各卷是启动了卷影副本的。<br>使用<code>vssadmin add shadowstorage /for=&lt;Volume1&gt; /on=&lt;Volume2&gt;</code>卷影副本。<code>&lt;Volume1&gt;</code>指定了要保护的卷，<code>&lt;Volume2&gt;</code>指定了副本存放的卷。副本存放的卷可以是要保护的本地卷，也可以是其他卷。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\WINDOWS\system32&gt;vssadmin add shadowstorage /for=c: /on=c:</span><br></pre></td></tr></table></figure></p>
+<p>挂载卷影副本<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\WINDOWS\system32&gt;mklink /d C:\Users\XUranus\Desktop\vss1 \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy2</span><br><span class="line">为 C:\Users\XUranus\Desktop\vss1 &lt;&lt;===&gt;&gt; \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy2 创建 的符号链接</span><br></pre></td></tr></table></figure></p>
+
     </div>
 
     
@@ -281,6 +298,10 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="tag"># 文件系统</a>
+              <a href="/tags/%E5%BF%AB%E7%85%A7/" rel="tag"># 快照</a>
+          </div>
 
         
 
@@ -288,13 +309,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/11/07/%E6%8E%A2%E7%A7%98%E6%96%87%E4%BB%B6%E9%94%81/" rel="prev" title="探秘文件锁">
-      <i class="fa fa-chevron-left"></i> 探秘文件锁
+    <a href="/2023/02/28/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F1/" rel="prev" title="Windows文件系统概述(一)">
+      <i class="fa fa-chevron-left"></i> Windows文件系统概述(一)
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2022/11/27/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7Json%E5%BA%93/" rel="next" title="用C++实现一个轻量级Json库">
-      用C++实现一个轻量级Json库 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -363,6 +381,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%B7%E6%93%8D%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">卷操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8cmd%E7%AE%A1%E7%90%86%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC"><span class="nav-number">2.</span> <span class="nav-text">使用cmd管理卷影副本</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -378,7 +397,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">125</span>
+          <span class="site-state-item-count">114</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -427,12 +446,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">500k</span>
+    <span title="站点总字数">546k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:35</span>
+    <span title="站点阅读时长">8:16</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
@@ -521,9 +540,9 @@ if (document.querySelectorAll('pre.mermaid').length) {
 </script>
 <script>
   var disqus_config = function() {
-    this.page.url = "http://xuranus.github.io/2022/11/07/%E6%B1%87%E7%BC%96%E8%AF%AD%E8%A8%80/";
-    this.page.identifier = "2022/11/07/汇编语言/";
-    this.page.title = "汇编语言";
+    this.page.url = "http://xuranus.github.io/2023/02/28/Windows%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC%E6%A6%82%E8%BF%B0/";
+    this.page.identifier = "2023/02/28/Windows卷影副本概述/";
+    this.page.title = "Windows卷影副本概述";
     };
   NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
     if (window.DISQUS) {

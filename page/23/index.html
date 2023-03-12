@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">125</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">114</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/10/07/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%8C%EF%BC%89%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2017/10/07/CentOS%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E4%BA%91%E7%9B%98%E6%9C%8D%E5%8A%A1%E5%99%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -220,7 +220,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/10/07/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%8C%EF%BC%89%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/" class="post-title-link" itemprop="url">R语言学习（二）数据可视化</a>
+            <a href="/2017/10/07/CentOS%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E4%BA%91%E7%9B%98%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="post-title-link" itemprop="url">CentOS搭建自己的云盘服务器</a>
         </h2>
 
         <div class="post-meta">
@@ -230,231 +230,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2018-10-06 18:19:42" itemprop="dateCreated datePublished" datetime="2018-10-06T18:19:42Z">2018-10-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">R语言学习</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2018/10/07/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%8C%EF%BC%89%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/10/07/R语言学习（二）数据可视化/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>3.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="数据可视化"><a href="#数据可视化" class="headerlink" title="数据可视化"></a>数据可视化</h2><h3 id="条形图-Bar-plots"><a href="#条形图-Bar-plots" class="headerlink" title="条形图(Bar plots)"></a>条形图(Bar plots)</h3><p>基本条形图：<code>barplot(height)</code>，其中height是一个向量或者矩阵<br>例子：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># vertical barplot</span><br><span class="line">barplot(counts,main=&quot;Simple Bar Plot&quot;,xlab=&quot;Improvement&quot;,ylab=&quot;Frequency&quot;)</span><br><span class="line"></span><br><span class="line"># horizontal bar plot</span><br><span class="line">barplot(counts,main=&quot;Horizontal Bar Plot&quot;,xlab=&quot;Frequency&quot;, ylab=&quot;Improvement&quot;,horiz=TRUE)</span><br></pre></td></tr></table></figure><br>main是条形图标题，xlab和ylab是横总坐标的标签，最后一个可选参数表示是否为纵条形图</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/10/07/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%8C%EF%BC%89%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%86%E5%8C%96/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/10/06/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E6%9C%AC%E5%AE%B9%E5%99%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/10/06/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E6%9C%AC%E5%AE%B9%E5%99%A8/" class="post-title-link" itemprop="url">R语言学习（一）基本容器</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-10-05 22:30:09" itemprop="dateCreated datePublished" datetime="2018-10-05T22:30:09Z">2018-10-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">R语言学习</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2018/10/06/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E6%9C%AC%E5%AE%B9%E5%99%A8/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/10/06/R语言学习（一）基本容器/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>10k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>9 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>R语言是一门数据处理语言，本文记录R语言学习的过程和一些注意点</p>
-</blockquote>
-<h2 id="基本数据结构"><a href="#基本数据结构" class="headerlink" title="基本数据结构"></a>基本数据结构</h2><p>对于数据集行和列的不同术语：</p>
-<ul>
-<li>统计学：观测(observation)/变量(variable)</li>
-<li>数据分析师：记录(record)/字段(field)</li>
-<li>机器学习与数据挖掘：示例(example)/属性(attribute)</li>
-</ul>
-<p>R的数据结构包括向量，数组，数据框和列表，R可以处理的数据类型成为模式(modes)，包括数值型，字符型，布尔型，复数型和原生型（字节）</p>
-<p>向量，矩阵，数组的本质是数组，唯独分别是一维，二维，更高，三者必须有相同的模式，而列表每一个元素可以是不同类型，是一个广义表。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/10/06/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E6%9C%AC%E5%AE%B9%E5%99%A8/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/09/29/Archlinux%E4%B8%8BRStudio%E7%9A%84%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/09/29/Archlinux%E4%B8%8BRStudio%E7%9A%84%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/" class="post-title-link" itemprop="url">Archlinux下RStudio的问题汇总</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-09-28 17:47:52" itemprop="dateCreated datePublished" datetime="2018-09-28T17:47:52Z">2018-09-28</time>
+              <time title="创建时间：2017-10-06 22:15:22" itemprop="dateCreated datePublished" datetime="2017-10-06T22:15:22Z">2017-10-06</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -473,8 +249,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2018/09/29/Archlinux%E4%B8%8BRStudio%E7%9A%84%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/09/29/Archlinux下RStudio的问题汇总/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2017/10/07/CentOS%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E4%BA%91%E7%9B%98%E6%9C%8D%E5%8A%A1%E5%99%A8/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/10/07/CentOS搭建自己的云盘服务器/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -483,7 +259,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>472</span>
+              <span>1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -501,14 +277,14 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>记录Archlinux下RStudio使用的一些坑</p>
-</blockquote>
-<h3 id="安装R"><a href="#安装R" class="headerlink" title="安装R"></a>安装R</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yaourt -S r #安装R</span><br><span class="line">yaourt rstudio-desktop-bin #安装R的IDE</span><br></pre></td></tr></table></figure>
-<p>控制台输入<code>R</code>进入交互界面</p>
+          <h2 id="更新你的-CentOS-系统"><a href="#更新你的-CentOS-系统" class="headerlink" title="更新你的 CentOS 系统"></a>更新你的 CentOS 系统</h2><p>为了系统更加稳定，将系统更新更新<br>更新完后将系统进行重启，下面命令已加入重启命令</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo yum install epel-release</span><br><span class="line">sudo yum update -y &amp;&amp; sudo reboot</span><br></pre></td></tr></table></figure>
+<h2 id="安装依赖环境"><a href="#安装依赖环境" class="headerlink" title="安装依赖环境"></a>安装依赖环境</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo yum install python python-setuptools python-imaging python-ldap python-memcached MySQL-python mariadb mariadb-server</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>接下来，启动其中的 MariaDB 服务</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo systemctl start mariadb.service</span><br><span class="line">sudo systemctl enable mariadb.service</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2018/09/29/Archlinux%E4%B8%8BRStudio%E7%9A%84%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/#more" rel="contents">
+              <a class="btn" href="/2017/10/07/CentOS%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E4%BA%91%E7%9B%98%E6%9C%8D%E5%8A%A1%E5%99%A8/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -532,7 +308,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/01/01/SQL%E6%B3%A8%E5%85%A5%E5%88%9D%E6%8E%A2/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2017/10/05/vultr%E9%85%8D%E7%BD%AEss%E6%95%99%E7%A8%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -546,7 +322,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2018/01/01/SQL%E6%B3%A8%E5%85%A5%E5%88%9D%E6%8E%A2/" class="post-title-link" itemprop="url">SQL注入初探</a>
+            <a href="/2017/10/05/vultr%E9%85%8D%E7%BD%AEss%E6%95%99%E7%A8%8B/" class="post-title-link" itemprop="url">vultr配置ss教程</a>
         </h2>
 
         <div class="post-meta">
@@ -556,7 +332,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2017-12-31 18:51:50" itemprop="dateCreated datePublished" datetime="2017-12-31T18:51:50Z">2017-12-31</time>
+              <time title="创建时间：2017-10-05 13:14:14" itemprop="dateCreated datePublished" datetime="2017-10-05T13:14:14Z">2017-10-05</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -575,8 +351,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2018/01/01/SQL%E6%B3%A8%E5%85%A5%E5%88%9D%E6%8E%A2/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/01/01/SQL注入初探/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2017/10/05/vultr%E9%85%8D%E7%BD%AEss%E6%95%99%E7%A8%8B/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/10/05/vultr配置ss教程/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -585,108 +361,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>3.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="SQL注入"><a href="#SQL注入" class="headerlink" title="SQL注入"></a>SQL注入</h2><p>所谓SQL注入，就是通过把SQL命令插入到Web表单提交或输入域名或页面请求的查询字符串，最终达到欺骗服务器执行恶意的SQL命令。</p>
-<h2 id="发现"><a href="#发现" class="headerlink" title="发现"></a>发现</h2><p>在<a target="_blank" rel="noopener" href="http://mathe.neu.edu.cn/">NEUMathe</a>的登陆表单内输入了‘，没有正常的显示登陆失败，而是弹出以下界面:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">### Error querying database. Cause: com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near at line 2 ### The error may exist in ssm/mapper/StudentMapperCustom.xml ### The error may involve ssm.mapper.StudentMapperCustom.checkStudentExits-Inline ### The error occurred while setting parameters ### SQL: SELECT * FROM Student WHERE Code = and Pwd =</span><br></pre></td></tr></table></figure>
-<p>很明显，这是数据库错误的提示信息，注意到这一行，<br><code>SELECT * FROM Student WHERE Code =  and Pwd =</code><br>服务器把单引号传入sql语句中导致这句查询执行错误，于是，找到注入点，输入<code>2016xxxx&#39; or &#39;1&#39;=&#39;1</code>,此时，原来正常的语句由<code>select * from student where code = &#39;2016xxxx&#39; and pwd = &#39;xxxx&#39;</code>变<br>成了<code>select * from student where code = &#39;2016xxxx&#39; or &#39;1&#39;=&#39;1&#39; and pwd = &#39;xxxx&#39;</code>，点击登陆，居然能成功登陆，pwd密码项被or后面一个恒等式架空了，于是这个语句恒为真，即可以登陆任何人的&gt;账号。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/01/01/SQL%E6%B3%A8%E5%85%A5%E5%88%9D%E6%8E%A2/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2017/12/25/Laravel%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/12/25/Laravel%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="post-title-link" itemprop="url">Laravel环境搭建</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-12-24 16:36:38" itemprop="dateCreated datePublished" datetime="2017-12-24T16:36:38Z">2017-12-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/12/25/Laravel%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/12/25/Laravel环境搭建/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>466</span>
+              <span>649</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -704,18 +379,227 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="以centos为例"><a href="#以centos为例" class="headerlink" title="以centos为例"></a>以centos为例</h2><ol>
-<li>安装composer<br><code>wget https://dl.laravel-china.org/composer.phar -O /usr/local/bin/composer</code><br><code>chmod a+x /usr/local/bin/composer</code><br><code>composer global require &quot;laravel/installer&quot;</code>  </li>
-<li>查看版本<br><code>composer -v</code></li>
+          <ol>
+<li>首先，需要购买境外服务器，在这里选用<a target="_blank" rel="noopener" href="https://www.vultr.com/">vultr</a></li>
+<li>首先需要安装wget</li>
+<li>配置完成后，输入第一条命令：</li>
 </ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">wget --no-check-certificate  </span><br><span class="line">https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks.sh</span><br></pre></td></tr></table></figure>
+<p>完成后，输入第二条命令：<br><code>chmod +x shadowsocks.sh</code>  </p>
+<p>完成后，第三条命令：<br><code>./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log</code>  </p>
+<p>中间会提示你输入你的SS SERVER的账号，和端口。不输入就是默认。<br>跑完命令后会出来你的SS客户端的信息。请立即copy下来加以保存。  </p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2017/12/25/Laravel%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/#more" rel="contents">
+              <a class="btn" href="/2017/10/05/vultr%E9%85%8D%E7%BD%AEss%E6%95%99%E7%A8%8B/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
           <!--/noindex-->
         
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2017/10/05/CentOS%E9%85%8D%E7%BD%AEoh-my-zsh/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/10/05/CentOS%E9%85%8D%E7%BD%AEoh-my-zsh/" class="post-title-link" itemprop="url">CentOS配置oh-my-zsh</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-10-04 18:25:26" itemprop="dateCreated datePublished" datetime="2017-10-04T18:25:26Z">2017-10-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/10/05/CentOS%E9%85%8D%E7%BD%AEoh-my-zsh/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/10/05/CentOS配置oh-my-zsh/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>1.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>使用root用户登录，下面的操作基本都没有root的困扰，如果非root用户请切换至root用户操作。<br>1、查看系统当前的shell<br><code>echo $SHELL</code><br>返回结果如下：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/bin/bash</span><br></pre></td></tr></table></figure></p>
+<p>2、查看bin下是否有zsh包<br><code>cat /etc/shells</code><br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/bin/sh</span><br><span class="line">/bin/bash</span><br><span class="line">/sbin/nologin</span><br><span class="line">/bin/dash</span><br><span class="line">/bin/tcsh</span><br><span class="line">/bin/csh</span><br></pre></td></tr></table></figure></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/10/05/CentOS%E9%85%8D%E7%BD%AEoh-my-zsh/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2017/10/01/%E6%96%B0%E7%BA%AA%E5%85%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/10/01/%E6%96%B0%E7%BA%AA%E5%85%83/" class="post-title-link" itemprop="url">新纪元</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-09-30 21:54:39" itemprop="dateCreated datePublished" datetime="2017-09-30T21:54:39Z">2017-09-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/10/01/%E6%96%B0%E7%BA%AA%E5%85%83/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/10/01/新纪元/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>434</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>为了迎接软件8周后三个实验课的恶竞，准备提前学一点前端。一学期前听学长讲起前端看到一个百度主页几千行的代码感觉这东西与我无缘，便产生了生生恐惧感。如今，有了队内巨佬的指导，一个星期算是进步神速了。一个星期前还是只会用网页输出‘Hello World’，如今已经学会html基本语法，了解了css和js，会用bootstrap的简单框架。  </p>
+<p>盘点一下这个星期达成的成就吧：  </p>
+<ol>
+<li>学会了配置CentOS  </li>
+<li>买了vultr境外主机，搭建ss服务器  </li>
+<li>顺带着发现hexo这块新大陆，开通了自己的个人博客  </li>
+</ol>
+<p>似乎大一所有人都在玩。有的玩的是Linux，服务器，算法，有的人玩的是王者荣耀。于是，当我沉迷于排位的时候，差距就如此拉开了。然而现在转眼一看，其实网络技术好像比moba好玩多了啊。</p>
+<p>第一篇文章，一个新的纪元。</p>
+<p>一周的小小成果：</p>
+<ul>
+<li>Paste: <a target="_blank" rel="noopener" href="http://paste.xuranus.com">http://paste.xuranus.com</a></li>
+<li>Blog: <a target="_blank" rel="noopener" href="http://blog.xuranus.com">http://blog.xuranus.com</a></li>
+<li>HomePage: <a target="_blank" rel="noopener" href="http://xuranus.com">http://xuranus.com</a></li>
+</ul>
+
       
     </div>
 
@@ -733,7 +617,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/22/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><span class="page-number current">23</span><a class="page-number" href="/page/24/">24</a><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/24/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/22/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><span class="page-number current">23</span>
   </nav>
 
 
@@ -801,7 +685,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">125</span>
+          <span class="site-state-item-count">114</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -850,12 +734,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">500k</span>
+    <span title="站点总字数">546k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:35</span>
+    <span title="站点阅读时长">8:16</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>

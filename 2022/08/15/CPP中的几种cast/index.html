@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="C++虽然集成了C语言的explict cast和implict case策略，但是作为一门更现代的语言，C++额外提供了一些类型检查，如检查指针和基础类型的转换，基类和派生类的转换等来提高编程的安全性。主要有const_cast,reinterpret_cast,static_cast,dynamic_cast。其中const_cast主要用于处理const修饰，功能单一，可以看作一类，其他三类">
+  <meta name="description" content="C++虽然集成了C语言的explict cast和implict cast策略，但是作为一门更现代的语言，C++额外提供了一些类型检查，如检查指针和基础类型的转换，基类和派生类的转换等来提高编程的安全性。主要有const_cast,reinterpret_cast,static_cast,dynamic_cast。其中const_cast主要用于处理const修饰，功能单一，可以看作一类，其他三类">
 <meta property="og:type" content="article">
 <meta property="og:title" content="C++中的几种cast">
 <meta property="og:url" content="http://xuranus.github.io/2022/08/15/CPP%E4%B8%AD%E7%9A%84%E5%87%A0%E7%A7%8Dcast/index.html">
 <meta property="og:site_name" content="XUranus">
-<meta property="og:description" content="C++虽然集成了C语言的explict cast和implict case策略，但是作为一门更现代的语言，C++额外提供了一些类型检查，如检查指针和基础类型的转换，基类和派生类的转换等来提高编程的安全性。主要有const_cast,reinterpret_cast,static_cast,dynamic_cast。其中const_cast主要用于处理const修饰，功能单一，可以看作一类，其他三类">
+<meta property="og:description" content="C++虽然集成了C语言的explict cast和implict cast策略，但是作为一门更现代的语言，C++额外提供了一些类型检查，如检查指针和基础类型的转换，基类和派生类的转换等来提高编程的安全性。主要有const_cast,reinterpret_cast,static_cast,dynamic_cast。其中const_cast主要用于处理const修饰，功能单一，可以看作一类，其他三类">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-08-14T18:11:03.000Z">
-<meta property="article:modified_time" content="2022-09-04T11:52:03.042Z">
+<meta property="article:modified_time" content="2023-03-12T14:33:45.361Z">
 <meta property="article:author" content="XUranus">
 <meta property="article:tag" content="CPP">
 <meta name="twitter:card" content="summary">
@@ -132,7 +132,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">125</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">114</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -240,7 +240,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-09-04 11:52:03" itemprop="dateModified" datetime="2022-09-04T11:52:03Z">2022-09-04</time>
+                <time title="修改时间：2023-03-12 14:33:45" itemprop="dateModified" datetime="2023-03-12T14:33:45Z">2023-03-12</time>
               </span>
 
           
@@ -262,13 +262,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>2.3k</span>
+              <span>3.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>2 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -280,33 +280,56 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>C++虽然集成了C语言的explict cast和implict case策略，但是作为一门更现代的语言，C++额外提供了一些类型检查，如检查指针和基础类型的转换，基类和派生类的转换等来提高编程的安全性。<br>主要有<code>const_cast</code>,<code>reinterpret_cast</code>,<code>static_cast</code>,<code>dynamic_cast</code>。其中<code>const_cast</code>主要用于处理<code>const</code>修饰，功能单一，可以看作一类，其他三类可以看作另一类。</p>
-<h2 id="const-cast"><a href="#const-cast" class="headerlink" title="const_cast"></a>const_cast</h2><p><code>const_cast</code>一般用于强制修改一个类型的<strong>读写权限</strong>，例如实现常量到变量引用的转换，以实现修改一些常量的目的。<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> v = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">int</span> &amp;mutv = std::<span class="keyword">const_cast</span>&lt;<span class="keyword">int</span>&amp;&gt;(v);</span><br><span class="line">mutv++;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *p = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">int</span> *mutp = std::<span class="keyword">const_cast</span>&lt;<span class="keyword">int</span>*&gt;(p);</span><br><span class="line">(*mutp)++;</span><br></pre></td></tr></table></figure></p>
+        <p>C++虽然集成了C语言的explict cast和implict cast策略，但是作为一门更现代的语言，C++额外提供了一些类型检查，如检查指针和基础类型的转换，基类和派生类的转换等来提高编程的安全性。<br>主要有<code>const_cast</code>,<code>reinterpret_cast</code>,<code>static_cast</code>,<code>dynamic_cast</code>。其中<code>const_cast</code>主要用于处理<code>const</code>修饰，功能单一，可以看作一类，其他三类可以看作另一类。</p>
+<h2 id="const-cast"><a href="#const-cast" class="headerlink" title="const_cast"></a>const_cast</h2><p><code>const_cast</code>一般用于强制修改一个类型的<strong>读写权限</strong>，例如实现常量到变量引用的转换，以实现修改一些常量的目的。<strong>强制转换的类型必须是指针或引用。</strong><br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> v = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">int</span> &amp;mutv = std::<span class="keyword">const_cast</span>&lt;<span class="keyword">int</span>&amp;&gt;(v);</span><br><span class="line">mutv++;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *p = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">int</span> *mutp = std::<span class="keyword">const_cast</span>&lt;<span class="keyword">int</span>*&gt;(p);</span><br><span class="line">(*mutp)++;</span><br></pre></td></tr></table></figure></p>
 <span id="more"></span>
 <h2 id="reinterpret-cast"><a href="#reinterpret-cast" class="headerlink" title="reinterpret_cast"></a>reinterpret_cast</h2><p>几乎什么都可以转，可以看作是<strong>内存层面的转化</strong>，是最为接近C风格的<strong>强制转换</strong>。<code>reinterpret_cast</code>在<code>static_cast</code>基础上支持更<strong>宽松</strong>的类型转换，例如支持指针和基础类型的相互转换。</p>
-<p>它的机制是对二进制数据进行重新的解释，不会改变原来的格式，而<code>static_cast</code>则会改变原来的格式。7</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">100</span>;</span><br><span class="line">    <span class="keyword">void</span> *ptr = <span class="keyword">reinterpret_cast</span>&lt;<span class="keyword">void</span>*&gt;(i); <span class="comment">// int =&gt; void*</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>它的机制是对二进制数据进行重新的解释，不会改变原来的格式，而<code>static_cast</code>则会改变原来的格式。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">100</span>;</span><br><span class="line">    <span class="keyword">void</span> *ptr = <span class="keyword">reinterpret_cast</span>&lt;<span class="keyword">void</span>*&gt;(i); <span class="comment">// int =&gt; void*</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>这类强制转换表面上看起来功能强大什么都能转，但是转化不够明确，不能进行错误检查，容易出错，所以尽可能不要用</p>
+<p>由于<code>reinterpret_cast</code>是二进制层面上的转化，不考虑转化后的数据是否有意义，不会主动抛出异常。这类强制转换表面上看起来功能强大什么都能转，但是转化不够明确，不能进行错误检查，容易出错，所以尽可能不要用</p>
 </blockquote>
-<h2 id="static-cast"><a href="#static-cast" class="headerlink" title="static_cast"></a>static_cast</h2><p><code>static_cast</code>用于各类<strong>隐式转换</strong>：</p>
+<h2 id="static-cast"><a href="#static-cast" class="headerlink" title="static_cast"></a>static_cast</h2><p><code>static_cast</code>是在<strong>编译阶段</strong>实现的<strong>静态映射</strong>，用于各类<strong>隐式转换</strong>，如果<strong>转化失败会抛出异常</strong></p>
 <ul>
 <li>非<code>const</code>和<code>const</code>类之间的相互转换</li>
-<li>基础类型<code>int</code>,<code>unsignn int</code>,<code>float</code>之间的相互转换，转换符合C的转换规则。</li>
+<li>基础类型<code>int</code>,<code>unsigned int</code>,<code>float</code>之间的相互转换，转换符合C的转换规则。</li>
 <li>任何指针类之间的相互转换</li>
 <li>将任何类型转化为<code>void</code>类型</li>
 <li>对于多态，只支持派生类的<strong>值</strong>向基类的<strong>值</strong>的<strong>单向</strong>转化。（如果是指针，可以双向转换，但是不安全。）</li>
 </ul>
 <blockquote>
-<p>不支持指针和基础类型(<code>int</code>,<code>float</code>)等之间的相互转换</p>
+<ul>
+<li>如果子类不包含额外成员，也支持用<code>static_cast</code>进行基类到子类的转换</li>
+<li>不支持指针和基础类型(<code>int</code>,<code>float</code>)等之间的相互转换</li>
+</ul>
 </blockquote>
 <figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Base</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="built_in">Base</span>() &#123; std::cout &lt;&lt; <span class="string">&quot;Base construct&quot;</span> &lt;&lt; std::endl;&#125;</span><br><span class="line">        <span class="built_in">Base</span>(<span class="keyword">const</span> Base&amp; base) &#123; std::cout &lt;&lt; <span class="string">&quot;Base copy construct&quot;</span> &lt;&lt; std::endl;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Derive</span>:</span> <span class="keyword">public</span> Base &#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="built_in">Derive</span>() &#123; std::cout &lt;&lt; <span class="string">&quot;Derive construct&quot;</span> &lt;&lt; std::endl; &#125;</span><br><span class="line">        <span class="built_in">Derive</span>(<span class="keyword">const</span> Derive&amp; derive) &#123; std::cout &lt;&lt; <span class="string">&quot;Derive copy construct&quot;</span> &lt;&lt; std::endl;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">float</span> f = <span class="number">3.14</span>;</span><br><span class="line">    <span class="keyword">int</span>* ptr = &amp;i;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> ci = <span class="keyword">static_cast</span>&lt;<span class="keyword">const</span> <span class="keyword">int</span>&gt;(i);</span><br><span class="line">    <span class="keyword">int</span> ici = <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(ci);</span><br><span class="line">    std::cout &lt;&lt; <span class="keyword">static_cast</span>&lt;<span class="keyword">float</span>&gt;(i) &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>&gt;(f) &lt;&lt; std::endl;</span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; static_cast&lt;int*&gt;(i) &lt;&lt; std::endl; // compile error</span></span><br><span class="line">    <span class="comment">// std::cout &lt;&lt; static_cast&lt;int&gt;(ptr) &lt;&lt; std::endl; // compile error</span></span><br><span class="line"></span><br><span class="line">    Base base;</span><br><span class="line">    Derive derive;  </span><br><span class="line">    <span class="comment">// Derive derive2 = static_cast&lt;Derive&gt;(base); // compile error</span></span><br><span class="line">    Base base2 = <span class="keyword">static_cast</span>&lt;Base&gt;(derive);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>输出：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1</span><br><span class="line">3</span><br><span class="line">Base construct</span><br><span class="line">Base construct</span><br><span class="line">Derive construct</span><br><span class="line">Base copy construct</span><br></pre></td></tr></table></figure><br>对于上述例子，可以看出多态场景下<strong>派生类向基类值的转换涉及到拷贝构造，将会以派生类中基类的数据为参调用基类的拷贝构造函数构造一个新对象</strong>。对于基础类型的转化也是<strong>基于复制</strong>的，会分配新的栈上空间。</p>
-<h2 id="dynamic-cast"><a href="#dynamic-cast" class="headerlink" title="dynamic_cast"></a>dynamic_cast</h2><p><code>dynamic_cast&lt;T*&gt;</code>用于动态类型转换，只能用于含有虚函数的类，用于类层次之间的向上和向下转换，只能转指针或引用，如果是非法的对于指针返回NULL，对于引用抛异常。它通过判断在执行到该语句的时候变量的运行时类型 和要转换的类型是否相同来判断是否能够向下转换。</p>
-<p>最为严格的强制转换，只能进行指针或者引用类型转换，而且要求满足转换安全。即只允许派生类类型向基类类型转换，否则抛出异常</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">Derive derive;</span><br><span class="line"><span class="keyword">const</span> Base&amp; baseref1 = <span class="keyword">static_cast</span>&lt;Base&amp;&gt;(derive); <span class="comment">// no copy construct happened</span></span><br><span class="line">Base&amp; basevalue = <span class="keyword">static_cast</span>&lt;Base&amp;&gt;(derive); <span class="comment">// copy construct happened</span></span><br><span class="line"><span class="keyword">const</span> Base&amp; baseref2 = <span class="keyword">static_cast</span>&lt;Base&gt;(derive); <span class="comment">// copy construct happened</span></span><br></pre></td></tr></table></figure>
+<p>转化类型是否涉及拷贝取决于转化后的目标是否占用新的栈上空间。如果转化后的值需要占用栈上空间，或者转化目标不是引用或指针，则会发生拷贝构造。<strong>如果不想发生拷贝构造，可以使用<code>dynamic_cast</code>。</strong></p>
+<h2 id="dynamic-cast"><a href="#dynamic-cast" class="headerlink" title="dynamic_cast"></a>dynamic_cast</h2><p><code>dynamic_cast&lt;T*&gt;</code>用于动态类型转换，<strong>只能用于含有虚函数的类</strong>，用于类层次之间的向上和向下转换，<strong>只能转指针或引用</strong>（所以转化过程不会设计拷贝构造），<strong>如果是非法的对于指针返回NULL，对于引用抛异常</strong>。<code>dynamic_cast</code>的检测发生在运行时，需要检查虚表判断是否能够向下转换。</p>
+<p>最为严格的强制转换，只能进行指针或者引用类型转换，而且要求满足转换安全。即<strong>只允许派生类类型向基类类型转换，否则抛出异常</strong></p>
+<p><code>dynamic_cast</code>使用了RTTI(RunTime Type Indentify)来检查类指针/引用的派生关系。RTTI提供了3个主要的操作符：</p>
+<ul>
+<li><code>dynamic_cast</code></li>
+<li><code>typeid</code></li>
+<li><code>type_info</code></li>
+</ul>
+<p>当typeid中的操作数是如下情况之一时，typeid运算符指出操作数的静态类型，即编译时的类型。</p>
+<ol>
+<li>类型名</li>
+<li>一个基本类型的变量</li>
+<li>一个具体的对象(非指针对象)</li>
+<li>一个指向不含有virtual函数的类对象的指针的解引用</li>
+<li>一个指向不含有virtual函数的类对象的引用</li>
+</ol>
+<p>静态类型在程序的运行过程中并不会改变，所以并不需要在程序运行时计算类型，在编译时就能根据操作数的静态类型，推导出其类型信息。例如如下的代码片断，typeid中的操作数均为静态类型：</p>
 <h2 id="dynamic-pointer-cast"><a href="#dynamic-pointer-cast" class="headerlink" title="dynamic_pointer_cast"></a>dynamic_pointer_cast</h2><h2 id="lexical-cast"><a href="#lexical-cast" class="headerlink" title="lexical_cast"></a>lexical_cast</h2><h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
 <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_46210273/article/details/121147406">C++ 四种cast 详解</a></li>
 <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/jiaomubai/article/details/99689461">C++四种cast及其使用</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/k6604125/article/details/126524992">https://blog.csdn.net/k6604125/article/details/126524992</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/26413951/overloaded-bool-string-ambiguity">https://stackoverflow.com/questions/26413951/overloaded-bool-string-ambiguity</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.codeproject.com/Questions/5348060/Cplusplus-string-constructor-why-bool-treated-as-c">https://www.codeproject.com/Questions/5348060/Cplusplus-string-constructor-why-bool-treated-as-c</a></li>
 </ul>
 
     </div>
@@ -330,8 +353,8 @@
       <i class="fa fa-chevron-left"></i> universal reference与完美转发
     </a></div>
       <div class="post-nav-item">
-    <a href="/2022/08/22/NAS%E5%8D%8F%E8%AE%AE%E5%88%9D%E6%8E%A2/" rel="next" title="NAS协议初探">
-      NAS协议初探 <i class="fa fa-chevron-right"></i>
+    <a href="/2022/11/27/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7Json%E5%BA%93/" rel="next" title="用C++实现一个轻量级Json库">
+      用C++实现一个轻量级Json库 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -417,7 +440,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">125</span>
+          <span class="site-state-item-count">114</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -466,12 +489,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">500k</span>
+    <span title="站点总字数">546k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:35</span>
+    <span title="站点阅读时长">8:16</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>

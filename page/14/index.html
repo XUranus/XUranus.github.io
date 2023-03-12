@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">125</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">114</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2020/11/18/Solr%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/06/26/%E5%AE%88%E6%8A%A4%E5%85%A8%E4%B8%96%E7%95%8C%E6%9C%80%E5%A5%BD%E7%9A%84%E7%83%A4%E7%AE%B1-systemd%E5%AD%A6%E4%B9%A0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -220,7 +220,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/11/18/Solr%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/" class="post-title-link" itemprop="url">Solr数据导入</a>
+            <a href="/2019/06/26/%E5%AE%88%E6%8A%A4%E5%85%A8%E4%B8%96%E7%95%8C%E6%9C%80%E5%A5%BD%E7%9A%84%E7%83%A4%E7%AE%B1-systemd%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">守护全世界最好的烤箱--systemd学习</a>
         </h2>
 
         <div class="post-meta">
@@ -230,7 +230,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-11-17 21:48:21" itemprop="dateCreated datePublished" datetime="2020-11-17T21:48:21Z">2020-11-17</time>
+              <time title="创建时间：2019-06-26 11:48:12" itemprop="dateCreated datePublished" datetime="2019-06-26T11:48:12Z">2019-06-26</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -249,8 +249,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2020/11/18/Solr%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/11/18/Solr数据导入/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2019/06/26/%E5%AE%88%E6%8A%A4%E5%85%A8%E4%B8%96%E7%95%8C%E6%9C%80%E5%A5%BD%E7%9A%84%E7%83%A4%E7%AE%B1-systemd%E5%AD%A6%E4%B9%A0/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/06/26/守护全世界最好的烤箱-systemd学习/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -259,13 +259,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>8.2k</span>
+              <span>4.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>7 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -278,18 +278,18 @@
 
       
           <blockquote>
-<p>版本：Solr 8 </p>
+<p>不想开斗鱼APP推送，如何在pc端收到hanser直播的通知呢？本人是linux的深度使用者，这就需要写一个守护进程在后台监测了。</p>
 </blockquote>
-<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>现实生活中我们都知道大多数网站或应用都必须具有某种搜索功能，问题是搜索功能往往是巨大的资源消耗并且它们由于沉重的数据库加载而拖垮你的应用的性能。在项目开发过程中为了提高查询效率和降低数据库的压力，因此就将查询量大的数据放到Solr中。</p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>平时常用的mysql，httpd，nginx都是守护进程（daemon），可以被systemctl命令管理，例如<code>sudo systemctl start XXX</code>可以启动一个守护进程，<code>sudo systemctl stop XXX</code>则是关闭。</p>
+<p>本人环境Archlinux，arch已经从service迁移到了systemd，关于systemd资料如下</p>
 <ul>
-<li>Solr是一个高性能，采用Java开发，基于Lucene的全文搜索服务器。同时对其进行了扩展，提供了比Lucene更为丰富的查询语言，同时实现了可配置、可扩展并对查询性能进行了优化，并且提供了一个完善的功能管理界面，是一款非常优秀的全文搜索引擎。</li>
-<li>Solr可以和Hadoop一起使用。由于Hadoop处理大量数据，Solr帮助我们从这么大的源中找到所需的信息。不仅限于搜索，Solr也可以用于存储目的。像其他NoSQL数据库一样，它是一种非关系数据存储和处理技术。</li>
-<li>Solr本身也可以看成数据库,(NoSql类型),但它比数据库搜索速度更快,所以在项目中我们一般把搜索的部分交给Solr。</li>
-<li>数据库本身不能实现分词效果,而只能使用模糊查询,但是模糊查询非常低效,查询速度比较慢,由于在实际生活中,一般搜索是用的比较多的,这样数据库压力自然就很大,所以我们就让供专业的solr来做搜索功能</li>
+<li><a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/Systemd/User#Writing_user_units">ArchWiki的官方讲解</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.centos.bz/2018/03/systemd-%E7%BC%96%E5%86%99%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86%E8%84%9A%E6%9C%AC/">systemd 编写服务管理脚本</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.centosdoc.com/system/201.html">SYSTEMD启动脚本详解</a></li>
 </ul>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/11/18/Solr%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/#more" rel="contents">
+              <a class="btn" href="/2019/06/26/%E5%AE%88%E6%8A%A4%E5%85%A8%E4%B8%96%E7%95%8C%E6%9C%80%E5%A5%BD%E7%9A%84%E7%83%A4%E7%AE%B1-systemd%E5%AD%A6%E4%B9%A0/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -313,7 +313,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2020/10/22/Redis%E9%AB%98%E5%B9%B6%E5%8F%91/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/06/11/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Clojure/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -327,7 +327,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/10/22/Redis%E9%AB%98%E5%B9%B6%E5%8F%91/" class="post-title-link" itemprop="url">Redis高并发</a>
+            <a href="/2019/06/11/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Clojure/" class="post-title-link" itemprop="url">七周七语言之-Clojure</a>
         </h2>
 
         <div class="post-meta">
@@ -337,7 +337,120 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-10-21 21:55:18" itemprop="dateCreated datePublished" datetime="2020-10-21T21:55:18Z">2020-10-21</time>
+              <time title="创建时间：2019-06-10 18:22:35" itemprop="dateCreated datePublished" datetime="2019-06-10T18:22:35Z">2019-06-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E3%80%8A%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E3%80%8B/" itemprop="url" rel="index"><span itemprop="name">《七周七语言》</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/06/11/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Clojure/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/06/11/七周七语言之-Clojure/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>4.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>Clojure是一门运行在JVM上的lisp方言。</p>
+</blockquote>
+<h2 id="Common-Lisp"><a href="#Common-Lisp" class="headerlink" title="Common Lisp"></a>Common Lisp</h2><p>common lisp安装<code>sudo pacman -S common-lisp</code>,选择[1]的<code>clisp</code>实现，输入<code>clisp</code>进入交互shell环境。</p>
+<h2 id="Clojure安装"><a href="#Clojure安装" class="headerlink" title="Clojure安装"></a>Clojure安装</h2><ul>
+<li>环境：Archlinux </li>
+<li>jdk: 12<br>首先安装clojure语言，使用pacman安装会找不到类途径，于是我还是手动安装了。官网提供的<a target="_blank" rel="noopener" href="https://www.clojure.org/guides/getting_started">安装方式</a><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">curl -O https://download.clojure.org/install/linux-install-1.10.1.447.sh</span><br><span class="line">sudo chmod +x linux-install-1.10.1.447.sh </span><br><span class="line">sudo ./linux-install-1.10.1.447.sh </span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/06/11/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Clojure/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/06/09/%E6%A0%A1%E5%9B%AD%E7%BD%91%E4%B8%8B%E7%9A%84ipv6%E4%BB%A3%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/06/09/%E6%A0%A1%E5%9B%AD%E7%BD%91%E4%B8%8B%E7%9A%84ipv6%E4%BB%A3%E7%90%86/" class="post-title-link" itemprop="url">校园网下的ipv6代理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-06-09 06:22:30" itemprop="dateCreated datePublished" datetime="2019-06-09T06:22:30Z">2019-06-09</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -356,8 +469,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2020/10/22/Redis%E9%AB%98%E5%B9%B6%E5%8F%91/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/10/22/Redis高并发/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2019/06/09/%E6%A0%A1%E5%9B%AD%E7%BD%91%E4%B8%8B%E7%9A%84ipv6%E4%BB%A3%E7%90%86/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/06/09/校园网下的ipv6代理/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -366,7 +479,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>722</span>
+              <span>968</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -384,17 +497,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="Redis缓存雪崩-穿透-击穿"><a href="#Redis缓存雪崩-穿透-击穿" class="headerlink" title="Redis缓存雪崩/穿透/击穿"></a>Redis缓存雪崩/穿透/击穿</h2><p>当一个系统为 <code>Server =&gt; Redis =&gt; DB</code> 的架构，请求先在Redis中查找数据，查找失败则在数据库中查找，在高并发场景下，以下几种情形容易造成系统宕机。</p>
-<h3 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h3><p>统一时间<strong>大量的缓存key</strong>失效，造成数据库响应不即时。</p>
-<p>解决方案:</p>
-<ul>
-<li>不设置key失效</li>
-<li>将key平均分布在不同节点上</li>
-<li>设置缓存刷新的定时任务</li>
-</ul>
+          <p>本人坐标东北某三本985，最近赶上学校网络系统大换代，于是帐号就被恶意盗用了，月初60G的流量就给我用掉了70G……这两年网速越来越快，视频画质越来越好，动辄看个直播就是几个G，25快60G是真的不够用的，每个月流量费超出得几十甚至上百。加之这次帐号盗用事件，我便确定了不再用校园网。但奈何隔壁联通的CNC PPPoE太不安全，还卡，还dns污染，于是我又想起了ipv6代理。</p>
+<p>目前，教育网基本你已经覆盖ipv6，在我们学校。ipv6的流量不计费，得益于这一点，某些能被解析v6地址的网站（google全家桶）是可以在教育网下使用的，但是国内的网站大部分不行。于是我们需要一个ipv6的shaodowsocks代理，找一台ipv6服务器。</p>
+<p>之前我玩vulter的时候，就搭过ipv6的梯子，但最短半天就被封，而且vulter时常抽风，10M最高的带宽，还顶着高ping，使用很不稳定，就弃了。最近我用google搜ss，居然无意搜到一个ipv6的shadowsocks帐号提供商：<a target="_blank" rel="noopener" href="https://home.shadowsocks.ch/aff.php?aff=26899">链接地址</a>。<br>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/10/22/Redis%E9%AB%98%E5%B9%B6%E5%8F%91/#more" rel="contents">
+              <a class="btn" href="/2019/06/09/%E6%A0%A1%E5%9B%AD%E7%BD%91%E4%B8%8B%E7%9A%84ipv6%E4%BB%A3%E7%90%86/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -418,7 +526,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2020/10/22/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E6%9C%89%E5%87%A0%E7%A7%8D%E5%86%99%E6%B3%95%EF%BC%9F/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/06/05/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Ruby/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -432,7 +540,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/10/22/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E6%9C%89%E5%87%A0%E7%A7%8D%E5%86%99%E6%B3%95%EF%BC%9F/" class="post-title-link" itemprop="url">单例模式有几种写法？</a>
+            <a href="/2019/06/05/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Ruby/" class="post-title-link" itemprop="url">七周七语言之-Ruby</a>
         </h2>
 
         <div class="post-meta">
@@ -442,7 +550,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-10-21 21:13:43" itemprop="dateCreated datePublished" datetime="2020-10-21T21:13:43Z">2020-10-21</time>
+              <time title="创建时间：2019-06-05 10:30:36" itemprop="dateCreated datePublished" datetime="2019-06-05T10:30:36Z">2019-06-05</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
@@ -451,6 +559,15 @@
                 <span class="post-meta-item-text">更新于</span>
                 <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
               </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E3%80%8A%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E3%80%8B/" itemprop="url" rel="index"><span itemprop="name">《七周七语言》</span></a>
+                </span>
+            </span>
 
           
   
@@ -461,8 +578,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2020/10/22/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E6%9C%89%E5%87%A0%E7%A7%8D%E5%86%99%E6%B3%95%EF%BC%9F/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/10/22/单例模式有几种写法？/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2019/06/05/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Ruby/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/06/05/七周七语言之-Ruby/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -471,208 +588,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>7.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>7 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="懒汉模式（lazy）"><a href="#懒汉模式（lazy）" class="headerlink" title="懒汉模式（lazy）"></a>懒汉模式（lazy）</h2><p>一般我们所熟知的单例（Singleton）懒汉模式是如下写法：<br><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">      instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> instance;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>但是这种写法在多线程情况下，有可能一个线程已经执行到了<code>if(instance == null)</code>然后判断为<code>true</code>，此时线程切换，另一个线程也执行到这一步，同样判定为<code>true</code>。接下来两个线程都会分别创建一个实例，这就打破了单例的原则。为了解决这一问题，可以给<code>getInstance()</code>方法添加同步锁。<br>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/10/22/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E6%9C%89%E5%87%A0%E7%A7%8D%E5%86%99%E6%B3%95%EF%BC%9F/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2020/04/30/Redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/04/30/Redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">Redis学习笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-04-29 18:12:13" itemprop="dateCreated datePublished" datetime="2020-04-29T18:12:13Z">2020-04-29</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/04/30/Redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/04/30/Redis学习笔记/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>14k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>13 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>实验楼练习地址：<a target="_blank" rel="noopener" href="https://www.shiyanlou.com/courses/106">Redis基础教程</a>，本文拷贝自实验楼</p>
-</blockquote>
-<h1 id="Redis简介"><a href="#Redis简介" class="headerlink" title="Redis简介"></a>Redis简介</h1><h2 id="Redis-是什么"><a href="#Redis-是什么" class="headerlink" title="Redis 是什么"></a>Redis 是什么</h2><p>REmote DIctionary Server(Redis) 是一个由 Salvatore Sanfilippo 写的 key-value 存储系统。Redis 提供了一些丰富的数据结构，包括 lists、sets、ordered sets 以及 hashes ，当然还有和 Memcached 一样的 strings 结构。Redis 当然还包括了对这些数据结构的丰富操作。</p>
-<p>Redis 常被称作是一款数据结构服务器（data structure server）。Redis 的键值可以包括字符串（strings）类型，同时它还包括哈希（hashes）、列表（lists）、集合（sets）和 有序集合（sorted sets）等数据类型。</p>
-<p>对于这些数据类型，你可以执行原子操作。例如：对字符串进行附加操作（append）；递增哈希中的值；向列表中增加元素；计算集合的交集、并集与差集等。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/04/30/Redis%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2020/02/21/%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E7%9A%84share/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/02/21/%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E7%9A%84share/" class="post-title-link" itemprop="url">命令行下的share</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-21 11:12:11" itemprop="dateCreated datePublished" datetime="2020-02-21T11:12:11Z">2020-02-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2020/02/21/%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E7%9A%84share/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2020/02/21/命令行下的share/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>5.2k</span>
+              <span>6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -690,18 +606,123 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>同学写了个上传文件的网站：<a target="_blank" rel="noopener" href="https://share.whoisnian.com">share</a> 用于解决linux下QQ传文件的问题。我突发奇想，做一命令行下的share客户端。完整代码见<a target="_blank" rel="noopener" href="https://github.com/xuranus/share-terminal">share-terminal</a></p>
-<p>需要用到:</p>
-<ul>
-<li>zsh</li>
-<li>xmllint</li>
-<li>curl</li>
-<li>wget</li>
+          <blockquote>
+<p>最近突然有兴趣翻开了队友从队里順来的一本书Bruce.A.Tate的《七周七语言 理解多种编程范式》，正好实训划水无事可干，打算写一个系列，涉及Ruby Lo Prolog Scala Erlang Clojure Haskell,对他们的特性，编程模型做一个简要的理解。语法一笔带过，日后详细学习的日后再补上</p>
+</blockquote>
+<h1 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h1><ul>
+<li>环境：Archlinux</li>
+<li>编辑器：VsCode</li>
+<li><a target="_blank" rel="noopener" href="https://www.runoob.com/ruby/ruby-tutorial.html">菜鸟教程Ruby</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.ruby-lang.org/zh_cn/">Ruby官方中文文档</a></li>
 </ul>
-<p>首先网站地址是：<code>https://share.whoisnian.com</code>，准备从服务器上拉取文件列表，存在本地<code>/tmp/share.list</code>，下载的时候可以快速补全文件名，创建一个名为share的bash脚本：<br>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/02/21/%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%8B%E7%9A%84share/#more" rel="contents">
+              <a class="btn" href="/2019/06/05/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Ruby/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/05/25/%E5%85%B3%E4%BA%8E%E5%A2%99%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/05/25/%E5%85%B3%E4%BA%8E%E5%A2%99%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">关于墙的若干问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-05-25 13:19:01" itemprop="dateCreated datePublished" datetime="2019-05-25T13:19:01Z">2019-05-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/05/25/%E5%85%B3%E4%BA%8E%E5%A2%99%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/05/25/关于墙的若干问题/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>1.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>这里整理一些由于我国国情导致的导致的生产环境恶劣的问题</p>
+</blockquote>
+<ul>
+<li>环境：Arch Linux</li>
+</ul>
+<p>解决墙的问题一般也就是梯子，而梯子的原理则是开两个服务，一个跑在远端vps，一个跑在本地，中间通信加密。我常用的梯子是sock5协议的shadowsocks</p>
+<h2 id="proxychain"><a href="#proxychain" class="headerlink" title="proxychain"></a>proxychain</h2><p>arch下的安装：<code>sudo pacman -S proxychains-ng</code>，修改配置：<code>cat /etc/proxychains.conf</code>，假设我们的本地代理跑在127.0.0.1:1080<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[ProxyList]</span><br><span class="line"># add proxy here ...</span><br><span class="line"># meanwile</span><br><span class="line"># defaults set to &quot;tor&quot;</span><br><span class="line">#socks4         127.0.0.1 9050</span><br><span class="line">socks5 127.0.0.1 1080</span><br></pre></td></tr></table></figure><br>运行firefox：<code>proxychains firefox</code>，使用代理打开浏览器。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/05/25/%E5%85%B3%E4%BA%8E%E5%A2%99%E7%9A%84%E8%8B%A5%E5%B9%B2%E9%97%AE%E9%A2%98/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -724,7 +745,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/13/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/">15</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/15/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/13/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/">15</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/15/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -792,7 +813,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">125</span>
+          <span class="site-state-item-count">114</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -841,12 +862,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">500k</span>
+    <span title="站点总字数">546k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:35</span>
+    <span title="站点阅读时长">8:16</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>

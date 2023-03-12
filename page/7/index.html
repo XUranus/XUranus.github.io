@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">125</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">114</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/01/22/%E6%A0%91%E8%8E%93%E6%B4%BE%E6%90%AD%E5%BB%BAKodi%E6%9C%BA%E9%A1%B6%E7%9B%92/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/23/%E5%89%8D%E7%AB%AF%E4%B8%AD%E7%9A%84%E5%87%A0%E7%B1%BB%E5%AD%98%E5%82%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -220,7 +220,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/01/22/%E6%A0%91%E8%8E%93%E6%B4%BE%E6%90%AD%E5%BB%BAKodi%E6%9C%BA%E9%A1%B6%E7%9B%92/" class="post-title-link" itemprop="url">树莓派搭建Kodi机顶盒</a>
+            <a href="/2021/04/23/%E5%89%8D%E7%AB%AF%E4%B8%AD%E7%9A%84%E5%87%A0%E7%B1%BB%E5%AD%98%E5%82%A8/" class="post-title-link" itemprop="url">前端中的几类存储</a>
         </h2>
 
         <div class="post-meta">
@@ -230,14 +230,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-01-22 08:45:55" itemprop="dateCreated datePublished" datetime="2022-01-22T08:45:55Z">2022-01-22</time>
+              <time title="创建时间：2021-04-23 09:24:11" itemprop="dateCreated datePublished" datetime="2021-04-23T09:24:11Z">2021-04-23</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-24 02:51:34" itemprop="dateModified" datetime="2022-01-24T02:51:34Z">2022-01-24</time>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
               </span>
 
           
@@ -249,8 +249,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2022/01/22/%E6%A0%91%E8%8E%93%E6%B4%BE%E6%90%AD%E5%BB%BAKodi%E6%9C%BA%E9%A1%B6%E7%9B%92/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/01/22/树莓派搭建Kodi机顶盒/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2021/04/23/%E5%89%8D%E7%AB%AF%E4%B8%AD%E7%9A%84%E5%87%A0%E7%B1%BB%E5%AD%98%E5%82%A8/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/23/前端中的几类存储/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -259,13 +259,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>2.3k</span>
+              <span>5.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>2 分钟</span>
+              <span>5 分钟</span>
             </span>
 
         </div>
@@ -277,14 +277,17 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>老家的机顶盒到期了，但其低劣的画质和残缺的功能放在2022年实在难以让我为其续费，正好家里装了无线网，打算用闲置的树莓派3B+顶替一下电视盒子</p>
-</blockquote>
-<p>树莓派作为家庭影音系统的最佳解决方案是Kodi，可以通过刷入LibreELEC系统来使用Kodi。</p>
-<p>LibreELEC简单来说就是最小限度满足Kodi运行的Linux，LibreELEC是把精简版Linux与kodi集成的媒体中心系统，速度快，cpu占用率低，非常适合性能较差的主机。</p>
+          <p>由于HTTP的无状态性，Web开发中最基本的维护页面状态的手段就是Cookie和Session，其中Cookie存在前端，Session存在后端。</p>
+<p>Chrome开发者工具的Application中除了Cookie之外还有其他几种存储：<br><img src="1.png" alt=""></p>
+<ul>
+<li>LocalStorage</li>
+<li>SessionStorage</li>
+<li>IndexedDB</li>
+<li>Web SQL</li>
+</ul>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/01/22/%E6%A0%91%E8%8E%93%E6%B4%BE%E6%90%AD%E5%BB%BAKodi%E6%9C%BA%E9%A1%B6%E7%9B%92/#more" rel="contents">
+              <a class="btn" href="/2021/04/23/%E5%89%8D%E7%AB%AF%E4%B8%AD%E7%9A%84%E5%87%A0%E7%B1%BB%E5%AD%98%E5%82%A8/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -308,7 +311,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/01/15/%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E6%95%B4%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/22/%E6%97%A5%E5%BF%97%E5%A4%84%E7%90%86%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%90%AD%E5%BB%BA/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -322,7 +325,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/01/15/%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E6%95%B4%E7%90%86/" class="post-title-link" itemprop="url">学习资源整理</a>
+            <a href="/2021/04/22/%E6%97%A5%E5%BF%97%E5%A4%84%E7%90%86%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%90%AD%E5%BB%BA/" class="post-title-link" itemprop="url">日志处理系统的搭建</a>
         </h2>
 
         <div class="post-meta">
@@ -332,14 +335,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-01-15 11:00:42" itemprop="dateCreated datePublished" datetime="2022-01-15T11:00:42Z">2022-01-15</time>
+              <time title="创建时间：2021-04-22 15:24:27" itemprop="dateCreated datePublished" datetime="2021-04-22T15:24:27Z">2021-04-22</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-14 08:41:21" itemprop="dateModified" datetime="2022-08-14T08:41:21Z">2022-08-14</time>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
               </span>
 
           
@@ -351,8 +354,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2022/01/15/%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E6%95%B4%E7%90%86/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/01/15/学习资源整理/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2021/04/22/%E6%97%A5%E5%BF%97%E5%A4%84%E7%90%86%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%90%AD%E5%BB%BA/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/22/日志处理系统的搭建/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -361,13 +364,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>598</span>
+              <span>3.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>1 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -379,11 +382,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>这个时代要学个东西网上资源丰富而又良莠不齐，映像里大多数培训班直播喜欢东拉西扯视频质量贼差，而有些用爱发电的UP做的教程往往PPT做的特别精致。</p>
-<p>这里搜集一些本人学过的精品资源，每一个都是宝藏。</p>
+          <p>服务运行的过程中就会不断产生日志，日志的常见用途有：</p>
+<ul>
+<li>查看某个时间段的错误原因</li>
+<li>分析某个接口的召回率</li>
+<li>记录接口的输入输出参数，在升级接口的时候做回归测试</li>
+</ul>
+<p>对于单点服务的日志只需要用<code>awk</code>，<code>grep</code>命令即可获取需要的信息，但在分布式系统中，管理分布在各个节点的日志就会变得很麻烦，需要有一个系统采集各个节点的日志几种储存。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/01/15/%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90%E6%95%B4%E7%90%86/#more" rel="contents">
+              <a class="btn" href="/2021/04/22/%E6%97%A5%E5%BF%97%E5%A4%84%E7%90%86%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%90%AD%E5%BB%BA/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -407,7 +415,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/01/10/Hexo-Next%E5%AE%9A%E5%88%B6%E5%8C%96/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/07/Linux%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%89%8B%E5%86%8C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -421,7 +429,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/01/10/Hexo-Next%E5%AE%9A%E5%88%B6%E5%8C%96/" class="post-title-link" itemprop="url">Hexo-Next定制化</a>
+            <a href="/2021/04/07/Linux%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%89%8B%E5%86%8C/" class="post-title-link" itemprop="url">Linux常用工具手册</a>
         </h2>
 
         <div class="post-meta">
@@ -431,14 +439,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-01-10 14:43:04" itemprop="dateCreated datePublished" datetime="2022-01-10T14:43:04Z">2022-01-10</time>
+              <time title="创建时间：2021-04-07 14:31:55" itemprop="dateCreated datePublished" datetime="2021-04-07T14:31:55Z">2021-04-07</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-06-27 14:49:31" itemprop="dateModified" datetime="2022-06-27T14:49:31Z">2022-06-27</time>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
               </span>
 
           
@@ -450,8 +458,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2022/01/10/Hexo-Next%E5%AE%9A%E5%88%B6%E5%8C%96/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/01/10/Hexo-Next定制化/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2021/04/07/Linux%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%89%8B%E5%86%8C/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/07/Linux常用工具手册/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -460,205 +468,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>6.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>6 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>之前折腾了不少Hexo的玩法，也写过零星的几篇Hexo文章，为了便于查阅这里做个整合。</p>
-<p>自从迁移到<a target="_blank" rel="noopener" href="https://github.com/theme-next/hexo-theme-next">Next</a>主题后就发觉这也许是实用性最好的Hexo主题，以后大概率不会更换其他主题，所以以后一些个性化修改也只基于他。</p>
-<p>博客项目目录：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">_config.yml # Hexo主配置</span><br><span class="line">public/</span><br><span class="line">source/</span><br><span class="line">  _drafts/</span><br><span class="line">  _posts/</span><br><span class="line">themes/</span><br><span class="line">  next/</span><br><span class="line">    _config.yml # Next主题配置</span><br></pre></td></tr></table></figure></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/10/Hexo-Next%E5%AE%9A%E5%88%B6%E5%8C%96/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/01/08/SpringBoot%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/01/08/SpringBoot%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">SpringBoot学习笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-01-07 20:26:33" itemprop="dateCreated datePublished" datetime="2022-01-07T20:26:33Z">2022-01-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-12 02:02:13" itemprop="dateModified" datetime="2022-01-12T02:02:13Z">2022-01-12</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2022/01/08/SpringBoot%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/01/08/SpringBoot学习笔记/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>6 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="起步"><a href="#起步" class="headerlink" title="起步"></a>起步</h2><h3 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h3><p>在IDEA中选择File-&gt;New-&gt;Project-&gt;Spring Initializr，勾选Web/Spring Web。或者File-&gt;New-&gt;Module，创建一个Maven项目。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/08/SpringBoot%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/" class="post-title-link" itemprop="url">MIUI微信8.0数据导出</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-10-06 17:13:08" itemprop="dateCreated datePublished" datetime="2021-10-06T17:13:08Z">2021-10-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-12 02:04:53" itemprop="dateModified" datetime="2022-01-12T02:04:53Z">2022-01-12</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/10/07/MIUI微信8-0数据导出/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>4.1k</span>
+              <span>4.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -677,15 +487,228 @@
 
       
           <blockquote>
-<p>多年不再联系的朋友X偶然加了我微信，发了一条消息后又撤回了，很想知道她发了什么但又不好意思问，于是打算从微信的本地数据库找点线索。</p>
+<p>整理多而杂的常用工具，以备日后查找用</p>
 </blockquote>
-<p>手机是红米K30 Pro(MIUI 12.5)，微信版本8.0。由于手机没有Root，不能用ADB直接拿到数据，所以用MIUI的备份功能备份微信。</p>
-<p><img src="1.jpg" alt=""></p>
-<p>只单独备份微信一个APP，USB链接后在<code>MIUI/backup/ALlBackup</code>中拿到微信的备份包，可以用7zip打开并导出<code>apps</code>文件夹。</p>
-<p>微信数据一般存放于SQlite的<code>db</code>文件中，搜索<code>*.db</code>文件可以发现<code>apps/com.tencent.mm/r/MicroMsg/ee1da3ae2100e09165c2e52382cfe79f</code>下有个挺大的<code>EnMicroMsg.db</code>文件，应该就是它了。对于有多个登录帐号的手机，每个账号对应一个<code>apps/com.tencent.mm/r/MicroMsg/&#123;你的帐号的hash&#125;</code>文件夹，里面存放数据库和一些资源文件。</p>
+<h2 id="route"><a href="#route" class="headerlink" title="route"></a>route</h2><p><code>route</code>用于查看路由表<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ route</span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">default         DESKTOP-N0ED40G 0.0.0.0         UG    100    0        0 eth0</span><br><span class="line">link-local      0.0.0.0         255.255.0.0     U     1000   0        0 eth0</span><br><span class="line">172.19.80.0     0.0.0.0         255.255.240.0   U     100    0        0 eth0</span><br></pre></td></tr></table></figure><br><code>Destination</code>，<code>Gateway</code>，<code>Genmask</code>分别表示目的网络号，网关，子网掩码。例如要访问<code>172.19.89.119</code>，按行与<code>Genmask</code>向与，结果是<code>172.19.80.0</code>，与第三行<code>Destination</code>相匹配，所以选择第三行配置。如果访问某个IP找不到匹配的路由项，则选<code>default</code>（第一行）。</p>
+<p><code>Flags</code>中<code>U</code>表示<code>used</code>，<code>G</code>表示<code>Gateway</code>，<code>H</code>表示<code>Host</code>。<code>Iface</code>表示路由对应的网卡。</p>
+<p>添加一条路由：<code>route add -net 10.0.0.0/24 dev ens160</code></p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/10/07/MIUI%E5%BE%AE%E4%BF%A18-0%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA/#more" rel="contents">
+              <a class="btn" href="/2021/04/07/Linux%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%89%8B%E5%86%8C/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/07/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/07/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/" class="post-title-link" itemprop="url">定时任务的几种实现方式</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-07 14:31:32" itemprop="dateCreated datePublished" datetime="2021-04-07T14:31:32Z">2021-04-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/04/07/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/07/定时任务的几种实现方式/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>19k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>17 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="crontab"><a href="#crontab" class="headerlink" title="crontab"></a>crontab</h2><p>Linux的crontab是系统自带的实现定时任务的模块，后台以守护进程的形式被<code>systemd</code>管理。crontab根据crontab表达式来配置一个定时任务，标准unix版本的crontab表达式是一个空格分割的5段字符串：<code>分 时 日 月 星</code>（分钟，小时，某日，某月，某年），一些其他的版本可能有7段：<code>秒 分 时 日 月 星 年</code>，此处以5段式表达式为准。</p>
+<p>基本用法：<code>crontab [-u user] &#123; -l | -r | -e &#125;</code>。<code>root</code>权限下<code>-u</code>可以指定他人的时程，不填默认设置自己的时程。</p>
+<ul>
+<li><code>-e</code> : 编辑器来设定时程表</li>
+<li><code>-r</code> : 删除目前的时程表</li>
+<li><code>-l</code> : 列出目前的时程表</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/04/07/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/07/%E5%B8%B8%E8%A7%81Web%E6%94%BB%E5%87%BB%E4%B8%8E%E5%BA%94%E5%AF%B9%E6%96%B9%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/07/%E5%B8%B8%E8%A7%81Web%E6%94%BB%E5%87%BB%E4%B8%8E%E5%BA%94%E5%AF%B9%E6%96%B9%E5%BC%8F/" class="post-title-link" itemprop="url">常见Web攻击与应对方式</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-07 14:06:40" itemprop="dateCreated datePublished" datetime="2021-04-07T14:06:40Z">2021-04-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/04/07/%E5%B8%B8%E8%A7%81Web%E6%94%BB%E5%87%BB%E4%B8%8E%E5%BA%94%E5%AF%B9%E6%96%B9%E5%BC%8F/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/07/常见Web攻击与应对方式/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>3.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>总结和概括一下常见的Web安全注意点</p>
+</blockquote>
+<h2 id="XSS攻击"><a href="#XSS攻击" class="headerlink" title="XSS攻击"></a>XSS攻击</h2><p>XSS(Cross Site Script)攻击，是攻击者想Web页面提交恶意脚本，当用户浏览页面的时候就会触发脚本。</p>
+<h3 id="攻击思路"><a href="#攻击思路" class="headerlink" title="攻击思路"></a>攻击思路</h3><ol>
+<li>盗取Cookie，模拟用户登录。用<code>document.cookie</code>获取cookie然后发送给某个后台服务器</li>
+<li>弹出”Flash插件已过期”的提示，欺骗用户去钓鱼页下载被种下木马的插件</li>
+</ol>
+<h3 id="检测方式"><a href="#检测方式" class="headerlink" title="检测方式"></a>检测方式</h3><p>一般的检测方式是检测弹窗，看能否执行<code>alert(1)</code></p>
+<ul>
+<li>对提交后展示的文本，输入<code>&lt;script&gt;alert(1)&lt;/script&gt;</code></li>
+<li>提交插入图片的连接，输入<code>javascript:alert(1)</code>，图片元素会被渲染成<code>&lt;img src=&quot;javascript:alert(1)&quot;&gt;</code></li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/04/07/%E5%B8%B8%E8%A7%81Web%E6%94%BB%E5%87%BB%E4%B8%8E%E5%BA%94%E5%AF%B9%E6%96%B9%E5%BC%8F/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -708,7 +731,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -776,7 +799,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">125</span>
+          <span class="site-state-item-count">114</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -825,12 +848,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">500k</span>
+    <span title="站点总字数">546k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:35</span>
+    <span title="站点阅读时长">8:16</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
@@ -904,59 +927,6 @@ if (document.querySelectorAll('pre.mermaid').length) {
   
 
   
-      
-
-<script>
-  if (typeof MathJax === 'undefined') {
-    window.MathJax = {
-      loader: {
-        source: {
-          '[tex]/amsCd': '[tex]/amscd',
-          '[tex]/AMScd': '[tex]/amscd'
-        }
-      },
-      tex: {
-        inlineMath: {'[+]': [['$', '$']]},
-        tags: 'ams'
-      },
-      options: {
-        renderActions: {
-          findScript: [10, doc => {
-            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
-              const display = !!node.type.match(/; *mode=display/);
-              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
-              const text = document.createTextNode('');
-              node.parentNode.replaceChild(text, node);
-              math.start = {node: text, delim: '', n: 0};
-              math.end = {node: text, delim: '', n: 0};
-              doc.math.push(math);
-            });
-          }, '', false],
-          insertedScript: [200, () => {
-            document.querySelectorAll('mjx-container').forEach(node => {
-              let target = node.parentNode;
-              if (target.nodeName.toLowerCase() === 'li') {
-                target.parentNode.classList.add('has-jax');
-              }
-            });
-          }, '', false]
-        }
-      }
-    };
-    (function () {
-      var script = document.createElement('script');
-      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
-      script.defer = true;
-      document.head.appendChild(script);
-    })();
-  } else {
-    MathJax.startup.document.state(0);
-    MathJax.texReset();
-    MathJax.typeset();
-  }
-</script>
-
-    
 
   
 

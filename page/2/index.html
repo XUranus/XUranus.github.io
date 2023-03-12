@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">125</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">114</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/11/07/%E6%B7%B1%E5%85%A5%E4%BA%86%E8%A7%A3Samba-CIFS%E5%8D%8F%E8%AE%AE/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/08/07/universal%E4%B8%8E%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -220,7 +220,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/11/07/%E6%B7%B1%E5%85%A5%E4%BA%86%E8%A7%A3Samba-CIFS%E5%8D%8F%E8%AE%AE/" class="post-title-link" itemprop="url">深入了解Samba/CIFS协议</a>
+            <a href="/2022/08/07/universal%E4%B8%8E%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/" class="post-title-link" itemprop="url">universal reference与完美转发</a>
         </h2>
 
         <div class="post-meta">
@@ -229,9 +229,24 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-11-06 16:20:15 / 修改时间：08:20:15" itemprop="dateCreated datePublished" datetime="2022-11-06T16:20:15Z">2022-11-06</time>
+              <time title="创建时间：2022-08-07 09:32:17" itemprop="dateCreated datePublished" datetime="2022-08-07T09:32:17Z">2022-08-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-14 08:14:17" itemprop="dateModified" datetime="2022-08-14T08:14:17Z">2022-08-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C-%E4%B9%8B%E5%B7%A6%E5%80%BC%E5%8F%B3%E5%80%BC/" itemprop="url" rel="index"><span itemprop="name">C++之左值右值</span></a>
+                </span>
             </span>
 
           
@@ -243,8 +258,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2022/11/07/%E6%B7%B1%E5%85%A5%E4%BA%86%E8%A7%A3Samba-CIFS%E5%8D%8F%E8%AE%AE/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/11/07/深入了解Samba-CIFS协议/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2022/08/07/universal%E4%B8%8E%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/08/07/universal与完美转发/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -253,13 +268,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>0</span>
+              <span>3.6k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>1 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -271,7 +286,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          
+          <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>声明一个模板函数<code>func()</code>，在<code>main()</code>中调用它：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(T&amp;&amp; v)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> v;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在<code>main()</code>中调用它：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">1</span>;</span><br><span class="line">    func&lt;<span class="keyword">int</span>&gt;(a); <span class="comment">// compile error</span></span><br><span class="line">    func&lt;<span class="keyword">int</span>&gt;(std::<span class="built_in">move</span>(a));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>可以看到<code>func&lt;int&gt;(a)</code>这一行编译报错：<code>error: cannot bind rvalue reference of type ‘int&amp;&amp;’ to lvalue of type ‘int’</code>，原因显而易见：<code>int func(T&amp;&amp; v)</code>被特化成了<code>int func(int&amp;&amp; v)</code>，只接受右值。<br>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/08/07/universal%E4%B8%8E%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -290,7 +314,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/11/07/%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AAstd-any/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/17/C-%E7%9A%84%E4%B8%89%E4%BA%94%E6%B3%95%E5%88%99/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -304,7 +328,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/11/07/%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AAstd-any/" class="post-title-link" itemprop="url">实现一个std::any</a>
+            <a href="/2022/07/17/C-%E7%9A%84%E4%B8%89%E4%BA%94%E6%B3%95%E5%88%99/" class="post-title-link" itemprop="url">C++的三五法则与拷贝移动语义</a>
         </h2>
 
         <div class="post-meta">
@@ -313,9 +337,24 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-11-06 16:19:43 / 修改时间：08:19:43" itemprop="dateCreated datePublished" datetime="2022-11-06T16:19:43Z">2022-11-06</time>
+              <time title="创建时间：2022-07-17 14:58:09" itemprop="dateCreated datePublished" datetime="2022-07-17T14:58:09Z">2022-07-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-07 01:29:53" itemprop="dateModified" datetime="2022-08-07T01:29:53Z">2022-08-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C-%E4%B9%8B%E5%B7%A6%E5%80%BC%E5%8F%B3%E5%80%BC/" itemprop="url" rel="index"><span itemprop="name">C++之左值右值</span></a>
+                </span>
             </span>
 
           
@@ -327,8 +366,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2022/11/07/%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AAstd-any/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/11/07/实现一个std-any/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2022/07/17/C-%E7%9A%84%E4%B8%89%E4%BA%94%E6%B3%95%E5%88%99/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/17/C-的三五法则/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -337,13 +376,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>0</span>
+              <span>6.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>1 分钟</span>
+              <span>6 分钟</span>
             </span>
 
         </div>
@@ -355,7 +394,17 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          
+          <p>我们先来看一个<code>matrix</code>类在C++中如何实现：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">matrix</span> &#123;</span></span><br><span class="line">  <span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int</span> nrow, ncol;</span><br><span class="line">    <span class="keyword">double</span>** value;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">matrix</span>(<span class="keyword">int</span> r, <span class="keyword">int</span> c);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>首先定义字段，在<code>matrix</code>中定义了行数<code>nrow</code>和列数<code>ncol</code>，以及指向存储数据的指针<code>value</code>。然后定义构造函数<code>matrix int r, int c)</code>。由于<code>matrix</code>有一个指针字段<code>value</code>，指向的数据需要在堆上动态分配，所以<code>matrix</code>类型的对象在拷贝时需要注意深浅拷贝的问题，在栈上对象离开作用域则需要考虑析构的问题，所以我们还需要显式地或隐式地指定了<code>matrix</code>类型的对象在<strong>拷贝</strong>、<strong>赋值</strong>和<strong>销毁</strong>时的行为。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/07/17/C-%E7%9A%84%E4%B8%89%E4%BA%94%E6%B3%95%E5%88%99/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -374,7 +423,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/09/26/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%AC%94%E8%AE%B0%E4%B8%80/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/16/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -388,7 +437,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/09/26/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%AC%94%E8%AE%B0%E4%B8%80/" class="post-title-link" itemprop="url">设计模式笔记一</a>
+            <a href="/2022/07/16/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" class="post-title-link" itemprop="url">深入理解Linux文件系统--软链接与硬链接</a>
         </h2>
 
         <div class="post-meta">
@@ -397,9 +446,24 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-09-25 21:49:42 / 修改时间：09:24:48" itemprop="dateCreated datePublished" datetime="2022-09-25T21:49:42Z">2022-09-25</time>
+              <time title="创建时间：2022-07-16 11:28:03" itemprop="dateCreated datePublished" datetime="2022-07-16T11:28:03Z">2022-07-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-07 01:35:10" itemprop="dateModified" datetime="2022-08-07T01:35:10Z">2022-08-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E8%AF%9D%E5%AD%98%E5%82%A8/" itemprop="url" rel="index"><span itemprop="name">大话存储</span></a>
+                </span>
             </span>
 
           
@@ -411,8 +475,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2022/09/26/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%AC%94%E8%AE%B0%E4%B8%80/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/09/26/设计模式笔记一/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2022/07/16/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/16/深入理解Linux文件系统/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -421,13 +485,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>0</span>
+              <span>4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>1 分钟</span>
+              <span>4 分钟</span>
             </span>
 
         </div>
@@ -439,7 +503,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          
+          <h2 id="inode"><a href="#inode" class="headerlink" title="inode"></a>inode</h2><p>硬盘的最小存储单位是扇区(Sector)，块(Block)由多个扇区组成。文件数据存储在块中。块的最常见的大小是4Kb，约为8个连续的扇区组成（每个扇区存储512字节）。计算机的内存是基于字节编址的，就像一个文件可能会占用多个Block，但是一个块只能存放一个文件。</p>
+<p>虽然，我们将文件存储在了块(Block)中，但是我们还需要一个空间来存储文件的元数据(Meta Data)，如：某个文件被分成几块、每一块在的地址、文件拥有者，创建时间，权限，大小等。这种存储文件元信息的区域就叫inode，译为索引节点(Index Node)。 每个文件都指向一个inode，存储文件的元信息。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/07/16/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -458,7 +531,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/09/11/Windows%E4%B8%8B%E4%BD%BF%E7%94%A8C-%E8%AF%BB%E5%86%99%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/10/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E6%96%87%E4%BB%B6%E5%BF%AB%E7%85%A7/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -472,7 +545,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/09/11/Windows%E4%B8%8B%E4%BD%BF%E7%94%A8C-%E8%AF%BB%E5%86%99%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" class="post-title-link" itemprop="url">Windows下使用C++读写文件系统</a>
+            <a href="/2022/07/10/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E6%96%87%E4%BB%B6%E5%BF%AB%E7%85%A7/" class="post-title-link" itemprop="url">深入理解文件快照</a>
         </h2>
 
         <div class="post-meta">
@@ -481,9 +554,24 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-09-10 21:46:50 / 修改时间：13:46:50" itemprop="dateCreated datePublished" datetime="2022-09-10T21:46:50Z">2022-09-10</time>
+              <time title="创建时间：2022-07-10 08:38:54" itemprop="dateCreated datePublished" datetime="2022-07-10T08:38:54Z">2022-07-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-07 01:36:17" itemprop="dateModified" datetime="2022-08-07T01:36:17Z">2022-08-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E8%AF%9D%E5%AD%98%E5%82%A8/" itemprop="url" rel="index"><span itemprop="name">大话存储</span></a>
+                </span>
             </span>
 
           
@@ -495,8 +583,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2022/09/11/Windows%E4%B8%8B%E4%BD%BF%E7%94%A8C-%E8%AF%BB%E5%86%99%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/09/11/Windows下使用C-读写文件系统/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2022/07/10/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E6%96%87%E4%BB%B6%E5%BF%AB%E7%85%A7/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/10/深入理解文件快照/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -505,7 +593,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>0</span>
+              <span>131</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -523,7 +611,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          
+          <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/32441736/cow-vs-row-snapshot-technologies">cow-vs-row-snapshot-technologies</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/dalei9243/article/details/106628611">什么是全量备份,增量备份,差异备份?</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/337088463">什么是完全备份，差异备份，增量备份？</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43466473/article/details/88262084">数据库全备份、差量备份和增量备份</a></li>
+<li><a target="_blank" rel="noopener" href="https://support.huawei.com/enterprise/en/doc/EDOC1100200561">COW and ROW Snapshot Working Principles</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/64595897">存储系统的快照技术</a></li>
+</ul>
+
       
     </div>
 
@@ -542,7 +638,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/09/11/GDB%E8%B0%83%E8%AF%95%E5%85%A5%E9%97%A8/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/09/%E8%A7%A3%E5%86%B3CRLF%E5%92%8CLF%E7%9A%84%E5%86%B2%E7%AA%81/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -556,7 +652,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/09/11/GDB%E8%B0%83%E8%AF%95%E5%85%A5%E9%97%A8/" class="post-title-link" itemprop="url">GDB调试入门</a>
+            <a href="/2022/07/09/%E8%A7%A3%E5%86%B3CRLF%E5%92%8CLF%E7%9A%84%E5%86%B2%E7%AA%81/" class="post-title-link" itemprop="url">解决CRLF和LF的冲突</a>
         </h2>
 
         <div class="post-meta">
@@ -567,7 +663,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2022-09-10 21:46:20 / 修改时间：13:46:20" itemprop="dateCreated datePublished" datetime="2022-09-10T21:46:20Z">2022-09-10</time>
+              <time title="创建时间：2022-07-09 15:01:01 / 修改时间：08:29:34" itemprop="dateCreated datePublished" datetime="2022-07-09T15:01:01Z">2022-07-09</time>
             </span>
 
           
@@ -579,8 +675,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2022/09/11/GDB%E8%B0%83%E8%AF%95%E5%85%A5%E9%97%A8/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/09/11/GDB调试入门/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2022/07/09/%E8%A7%A3%E5%86%B3CRLF%E5%92%8CLF%E7%9A%84%E5%86%B2%E7%AA%81/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/09/解决CRLF和LF的冲突/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -589,13 +685,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>0</span>
+              <span>2.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
 
         </div>
@@ -607,7 +703,21 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          
+          <h2 id="CRLF和LF"><a href="#CRLF和LF" class="headerlink" title="CRLF和LF"></a>CRLF和LF</h2><p>重视由于历史的原因，各种不同的操作系统在处理行尾结束符采取了不同的处理方法：</p>
+<ul>
+<li>CRLF(carriage return line feed)，即“回车换行”，是Windows下的文件换行符<code>\r\n</code></li>
+<li>LF(line feed)，即“换行”，是类Unix下的文件换行符<code>\n</code></li>
+<li>CR(carriage return)，即“回车”，是Mac OS下的文件换行符<code>\r</code>（现在Mac OS X下已经改回LF）</li>
+</ul>
+<p>关于产生CRLF和LF的历史原因可以看这篇文章：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/380574688">CRLF和LF的差异</a></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/07/09/%E8%A7%A3%E5%86%B3CRLF%E5%92%8CLF%E7%9A%84%E5%86%B2%E7%AA%81/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -625,7 +735,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -693,7 +803,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">125</span>
+          <span class="site-state-item-count">114</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -742,12 +852,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">500k</span>
+    <span title="站点总字数">546k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">7:35</span>
+    <span title="站点阅读时长">8:16</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
