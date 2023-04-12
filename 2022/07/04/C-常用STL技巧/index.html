@@ -28,7 +28,7 @@
 <meta property="og:description" content="std::isdigit判断一个字符是否是数字，通常可以这样实现：bool IsDigit(char ch) &amp;#123; return ch &gt;&#x3D; &amp;#x27;0&amp;#x27; &amp;&amp; ch &lt;&#x3D; &amp;#x27;9&amp;#x27;; &amp;#125;也可以直接用std::isdigitchar ch &#x3D; &amp;#x27;8&amp;#x27;;if (std::isdigit(ch)) &amp;#1">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-07-03T21:37:16.000Z">
-<meta property="article:modified_time" content="2023-03-12T14:42:17.312Z">
+<meta property="article:modified_time" content="2023-04-10T06:07:45.255Z">
 <meta property="article:author" content="XUranus">
 <meta property="article:tag" content="CPP">
 <meta name="twitter:card" content="summary">
@@ -122,7 +122,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">58</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -132,7 +132,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">114</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">120</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -240,7 +240,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-03-12 14:42:17" itemprop="dateModified" datetime="2023-03-12T14:42:17Z">2023-03-12</time>
+                <time title="修改时间：2023-04-10 06:07:45" itemprop="dateModified" datetime="2023-04-10T06:07:45Z">2023-04-10</time>
               </span>
 
           
@@ -262,7 +262,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>2.8k</span>
+              <span>3.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -288,6 +288,11 @@
 <h3 id="std-replace"><a href="#std-replace" class="headerlink" title="std::replace"></a>std::replace</h3><p><code>std::replace</code>通过传入一组迭代器区间，将其范围内值等于<code>_Oldval</code>的元素替换为<code>_Newval</code>：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">template</span>&lt;class _FwdIt,class _Ty&gt; <span class="keyword">inline</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">replace</span><span class="params">(_FwdIt _First, _FwdIt _Last, <span class="keyword">const</span> _Ty&amp; _Oldval, <span class="keyword">const</span> _Ty&amp; _Newval)</span></span></span><br><span class="line"><span class="function"></span>&#123;	<span class="comment">// replace each matching _Oldval with _Newval</span></span><br><span class="line">	_DEBUG_RANGE(_First, _Last);</span><br><span class="line">	_Replace_unchecked(_Unchecked(_First), _Unchecked(_Last),</span><br><span class="line">		_Oldval, _Newval);</span><br><span class="line">&#125;</span><br><span class="line">_Replace_unchecked 的源码：</span><br><span class="line"></span><br><span class="line">_Replace_unchecked 的源码：</span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> _<span class="title">FwdIt</span>,<span class="keyword">class</span> _<span class="title">Ty</span>&gt;</span> <span class="keyword">inline</span></span><br><span class="line"><span class="keyword">void</span> _Replace_unchecked(_FwdIt _First, _FwdIt _Last, <span class="keyword">const</span> _Ty&amp; _Oldval, <span class="keyword">const</span> _Ty&amp; _Newval)</span><br><span class="line">&#123;	<span class="comment">// replace each matching _Oldval with _Newval</span></span><br><span class="line">	<span class="keyword">for</span> (; _First != _Last; ++_First)</span><br><span class="line">		<span class="keyword">if</span> (*_First == _Oldval)</span><br><span class="line">			*_First = _Newval;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>例如：检查文件路径，将所有斜杠替换成反斜杠：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">std::string path = <span class="string">R&quot;(C:\Users\XUranus/Desktop/1.txt)&quot;</span>;</span><br><span class="line">std::<span class="built_in">replace</span>(path.<span class="built_in">begin</span>(), path.<span class="built_in">end</span>(), <span class="string">&#x27;/&#x27;</span>, <span class="string">&#x27;\\&#x27;</span>); <span class="comment">// path: C:\Users\XUranus\Desktop\1.txt</span></span><br></pre></td></tr></table></figure></p>
 <p>如果要替换的元素需要满足非相等的更复杂的逻辑，可以用<code>std::replace_if</code>，和<code>std::replace</code>类似，只是其中的参数3从接受<code>_Oldval</code>改为接受一个匿名函数。</p>
 <p>例如：将数组中所有大于100的值置为-1：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">std::vector&lt;<span class="keyword">int</span>&gt; vec = &#123; <span class="number">10</span>, <span class="number">104</span>, <span class="number">20</span>, <span class="number">67</span>, <span class="number">300</span>&#125;;</span><br><span class="line">std::<span class="built_in">replace_if</span>(</span><br><span class="line">    vec.<span class="built_in">begin</span>(),</span><br><span class="line">    vec.<span class="built_in">end</span>(),</span><br><span class="line">    std::<span class="built_in">bind</span>(std::greater&lt;<span class="keyword">int</span>&gt;(), std::placeholder::_1, <span class="number">100</span>),</span><br><span class="line">    <span class="number">-1</span>); <span class="comment">// vec: &#123; 10, -1, 20, 67, -1&#125;</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="std-copy"><a href="#std-copy" class="headerlink" title="std::copy"></a>std::copy</h3><p><code>std::copy(Iterator _first, Iterator _end, Iterator _dst)</code>拷贝<code>[_first, _end)</code>范围中的元素到始于<code>_dst</code>往后的位置。例：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">std::vector&lt;<span class="keyword">int</span>&gt; src = &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> &#125;;</span><br><span class="line"><span class="function">std::vector&lt;<span class="keyword">int</span>&gt; <span class="title">container</span><span class="params">(<span class="number">3</span>)</span></span>;</span><br><span class="line">std::<span class="built_in">copy</span>(src.<span class="built_in">begin</span>(), src.<span class="built_in">end</span>(), container.<span class="built_in">begin</span>());</span><br></pre></td></tr></table></figure>
+<p><strong>此处<code>copy</code>只负责复制，不负责申请空间，所以复制前必须有足够的空间</strong>。如果container的大小小于输入序列的长度的话，这段代码会导致崩溃（crash）。所以此时引入了<code>std::back_inserter</code>:<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">std::vector&lt;<span class="keyword">int</span>&gt; src = &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> &#125;;</span><br><span class="line">std::vector&lt;<span class="keyword">int</span>&gt; container;</span><br><span class="line">std::<span class="built_in">copy</span>(src.<span class="built_in">begin</span>(), src.<span class="built_in">end</span>(), std::<span class="built_in">back_inserter</span>(container))</span><br></pre></td></tr></table></figure><br>标准库提供的<code>std::back_inserter</code>模板函数很方便，因为它为container返回一个<code>back_insert_iterator</code>迭代器：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// iterator header</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Container</span>&gt;</span></span><br><span class="line"><span class="function">_NODISCARD _CONSTEXPR20 back_insert_iterator&lt;_Container&gt; <span class="title">back_inserter</span><span class="params">(_Container&amp; _Cont)</span> <span class="keyword">noexcept</span> <span class="comment">/* strengthened */</span> </span>&#123;</span><br><span class="line">    <span class="comment">// return a back_insert_iterator</span></span><br><span class="line">    <span class="keyword">return</span> back_insert_iterator&lt;_Container&gt;(_Cont);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样，复制的元素都被追加到container的末尾了。(就算container为空也没事)。该迭代器扩展目的容器为每一次复制扩展元素，确保了容器有足够的大小来容纳每个元素。</p>
 <h3 id="std-next-permutation"><a href="#std-next-permutation" class="headerlink" title="std::next_permutation"></a>std::next_permutation</h3><p><code>std::next_permutation</code>用于找到数组的下一个排列，常用于获得数组的全排列。<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">std::vector&lt;<span class="keyword">int</span>&gt; vec &#123;<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">5</span>, <span class="number">4</span>&#125;;</span><br><span class="line">std::<span class="built_in">sort</span>(vec.<span class="built_in">begin</span>(), vec.<span class="built_in">end</span>());</span><br><span class="line"><span class="keyword">while</span> (std::<span class="built_in">next_permutation</span>(vec.<span class="built_in">begin</span>(), vec.<span class="built_in">end</span>())) &#123; <span class="comment">// return false if vec is in descending sequence</span></span><br><span class="line">    <span class="comment">// print current vector ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 
     </div>
@@ -382,7 +387,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#std-isdigit"><span class="nav-number">1.</span> <span class="nav-text">std::isdigit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#std-transform"><span class="nav-number">2.</span> <span class="nav-text">std::transform</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#std-to-string"><span class="nav-number">3.</span> <span class="nav-text">std::to_string</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#std-replace"><span class="nav-number">4.</span> <span class="nav-text">std::replace</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#std-next-permutation"><span class="nav-number">5.</span> <span class="nav-text">std::next_permutation</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#std-isdigit"><span class="nav-number">1.</span> <span class="nav-text">std::isdigit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#std-transform"><span class="nav-number">2.</span> <span class="nav-text">std::transform</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#std-to-string"><span class="nav-number">3.</span> <span class="nav-text">std::to_string</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#std-replace"><span class="nav-number">4.</span> <span class="nav-text">std::replace</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#std-copy"><span class="nav-number">5.</span> <span class="nav-text">std::copy</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#std-next-permutation"><span class="nav-number">6.</span> <span class="nav-text">std::next_permutation</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -398,7 +403,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">114</span>
+          <span class="site-state-item-count">120</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -411,7 +416,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-count">58</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -447,12 +452,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">546k</span>
+    <span title="站点总字数">610k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:16</span>
+    <span title="站点阅读时长">9:15</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>

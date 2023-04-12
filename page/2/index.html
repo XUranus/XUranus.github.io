@@ -119,7 +119,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">56</span></a>
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">58</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">114</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">120</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/08/07/universal%E4%B8%8E%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -220,7 +220,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/08/07/universal%E4%B8%8E%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/" class="post-title-link" itemprop="url">universal reference与完美转发</a>
+            <a href="/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F3/" class="post-title-link" itemprop="url">Windows文件系统概述(三)ADS</a>
         </h2>
 
         <div class="post-meta">
@@ -230,24 +230,15 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-08-07 09:32:17" itemprop="dateCreated datePublished" datetime="2022-08-07T09:32:17Z">2022-08-07</time>
+              <time title="创建时间：2023-03-19 14:23:20" itemprop="dateCreated datePublished" datetime="2023-03-19T14:23:20Z">2023-03-19</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-14 08:14:17" itemprop="dateModified" datetime="2022-08-14T08:14:17Z">2022-08-14</time>
+                <time title="修改时间：2023-04-10 06:07:45" itemprop="dateModified" datetime="2023-04-10T06:07:45Z">2023-04-10</time>
               </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C-%E4%B9%8B%E5%B7%A6%E5%80%BC%E5%8F%B3%E5%80%BC/" itemprop="url" rel="index"><span itemprop="name">C++之左值右值</span></a>
-                </span>
-            </span>
 
           
   
@@ -258,8 +249,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2022/08/07/universal%E4%B8%8E%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/08/07/universal与完美转发/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F3/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/03/19/Windows文件系统3/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -268,13 +259,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>3.6k</span>
+              <span>5.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>3 分钟</span>
+              <span>5 分钟</span>
             </span>
 
         </div>
@@ -286,338 +277,43 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h2><p>声明一个模板函数<code>func()</code>，在<code>main()</code>中调用它：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(T&amp;&amp; v)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> v;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>在<code>main()</code>中调用它：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">1</span>;</span><br><span class="line">    func&lt;<span class="keyword">int</span>&gt;(a); <span class="comment">// compile error</span></span><br><span class="line">    func&lt;<span class="keyword">int</span>&gt;(std::<span class="built_in">move</span>(a));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>可以看到<code>func&lt;int&gt;(a)</code>这一行编译报错：<code>error: cannot bind rvalue reference of type ‘int&amp;&amp;’ to lvalue of type ‘int’</code>，原因显而易见：<code>int func(T&amp;&amp; v)</code>被特化成了<code>int func(int&amp;&amp; v)</code>，只接受右值。<br>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/08/07/universal%E4%B8%8E%E5%AE%8C%E7%BE%8E%E8%BD%AC%E5%8F%91/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/17/C-%E7%9A%84%E4%B8%89%E4%BA%94%E6%B3%95%E5%88%99/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/07/17/C-%E7%9A%84%E4%B8%89%E4%BA%94%E6%B3%95%E5%88%99/" class="post-title-link" itemprop="url">C++的三五法则与拷贝移动语义</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-07-17 14:58:09" itemprop="dateCreated datePublished" datetime="2022-07-17T14:58:09Z">2022-07-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-07 01:29:53" itemprop="dateModified" datetime="2022-08-07T01:29:53Z">2022-08-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C-%E4%B9%8B%E5%B7%A6%E5%80%BC%E5%8F%B3%E5%80%BC/" itemprop="url" rel="index"><span itemprop="name">C++之左值右值</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2022/07/17/C-%E7%9A%84%E4%B8%89%E4%BA%94%E6%B3%95%E5%88%99/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/17/C-的三五法则/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>6.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>6 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>我们先来看一个<code>matrix</code>类在C++中如何实现：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">matrix</span> &#123;</span></span><br><span class="line">  <span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int</span> nrow, ncol;</span><br><span class="line">    <span class="keyword">double</span>** value;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">matrix</span>(<span class="keyword">int</span> r, <span class="keyword">int</span> c);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>首先定义字段，在<code>matrix</code>中定义了行数<code>nrow</code>和列数<code>ncol</code>，以及指向存储数据的指针<code>value</code>。然后定义构造函数<code>matrix int r, int c)</code>。由于<code>matrix</code>有一个指针字段<code>value</code>，指向的数据需要在堆上动态分配，所以<code>matrix</code>类型的对象在拷贝时需要注意深浅拷贝的问题，在栈上对象离开作用域则需要考虑析构的问题，所以我们还需要显式地或隐式地指定了<code>matrix</code>类型的对象在<strong>拷贝</strong>、<strong>赋值</strong>和<strong>销毁</strong>时的行为。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/07/17/C-%E7%9A%84%E4%B8%89%E4%BA%94%E6%B3%95%E5%88%99/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/16/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/07/16/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" class="post-title-link" itemprop="url">深入理解Linux文件系统--软链接与硬链接</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-07-16 11:28:03" itemprop="dateCreated datePublished" datetime="2022-07-16T11:28:03Z">2022-07-16</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-07 01:35:10" itemprop="dateModified" datetime="2022-08-07T01:35:10Z">2022-08-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%A4%A7%E8%AF%9D%E5%AD%98%E5%82%A8/" itemprop="url" rel="index"><span itemprop="name">大话存储</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2022/07/16/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/16/深入理解Linux文件系统/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="inode"><a href="#inode" class="headerlink" title="inode"></a>inode</h2><p>硬盘的最小存储单位是扇区(Sector)，块(Block)由多个扇区组成。文件数据存储在块中。块的最常见的大小是4Kb，约为8个连续的扇区组成（每个扇区存储512字节）。计算机的内存是基于字节编址的，就像一个文件可能会占用多个Block，但是一个块只能存放一个文件。</p>
-<p>虽然，我们将文件存储在了块(Block)中，但是我们还需要一个空间来存储文件的元数据(Meta Data)，如：某个文件被分成几块、每一块在的地址、文件拥有者，创建时间，权限，大小等。这种存储文件元信息的区域就叫inode，译为索引节点(Index Node)。 每个文件都指向一个inode，存储文件的元信息。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/07/16/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/10/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E6%96%87%E4%BB%B6%E5%BF%AB%E7%85%A7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/07/10/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E6%96%87%E4%BB%B6%E5%BF%AB%E7%85%A7/" class="post-title-link" itemprop="url">深入理解文件快照</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-07-10 08:38:54" itemprop="dateCreated datePublished" datetime="2022-07-10T08:38:54Z">2022-07-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-07 01:36:17" itemprop="dateModified" datetime="2022-08-07T01:36:17Z">2022-08-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%A4%A7%E8%AF%9D%E5%AD%98%E5%82%A8/" itemprop="url" rel="index"><span itemprop="name">大话存储</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2022/07/10/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E6%96%87%E4%BB%B6%E5%BF%AB%E7%85%A7/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/10/深入理解文件快照/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>131</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/32441736/cow-vs-row-snapshot-technologies">cow-vs-row-snapshot-technologies</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/dalei9243/article/details/106628611">什么是全量备份,增量备份,差异备份?</a></li>
-<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/337088463">什么是完全备份，差异备份，增量备份？</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43466473/article/details/88262084">数据库全备份、差量备份和增量备份</a></li>
-<li><a target="_blank" rel="noopener" href="https://support.huawei.com/enterprise/en/doc/EDOC1100200561">COW and ROW Snapshot Working Principles</a></li>
-<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/64595897">存储系统的快照技术</a></li>
+          <p>Alternative Data Streams (ADS)是Windows文件系统中引入的一项功能，可以为文件关联额外的数据流。这项功能的诞生原因是为了提高文件系统的兼容性和功能性，特别是与Macintosh和Unix系统创建的文件进行交互时。</p>
+<p>在Macintosh和Unix系统中，文件可以具有多个数据流，而Windows文件系统中最初只支持一个数据流。为了使Windows文件系统与其他操作系统更兼容，Microsoft引入了ADS功能，使Windows文件系统能够处理多个数据流。这项功能可以用于存储文件的元数据，如作者、创建日期、修改日期等，还可以用于存储图像和音频文件的缩略图、元数据等。</p>
+<p>ADS功能可以提供重要的功能和灵活性，但也带来了一些安全风险。因为ADS可以隐藏在文件中，不容易被普通的文件系统API或一些防病毒软件所发现，因此，它也可能被恶意软件利用来隐藏其存在，使得系统的安全受到威胁。</p>
+<p>尽管如此，ADS仍然被保留在Windows文件系统中，因为它在某些应用程序和使用情况下提供了重要的功能。但是，用户和组织需要意识到ADS所带来的安全风险，并采取措施来减轻这些风险，例如使用专门设计用于检测ADS中隐藏的恶意软件的防病毒软件等。本文将介绍ADS的创建和检测，以及如何用Win32 API读写ADS。</p>
+<h3 id="创建ADS"><a href="#创建ADS" class="headerlink" title="创建ADS"></a>创建ADS</h3><p>NTFS交换数据流（Alternate Data Streams，简称ADS）是NTFS磁盘格式的一个特性。在NTFS文件系统下，每个文件都可以存在多个数据流。通俗的理解，就是其它文件可以“寄宿”在某个文件身上。</p>
+<p>首先来看个例子，打开<code>cmd.exe</code>，在<code>C:\Test\ADS</code>下创建一个<code>hello.txt</code>文件<br><figure class="highlight bat"><table><tr><td class="code"><pre><span class="line"><span class="function">C:\<span class="title">Test</span>\<span class="title">ADS</span>&gt;<span class="title">ECHO</span> <span class="title">HelloWorld</span> &gt; <span class="title">hello.txt</span></span></span><br></pre></td></tr></table></figure><br>用<code>DIR</code>可以看到该目录下已经有一个<code>hello.txt</code>文件，可以用<code>notepad.exe hello.txt</code>查看其内容，会发现”HelloWorld”已经被写入。</p>
+<p>接着继续指向如下命令：<br><figure class="highlight bat"><table><tr><td class="code"><pre><span class="line"><span class="function">C:\<span class="title">Test</span>\<span class="title">ADS</span>&gt;<span class="title">echo</span> <span class="title">ThisIsADS1</span> &gt; <span class="title">hello.txt:ads1</span>.<span class="title">txt</span></span></span><br></pre></td></tr></table></figure><br>这条命令在<code>cmd.exe</code>下可以执行成功，看起来是向<code>hello.txt:ads1.txt</code>这个文件写入了”ThisIsADS1”的内容，但是此时用<code>DIR</code>列出该目录下所有文件，会发现依然只有<code>hello.txt</code>：</p>
+<figure class="highlight bat"><table><tr><td class="code"><pre><span class="line"><span class="function">C:\<span class="title">Test</span>\<span class="title">ADS</span>&gt;<span class="title">DIR</span></span></span><br><span class="line"><span class="function"> 驱动器 <span class="title">C</span> 中的卷是 <span class="title">Windows</span></span></span><br><span class="line"><span class="function"> 卷的序列号是 <span class="title">CC7A</span>-4265</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"> <span class="title">C</span>:\<span class="title">Test</span>\<span class="title">ADS</span> 的目录</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">2023/03/28  21:42    &lt;<span class="title">DIR</span>&gt;          .</span></span><br><span class="line"><span class="function">2023/03/07  22:47    &lt;<span class="title">DIR</span>&gt;          ..</span></span><br><span class="line"><span class="function">2023/03/28  21:44                26 <span class="title">hello.txt</span></span></span><br><span class="line"><span class="function">               1 个文件             26 字节</span></span><br><span class="line"><span class="function">               2 个目录 67,740,217,344 可用字节</span></span><br></pre></td></tr></table></figure>
+<p>如果用<code>notepad.exe hello.txt</code>打开<code>hello.txt</code>会发现内容依然是”HelloWorld”，而用<code>notepad.exe hello.txt:ads1.txt</code>打开<code>hello.txt:ads1.txt</code>文件则会发现”ThisIsADS1”这个内容已经被成功写入了，如果删除<code>hello.txt</code>则<code>hello.txt:ads.txt</code>也无法打开。如果直接<code>echo ThisIsADS1 &gt; hello.txt:ads1.txt</code>创建<code>hello.txt:ads1.txt</code>则实际上会创建一个空的<code>hello.txt</code>文件。以上这些现象说明<code>hello.txt:ads1.txt</code>在当前文件系统是真实存在的而又不可见，看似就是依附于<code>hello.txt</code>的子文件。</p>
+<p><code>hello.txt:ads.txt</code>这类文件就是<strong>指定了宿主的ADS文件</strong>，<code>hello.txt</code>就是它的宿主。<strong>宿主的删除会导致依附的ADS文件也被删除</strong></p>
+<p>要查看目录下的ADS文件可以用<code>DIR /R</code><br><figure class="highlight bat"><table><tr><td class="code"><pre><span class="line"><span class="function">C:\<span class="title">Test</span>\<span class="title">ADS</span>&gt;<span class="title">DIR</span> /<span class="title">R</span></span></span><br><span class="line"><span class="function"> 驱动器 <span class="title">C</span> 中的卷是 <span class="title">Windows</span></span></span><br><span class="line"><span class="function"> 卷的序列号是 <span class="title">CC7A</span>-4265</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"> <span class="title">C</span>:\<span class="title">Test</span>\<span class="title">ADS</span> 的目录</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">2023/03/28  21:55    &lt;<span class="title">DIR</span>&gt;          .</span></span><br><span class="line"><span class="function">2023/03/07  22:47    &lt;<span class="title">DIR</span>&gt;          ..</span></span><br><span class="line"><span class="function">2023/03/28  21:55                 0 <span class="title">hello.txt</span></span></span><br><span class="line"><span class="function">                                 26 <span class="title">hello.txt:ads1</span>.<span class="title">txt</span>:$<span class="title">DATA</span></span></span><br><span class="line"><span class="function">               1 个文件              0 字节</span></span><br><span class="line"><span class="function">               2 个目录 67,761,876,992 可用字节</span></span><br></pre></td></tr></table></figure><br>可以看见<code>hello.txt</code>有时间信息，而<code>hello.txt:ads.txt</code>并没有。这是因为<strong>ADS文件和宿主共享相同的文件元数据</strong>。ADS文件的大小也不会反应在宿主文件的大小上，宿主文件的大小属性只描述其自身数据的大小。</p>
+<p>ADS文件不仅可以依附于文件，也可以依附于目录。创建依附目录的ADS文件同理：<br><figure class="highlight bat"><table><tr><td class="code"><pre><span class="line"><span class="function">C:\<span class="title">Test</span>\<span class="title">ADS</span>&gt;<span class="title">mkdir</span> <span class="title">dir1</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">C</span>:\<span class="title">Test</span>\<span class="title">ADS</span>&gt;<span class="title">echo</span> <span class="title">ThisIsDirADS1</span> &gt; <span class="title">dir1:dirADS1</span>.<span class="title">txt</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">C</span>:\<span class="title">Test</span>\<span class="title">ADS</span>&gt;<span class="title">DIR</span> /<span class="title">R</span></span></span><br><span class="line"><span class="function"> 驱动器 <span class="title">C</span> 中的卷是 <span class="title">Windows</span></span></span><br><span class="line"><span class="function"> 卷的序列号是 <span class="title">CC7A</span>-4265</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"> <span class="title">C</span>:\<span class="title">Test</span>\<span class="title">ADS</span> 的目录</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">2023/03/28  22:09    &lt;<span class="title">DIR</span>&gt;          .</span></span><br><span class="line"><span class="function">2023/03/07  22:47    &lt;<span class="title">DIR</span>&gt;          ..</span></span><br><span class="line"><span class="function">2023/03/28  22:09    &lt;<span class="title">DIR</span>&gt;          <span class="title">dir1</span></span></span><br><span class="line"><span class="function">                                 16 <span class="title">dir1:dirADS1</span>.<span class="title">txt</span>:$<span class="title">DATA</span></span></span><br><span class="line"><span class="function">2023/03/28  21:55                 0 <span class="title">hello.txt</span></span></span><br><span class="line"><span class="function">                                 26 <span class="title">hello.txt:ads1</span>.<span class="title">txt</span>:$<span class="title">DATA</span></span></span><br><span class="line"><span class="function">               1 个文件              0 字节</span></span><br><span class="line"><span class="function">               3 个目录 67,760,422,912 可用字节</span></span><br></pre></td></tr></table></figure></p>
+<p>也可以创建不指定宿主的ADS文件：<br><figure class="highlight bat"><table><tr><td class="code"><pre><span class="line"><span class="function">C:\<span class="title">Test</span>\<span class="title">ADS</span>&gt;<span class="title">echo</span> <span class="title">ThisIsDirADS2</span> &gt; :<span class="title">dirADS2.txt</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">C</span>:\<span class="title">Test</span>\<span class="title">ADS</span>&gt;<span class="title">DIR</span> /<span class="title">R</span></span></span><br><span class="line"><span class="function"> 驱动器 <span class="title">C</span> 中的卷是 <span class="title">Windows</span></span></span><br><span class="line"><span class="function"> 卷的序列号是 <span class="title">CC7A</span>-4265</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"> <span class="title">C</span>:\<span class="title">Test</span>\<span class="title">ADS</span> 的目录</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">2023/03/28  22:13    &lt;<span class="title">DIR</span>&gt;          .</span></span><br><span class="line"><span class="function">                                 16 .:<span class="title">dirADS2.txt</span>:$<span class="title">DATA</span></span></span><br><span class="line"><span class="function">2023/03/07  22:47    &lt;<span class="title">DIR</span>&gt;          ..</span></span><br><span class="line"><span class="function">2023/03/28  22:09    &lt;<span class="title">DIR</span>&gt;          <span class="title">dir1</span></span></span><br><span class="line"><span class="function">                                 16 <span class="title">dir1:dirADS1</span>.<span class="title">txt</span>:$<span class="title">DATA</span></span></span><br><span class="line"><span class="function">2023/03/28  21:55                 0 <span class="title">hello.txt</span></span></span><br><span class="line"><span class="function">                                 26 <span class="title">hello.txt:ads1</span>.<span class="title">txt</span>:$<span class="title">DATA</span></span></span><br><span class="line"><span class="function">               1 个文件              0 字节</span></span><br><span class="line"><span class="function">               3 个目录 67,745,931,264 可用字节</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">C</span>:\<span class="title">Test</span>\<span class="title">ADS</span>&gt;<span class="title">cd</span> ..</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">C</span>:\<span class="title">Test</span>&gt;<span class="title">DIR</span> /<span class="title">R</span></span></span><br><span class="line"><span class="function"> 驱动器 <span class="title">C</span> 中的卷是 <span class="title">Windows</span></span></span><br><span class="line"><span class="function"> 卷的序列号是 <span class="title">CC7A</span>-4265</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"> <span class="title">C</span>:\<span class="title">Test</span> 的目录</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">2023/03/07  22:47    &lt;<span class="title">DIR</span>&gt;          .</span></span><br><span class="line"><span class="function">2023/03/28  22:13    &lt;<span class="title">DIR</span>&gt;          <span class="title">ADS</span></span></span><br><span class="line"><span class="function">                                 16 <span class="title">ADS:dirADS2</span>.<span class="title">txt</span>:$<span class="title">DATA</span></span></span><br></pre></td></tr></table></figure><br>这时可以观察到实际上<strong>创建的没有宿主的ADS会把当前目录作为自己的宿主</strong></p>
+<p>除了上述用<code>echo</code>命令向ADS文件写入数据外，<code>cmd.exe</code>还提供了一个<code>type</code>命令用于将指定文件写入ADS文件。例如：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\Test\ADS&gt;type &quot;C:\Program Files\Bandizip\Bandizip.exe&quot; &gt; hello.txt:Bandzip.exe</span><br><span class="line"></span><br><span class="line">C:\Test\ADS&gt;dir /R </span><br><span class="line"> 驱动器 C 中的卷是 Windows</span><br><span class="line"> 卷的序列号是 CC7A-4265</span><br><span class="line"></span><br><span class="line"> C:\Test\ADS 的目录</span><br><span class="line"></span><br><span class="line">2023/03/28  22:13    &lt;DIR&gt;          .</span><br><span class="line">                                 16 .:dirADS2.txt:$DATA</span><br><span class="line">2023/03/07  22:47    &lt;DIR&gt;          ..</span><br><span class="line">2023/03/28  22:09    &lt;DIR&gt;          dir1</span><br><span class="line">                                 16 dir1:dirADS1.txt:$DATA</span><br><span class="line">2023/03/28  22:32                 0 hello.txt</span><br><span class="line">                                 26 hello.txt:ads1.txt:$DATA</span><br><span class="line">                          3,211,240 hello.txt:Bandzip.exe:$DATA</span><br><span class="line">               1 个文件              0 字节</span><br><span class="line">               3 个目录 67,742,556,160 可用字节</span><br></pre></td></tr></table></figure><br>将一个可执行程序<code>Bandizip.exe</code>附加在了<code>hello.txt:Bandzip.exe</code>上，该过程是拷贝的，即<code>hello.txt:Bandzip.exe</code>占用独立的磁盘空间。由于ADS不可见的特性，ADS很容易被用于将木马文件隐藏在常规文件中以躲避操查杀。要删除ADS可以用特殊的工具，也可以将文件拷入不支持ADS特性的FAT32分区。</p>
+<h3 id="ADS-Win32-API"><a href="#ADS-Win32-API" class="headerlink" title="ADS Win32 API"></a>ADS Win32 API</h3><p>Windows提供<code>FindFirstStreamW</code>和<code>FindNextStreamW</code>来获取文件/目录拥有的所有数据流。</p>
+<ol>
+<li><p>首先用<code>FindFirstStreamW</code>查找文件对应的第一个<code>hStream</code>句柄。传入文件路径，第二参数固定为<code>_STREAM_INFO_LEVELS::FindStreamInfoStandard</code>，第四个参数固定为0。如果成功将把查找到的流的信息读入<code>WIN32_FIND_STREAM_DATA</code>结构，如果失败会返回<code>INVALID_HANDLE_VALUE</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">std::wstring wPath = <span class="string">LR&quot;(C:\Test\ADS\hello.txt)&quot;</span>;</span><br><span class="line">WIN32_FIND_STREAM_DATA findStreamData&#123;&#125;;</span><br><span class="line">HANDLE hStream = ::<span class="built_in">FindFirstStreamW</span>(</span><br><span class="line">    wPath.<span class="built_in">c_str</span>(),</span><br><span class="line">    _STREAM_INFO_LEVELS::FindStreamInfoStandard,</span><br><span class="line">    &amp;findStreamData,</span><br><span class="line">    <span class="number">0</span></span><br><span class="line">);</span><br><span class="line"><span class="keyword">if</span> (hStream == INVALID_HANDLE_VALUE) &#123;</span><br><span class="line">    <span class="comment">/* get stream handle failed */</span></span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用<code>FindNextStreamW</code>结合之前获取的<code>hStream</code>继续查找下一个流的信息。这个过程和遍历文件用到的<code>FindNextFileW</code>很类似。当查找完成<code>FindNextStreamW</code>会失败，<code>GetLastError()</code>将会返回<code>ERROR_HANDLE_EOF</code>。查找成功下一个流的信息将会覆写入<code>WIN32_FIND_STREAM_DATA findStreamData</code>中。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">    std::cout &lt;&lt; findStreamData.cStreamName &lt;&lt; std::endl;</span><br><span class="line">    <span class="keyword">if</span> (!::<span class="built_in">FindNextStreamW</span>(hStream, &amp;findStreamData)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (::<span class="built_in">GetLastError</span>() != ERROR_HANDLE_EOF) &#123;</span><br><span class="line">            <span class="comment">/* error occured */</span></span><br><span class="line">            std::cerr &lt;&lt; <span class="string">&quot;error happened&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>最后用<code>FindClose</code>关闭句柄，释放资源。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">::<span class="built_in">FindClose</span>(hStream);</span><br><span class="line">hStream = INVALID_HANDLE_VALUE;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>对于之前的<code>hello.txt</code>文件，会打印出这样的结果：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">::$DATA</span><br><span class="line">:ads1.txt:$DATA</span><br><span class="line">:ads2.txt:$DATA</span><br></pre></td></tr></table></figure><br>形式可以看成是<code>:&lt;stream name&gt;:$DATA</code>。其中<code>::$DATA</code>表示streamName为空，这表示一个主数据流，<strong>所有文件（非目录），无论是否包含ADS，都必定有一个主数据流</strong>。<code>:ads1.txt:$DATA</code>和<code>:ads2.txt:$DATA</code>表明<code>hello.txt</code>还包含两个ADS，分别为<code>ads1.txt</code>和<code>ads2.txt</code>。<strong>所有目录，都没有主数据流，但可能包含ADS</strong>。例如上文中<code>C:\Test\ADS\dir1</code>可以拿到如下打印结果：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">:dirADS1.txt:$DATA</span><br><span class="line">:dirADS2.txt:$DATA</span><br></pre></td></tr></table></figure></p>
+<p>无论目录还是文件的ADS都可以看作是文件。对于ADS的读取、创建、写入都可以直接用之前几章节提到的文件操作API <code>CreateFileW</code>、<code>ReadFile</code>、<code>WriteFile</code>等。传入的路径可以用<code>&lt;filePath&gt;:&lt;streamName&gt;</code>表示。打开一个ADS的句柄可以表示为：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">std::wstring wPath = <span class="string">LR&quot;(C:\Test\ADS\hello.txt:ads1.txt)&quot;</span>;</span><br><span class="line">HANDLE hFile = ::<span class="built_in">CreateFileW</span>(</span><br><span class="line">    wPath.<span class="built_in">c_str</span>(),</span><br><span class="line">    GENERIC_READ,</span><br><span class="line">    FILE_SHARE_READ,</span><br><span class="line">    <span class="literal">nullptr</span>,</span><br><span class="line">    OPEN_EXISTING,</span><br><span class="line">    FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT,</span><br><span class="line">    <span class="number">0</span>);</span><br></pre></td></tr></table></figure><br>根据该句柄执行<code>ReadFile</code>和<code>WriteFile</code>就可以和读写常规文件一样读写ADS了。</p>
+<p>需要注意的是，对ADS的读写不光会改变ADS的内容，也会改变宿主文件的部分属性（例如AccessTime、ModifyTime），且<strong>ADS只和宿主在<em>数据流内容和大小</em>上相互区分，在元数据上他们和宿主是共享的</strong>。用获得的宿主文件句柄和ADS句柄可以获得一样的文件元数据信息（Index、设备号，时间，Attribute）。</p>
+<h3 id="相关API文档："><a href="#相关API文档：" class="headerlink" title="相关API文档："></a>相关API文档：</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/desktop/api/fileapi/nf-fileapi-findfirststreamw">FindFirstStreamW</a>  </li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-findnextstreamw">FindNextStreamW</a>  </li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/fileapi/ns-fileapi-win32_find_stream_data">WIN32_FIND_STREAM_DATA</a>  </li>
+</ul>
+<h3 id="扩展资料"><a href="#扩展资料" class="headerlink" title="扩展资料"></a>扩展资料</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/nzjdsds/article/details/81260524">【web端权限维持】利用ADS隐藏webshell</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/x1183834753/article/details/124384108">【ADS】Windows下的ADS NTFS交换数据流</a></li>
 </ul>
 
       
@@ -638,7 +334,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/09/%E8%A7%A3%E5%86%B3CRLF%E5%92%8CLF%E7%9A%84%E5%86%B2%E7%AA%81/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -652,7 +348,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/07/09/%E8%A7%A3%E5%86%B3CRLF%E5%92%8CLF%E7%9A%84%E5%86%B2%E7%AA%81/" class="post-title-link" itemprop="url">解决CRLF和LF的冲突</a>
+            <a href="/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F2/" class="post-title-link" itemprop="url">Windows文件系统概述(二)指向点</a>
         </h2>
 
         <div class="post-meta">
@@ -661,10 +357,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-07-09 15:01:01 / 修改时间：08:29:34" itemprop="dateCreated datePublished" datetime="2022-07-09T15:01:01Z">2022-07-09</time>
+              <time title="创建时间：2023-03-19 14:23:17" itemprop="dateCreated datePublished" datetime="2023-03-19T14:23:17Z">2023-03-19</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-10 06:07:45" itemprop="dateModified" datetime="2023-04-10T06:07:45Z">2023-04-10</time>
+              </span>
 
           
   
@@ -675,8 +377,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2022/07/09/%E8%A7%A3%E5%86%B3CRLF%E5%92%8CLF%E7%9A%84%E5%86%B2%E7%AA%81/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/09/解决CRLF和LF的冲突/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F2/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/03/19/Windows文件系统2/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -685,13 +387,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>2.4k</span>
+              <span>13k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>2 分钟</span>
+              <span>12 分钟</span>
             </span>
 
         </div>
@@ -703,16 +405,318 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="CRLF和LF"><a href="#CRLF和LF" class="headerlink" title="CRLF和LF"></a>CRLF和LF</h2><p>重视由于历史的原因，各种不同的操作系统在处理行尾结束符采取了不同的处理方法：</p>
-<ul>
-<li>CRLF(carriage return line feed)，即“回车换行”，是Windows下的文件换行符<code>\r\n</code></li>
-<li>LF(line feed)，即“换行”，是类Unix下的文件换行符<code>\n</code></li>
-<li>CR(carriage return)，即“回车”，是Mac OS下的文件换行符<code>\r</code>（现在Mac OS X下已经改回LF）</li>
-</ul>
-<p>关于产生CRLF和LF的历史原因可以看这篇文章：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/380574688">CRLF和LF的差异</a></p>
+          <blockquote>
+<p>上一篇文件我们主要介绍了Windows文件系统的基本特性及文档阅读方式，本文将介绍Windows文件系统中一种特殊的概念：<strong>指向点（Reparse Point）</strong></p>
+</blockquote>
+<p>回顾上一章节，我们在文件<code>dwFileAttributes</code>依据符号位<code>FILE_ATTRIBUTE_REPARSE_POINT</code>实现了一个方法：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">StatResult::IsReparsePoint</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (m_handleFileInformation.dwFileAttributes &amp; FILE_ATTRIBUTE_REPARSE_POINT) != <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们还没有说明这个方法的意义，该方法说明<strong>该文件是一个指向点（Reparse Point）</strong>。Reparse Point是一种特殊机制，用于实现Windows文件系统的重定向。Windows的挂载和软连接就是基于它实现的。在详解<code>FILE_ATTRIBUTE_REPARSE_POINT</code>之前，我们先从Windows软链接开始看起。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/07/09/%E8%A7%A3%E5%86%B3CRLF%E5%92%8CLF%E7%9A%84%E5%86%B2%E7%AA%81/#more" rel="contents">
+              <a class="btn" href="/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F2/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/02/28/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/02/28/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F1/" class="post-title-link" itemprop="url">Windows文件系统概述(一)基本概念</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-02-28 12:56:37" itemprop="dateCreated datePublished" datetime="2023-02-28T12:56:37Z">2023-02-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-10 06:07:45" itemprop="dateModified" datetime="2023-04-10T06:07:45Z">2023-04-10</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2023/02/28/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F1/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/02/28/Windows文件系统1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>20k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>18 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>最近接触Windows文件备份相关的业务，从Win32 API入手对Windows文件系统的基本概念做一个总结。学习Windows文件系统最好方式还是阅读<a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/fileapi">官方文档</a>，本文只是对相关概念进行粗浅的介绍，权当抛砖引玉。<br>本文完整代码见：<a target="_blank" rel="noopener" href="https://github.com/XUranus/FileSystemUtil">https://github.com/XUranus/FileSystemUtil</a></p>
+</blockquote>
+<h2 id="Win32-API-Doc"><a href="#Win32-API-Doc" class="headerlink" title="Win32 API Doc"></a>Win32 API Doc</h2><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/fileapi">官方文档</a>。文档会详细描述每一个API的入参、出参、返回的字段含义和取值范围，部分还会给出Example程序。</p>
+<p>Windows程序开发一般使用MSVC，和GCC有不少区别。为了更有效率的学习Windows文件系统，在介绍文件系统之前，本文先给Linux转Windows的开发者介绍一下Windows的编码和文档阅读方式，磨刀不误砍柴工。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/02/28/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F1/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/02/19/%E7%A8%80%E7%96%8F%E6%96%87%E4%BB%B6%E7%AE%80%E4%BB%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/02/19/%E7%A8%80%E7%96%8F%E6%96%87%E4%BB%B6%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">稀疏文件简介</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-02-19 10:52:28" itemprop="dateCreated datePublished" datetime="2023-02-19T10:52:28Z">2023-02-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-03-11 11:03:32" itemprop="dateModified" datetime="2023-03-11T11:03:32Z">2023-03-11</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2023/02/19/%E7%A8%80%E7%96%8F%E6%96%87%E4%BB%B6%E7%AE%80%E4%BB%8B/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/02/19/稀疏文件简介/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>11k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Linux上可以快速创建一个超过卷自身大小的文件。例如<code>/dev/nvme0n1p2</code>对应的大小只有234GB：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">╭─xuranus@Thanos ~/workspace </span><br><span class="line">╰─$ df -h</span><br><span class="line">Filesystem      Size  Used Avail Use% Mounted on</span><br><span class="line">dev             7.8G     0  7.8G   0% /dev</span><br><span class="line">run             7.8G  1.6M  7.8G   1% /run</span><br><span class="line">/dev/nvme0n1p2  234G  196G   26G  89% /</span><br><span class="line">tmpfs           7.8G  172M  7.6G   3% /dev/shm</span><br><span class="line">tmpfs           7.8G   21M  7.8G   1% /tmp</span><br><span class="line">/dev/nvme0n1p1  500M  114M  386M  23% /boot</span><br><span class="line">tmpfs           1.6G   76K  1.6G   1% /run/user/1000</span><br></pre></td></tr></table></figure><br>用<code>dd if=/dev/zero bs=1M count=1 of=sparsefile seek=1000000</code>以1MB为单位，从1000000的位置，即offset = 1M * 1000000处写入一个1M的数据块：<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">╭─xuranus@Thanos ~/workspace </span><br><span class="line">╰─$ dd <span class="keyword">if</span>=/dev/zero bs=1M count=1 of=sparsefile seek=1000000          </span><br><span class="line">1+0 records <span class="keyword">in</span></span><br><span class="line">1+0 records out</span><br><span class="line">1048576 bytes (1.0 MB, 1.0 MiB) copied, 0.00405439 s, 259 MB/s</span><br></pre></td></tr></table></figure></p>
+<p>用<code>ll -h</code>可以看到文件空间占用达到了977GB：</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/02/19/%E7%A8%80%E7%96%8F%E6%96%87%E4%BB%B6%E7%AE%80%E4%BB%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/11/27/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7Json%E5%BA%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/27/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7Json%E5%BA%93/" class="post-title-link" itemprop="url">用C++实现一个轻量级Json库</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-27 09:18:02" itemprop="dateCreated datePublished" datetime="2022-11-27T09:18:02Z">2022-11-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-03-11 11:03:32" itemprop="dateModified" datetime="2023-03-11T11:03:32Z">2023-03-11</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2022/11/27/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7Json%E5%BA%93/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/11/27/用C-实现一个轻量级Json库/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>31k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>28 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>项目地址<a target="_blank" rel="noopener" href="https://github.com/XUranus/minijson">https://github.com/XUranus/minijson</a></p>
+</blockquote>
+<p>JSON是非常常用的结构对象序列化方式。相比于其他基于字节流的序列化方案（thrift，protobuff），JSON易于阅读和编辑；相较于同样基于文本的序列化方案XML，JSON在网络传输占用更小的空间。JSON很好平衡了序列化/反序列化的性能、可读性、空间占用的问题。</p>
+<p>很多语言都在标准库中添加了JSON相关的API，但C/C++还没有。C++较为完善的开源JSON库有jsoncpp。这篇文件将介绍如何用1K行左右的代码实现一个精简C++的Json库。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/11/27/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7Json%E5%BA%93/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -735,7 +739,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -803,7 +807,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">114</span>
+          <span class="site-state-item-count">120</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -816,7 +820,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">56</span>
+        <span class="site-state-item-count">58</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -852,12 +856,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">546k</span>
+    <span title="站点总字数">610k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">8:16</span>
+    <span title="站点阅读时长">9:15</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>

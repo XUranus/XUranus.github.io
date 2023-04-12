@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="Windows Server 2008以上的版本，管理员可以通过卷影副本服务（Volume Shadow Service）在指定的卷上创建备份的卷影副本。卷影副本类似于快照(Snapshot)，用户可以基于快照卷恢复到之前某个时间的版本，备份软件也可基于快照做一致性备份。因此，它可以极大保护服务器的数据安全。 本文就介绍VSS相关操作以及如何用C++调用相关API。  项目完整地址见https:&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows创建卷影副本">
+<meta property="og:url" content="http://xuranus.github.io/2023/03/20/Windows%E5%88%9B%E5%BB%BA%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="Windows Server 2008以上的版本，管理员可以通过卷影副本服务（Volume Shadow Service）在指定的卷上创建备份的卷影副本。卷影副本类似于快照(Snapshot)，用户可以基于快照卷恢复到之前某个时间的版本，备份软件也可基于快照做一致性备份。因此，它可以极大保护服务器的数据安全。 本文就介绍VSS相关操作以及如何用C++调用相关API。  项目完整地址见https:&#x2F;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-03-20T12:57:29.000Z">
+<meta property="article:modified_time" content="2023-04-10T06:07:45.255Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="文件系统">
+<meta property="article:tag" content="快照">
+<meta property="article:tag" content="Windows">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://xuranus.github.io/2023/03/20/Windows%E5%88%9B%E5%BB%BA%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Windows创建卷影副本 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">58</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/03/20/Windows%E5%88%9B%E5%BB%BA%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows创建卷影副本
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-03-20 12:57:29" itemprop="dateCreated datePublished" datetime="2023-03-20T12:57:29Z">2023-03-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-10 06:07:45" itemprop="dateModified" datetime="2023-04-10T06:07:45Z">2023-04-10</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2023/03/20/Windows%E5%88%9B%E5%BB%BA%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/03/20/Windows创建卷影副本/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Windows Server 2008以上的版本，管理员可以通过卷影副本服务（Volume Shadow Service）在<strong>指定的</strong>卷上创建备份的<strong>卷影副本</strong>。卷影副本类似于快照(Snapshot)，用户可以基于快照卷恢复到之前某个时间的版本，备份软件也可基于快照做一致性备份。因此，它可以极大保护服务器的数据安全。</p>
+<p>本文就介绍VSS相关操作以及如何用C++调用相关API。</p>
+<blockquote>
+<p>项目完整地址见<a target="_blank" rel="noopener" href="https://github.com/XUranus/Win32VSSWrapper">https://github.com/XUranus/Win32VSSWrapper</a><br>下文所说的<strong>卷影副本</strong>和<strong>快照</strong>属于一个概念</p>
+</blockquote>
+<span id="more"></span>
+<h2 id="vssadmin卷操作"><a href="#vssadmin卷操作" class="headerlink" title="vssadmin卷操作"></a>vssadmin卷操作</h2><p>所有支持VSS的Windows系统已经提供了一个管理卷影副本的命令行工具vssadmin。使用<strong>管理员权限</strong>进入cmd，执行卷影副本命令<code>vssadmin</code>，可以看到所有支持的命令：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\WINDOWS\system32&gt;vssadmin</span><br><span class="line">vssadmin 1.1 - 卷影复制服务管理命令行工具</span><br><span class="line">(C) 版权所有 2001-2013 Microsoft Corp.</span><br><span class="line"></span><br><span class="line">---- 支持的命令 ----</span><br><span class="line"></span><br><span class="line">Delete Shadows        - 删除卷影副本</span><br><span class="line">List Providers        - 列出已注册的卷影副本提供程序</span><br><span class="line">List Shadows          - 列出现有卷影副本</span><br><span class="line">List ShadowStorage    - 列出卷影副本存储关联</span><br><span class="line">List Volumes          - 列出可以进行卷影副本处理的卷</span><br><span class="line">List Writers          - 列出订阅的卷影副本写入程序</span><br><span class="line">Resize ShadowStorage  - 调整卷影副本存储关联的大小</span><br></pre></td></tr></table></figure><br>这里我们主要讨论副本的创建、删除、查询。首先用<code>vssadmin list shadows</code>列出所有卷影副本：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\WINDOWS\system32&gt;vssadmin list shadows</span><br><span class="line">vssadmin 1.1 - 卷影复制服务管理命令行工具</span><br><span class="line">(C) 版权所有 2001-2013 Microsoft Corp.</span><br><span class="line"></span><br><span class="line">卷影副本集 ID: &#123;d85162e7-db49-4035-956e-465e1a7f3747&#125; 的内容</span><br><span class="line">   在创建时间: 2023/1/17 13:46:05 含有 1 个卷影副本</span><br><span class="line">      卷影副本 ID: &#123;f8bf1cfc-ddab-47ad-8156-3f1f45f70641&#125;</span><br><span class="line">         原始卷: (C:)\\?\Volume&#123;a501f5cc-311e-423c-bc58-94a6c1b6b509&#125;\</span><br><span class="line">         卷影副本卷: \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1</span><br><span class="line">         源起机器: DESKTOP-TODPNBO</span><br><span class="line">         服务机器: DESKTOP-TODPNBO</span><br><span class="line">         提供程序: &#x27;Microsoft Software Shadow Copy provider 1.0&#x27;</span><br><span class="line">         类型: ClientAccessibleWriters</span><br><span class="line">         属性: 持续, 客户端可访问, 无自动释放, 差异, 自动还原</span><br><span class="line"></span><br><span class="line">卷影副本集 ID: &#123;1abe303d-eb32-445a-ae78-72432980191b&#125; 的内容</span><br><span class="line">   在创建时间: 2023/1/18 23:38:42 含有 1 个卷影副本</span><br><span class="line">      卷影副本 ID: &#123;5fee2842-be4e-4477-86c6-1c0c28221a4f&#125;</span><br><span class="line">         原始卷: (C:)\\?\Volume&#123;a501f5cc-311e-423c-bc58-94a6c1b6b509&#125;\</span><br><span class="line">         卷影副本卷: \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy2</span><br><span class="line">         源起机器: DESKTOP-TODPNBO</span><br><span class="line">         服务机器: DESKTOP-TODPNBO</span><br><span class="line">         提供程序: &#x27;Microsoft Software Shadow Copy provider 1.0&#x27;</span><br><span class="line">         类型: ClientAccessibleWriters</span><br><span class="line">         属性: 持续, 客户端可访问, 无自动释放, 差异, 自动还原</span><br></pre></td></tr></table></figure><br><code>vssadmin list shadows</code>可以展开每个副本的详细信息，包含：</p>
+<ul>
+<li>卷影副本ID：这是每个VSS快照的唯一GUID标识符</li>
+<li>卷影副本集ID：一个副本集可以是一个或多个同时创建的快照集合，一个副本集也有一个GUID标识符。一个快照只对应一个副本集，而一个副本集可能会包含多个快照。</li>
+<li>属性：快照可能是持久的、也可能会在创建后一段时间内自动释放。</li>
+</ul>
+<p><code>vssadmin list shadowstorage</code>用于展示所有支持快照的卷的空间分配情况。<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\WINDOWS\system32&gt;vssadmin list shadowstorage</span><br><span class="line">vssadmin 1.1 - 卷影复制服务管理命令行工具</span><br><span class="line">(C) 版权所有 2001-2013 Microsoft Corp.</span><br><span class="line"></span><br><span class="line">卷影副本存储关联</span><br><span class="line">   卷: (C:)\\?\Volume&#123;a501f5cc-311e-423c-bc58-94a6c1b6b509&#125;\</span><br><span class="line">   卷影副本存储卷: (C:)\\?\Volume&#123;a501f5cc-311e-423c-bc58-94a6c1b6b509&#125;\</span><br><span class="line">   已用卷影副本存储空间: 1.80 GB (0%)</span><br><span class="line">   分配的卷影副本存储空间: 2.16 GB (0%)</span><br><span class="line">   最大卷影副本存储空间: 4.75 GB (2%)</span><br></pre></td></tr></table></figure></p>
+<p>使用<code>vssadmin add shadowstorage /for=&lt;Volume1&gt; /on=&lt;Volume2&gt;</code>可以创建卷影副本。其中<code>&lt;Volume1&gt;</code>指定了要保护的卷，<code>&lt;Volume2&gt;</code>指定了副本存放的卷。<strong>副本存放的卷可以是要保护的本地卷，也可以是其他卷。</strong>，例如：<br><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line"><span class="function">C:\<span class="title">WINDOWS</span>\<span class="title">system32</span>&gt;<span class="title">vssadmin</span> <span class="title">add</span> <span class="title">shadowstorage</span> /<span class="title">for</span>=<span class="title">c</span>: /<span class="title">on</span>=<span class="title">c</span>:</span></span><br></pre></td></tr></table></figure></p>
+<p>每一个创建完成的卷影副本都对应一个ID和设备名，可以根据其设备名创建符号链接来实现挂载。例如将<code>\\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy2</code>挂载到<code>C:\Users\XUranus\Desktop\vss1</code>的位置上，该目录可以获得一个只读的文件系统：<br><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line"><span class="function">C:\<span class="title">WINDOWS</span>\<span class="title">system32</span>&gt;<span class="title">mklink</span> /<span class="title">d</span> <span class="title">C</span>:\<span class="title">Users</span>\<span class="title">XUranus</span>\<span class="title">Desktop</span>\<span class="title">vss1</span> \\?\<span class="title">GLOBALROOT</span>\<span class="title">Device</span>\<span class="title">HarddiskVolumeShadowCopy2</span></span></span><br><span class="line"><span class="function">为 <span class="title">C</span>:\<span class="title">Users</span>\<span class="title">XUranus</span>\<span class="title">Desktop</span>\<span class="title">vss1</span> &lt;&lt;===&gt;&gt; \\?\<span class="title">GLOBALROOT</span>\<span class="title">Device</span>\<span class="title">HarddiskVolumeShadowCopy2</span> 创建 的符号链接</span></span><br></pre></td></tr></table></figure></p>
+<p>删除快照也是使用卷影副本ID，例如删除之前创建的<code>C:</code>盘下的快照<code>&#123;f8bf1cfc-ddab-47ad-8156-3f1f45f70641&#125;</code><br><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">vssadmin delete shadows /<span class="keyword">for</span>=c：/shadow=&#123;f8bf1cfc-ddab-<span class="number">47</span>ad-<span class="number">8156</span>-<span class="number">3</span>f1f45f70641&#125;</span><br></pre></td></tr></table></figure><br>详见<a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/vssadmin-delete-shadows?source=recommendations">vssadmin delete shadows</a></p>
+<h2 id="VSS-Win32-API"><a href="#VSS-Win32-API" class="headerlink" title="VSS Win32 API"></a>VSS Win32 API</h2><p>调用VSS相关Win32 API需要依赖<code>VssApi.lib</code>，部分低版本的Windows可能需要安装相应的SDK。</p>
+<p>我们将对VSS快照相关Win32 API做一个简单的封装。首先需要引入VSS相关头文件：<code>vss.h</code>、<code>vswriter.h</code>、<code>vsbackup.h</code>。由于VSS API依赖COM库相关结构，还需要包含<code>comdef.h</code><br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// VssClient.h</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> WIN32_LEAN_AND_MEAN</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;Windows.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;objbase.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vss.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vswriter.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vsbackup.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;comdef.h&gt;</span></span></span><br></pre></td></tr></table></figure></p>
+<p>前文用<code>vssadmin</code>列出所有创建的VSS快照，可以看到形如<code>&#123;a501f5cc-311e-423c-bc58-94a6c1b6b509&#125;</code>这样的副本/副本集ID。VSS API使用<code>VSS_ID</code>类型的<strong>结构体</strong>来描述这类ID，它是一种Windows GUID类型。为了减少头文件污染，这里统一用字符串来标记这类ID的字面量。于是首先要提供<code>VSS_ID</code>和<code>std::string</code>的转化操作：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// VssClient.h</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * An Util Class, Used to automatically release a CoTaskMemAlloc allocated pointer</span></span><br><span class="line"><span class="comment"> * when the instance of this class goes out of scope（RAII)</span></span><br><span class="line"><span class="comment"> * (even if an exception is thrown)</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CAutoComPointer</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">CAutoComPointer</span>(LPVOID ptr): <span class="built_in">m_ptr</span>(ptr) &#123;&#125;;</span><br><span class="line">    ~<span class="built_in">CAutoComPointer</span>() &#123; ::<span class="built_in">CoTaskMemFree</span>(m_ptr); &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    LPVOID m_ptr;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// VssClient.cpp</span></span><br><span class="line"><span class="function">std::optional&lt;std::wstring&gt; <span class="title">VssID2WStr</span><span class="params">(<span class="keyword">const</span> VSS_ID&amp; vssID)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    LPOLESTR wVssIDBuf = <span class="literal">nullptr</span>;</span><br><span class="line">    <span class="function">CAutoComPointer <span class="title">ptrAutoCleanUp</span><span class="params">(wVssIDBuf)</span></span>;</span><br><span class="line">    HRESULT hr = ::<span class="built_in">StringFromIID</span>(vssID, &amp;wVssIDBuf);</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">FAILED</span>(hr)) &#123;</span><br><span class="line">        <span class="keyword">return</span> std::nullopt;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">std::wstring <span class="title">wVssIDStr</span><span class="params">(wVssIDBuf)</span></span>;</span><br><span class="line">    <span class="keyword">return</span> std::make_optional&lt;std::wstring&gt;(wVssIDStr);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">std::optional&lt;VSS_ID&gt; <span class="title">VssIDfromWStr</span><span class="params">(<span class="keyword">const</span> std::wstring&amp; vssIDWstr)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    VSS_ID vssID;</span><br><span class="line">    HRESULT hr = ::<span class="built_in">IIDFromString</span>(vssIDWstr.<span class="built_in">c_str</span>(), &amp;vssID);</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">FAILED</span>(hr)) &#123;</span><br><span class="line">        <span class="keyword">return</span> std::nullopt;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> std::make_optional&lt;VSS_ID&gt;(vssID);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到这里额外定义了<code>CAutoComPointer</code>类型，因为这里及后续的很多VSS API都会用参数返回堆上分配的空间地址，并要求调用者手动调用<code>::CoTaskMemFree(LPVOID)</code>释放分配的资源，这里用RAII的机制可以有效避免内存泄漏。<code>VSS_ID</code>和<code>std::string</code>的互转是通过<code>::StringFromIID</code>和<code>::IIDFromString</code>实现的。</p>
+<blockquote>
+<p>这两个API都返回<code>HRESULT</code>类型，这是一类Win32错误码返回类型，后续其余VSS API也会相继用到它，可以用<code>FAILED</code>宏判断这类返回值是否成功。<code>HRESULT</code>详见<a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/seccrypto/common-hresult-values">Common HRESULT Values</a></p>
+</blockquote>
+<p>定义两个和宏<code>CHECK_HR_RETURN</code>和<code>CHECK_BOOL_RETURN</code>来判断操作结果并返回<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// VssClient.cpp</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CHECK_HR_RETURN(HR, FUNC, RET) \</span></span><br><span class="line"><span class="meta">    do &#123; \</span></span><br><span class="line"><span class="meta">        _com_error err(HR); \</span></span><br><span class="line"><span class="meta">        <span class="meta-keyword">if</span> (HR != S_OK) &#123; \</span></span><br><span class="line"><span class="meta">            ::fprintf(stderr, <span class="meta-string">&quot;HRESULT Return FAILED, Function: &quot;</span> ## FUNC ## <span class="meta-string">&quot;, Error: %s\n&quot;</span>, err.ErrorMessage()); \</span></span><br><span class="line"><span class="meta">            return RET; \</span></span><br><span class="line"><span class="meta">        &#125; \</span></span><br><span class="line"><span class="meta">    &#125; \</span></span><br><span class="line"><span class="meta">    while (0)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CHECK_BOOL_RETURN(BOOLVALUE, FUNC, RET) \</span></span><br><span class="line"><span class="meta">    do &#123; \</span></span><br><span class="line"><span class="meta">        <span class="meta-keyword">if</span> ((!BOOLVALUE)) &#123; \</span></span><br><span class="line"><span class="meta">            ::fprintf(stderr, <span class="meta-string">&quot;Boolean Return False, Function: &quot;</span> ## FUNC ## <span class="meta-string">&quot;\n&quot;</span>); \</span></span><br><span class="line"><span class="meta">            return RET; \</span></span><br><span class="line"><span class="meta">        &#125; \</span></span><br><span class="line"><span class="meta">    &#125; \</span></span><br><span class="line"><span class="meta">    while (0)</span></span><br></pre></td></tr></table></figure></p>
+<p>给出类<code>VssClient</code>的定义：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// VssClient.h</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * The class providing snapshot creation/delete/query</span></span><br><span class="line"><span class="comment"> * Not thread-safe</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">VssClient</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">VssClient::InitializeCom</span><span class="params">()</span></span>;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">bool</span> m_comInitialized = <span class="literal">false</span>;</span><br><span class="line">    IVssBackupComponents* m_pVssObject = <span class="literal">nullptr</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>VSS API需要依赖一个核心类<code>IVssBackupComponents</code>，所有创建、查询、删除等逻辑都是这个类提供的。在创建<code>IVssBackupComponents</code>之前需要先初始化COM库。COM库初始化详见<a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coinitializeex">https://learn.microsoft.com/en-us/windows/win32/api/combaseapi/nf-combaseapi-coinitializeex</a></p>
+<p>首先实现COM库的初始化方法和取消初始化方法：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// VssClient.cpp</span></span><br><span class="line"><span class="comment">/* initialzie COM */</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VssClient::InitializeCom</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (m_comInitialized) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    HRESULT hr = ::<span class="built_in">CoInitializeEx</span>(<span class="literal">nullptr</span>, COINIT::COINIT_MULTITHREADED);</span><br><span class="line">    <span class="built_in">CHECK_HR_RETURN</span>(hr, <span class="string">&quot;CoInitializeEx&quot;</span>, <span class="literal">false</span>);</span><br><span class="line">    m_comInitialized = <span class="literal">true</span>;</span><br><span class="line">    hr = <span class="built_in">CoInitializeSecurity</span>(</span><br><span class="line">        <span class="literal">NULL</span>,                           <span class="comment">//  Allow *all* VSS writers to communicate back!</span></span><br><span class="line">        <span class="number">-1</span>,                             <span class="comment">//  Default COM authentication service</span></span><br><span class="line">        <span class="literal">NULL</span>,                           <span class="comment">//  Default COM authorization service</span></span><br><span class="line">        <span class="literal">NULL</span>,                           <span class="comment">//  reserved parameter</span></span><br><span class="line">        RPC_C_AUTHN_LEVEL_PKT_PRIVACY,  <span class="comment">//  Strongest COM authentication level</span></span><br><span class="line">        RPC_C_IMP_LEVEL_IMPERSONATE,    <span class="comment">//  Minimal impersonation abilities </span></span><br><span class="line">        <span class="literal">NULL</span>,                           <span class="comment">//  Default COM authentication settings</span></span><br><span class="line">        EOAC_DYNAMIC_CLOAKING,          <span class="comment">//  Cloaking</span></span><br><span class="line">        <span class="literal">NULL</span>                            <span class="comment">//  Reserved parameter</span></span><br><span class="line">    );</span><br><span class="line">    <span class="built_in">CHECK_HR_RETURN</span>(hr, <span class="string">&quot;CoInitializeSecurity&quot;</span>, <span class="literal">false</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">VssClient::UninitializeCom</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!m_comInitialized) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    ::<span class="built_in">CoUninitialize</span>();</span><br><span class="line">    m_comInitialized = <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>由于所有VSS操作都需要在初始化COM库后进行，在<code>VssClient</code>构造时就执行相关操作，并在析构时取消初始化并析构<code>IVssBackupComponents* m_pVssObject</code><br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// VssClient.cpp</span></span><br><span class="line">VssClient::<span class="built_in">VssClient</span>()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">InitializeCom</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">VssClient::~<span class="built_in">VssClient</span>()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (m_pVssObject != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">        m_pVssObject-&gt;<span class="built_in">Release</span>();</span><br><span class="line">        m_pVssObject = <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">UninitializeCom</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>之前说到VSS操作依赖一个核心类<code>IVssBackupComponents</code>实现，这里我们将其指针作为<code>VssClient</code>的成员，在<code>InitializeVssComponent()</code>中使用API<code>CreateVssBackupComponents()</code>初始化，由于每种VSS操作（创建、删除、查询）可能需要用到不同的上下文，而<code>IVssBackupComponents* m_pVssObject</code>指向唯一的上下文，所以每次操作我们选择用其<code>Release()</code>方法释放资源，再重新创建实例：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// VssClient.cpp</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VssClient::InitializeVssComponent</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (m_pVssObject != <span class="literal">nullptr</span>) &#123;</span><br><span class="line">        m_pVssObject-&gt;<span class="built_in">Release</span>();</span><br><span class="line">        m_pVssObject = <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    HRESULT hr = ::<span class="built_in">CreateVssBackupComponents</span>(&amp;m_pVssObject);</span><br><span class="line">    <span class="built_in">CHECK_HR_RETURN</span>(hr, <span class="string">&quot;CreateVssBackupComponents&quot;</span>, <span class="literal">false</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>由于每次操作VSS需要不同的上下文，这里定义一个<code>InitializeBackupContect(const VSS_SNAPSHOT_CONTEXT&amp; context)</code>方法用于依据不同上下文初始化对应的<code>IVssBackupComponents</code>实例并设置其上下文：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// VssClient.cpp</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VssClient::InitializeBackupContect</span><span class="params">(<span class="keyword">const</span> VSS_SNAPSHOT_CONTEXT&amp; context)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">CHECK_BOOL_RETURN</span>(<span class="built_in">InitializeVssComponent</span>(), <span class="string">&quot;InitializeVssComponent&quot;</span>, <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">    HRESULT hr = m_pVssObject-&gt;<span class="built_in">InitializeForBackup</span>();</span><br><span class="line">    <span class="built_in">CHECK_HR_RETURN</span>(hr, <span class="string">&quot;InitializeForBackup&quot;</span>, <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">    hr = m_pVssObject-&gt;<span class="built_in">SetContext</span>(context);</span><br><span class="line">    <span class="built_in">CHECK_HR_RETURN</span>(hr, <span class="string">&quot;SetContext&quot;</span>, <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">    hr = m_pVssObject-&gt;<span class="built_in">SetBackupState</span>(<span class="literal">true</span>, <span class="literal">false</span>, VSS_BT_FULL, <span class="literal">false</span>);</span><br><span class="line">    <span class="built_in">CHECK_HR_RETURN</span>(hr, <span class="string">&quot;SetBackupState&quot;</span>, <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>好了，至此我们已经完成了核心类<code>IVssBackupComponents</code>实例的创建与初始化，接下来就是封装VSS的集中操作了。</p>
+<p>创建快照的步骤如下：</p>
+<ol>
+<li>先用<code>IVssBackupComponents::StartSnapshotSet</code>初始化一个卷影副本集，获取副本集ID</li>
+<li>然后用<code>IVssBackupComponents::AddToSnapshotSet</code>依次传入要打快照的卷对应的驱动器路径</li>
+<li>然后<code>IVssBackupComponents::PrepareForBackup</code>准备创建快照需要的资源</li>
+<li>最后<code>IVssBackupComponents::DoSnapshotSet</code>为每个卷生成卷影副本，每个卷影副本对应唯一的副本ID，它们属于共同的卷影副本集</li>
+</ol>
+<p>创建快照实现如下：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// VssClient.cpp</span></span><br><span class="line"><span class="function">std::optional&lt;SnapshotSetResult&gt; <span class="title">VssClient::CreateSnapshotsW</span><span class="params">(<span class="keyword">const</span> std::vector&lt;std::wstring&gt;&amp; wVolumePathList)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">InitializeBackupContect</span>(VSS_CTX_APP_ROLLBACK);</span><br><span class="line">    SnapshotSetResult result;</span><br><span class="line">    <span class="comment">/* no need to call GatherWriterMetadata due to no writers involved */</span></span><br><span class="line">    VSS_ID snapshotSetID;</span><br><span class="line">    HRESULT hr = m_pVssObject-&gt;<span class="built_in">StartSnapshotSet</span>(&amp;snapshotSetID);</span><br><span class="line">    <span class="built_in">CHECK_HR_RETURN</span>(hr, <span class="string">&quot;StartSnapshotSet&quot;</span>, std::nullopt);</span><br><span class="line"></span><br><span class="line">    result.m_wSnapshotSetID = <span class="built_in">VssID2WStr</span>(snapshotSetID).<span class="built_in">value</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> std::wstring&amp; wVolumePath: wVolumePathList) &#123;</span><br><span class="line">        VSS_ID snapshotID;</span><br><span class="line">        WCHAR volume[MAX_PATH] = &#123; <span class="string">L&#x27;\0&#x27;</span> &#125;;</span><br><span class="line">        <span class="built_in">wcscpy_s</span>(volume, MAX_PATH, wVolumePath.<span class="built_in">c_str</span>());</span><br><span class="line">        hr = m_pVssObject-&gt;<span class="built_in">AddToSnapshotSet</span>(volume, GUID_NULL, &amp;snapshotID);</span><br><span class="line">        <span class="built_in">CHECK_HR_RETURN</span>(hr, <span class="string">&quot;AddToSnapshotSet&quot;</span>, std::nullopt);</span><br><span class="line">        result.m_wSnapshotIDList.<span class="built_in">emplace_back</span>(<span class="built_in">VssID2WStr</span>(snapshotID).<span class="built_in">value</span>());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">CHECK_BOOL_RETURN</span>(<span class="built_in">PrepareForBackupSync</span>(), <span class="string">&quot;PrepareForBackupSync&quot;</span>, std::nullopt);</span><br><span class="line">    <span class="built_in">CHECK_BOOL_RETURN</span>(<span class="built_in">DoSnapshotSetSync</span>(), <span class="string">&quot;DoSnapshotSetSync&quot;</span>, std::nullopt);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* no need to call BackupComplete due to no writers involved */</span></span><br><span class="line">    <span class="keyword">return</span> std::make_optional&lt;SnapshotSetResult&gt;(result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>其中<code>VSS_CTX_APP_ROLLBACK</code>是创建快照指定的上下文，用于创建持久化的快照（不会定期清理，需要用户程序自行删除）。<code>PrepareForBackupSync</code>和<code>DoSnapshotSetSync</code>对应3、4两步：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VssClient::PrepareForBackupSync</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    CComPtr&lt;IVssAsync&gt; pAsync;</span><br><span class="line">    HRESULT hr = m_pVssObject-&gt;<span class="built_in">PrepareForBackup</span>(&amp;pAsync);</span><br><span class="line">    <span class="built_in">CHECK_HR_RETURN</span>(hr, <span class="string">&quot;PrepareForBackup&quot;</span>, <span class="literal">false</span>);</span><br><span class="line">    <span class="built_in">CHECK_BOOL_RETURN</span>(<span class="built_in">WaitAndCheckForAsyncOperation</span>(pAsync), <span class="string">&quot;PrepareForBackup Wait&quot;</span>, <span class="literal">false</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VssClient::DoSnapshotSetSync</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    CComPtr&lt;IVssAsync&gt; pAsync;</span><br><span class="line">    HRESULT hr = m_pVssObject-&gt;<span class="built_in">DoSnapshotSet</span>(&amp;pAsync);</span><br><span class="line">    <span class="built_in">CHECK_HR_RETURN</span>(hr, <span class="string">&quot;DoSnapshotSet&quot;</span>, <span class="literal">false</span>);</span><br><span class="line">    <span class="built_in">CHECK_BOOL_RETURN</span>(<span class="built_in">WaitAndCheckForAsyncOperation</span>(pAsync), <span class="string">&quot;DoSnapshotSet Wait&quot;</span>, <span class="literal">false</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">VssClient::WaitAndCheckForAsyncOperation</span><span class="params">(IVssAsync* pAsync)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    HRESULT hr = pAsync-&gt;<span class="built_in">Wait</span>();</span><br><span class="line">    <span class="built_in">CHECK_HR_RETURN</span>(hr, <span class="string">&quot;WaitAndCheckForAsyncOperation pAsync-&gt;Wait&quot;</span>, <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Check the result of the asynchronous operation */</span></span><br><span class="line">    HRESULT hrReturned = S_OK;</span><br><span class="line">    hr = pAsync-&gt;<span class="built_in">QueryStatus</span>(&amp;hrReturned, <span class="literal">nullptr</span>);</span><br><span class="line">    <span class="built_in">CHECK_HR_RETURN</span>(hr, <span class="string">&quot;WaitAndCheckForAsyncOperation pAsync-&gt;QueryStatus&quot;</span>, <span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Check if the async operation succeeded... */</span></span><br><span class="line">    <span class="keyword">if</span> (hrReturned != VSS_S_ASYNC_FINISHED) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里<code>IVssBackupComponents::DoSnapshotSet</code>是一个异步API，通过参数返回<code>IVssAsync</code>类型。这里通过<code>WaitAndCheckForAsyncOperation</code>将这类异步操作封装为同步操作，利用<code>IVssAsync::Wait</code>阻塞调用直到结果返回，并通过<code>IVssAsync::QueryStatus</code>查询结果是否成功。</p>
+<blockquote>
+<p><code>CComPtr</code>是一种用于释放COM资源的RAII机制的智能指针，详见<a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/cpp/atl/reference/ccomptr-class?view=msvc-170">CComPtr Class</a></p>
+</blockquote>
+<p>最后写一个Demo测试快照的创建：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Create snapshots for C: and D:</span></span><br><span class="line">std::vector&lt;std::wstring&gt; wVolumePathList &#123; <span class="string">L&quot;C:\\&quot;</span>, <span class="string">L&quot;D:\\&quot;</span> &#125;;</span><br><span class="line">VssClient vssClient;</span><br><span class="line">std::optional&lt;SnapshotSetResult&gt; result = vssClient.<span class="built_in">CreateSnapshotsW</span>(wVolumePathList);</span><br><span class="line"><span class="keyword">if</span> (!result) &#123;</span><br><span class="line">    std::wcout &lt;&lt; <span class="string">L&quot;Failed to Create Snapshots&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    std::wcout &lt;&lt; <span class="string">L&quot;Create Snapshots Success&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line">std::wcout &lt;&lt; <span class="string">L&quot;Shadow Set ID: &quot;</span> &lt;&lt; result-&gt;<span class="built_in">SnapshotSetIDW</span>() &lt;&lt; std::endl;</span><br><span class="line"><span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">const</span> std::wstring&amp; wSnapshotID: result-&gt;<span class="built_in">SnapshotIDListW</span>()) &#123;</span><br><span class="line">    std::wcout &lt;&lt; <span class="string">L&quot;snapshot ID[&quot;</span> &lt;&lt; ++index &lt;&lt; <span class="string">L&quot;]: &quot;</span> &lt;&lt; wSnapshotID &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>此时创建的快照已经可以用之前提到的<code>vssadmin</code>工具查询到了。有关快照的删除、查询、挂载也是基于<code>IVssBackupComponents* m_pVssObject</code>实现，详见<a target="_blank" rel="noopener" href="https://github.com/XUranus/Win32VSSWrapper">https://github.com/XUranus/Win32VSSWrapper</a>，可以结合官方文档学习，这里就不再赘述了。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/vssadmin?source=recommendations">vssadmin</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows-server/storage/file-server/volume-shadow-copy-service?source=recommendations">volume shadow copy service</a></li>
+<li><a target="_blank" rel="noopener" href="https://cs-cjl.com/2018/09_11_backup_file_with_volume_shadow_copy_service">使用 Volume Shadow Copy Service 进行文件备份</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" rel="tag"># 文件系统</a>
+              <a href="/tags/%E5%BF%AB%E7%85%A7/" rel="tag"># 快照</a>
+              <a href="/tags/Windows/" rel="tag"># Windows</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F3/" rel="prev" title="Windows文件系统概述(三)ADS">
+      <i class="fa fa-chevron-left"></i> Windows文件系统概述(三)ADS
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/03/20/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F4/" rel="next" title="Windows文件系统概述(四)安全描述符">
+      Windows文件系统概述(四)安全描述符 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#vssadmin%E5%8D%B7%E6%93%8D%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">vssadmin卷操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VSS-Win32-API"><span class="nav-number">2.</span> <span class="nav-text">VSS Win32 API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">610k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">9:15</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2023/03/20/Windows%E5%88%9B%E5%BB%BA%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC/";
+    this.page.identifier = "2023/03/20/Windows创建卷影副本/";
+    this.page.title = "Windows创建卷影副本";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

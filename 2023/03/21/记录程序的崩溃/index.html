@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="Windows捕获Crash打开regedit.exe在注册表中找到HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting项，新建3个“字符串值”：配置DumpCount &#x3D; 10，DumpFolder &#x3D; C:\XUranusDump，DumpType &#x3D; 2如图所示：  其中DumpType代表的含义是：  0">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记录程序的崩溃">
+<meta property="og:url" content="http://xuranus.github.io/2023/03/21/%E8%AE%B0%E5%BD%95%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B4%A9%E6%BA%83/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="Windows捕获Crash打开regedit.exe在注册表中找到HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting项，新建3个“字符串值”：配置DumpCount &#x3D; 10，DumpFolder &#x3D; C:\XUranusDump，DumpType &#x3D; 2如图所示：  其中DumpType代表的含义是：  0">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2023/03/21/%E8%AE%B0%E5%BD%95%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B4%A9%E6%BA%83/regedit.png">
+<meta property="og:image" content="http://xuranus.github.io/2023/03/21/%E8%AE%B0%E5%BD%95%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B4%A9%E6%BA%83/dump.png">
+<meta property="article:published_time" content="2023-03-20T21:49:02.000Z">
+<meta property="article:modified_time" content="2023-04-10T06:07:45.255Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="Coredump">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2023/03/21/%E8%AE%B0%E5%BD%95%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B4%A9%E6%BA%83/regedit.png">
+
+<link rel="canonical" href="http://xuranus.github.io/2023/03/21/%E8%AE%B0%E5%BD%95%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B4%A9%E6%BA%83/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>记录程序的崩溃 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">58</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/03/21/%E8%AE%B0%E5%BD%95%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B4%A9%E6%BA%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          记录程序的崩溃
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-03-20 21:49:02" itemprop="dateCreated datePublished" datetime="2023-03-20T21:49:02Z">2023-03-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-10 06:07:45" itemprop="dateModified" datetime="2023-04-10T06:07:45Z">2023-04-10</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2023/03/21/%E8%AE%B0%E5%BD%95%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B4%A9%E6%BA%83/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/03/21/记录程序的崩溃/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>17k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>16 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Windows捕获Crash"><a href="#Windows捕获Crash" class="headerlink" title="Windows捕获Crash"></a>Windows捕获Crash</h2><p>打开<code>regedit.exe</code>在注册表中找到<code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting</code><br>项，新建3个“字符串值”：配置<code>DumpCount = 10</code>，<code>DumpFolder = C:\XUranusDump</code>，<code>DumpType = 2</code>如图所示：</p>
+<p><img src="regedit.png" alt=""></p>
+<p>其中DumpType代表的含义是：</p>
+<ul>
+<li>0 ：Create a Custom Dump  </li>
+<li>1 ：Mini Dump  </li>
+<li>2 ：Full Dump  </li>
+</ul>
+<p>这里配置将会在程序崩溃时在<code>C:\XUranusDump</code>目录下生成完整的Dump信息，最多生成10个。生成的Dump信息以<code>*.dmp</code>文件形式存在：</p>
+<span id="more"></span>
+<p><img src="dump.png" alt=""></p>
+<p>有了<code>*.dmp</code>文件就可以用VS调试Dump。调试会依赖可执行程序及对应的<code>*.pdb</code>符号文件。如果是本地执行产生的<code>*.dmp</code>文件，VS可以直接从<code>*.dmp</code>文件拿到<code>*.pdb</code>的位置，如果是其他环境生成的<code>*.dmp</code>文件在本地调试，需要在VS中指定符号文件和源码<br>的路径，将源码、<code>*.pdb</code>和<code>*.dmp</code>文件放在同一目录下。</p>
+<blockquote>
+<p><code>*.pdb</code>文件和可执行程序的构建是一一对应的，即：<strong>同样的源码两次构建产生的pdb不一样</strong>。因此必须在生成每一个Release后保存好对应的<code>*.pdb</code>文件以供日后调试。</p>
+</blockquote>
+<p>在生产环境上，可以在用户程序中捕获异常并生成MiniDump文件。</p>
+<p>Windows提供<code>SetUnhandledExceptionFilter(LPTOP_LEVEL_EXCEPTION_FILTER* handler)</code> API用于注册一个异常捕获函数：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Register windows crash handler</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> LONG <span class="title">ApplicationCrashCollector</span><span class="params">(EXCEPTION_POINTERS *pException)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Handle Exception via pException ptr here ...</span></span><br><span class="line">    <span class="keyword">return</span> EXCEPTION_EXECUTE_HANDLER;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>通过<code>EXCEPTION_POINTERS* pException</code>可以拿到异常相关信息，并生成MiniDump文件。我们来实现一个<code>DumpCollector</code>来实现上述功能：</p>
+<blockquote>
+<p>完整代码详见：<a target="_blank" rel="noopener" href="https://github.com/XUranus/MiniDump">MiniDump</a></p>
+</blockquote>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DumpCollector</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// init collector, need to be called at main routine</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span>                         <span class="title">Init</span><span class="params">()</span></span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> WIN32</span></span><br><span class="line">    <span class="comment">// specify root path of dump file</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">bool</span>                         <span class="title">SetDumpFileRoot</span><span class="params">(<span class="keyword">const</span> std::string&amp; dumpFileRootPath)</span></span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> WIN32</span></span><br><span class="line">    <span class="comment">// util method, to generate a dump file path contain current datetime</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> std::string                  <span class="title">GenerateDumpFilePath</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">// collect summary reason of win32 exception</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> std::string                  <span class="title">GetWin32ExceptionInfo</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">// generate detail info of stack trace (windows)</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> std::vector&lt;StackFrame&gt;      <span class="title">DumpWin32StackTrace</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">// genterate a *.dmp file at target path, will return empty if failed</span></span><br><span class="line">    <span class="function"><span class="keyword">static</span> std::string                  <span class="title">CreateDumpFile</span><span class="params">()</span></span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> WIN32</span></span><br><span class="line">    <span class="comment">// store ptr of EXCEPTION_POINTER of exception caught</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">void</span>*            exceptionPtr;</span><br><span class="line">    <span class="comment">// store the dump file root path specified</span></span><br><span class="line">    <span class="keyword">static</span> std::string      dumpFileRootPath;</span><br><span class="line">    <span class="comment">// callback function (dump path, crash cause, stacktrace)</span></span><br><span class="line">    <span class="keyword">using</span> WinCallbackType = <span class="built_in"><span class="keyword">void</span></span>(<span class="keyword">const</span> std::string&amp;, <span class="keyword">const</span> std::string&amp;, <span class="keyword">const</span> std::vector&lt;StackFrame&gt;&amp; frames);</span><br><span class="line">    <span class="keyword">static</span> std::function&lt;WinCallbackType&gt; Win32CrashHandler;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>在<code>DumpCollector::Init</code>中注册异常处理函数<code>ApplicationCrashCollector</code>，在<code>ApplicationCrashCollector</code>中处理<code>EXCEPTION_POINTERS *pException</code>，依次调用：</p>
+<ol>
+<li><code>DumpCollector::CreateDumpFile()</code> 生成MiniDump文件</li>
+<li><code>DumpCollector::GetWin32ExceptionInfo()</code>获取异常信息</li>
+<li><code>DumpCollector::DumpWin32StackTrace()</code>获取当前堆栈</li>
+<li><p><code>DumpCollector::Win32CrashHandler()</code>通过注册的回调函数返回MiniDump路径、异常原因、堆栈</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Register windows crash handler</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> LONG <span class="title">ApplicationCrashCollector</span><span class="params">(EXCEPTION_POINTERS *pException)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// set exception pointer</span></span><br><span class="line">    DumpCollector::exceptionPtr = <span class="keyword">static_cast</span>&lt;<span class="keyword">void</span>*&gt;(pException);</span><br><span class="line">    <span class="comment">// prepare to collect dump info</span></span><br><span class="line">    std::string dumpFilePath = DumpCollector::<span class="built_in">CreateDumpFile</span>();</span><br><span class="line">    std::string exceptionCause = DumpCollector::<span class="built_in">GetWin32ExceptionInfo</span>();</span><br><span class="line">    std::vector&lt;StackFrame&gt; stacktrace = DumpCollector::<span class="built_in">DumpWin32StackTrace</span>();</span><br><span class="line">    <span class="keyword">if</span> (DumpCollector::Win32CrashHandler == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">        <span class="built_in">WRITE_ERROR</span>(<span class="string">&quot;missing win32 crash handler&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        DumpCollector::<span class="built_in">Win32CrashHandler</span>(dumpFilePath, exceptionCause, stacktrace);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> EXCEPTION_EXECUTE_HANDLER;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">DumpCollector::Init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> WIN32</span></span><br><span class="line">    ::<span class="built_in">SetUnhandledExceptionFilter</span>((LPTOP_LEVEL_EXCEPTION_FILTER)ApplicationCrashCollector);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>用<code>MiniDumpWriteDump()</code>从<code>EXCEPTION_POINTERS* pException</code>生成MiniDump文件：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Create dump file from DumpCollector::exceptionPtr</span></span><br><span class="line"><span class="function">std::string <span class="title">DumpCollector::CreateDumpFile</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="keyword">if</span> (DumpCollector::exceptionPtr == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">        <span class="built_in">WRITE_ERROR</span>(<span class="string">&quot;failed to create dump file, exception ptr is null&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    std::string dumpFilePath = DumpCollector::<span class="built_in">GenerateDumpFilePath</span>();</span><br><span class="line">    EXCEPTION_POINTERS *pException = <span class="keyword">static_cast</span>&lt;EXCEPTION_POINTERS*&gt;(DumpCollector::exceptionPtr);</span><br><span class="line">    std::wstring wDumpFilePath = <span class="built_in">Utf8ToUtf16</span>(dumpFilePath);</span><br><span class="line">    HANDLE hDumpFile = ::<span class="built_in">CreateFileW</span>(</span><br><span class="line">        wDumpFilePath.<span class="built_in">c_str</span>(),</span><br><span class="line">        GENERIC_WRITE,</span><br><span class="line">        <span class="number">0</span>,</span><br><span class="line">        <span class="literal">nullptr</span>,</span><br><span class="line">        CREATE_ALWAYS,</span><br><span class="line">        FILE_ATTRIBUTE_NORMAL,</span><br><span class="line">        <span class="literal">nullptr</span>);</span><br><span class="line">    <span class="keyword">if</span> (hDumpFile == INVALID_HANDLE_VALUE) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;&quot;</span>; <span class="comment">// failed to create file</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// fill dump information  </span></span><br><span class="line">    MINIDUMP_EXCEPTION_INFORMATION dumpInfo;  </span><br><span class="line">    dumpInfo.ExceptionPointers = pException;  </span><br><span class="line">    dumpInfo.ThreadId = ::<span class="built_in">GetCurrentThreadId</span>();</span><br><span class="line">    dumpInfo.ClientPointers = TRUE;</span><br><span class="line">    <span class="comment">// write dump information to file</span></span><br><span class="line">    ::<span class="built_in">MiniDumpWriteDump</span>(</span><br><span class="line">        ::<span class="built_in">GetCurrentProcess</span>(),</span><br><span class="line">        ::<span class="built_in">GetCurrentProcessId</span>(),</span><br><span class="line">        hDumpFile,</span><br><span class="line">        MiniDumpNormal,</span><br><span class="line">        &amp;dumpInfo,</span><br><span class="line">        <span class="literal">nullptr</span>,</span><br><span class="line">        <span class="literal">nullptr</span>);</span><br><span class="line">    ::<span class="built_in">CloseHandle</span>(hDumpFile);</span><br><span class="line">    <span class="keyword">return</span> dumpFilePath;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>从<code>pException-&gt;ExceptionRecord-&gt;ExceptionCode</code>枚举错误码，获取异常原因：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> CASE_RETURN(EXCEPTION) case EXCEPTION: &#123; \</span></span><br><span class="line"><span class="meta">    return #EXCEPTION; \</span></span><br><span class="line"><span class="meta">&#125; \</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="comment">// obtain exception reason from pException</span></span><br><span class="line"><span class="function">std::string <span class="title">DumpCollector::GetWin32ExceptionInfo</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    EXCEPTION_POINTERS* exceptionPtr = <span class="keyword">static_cast</span>&lt;EXCEPTION_POINTERS*&gt;(DumpCollector::exceptionPtr);</span><br><span class="line">    <span class="keyword">if</span> (exceptionPtr == <span class="literal">nullptr</span> || exceptionPtr-&gt;ExceptionRecord == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in"><span class="keyword">switch</span></span> (exceptionPtr-&gt;ExceptionRecord-&gt;ExceptionCode) &#123;</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_ACCESS_VIOLATION)</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_ARRAY_BOUNDS_EXCEEDED)</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_BREAKPOINT)</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_DATATYPE_MISALIGNMENT)</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_FLT_DENORMAL_OPERAND)</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_FLT_DIVIDE_BY_ZERO)</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_FLT_INEXACT_RESULT)</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_FLT_INVALID_OPERATION)</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_FLT_OVERFLOW)</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_FLT_STACK_CHECK)</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_FLT_UNDERFLOW)</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_ILLEGAL_INSTRUCTION)</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_IN_PAGE_ERROR)</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_INT_DIVIDE_BY_ZERO)</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_INT_OVERFLOW)</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_INVALID_DISPOSITION)</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_NONCONTINUABLE_EXCEPTION)</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_PRIV_INSTRUCTION)</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_SINGLE_STEP)</span><br><span class="line">        <span class="built_in">CASE_RETURN</span>(EXCEPTION_STACK_OVERFLOW)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Unknown Exception&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>从<code>EXCEPTION_POINTERS* pException</code>获取堆栈信息：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">StackFrame</span> &#123;</span></span><br><span class="line">    std::string         file;</span><br><span class="line">    std::string         <span class="keyword">module</span>;</span><br><span class="line">    std::string         function;</span><br><span class="line">    <span class="keyword">uint64_t</span>            address;</span><br><span class="line">    <span class="keyword">uint64_t</span>            line;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// a util function to reduce complexity of DumpWin32StackTrace</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> std::vector&lt;StackFrame&gt; <span class="title">WalkStacks</span><span class="params">(DWORD machineType, HANDLE hProcess, HANDLE hThread, STACKFRAME* stackframePtr, CONTEXT* contextPtr)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">bool</span> first = <span class="literal">true</span>;</span><br><span class="line">    std::vector&lt;StackFrame&gt; stackframes;</span><br><span class="line">    <span class="keyword">while</span> (::<span class="built_in">StackWalk</span>(machineType, hProcess, hThread, stackframePtr, contextPtr, <span class="literal">nullptr</span>, SymFunctionTableAccess, SymGetModuleBase, <span class="literal">nullptr</span>)) &#123;</span><br><span class="line">        StackFrame f&#123;&#125;;</span><br><span class="line">        f.address = stackframePtr-&gt;AddrPC.Offset;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> _WIN64</span></span><br><span class="line">        DWORD64 moduleBase = <span class="built_in">SymGetModuleBase</span>(hProcess, stackframePtr-&gt;AddrPC.Offset);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">        DWORD moduleBase = <span class="built_in">SymGetModuleBase</span>(hProcess, stackframePtr-&gt;AddrPC.Offset);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">        <span class="keyword">char</span> moduelBuff[MAX_PATH];</span><br><span class="line">        <span class="keyword">if</span> (moduleBase &amp;&amp; <span class="built_in">GetModuleFileNameA</span>((HINSTANCE)moduleBase, moduelBuff, MAX_PATH)) &#123;</span><br><span class="line">            f.<span class="keyword">module</span> = moduelBuff;</span><br><span class="line">        &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> _WIN64</span></span><br><span class="line">        DWORD64 offset = <span class="number">0</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">        DWORD offset = <span class="number">0</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">        <span class="keyword">char</span> symbolBuffer[<span class="built_in"><span class="keyword">sizeof</span></span>(IMAGEHLP_SYMBOL) + <span class="number">255</span>];</span><br><span class="line">        PIMAGEHLP_SYMBOL symbol = (PIMAGEHLP_SYMBOL)symbolBuffer;</span><br><span class="line">        symbol-&gt;SizeOfStruct = (<span class="keyword">sizeof</span> IMAGEHLP_SYMBOL) + <span class="number">255</span>;</span><br><span class="line">        symbol-&gt;MaxNameLength = <span class="number">254</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (::<span class="built_in">SymGetSymFromAddr</span>(hProcess, stackframePtr-&gt;AddrPC.Offset, &amp;offset, symbol)) &#123;</span><br><span class="line">            f.function = symbol-&gt;Name;</span><br><span class="line">        &#125; <span class="comment">// Failed to resolve address frame.AddrPC.Offset otherwise, default empty</span></span><br><span class="line"></span><br><span class="line">        IMAGEHLP_LINE line;</span><br><span class="line">        line.SizeOfStruct = <span class="built_in"><span class="keyword">sizeof</span></span>(IMAGEHLP_LINE);</span><br><span class="line"></span><br><span class="line">        DWORD offsetln = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">if</span> (::<span class="built_in">SymGetLineFromAddr</span>(hProcess, stackframePtr-&gt;AddrPC.Offset, &amp;offsetln, &amp;line)) &#123;</span><br><span class="line">            f.file = line.FileName;</span><br><span class="line">            f.line = line.LineNumber;</span><br><span class="line">        &#125; <span class="comment">// Failed to resolve line for frame.AddrPC.Offset otherwise, default 0</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!first) &#123;</span><br><span class="line">            stackframes.<span class="built_in">push_back</span>(f);</span><br><span class="line">        &#125;</span><br><span class="line">        first = <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> stackframes;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">std::vector&lt;StackFrame&gt; <span class="title">DumpCollector::DumpWin32StackTrace</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> _WIN64</span></span><br><span class="line">    DWORD machine = IMAGE_FILE_MACHINE_AMD64;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    DWORD machine = IMAGE_FILE_MACHINE_I386;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    HANDLE process = <span class="built_in">GetCurrentProcess</span>();</span><br><span class="line">    HANDLE thread  = <span class="built_in">GetCurrentThread</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!::<span class="built_in">SymInitialize</span>(process, <span class="literal">nullptr</span>, TRUE)) &#123;</span><br><span class="line">        <span class="built_in">WRITE_ERROR</span>(<span class="string">&quot;Failed to call SymInitialize&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> std::vector&lt;StackFrame&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ::<span class="built_in">SymSetOptions</span>(SYMOPT_LOAD_LINES);</span><br><span class="line">    CONTEXT context = &#123;&#125;;</span><br><span class="line">    context.ContextFlags = CONTEXT_FULL;</span><br><span class="line">    ::<span class="built_in">RtlCaptureContext</span>(&amp;context);</span><br><span class="line"></span><br><span class="line">    STACKFRAME frame &#123;&#125;;</span><br><span class="line">    frame.AddrPC.Mode = AddrModeFlat;</span><br><span class="line">    frame.AddrFrame.Mode = AddrModeFlat;</span><br><span class="line">    frame.AddrStack.Mode = AddrModeFlat;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> _WIN64</span></span><br><span class="line">    frame.AddrPC.Offset = context.Rip;</span><br><span class="line">    frame.AddrFrame.Offset = context.Rbp;</span><br><span class="line">    frame.AddrStack.Offset = context.Rsp;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    frame.AddrPC.Offset = context.Eip;</span><br><span class="line">    frame.AddrFrame.Offset = context.Ebp;</span><br><span class="line">    frame.AddrStack.Offset = context.Esp;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    std::vector&lt;StackFrame&gt; stackframes = <span class="built_in">WalkStacks</span>(machine, process, thread, &amp;frame, &amp;context);</span><br><span class="line">    ::<span class="built_in">SymCleanup</span>(process);</span><br><span class="line">    <span class="keyword">return</span> stackframes;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>执行<code>DumpCollector::Init()</code>并手动触发一次异常，观察异常捕获结果：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* Coredump happend here */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">FuncCoredump</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">int</span> b = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> c = a/b;</span><br><span class="line">    std::cout &lt;&lt; c &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Func2</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">FuncCoredump</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Func3</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">Func2</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Func4</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">Func3</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Func5</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">Func4</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TriggerCrash</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">Func5</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>** argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Init And Register Crash Handler&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    DumpCollector::<span class="built_in">Init</span>();</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> WIN32</span></span><br><span class="line">    DumpCollector::<span class="built_in">SetDumpFileRoot</span>(<span class="string">&quot;C:\\Test\\Coredump&quot;</span>);</span><br><span class="line">    DumpCollector::Win32CrashHandler = Win32ApplicationCrashHandler;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Ready To Triger Crash&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    <span class="built_in">TriggerCrash</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;All Is Well, No Crash&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>编译执行，观察输出结果:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">PS C:\Users\XUranus\source\repos\MiniDump\build64&gt; .\Debug\dumpcollector.exe</span><br><span class="line">Init And Register Crash Handler</span><br><span class="line">Ready To Triger Crash</span><br><span class="line">Dump File Generated At: C:\Test\Coredump\2023-03-21.22.17.28.dmp</span><br><span class="line">Crash Reason: EXCEPTION_INT_DIVIDE_BY_ZERO</span><br><span class="line">C:\Users\XUranus\source\repos\MiniDump\build64\Debug\dumpcollector.exe,ApplicationCrashCollector[0x7ff6e4a747cf]C:\Users\XUranus\source\repos\MiniDump\DumpCollector.:90</span><br><span class="line">C:\WINDOWS\System32\KERNELBASE.dll,UnhandledExceptionFilter[0x7ffb0e635f0c]:0</span><br><span class="line">C:\WINDOWS\SYSTEM32\ntdll.dll,RtlMoveMemory[0x7ffb10fd837d]:0</span><br><span class="line">C:\WINDOWS\SYSTEM32\ntdll.dll,_C_specific_handler[0x7ffb10fbefa7]:0</span><br><span class="line">C:\WINDOWS\SYSTEM32\ntdll.dll,_chkstk[0x7ffb10fd3cff]:0</span><br><span class="line">C:\WINDOWS\SYSTEM32\ntdll.dll,RtlFindCharInUnicodeString[0x7ffb10f4e456]:0</span><br><span class="line">C:\WINDOWS\SYSTEM32\ntdll.dll,KiUserExceptionDispatcher[0x7ffb10fd2cee]:0</span><br><span class="line">C:\Users\XUranus\source\repos\MiniDump\build64\Debug\dumpcollector.exe,FuncCoredump[0x7ff6e4a7e92b]C:\Users\XUranus\source\repos\MiniDump\Demo.:11</span><br><span class="line">C:\Users\XUranus\source\repos\MiniDump\build64\Debug\dumpcollector.exe,Func2[0x7ff6e4a7e96b]C:\Users\XUranus\source\repos\MiniDump\Demo.:18</span><br><span class="line">C:\Users\XUranus\source\repos\MiniDump\build64\Debug\dumpcollector.exe,Func3[0x7ff6e4a7e98b]C:\Users\XUranus\source\repos\MiniDump\Demo.:23</span><br><span class="line">C:\Users\XUranus\source\repos\MiniDump\build64\Debug\dumpcollector.exe,Func4[0x7ff6e4a7e9ab]C:\Users\XUranus\source\repos\MiniDump\Demo.:28</span><br><span class="line">C:\Users\XUranus\source\repos\MiniDump\build64\Debug\dumpcollector.exe,Func5[0x7ff6e4a7e9cb]C:\Users\XUranus\source\repos\MiniDump\Demo.:33</span><br><span class="line">C:\Users\XUranus\source\repos\MiniDump\build64\Debug\dumpcollector.exe,TriggerCrash[0x7ff6e4a7e9eb]C:\Users\XUranus\source\repos\MiniDump\Demo.:38</span><br><span class="line">C:\Users\XUranus\source\repos\MiniDump\build64\Debug\dumpcollector.exe,main[0x7ff6e4a7ec77]C:\Users\XUranus\source\repos\MiniDump\Demo.:93</span><br><span class="line">C:\Users\XUranus\source\repos\MiniDump\build64\Debug\dumpcollector.exe,invoke_main[0x7ff6e4a81929]D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:79</span><br><span class="line">C:\Users\XUranus\source\repos\MiniDump\build64\Debug\dumpcollector.exe,__scrt_common_main_seh[0x7ff6e4a8180e]D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:288</span><br><span class="line">C:\Users\XUranus\source\repos\MiniDump\build64\Debug\dumpcollector.exe,__scrt_common_main[0x7ff6e4a816ce]D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:331</span><br><span class="line">C:\Users\XUranus\source\repos\MiniDump\build64\Debug\dumpcollector.exe,mainCRTStartup[0x7ff6e4a819be]D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_main.cpp:17</span><br><span class="line">C:\WINDOWS\System32\KERNEL32.DLL,BaseThreadInitThunk[0x7ffb0f1e26bd]:0</span><br><span class="line">C:\WINDOWS\SYSTEM32\ntdll.dll,RtlUserThreadStart[0x7ffb10f8a9f8]:0</span><br></pre></td></tr></table></figure>
+<p>可以看到异常原因为<code>EXCEPTION_INT_DIVIDE_BY_ZERO</code>，捕获到堆栈：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\Users\XUranus\source\repos\MiniDump\build64\Debug\dumpcollector.exe,FuncCoredump[0x7ff6e4a7e92b]C:\Users\XUranus\source\repos\MiniDump\Demo.:11</span><br><span class="line">C:\Users\XUranus\source\repos\MiniDump\build64\Debug\dumpcollector.exe,Func2[0x7ff6e4a7e96b]C:\Users\XUranus\source\repos\MiniDump\Demo.:18</span><br><span class="line">C:\Users\XUranus\source\repos\MiniDump\build64\Debug\dumpcollector.exe,Func3[0x7ff6e4a7e98b]C:\Users\XUranus\source\repos\MiniDump\Demo.:23</span><br><span class="line">C:\Users\XUranus\source\repos\MiniDump\build64\Debug\dumpcollector.exe,Func4[0x7ff6e4a7e9ab]C:\Users\XUranus\source\repos\MiniDump\Demo.:28</span><br><span class="line">C:\Users\XUranus\source\repos\MiniDump\build64\Debug\dumpcollector.exe,Func5[0x7ff6e4a7e9cb]C:\Users\XUranus\source\repos\MiniDump\Demo.:33</span><br><span class="line">C:\Users\XUranus\source\repos\MiniDump\build64\Debug\dumpcollector.exe,TriggerCrash[0x7ff6e4a7e9eb]C:\Users\XUranus\source\repos\MiniDump\Demo.:38</span><br><span class="line">C:\Users\XUranus\source\repos\MiniDump\build64\Debug\dumpcollector.exe,main[0x7ff6e4a7ec77]C:\Users\XUranus\source\repos\MiniDump\Demo.:93</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>注意：生成堆栈必须要在编译的时候保留符号表（<code>*.pdb</code>）文件，如果缺少符号表将不能获得函数名、文件名和行号等信息。如果开启了llvm编译后端优化，编译后的堆栈和符号表中的堆栈可能不一致，会导致收集到的堆栈信息和实际堆栈不一致，要获取实际堆栈信息还得用VS处理生成的MiniDump文件。上述程序中生成MiniDump文件需要对应体系结构(x86/x64)的<code>imagehlp.lib</code>库，如果<code>system32</code>中不包含<code>imagehlp.dll</code>则需要手动指定。</p>
+</blockquote>
+<h2 id="Linux捕获Crash"><a href="#Linux捕获Crash" class="headerlink" title="Linux捕获Crash"></a>Linux捕获Crash</h2><p>Linux通过信号机制抛出异常，Linux下可以通过捕获信号来捕获异常：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">DumpCollector::Init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> WIN32</span></span><br><span class="line">    <span class="comment">// ::SetUnhandledExceptionFilter((LPTOP_LEVEL_EXCEPTION_FILTER)ApplicationCrashCollector);</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    DumpCollector::<span class="built_in">SetPosixSignalHandler</span>();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">PosixApplicationSignalCollector</span><span class="params">(<span class="keyword">int</span> sig, <span class="keyword">siginfo_t</span>* siginfo, <span class="keyword">void</span>* context)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lck</span><span class="params">(DumpCollector::lock)</span></span>;</span><br><span class="line">    DumpCollector::sig = sig;</span><br><span class="line">    DumpCollector::siginfo = siginfo;</span><br><span class="line"></span><br><span class="line">    std::string exceptionCause = DumpCollector::<span class="built_in">GetPosixExceptionInfo</span>();</span><br><span class="line">    std::vector&lt;StackFrame&gt; stacktrace = DumpCollector::<span class="built_in">DumpPosixStackTrace</span>();</span><br><span class="line">    <span class="keyword">if</span> (DumpCollector::PosixCrashHandler == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">        <span class="built_in">WRITE_ERROR</span>(<span class="string">&quot;missing posix crash handler&quot;</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        DumpCollector::<span class="built_in">PosixCrashHandler</span>(exceptionCause, stacktrace);</span><br><span class="line">    &#125;</span><br><span class="line">    std::<span class="built_in">abort</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">DumpCollector::SetPosixSignalHandler</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">uint8_t</span> alternateStack[SIGSTKSZ];</span><br><span class="line">    <span class="comment">// setup alternate stack</span></span><br><span class="line">    <span class="keyword">stack_t</span> ss &#123;&#125;;</span><br><span class="line">    <span class="comment">// malloc is usually used here, I&#x27;m not 100% sure my static allocation is valid but it seems to work just fine. */</span></span><br><span class="line">    ss.ss_sp = (<span class="keyword">void</span>*)alternateStack;</span><br><span class="line">    ss.ss_size = SIGSTKSZ;</span><br><span class="line">    ss.ss_flags = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (::<span class="built_in">sigaltstack</span>(&amp;ss, <span class="literal">NULL</span>) != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">WRITE_ERROR</span>(<span class="string">&quot;call sigaltstack() error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// register posix signal handlers</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span> <span class="title">signalAction</span> &#123;</span>&#125;;</span><br><span class="line">    signalAction.sa_sigaction = PosixApplicationSignalCollector;</span><br><span class="line">    ::<span class="built_in">sigemptyset</span>(&amp;signalAction.sa_mask);</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __APPLE__</span></span><br><span class="line">    <span class="comment">// for some reason we backtrace() doesn&#x27;t work on osx when we use an alternate stack</span></span><br><span class="line">    signalAction.sa_flags = SA_SIGINFO;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    signalAction.sa_flags = SA_SIGINFO | SA_ONSTACK;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">sigaction</span>(SIGSEGV, &amp;signalAction, <span class="literal">nullptr</span>) != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">WRITE_ERROR</span>(<span class="string">&quot;call sigaction(SIGSEGV) error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">sigaction</span>(SIGFPE, &amp;signalAction, <span class="literal">nullptr</span>) != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">WRITE_ERROR</span>(<span class="string">&quot;call sigaction(SIGFPE) error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">sigaction</span>(SIGINT, &amp;signalAction, <span class="literal">nullptr</span>) != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">WRITE_ERROR</span>(<span class="string">&quot;call sigaction(SIGINT) error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">sigaction</span>(SIGILL, &amp;signalAction, <span class="literal">nullptr</span>) != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">WRITE_ERROR</span>(<span class="string">&quot;call sigaction(SIGILL) error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">sigaction</span>(SIGTERM, &amp;signalAction, <span class="literal">nullptr</span>) != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">WRITE_ERROR</span>(<span class="string">&quot;call sigaction(SIGTERM) error&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// skip SIGABRT in case of infinite loop</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从信号推测可能的异常原因：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">std::string <span class="title">DumpCollector::GetPosixExceptionInfo</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> sig = DumpCollector::sig;</span><br><span class="line">    <span class="keyword">siginfo_t</span> *siginfo = <span class="keyword">static_cast</span>&lt;<span class="keyword">siginfo_t</span>*&gt;(DumpCollector::siginfo);</span><br><span class="line">    <span class="built_in"><span class="keyword">switch</span></span> (sig)&#123;</span><br><span class="line">        <span class="keyword">case</span> SIGSEGV: <span class="keyword">return</span> <span class="string">&quot;Caught SIGSEGV: Segmentation Fault&quot;</span>;</span><br><span class="line">        <span class="keyword">case</span> SIGINT: <span class="keyword">return</span> <span class="string">&quot;Caught SIGINT: Interactive attention signal, (usually ctrl+c)&quot;</span>;</span><br><span class="line">        <span class="keyword">case</span> SIGFPE: &#123;</span><br><span class="line">            <span class="built_in"><span class="keyword">switch</span></span> (siginfo-&gt;si_code) &#123;</span><br><span class="line">                <span class="keyword">case</span> FPE_INTDIV: <span class="keyword">return</span> <span class="string">&quot;Caught SIGFPE: (integer divide by zero)&quot;</span>;</span><br><span class="line">                <span class="keyword">case</span> FPE_INTOVF: <span class="keyword">return</span> <span class="string">&quot;Caught SIGFPE: (integer overflow)&quot;</span>;</span><br><span class="line">                <span class="keyword">case</span> FPE_FLTDIV: <span class="keyword">return</span> <span class="string">&quot;Caught SIGFPE: (floating-point divide by zero)&quot;</span>;</span><br><span class="line">                <span class="keyword">case</span> FPE_FLTOVF: <span class="keyword">return</span> <span class="string">&quot;Caught SIGFPE: (floating-point overflow)&quot;</span>;</span><br><span class="line">                <span class="keyword">case</span> FPE_FLTUND: <span class="keyword">return</span> <span class="string">&quot;Caught SIGFPE: (floating-point underflow)&quot;</span>;</span><br><span class="line">                <span class="keyword">case</span> FPE_FLTRES: <span class="keyword">return</span> <span class="string">&quot;Caught SIGFPE: (floating-point inexact result)&quot;</span>;</span><br><span class="line">                <span class="keyword">case</span> FPE_FLTINV: <span class="keyword">return</span> <span class="string">&quot;Caught SIGFPE: (floating-point invalid operation)&quot;</span>;</span><br><span class="line">                <span class="keyword">case</span> FPE_FLTSUB: <span class="keyword">return</span> <span class="string">&quot;Caught SIGFPE: (subscript out of range)&quot;</span>;</span><br><span class="line">                <span class="keyword">default</span>: <span class="keyword">return</span> <span class="string">&quot;Caught SIGFPE: Arithmetic Exception&quot;</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">case</span> SIGILL: &#123;</span><br><span class="line">            <span class="built_in"><span class="keyword">switch</span></span> (siginfo-&gt;si_code) &#123;</span><br><span class="line">                <span class="keyword">case</span> ILL_ILLOPC: <span class="keyword">return</span> <span class="string">&quot;Caught SIGILL: (illegal opcode)&quot;</span>;</span><br><span class="line">                <span class="keyword">case</span> ILL_ILLOPN: <span class="keyword">return</span> <span class="string">&quot;Caught SIGILL: (illegal operand)&quot;</span>;</span><br><span class="line">                <span class="keyword">case</span> ILL_ILLADR: <span class="keyword">return</span> <span class="string">&quot;Caught SIGILL: (illegal addressing mode)&quot;</span>;</span><br><span class="line">                <span class="keyword">case</span> ILL_ILLTRP: <span class="keyword">return</span> <span class="string">&quot;Caught SIGILL: (illegal trap)&quot;</span>;</span><br><span class="line">                <span class="keyword">case</span> ILL_PRVOPC: <span class="keyword">return</span> <span class="string">&quot;Caught SIGILL: (privileged opcode)&quot;</span>;</span><br><span class="line">                <span class="keyword">case</span> ILL_PRVREG: <span class="keyword">return</span> <span class="string">&quot;Caught SIGILL: (privileged register)&quot;</span>;</span><br><span class="line">                <span class="keyword">case</span> ILL_COPROC: <span class="keyword">return</span> <span class="string">&quot;Caught SIGILL: (coprocessor error)&quot;</span>;</span><br><span class="line">                <span class="keyword">case</span> ILL_BADSTK: <span class="keyword">return</span> <span class="string">&quot;Caught SIGILL: (internal stack error)&quot;</span>;</span><br><span class="line">                <span class="keyword">default</span>: <span class="keyword">return</span> <span class="string">&quot;Caught SIGILL: Illegal Instruction&quot;</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">case</span> SIGTERM: <span class="keyword">return</span> <span class="string">&quot;Caught SIGTERM: a termination request was sent to the program&quot;</span>;</span><br><span class="line">        <span class="keyword">case</span> SIGABRT: <span class="keyword">return</span> <span class="string">&quot;Caught SIGABRT: usually caused by an abort() or assert()&quot;</span>;</span><br><span class="line">        <span class="keyword">default</span>: <span class="keyword">return</span> <span class="string">&quot;Unknown&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Unknown&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>获取堆栈信息：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">std::vector&lt;StackFrame&gt; <span class="title">DumpCollector::DumpPosixStackTrace</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::vector&lt;StackFrame&gt; stacktrace;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">void</span>* stacktraces[POSIX_MAX_STACK_FRAMES];</span><br><span class="line">    <span class="keyword">int</span> traceSize = ::<span class="built_in">backtrace</span>(stacktraces, POSIX_MAX_STACK_FRAMES);</span><br><span class="line">    <span class="keyword">char</span>** messages = ::<span class="built_in">backtrace_symbols</span>(stacktraces, traceSize);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; traceSize; ++i) &#123;</span><br><span class="line">        <span class="comment">//if (::addr2line(icky_global_program_name, stacktraces[i]) != 0) &#123;</span></span><br><span class="line">        <span class="comment">//    ::printf(&quot;  error determining line # for: %s\n&quot;, messages[i]);</span></span><br><span class="line">        <span class="comment">//&#125;</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;[%d]%s\n&quot;</span>, i, messages[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (messages) &#123;</span><br><span class="line">        ::<span class="built_in">free</span>(messages);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> stacktrace;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/rqf520/article/details/102698796">windows appcrash 注册表配置 dump生成</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Coredump/" rel="tag"># Coredump</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/03/20/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F4/" rel="prev" title="Windows文件系统概述(四)安全描述符">
+      <i class="fa fa-chevron-left"></i> Windows文件系统概述(四)安全描述符
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/04/03/%E8%A7%A3%E5%86%B3C-%E4%B8%ADsleep%E5%AF%B9%E7%B3%BB%E7%BB%9F%E6%97%B6%E9%97%B4%E7%9A%84%E4%BE%9D%E8%B5%96/" rel="next" title="解决C++中sleep对系统时间的依赖">
+      解决C++中sleep对系统时间的依赖 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Windows%E6%8D%95%E8%8E%B7Crash"><span class="nav-number">1.</span> <span class="nav-text">Windows捕获Crash</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E6%8D%95%E8%8E%B7Crash"><span class="nav-number">2.</span> <span class="nav-text">Linux捕获Crash</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">610k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">9:15</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2023/03/21/%E8%AE%B0%E5%BD%95%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B4%A9%E6%BA%83/";
+    this.page.identifier = "2023/03/21/记录程序的崩溃/";
+    this.page.title = "记录程序的崩溃";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

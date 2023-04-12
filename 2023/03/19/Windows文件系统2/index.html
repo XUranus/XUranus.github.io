@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="上一篇文件我们主要介绍了Windows文件系统的基本特性及文档阅读方式，本文将介绍Windows文件系统中一种特殊的概念：指向点（Reparse Point）  回顾上一章节，我们在文件dwFileAttributes依据符号位FILE_ATTRIBUTE_REPARSE_POINT实现了一个方法： bool StatResult::IsReparsePoint() const &amp;#123;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows文件系统概述(二)指向点">
+<meta property="og:url" content="http://xuranus.github.io/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F2/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="上一篇文件我们主要介绍了Windows文件系统的基本特性及文档阅读方式，本文将介绍Windows文件系统中一种特殊的概念：指向点（Reparse Point）  回顾上一章节，我们在文件dwFileAttributes依据符号位FILE_ATTRIBUTE_REPARSE_POINT实现了一个方法： bool StatResult::IsReparsePoint() const &amp;#123;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-03-19T14:23:17.000Z">
+<meta property="article:modified_time" content="2023-04-10T06:07:45.255Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="Windows">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://xuranus.github.io/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Windows文件系统概述(二)指向点 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">58</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">120</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows文件系统概述(二)指向点
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-03-19 14:23:17" itemprop="dateCreated datePublished" datetime="2023-03-19T14:23:17Z">2023-03-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-10 06:07:45" itemprop="dateModified" datetime="2023-04-10T06:07:45Z">2023-04-10</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F2/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/03/19/Windows文件系统2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>13k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>12 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>上一篇文件我们主要介绍了Windows文件系统的基本特性及文档阅读方式，本文将介绍Windows文件系统中一种特殊的概念：<strong>指向点（Reparse Point）</strong></p>
+</blockquote>
+<p>回顾上一章节，我们在文件<code>dwFileAttributes</code>依据符号位<code>FILE_ATTRIBUTE_REPARSE_POINT</code>实现了一个方法：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">StatResult::IsReparsePoint</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (m_handleFileInformation.dwFileAttributes &amp; FILE_ATTRIBUTE_REPARSE_POINT) != <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们还没有说明这个方法的意义，该方法说明<strong>该文件是一个指向点（Reparse Point）</strong>。Reparse Point是一种特殊机制，用于实现Windows文件系统的重定向。Windows的挂载和软连接就是基于它实现的。在详解<code>FILE_ATTRIBUTE_REPARSE_POINT</code>之前，我们先从Windows软链接开始看起。</p>
+<span id="more"></span>
+<h2 id="mklink"><a href="#mklink" class="headerlink" title="mklink"></a>mklink</h2><h3 id="创建软连接"><a href="#创建软连接" class="headerlink" title="创建软连接"></a>创建软连接</h3><p><code>cmd.exe</code>提供了<code>mklink</code>命令用于在Windows创建软链接：<br><figure class="highlight bat"><table><tr><td class="code"><pre><span class="line"><span class="function">C:\<span class="title">Users</span>\<span class="title">XUranus</span>&gt;<span class="title">mklink</span></span></span><br><span class="line"><span class="function"><span class="title">MKLINK</span> [[/<span class="title">D</span>] | [/<span class="title">H</span>] | [/<span class="title">J</span>]] <span class="title">Link</span> <span class="title">Target</span></span></span><br><span class="line"><span class="function">        /<span class="title">D</span>      创建目录符号链接。默认为文件符号链接。</span></span><br><span class="line"><span class="function">        /<span class="title">H</span>      创建硬链接而非符号链接。</span></span><br><span class="line"><span class="function">        /<span class="title">J</span>      创建目录联接。</span></span><br><span class="line"><span class="function">        <span class="title">Link</span>    指定新的符号链接名称。</span></span><br><span class="line"><span class="function">        <span class="title">Target</span>  指定新链接引用的路径 (相对或绝对)。</span></span><br></pre></td></tr></table></figure><br><code>mklink</code>创建的软链接有两种：</p>
+<ul>
+<li>符号链接（Symbolic）</li>
+<li>目录链接（Junction）</li>
+</ul>
+<p><code>mklink</code>不指定<code>/D</code>或者<code>/J</code>创建出来的默认是文件符号链接，例如：<br><figure class="highlight bat"><table><tr><td class="code"><pre><span class="line"><span class="function">C:\&gt;<span class="title">mklink</span> <span class="title">C</span>:\<span class="title">symfile</span> <span class="title">C</span>:\<span class="title">file.txt</span></span></span><br><span class="line"><span class="function">为 <span class="title">C</span>:\<span class="title">symfile</span> &lt;&lt;===&gt;&gt; <span class="title">C</span>:\<span class="title">file.txt</span> 创建的符号链接</span></span><br></pre></td></tr></table></figure><br>此处<code>C:\file.txt</code>是一个文本文件，<code>C:\symfile</code>是指向它的文件符号链接。通过打开<code>C:\symfile</code>可以打开<code>C:\file.txt</code>。</p>
+<p><code>mklink</code>指定<code>/D</code>可以创建目录的符号链接，例如：<br><figure class="highlight bat"><table><tr><td class="code"><pre><span class="line"><span class="function">C:\&gt;<span class="title">mkdir</span> <span class="title">dir1</span></span></span><br><span class="line"><span class="function"><span class="title">C</span>:\&gt;<span class="title">mklink</span> /<span class="title">D</span> <span class="title">C</span>:\<span class="title">symdir</span> <span class="title">C</span>:\<span class="title">dir1</span></span></span><br><span class="line"><span class="function">为 <span class="title">C</span>:\<span class="title">symdir</span> &lt;&lt;===&gt;&gt; <span class="title">C</span>:\<span class="title">dir1</span> 创建的符号链接</span></span><br></pre></td></tr></table></figure><br>此处<code>C:\dir1</code>是一个目录，创建一个指向它的<code>C:\symdir</code>。在资源浏览器中它表现为一个目录，打开<code>C:\symdir</code>目录可以重定向到<code>C:\dir</code>。</p>
+<p><code>mklink</code>指定<code>/J</code>可以创建指向Target的目录链接（Junction）。例如：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\&gt;mkdir dir2</span><br><span class="line">C:\&gt;mklink /J C:\junctiondir C:\dir2</span><br><span class="line">为 C:\junctiondir &lt;&lt;===&gt;&gt; C:\dir2 创建的符号链接</span><br></pre></td></tr></table></figure><br>此处<code>C:\dir2</code>依旧是一个目录，创建一个指向它的<code>C:\junctiondir</code>，在资源管理器中它依旧表现为一个目录，并且可以打开重定向到<code>C:\dir2</code>。</p>
+<p>以上就是<code>mklink</code>正常创建符号链接的使用方法了，我们用表格对其使用各个参数创建出的链接类型做个总结：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>创建链接表现类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>不填</td>
+<td>文件</td>
+</tr>
+<tr>
+<td><code>/D</code></td>
+<td>目录</td>
+</tr>
+<tr>
+<td><code>/J</code></td>
+<td>目录</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Symbolic和Junction在链接目录的时候表现相似，但他们并不是一类事物，区别主要反映在远端服务器的场景：<strong>Junction在服务端处理，而Symbolic在客户端处理</strong>。所以Junction不能指向远端文件，而Symbolic可以。同时创建Symbolic需要更高的权限，而创建Junction只需要文件系统的读写权限。详见：<a target="_blank" rel="noopener" href="https://superuser.com/questions/343074/directory-junction-vs-directory-symbolic-link">“directory junction” vs “directory symbolic link”?</a></p>
+<h3 id="失效软连接"><a href="#失效软连接" class="headerlink" title="失效软连接"></a>失效软连接</h3><p>需要注意的是，以上我们都只测试了<strong>目标路径存在</strong>，且<strong>目标类型和链接类型一致</strong>的正常场景。那么，如果参数声明和目标文件不一致会怎么样呢？如果目标文件根本不存在又会怎么样呢？</p>
+<p>如果指向目标是一个目录，并且不指定<code>/D</code>和<code>/J</code>，依然可以创建出一个<strong>指向目录的文件符号链接</strong>：<br><figure class="highlight bat"><table><tr><td class="code"><pre><span class="line"><span class="function">C:\&gt;<span class="title">mklink</span> <span class="title">C</span>:\<span class="title">sym1</span> <span class="title">C</span>:\<span class="title">dir1</span></span></span><br><span class="line"><span class="function">为 <span class="title">C</span>:\<span class="title">sym1</span> &lt;&lt;===&gt;&gt; <span class="title">C</span>:\<span class="title">dir1</span> 创建的符号链接</span></span><br></pre></td></tr></table></figure><br>此处<code>C:\dir1</code>是一个目录，创建一个指向它的<code>C:\sym1</code>。在资源浏览器中它依然表现为一个文件，然而打开<code>C:\sym1</code>并不能成功：<br><img src="" alt=""></p>
+<p>同理<code>mklink</code>可以创建一个<strong>指向文件的目录软连接</strong>或者一个<strong>指向文件的目录链接</strong>：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\&gt;mklink /D C:\sym2 C:\file.txt</span><br><span class="line">为 C:\sym2 &lt;&lt;===&gt;&gt; C:\file.txt 创建的符号链接</span><br><span class="line"></span><br><span class="line">C:\&gt;mklink /D C:\junction2 C:\file.txt</span><br><span class="line">为 C:\junction2 &lt;&lt;===&gt;&gt; C:\file.txt 创建的符号链接</span><br></pre></td></tr></table></figure><br><code>C:\sym2</code>和<code>C:\junction2</code>在资源管理器中表现都是一个目录，但是由于它指向一个文件，他也不能被重定向打开目标路径。</p>
+<p>更进一步，<code>mklink</code>可以任意指定Target来创建的符号链接，Target路径根本不存在，依然可以创建成功：<br><figure class="highlight bat"><table><tr><td class="code"><pre><span class="line"><span class="function">C:\&gt;<span class="title">mklink</span> <span class="title">C</span>:\<span class="title">invalidsym1</span> <span class="title">C</span>:\<span class="title">path_not_exists</span></span></span><br><span class="line"><span class="function">为 <span class="title">C</span>:\<span class="title">invalidsym1</span> &lt;&lt;===&gt;&gt; <span class="title">C</span>:\<span class="title">path_not_exists</span> 创建的符号链接</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">C</span>:\&gt;<span class="title">mklink</span> <span class="title">C</span>:\<span class="title">invalidsym2</span> /<span class="title">D</span> <span class="title">C</span>:\<span class="title">path_not_exists</span></span></span><br><span class="line"><span class="function">为 <span class="title">C</span>:\<span class="title">invalidsym2</span> &lt;&lt;===&gt;&gt; <span class="title">C</span>:\<span class="title">path_not_exists</span> 创建的符号链接</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">C</span>:\&gt;<span class="title">mklink</span> <span class="title">C</span>:\<span class="title">invalidjunction3</span> /<span class="title">D</span> <span class="title">C</span>:\<span class="title">path_not_exists</span></span></span><br><span class="line"><span class="function">为 <span class="title">C</span>:\<span class="title">invalidjunction3</span> &lt;&lt;===&gt;&gt; <span class="title">C</span>:\<span class="title">path_not_exists</span> 创建的符号链接</span></span><br></pre></td></tr></table></figure></p>
+<p>我们把这类不能正常起到重定向作用的软连接成为<strong>失效的软连接</strong>。<code>mklink</code>创建软链接时候检查指向的目标路径是否存在，不会管目标路径是否是文件或目录。创建出的符号链接类型表现为目录还是文件只和创建时传入的参数有关。</p>
+<h3 id="级联软连接"><a href="#级联软连接" class="headerlink" title="级联软连接"></a>级联软连接</h3><p>由于软连接可以指任何路径，于是自然可以联想到软连接可以指向软连接：<br><figure class="highlight bat"><table><tr><td class="code"><pre><span class="line"><span class="function">C:\&gt;<span class="title">mklink</span> <span class="title">C</span>:\<span class="title">cascadesym1</span> <span class="title">C</span>:\<span class="title">file.txt</span></span></span><br><span class="line"><span class="function">为 <span class="title">C</span>:\<span class="title">cascadesym1</span> &lt;&lt;===&gt;&gt; <span class="title">C</span>:\<span class="title">file.txt</span> 创建的符号链接</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">C</span>:\&gt;<span class="title">mklink</span> <span class="title">C</span>:\<span class="title">cascadesym2</span> <span class="title">C</span>:\<span class="title">cascadesym1</span></span></span><br><span class="line"><span class="function">为 <span class="title">C</span>:\<span class="title">cascadesym2</span> &lt;&lt;===&gt;&gt; <span class="title">C</span>:\<span class="title">cascadesym1</span> 创建的符号链接</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">C</span>:\&gt;<span class="title">mklink</span> <span class="title">C</span>:\<span class="title">cascadesym3</span> <span class="title">C</span>:\<span class="title">cascadesym2</span></span></span><br><span class="line"><span class="function">为 <span class="title">C</span>:\<span class="title">cascadesym3</span> &lt;&lt;===&gt;&gt; <span class="title">C</span>:\<span class="title">cascadesym2</span> 创建的符号链接</span></span><br></pre></td></tr></table></figure><br><code>C:\cascadesym3</code>指向了<code>C:\cascadesym2</code>，<code>C:\cascadesym2</code>指向了<code>C:\cascadesym1</code>，<code>C:\cascadesym1</code>指向了<code>C:\file.txt</code>。这三个符号链接都可以用来打开<code>C:\file.txt</code>。说明<strong>Windows符号链接可以级联重定向</strong>。</p>
+<p>综上，Windows的软链接也可以理解为和Linux的Symlink一样，是一种存储了目标位置路径的特殊文件，通过重定向来访问指向的目标文件。</p>
+<h3 id="删除软链接"><a href="#删除软链接" class="headerlink" title="删除软链接"></a>删除软链接</h3><p>由于软连接只是一种存储目标文件的路径，于是删除和修改软连接不会影响到指向的目标文件。</p>
+<h2 id="Win32-API"><a href="#Win32-API" class="headerlink" title="Win32 API"></a>Win32 API</h2><p>了解了Windows软连接的基本概念后，我们从Win32 API的层面上来对其做进一步了解：<br>通过<code>GetFileAttributesW</code>查看软连接文件的<code>dwFileAttributes</code>属性：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// mklink /D C:\sym1 C:\dir</span></span><br><span class="line"><span class="comment">// C:\sym1 &lt;==&gt; C:\dir1</span></span><br><span class="line">DWORD dwFileAttributes = ::<span class="built_in">GetFileAttributesW</span>(<span class="string">LR&quot;(C:\sym1)&quot;</span>);</span><br><span class="line">std::cout &lt;&lt; (dwFileAttributes &amp; FILE_ATTRIBUTE_REPARSE_POINT) &lt;&lt; std::endl;; <span class="comment">// 1 </span></span><br><span class="line">std::cout &lt;&lt; (dwFileAttributes &amp; FILE_ATTRIBUTE_DIRECTORY) &lt;&lt; std::endl;; <span class="comment">// 1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// mklink C:\symfile C:\file.txt</span></span><br><span class="line"><span class="comment">// C:\symfile &lt;==&gt; C:\file.txt</span></span><br><span class="line">dwFileAttributes = ::<span class="built_in">GetFileAttributesW</span>(<span class="string">LR&quot;(C:\symfile)&quot;</span>);</span><br><span class="line">std::cout &lt;&lt; (dwFileAttributes &amp; FILE_ATTRIBUTE_REPARSE_POINT) &lt;&lt; std::endl;; <span class="comment">// 1 </span></span><br><span class="line">std::cout &lt;&lt; (dwFileAttributes &amp; FILE_ATTRIBUTE_DIRECTORY) &lt;&lt; std::endl;; <span class="comment">// 0</span></span><br></pre></td></tr></table></figure><br>可以看到他们都有<code>FILE_ATTRIBUTE_REPARSE_POINT</code>符号位，每个软连接文件是否有<code>FILE_ATTRIBUTE_DIRECTORY</code>符号位只取决于创建他们的时候声明的参数。</p>
+<p>在上一篇中我们封装了获取Windows文件信息的<code>StatW()</code>方法<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">std::optional&lt;StatResult&gt; <span class="title">StatW</span><span class="params">(<span class="keyword">const</span> std::wstring&amp; wPath)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    BY_HANDLE_FILE_INFORMATION handleFileInformation&#123;&#125;;</span><br><span class="line">    HANDLE hFile = ::<span class="built_in">CreateFileW</span>(</span><br><span class="line">        wPath.<span class="built_in">c_str</span>(),</span><br><span class="line">        GENERIC_READ,</span><br><span class="line">        FILE_SHARE_READ,</span><br><span class="line">        <span class="literal">nullptr</span>,</span><br><span class="line">        OPEN_EXISTING,</span><br><span class="line">        FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT,</span><br><span class="line">        <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (hFile == INVALID_HANDLE_VALUE) &#123;</span><br><span class="line">        <span class="keyword">return</span> std::nullopt;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (::<span class="built_in">GetFileInformationByHandle</span>(hFile, &amp;handleFileInformation) == <span class="number">0</span>) &#123;</span><br><span class="line">        ::<span class="built_in">CloseHandle</span>(hFile);</span><br><span class="line">        <span class="keyword">return</span> std::nullopt;</span><br><span class="line">    &#125;</span><br><span class="line">    ::<span class="built_in">CloseHandle</span>(hFile);</span><br><span class="line">    <span class="keyword">return</span> std::make_optional&lt;StatResult&gt;(wPath, handleFileInformation);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>在<code>CreateFileW()</code>的第6个参数中我们传入了一个<code>FILE_FLAG_OPEN_REPARSE_POINT</code>符号位，该符号位用于告知系统：<strong>不要对Reparse Point重定向</strong>。传入该符号位，如果路径对应的文件是软连接文件，则会返回<strong>其自身的句柄</strong>。反之则会触发重定向，重定向会级联触发直到找到最终指向的Target文件的句柄并返回，如果中途失败则打开失败返回<code>INVALID_HANDLE_VALUE</code>。</p>
+<blockquote>
+<p>除了<code>CreateFileW()</code>还有一系列涉及路径的Windows API可能会因为软连接的重定向影响行为，详见<a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/fileio/symbolic-link-effects-on-file-systems-functions?redirectedfrom=MSDN">Symbolic Link Effects on File Systems Functions</a></p>
+</blockquote>
+<p>因此，在遍历并处理目录中文件的时候，建议对<code>CreateFileW</code>传入<code>FILE_FLAG_OPEN_REPARSE_POINT</code>符号位来保证获得的句柄一定是Reparse Point文件本身的句柄。如果启动了重定向，获得的句柄可能是指向最终文件的句柄，而<code>GetFileInformationByHandle</code>获取的信息自然也是最终文件的信息，<code>handleFileInformation.dwFileAttributes</code>也是最终文件的<code>dwFileAttributes</code>，就不一定含有<code>FILE_ATTRIBUTE_REPARSE_POINT</code>，则无法再判断文件是否是符号链接了。同时，由于<code>dwFileAttributes</code>是最终重定向后文件的<code>dwFileAttributes</code>，当前路径对应文件是否是一个目录/文件也无从判断。所以，正常的文件处理流程应该是：</p>
+<ol>
+<li><code>CreateFileW</code>传入<code>FILE_FLAG_OPEN_REPARSE_POINT</code>符号位保证获得的句柄一定是Reparse Point文件本身</li>
+<li><code>GetFileInformationByHandle</code>获取<code>dwFileAttributes</code></li>
+<li>判断文件是否有<code>FILE_ATTRIBUTE_REPARSE_POINT</code>符号位</li>
+<li>进一步判断Reparse Point的类型，并决定是否重定向</li>
+</ol>
+<p>要处理Reparse Point类型的文件就需要判断他们是哪一种Reparse Point。由于Reparse Point机制实现了多种文件的重定向能力，所以每一种Reparse Point类型都对应一种DWORD类型的Reparse Tag。再<code>winnt.h</code>中有形如<code>IO_REPARSE_TAG_XXX</code>的常量定义：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IO_REPARSE_TAG_MOUNT_POINT              (0xA0000003L)       </span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IO_REPARSE_TAG_HSM                      (0xC0000004L)       </span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IO_REPARSE_TAG_HSM2                     (0x80000006L)       </span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IO_REPARSE_TAG_SIS                      (0x80000007L)       </span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IO_REPARSE_TAG_WIM                      (0x80000008L)    </span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IO_REPARSE_TAG_SYMLINK                  (0xA000000CL) </span></span><br><span class="line">...   </span><br></pre></td></tr></table></figure><br>本文只介绍其中两种：<code>IO_REPARSE_TAG_MOUNT_POINT</code>和<code>IO_REPARSE_TAG_SYMLINK</code>。从字面上看他们分别用于标记挂载点和符号链接。通过他们就可以判断部分Reparse Point文件的类型了。Windows要获取文件的Reparse Tag需要用<code>FindFirstFileW</code> API获取<code>WIN32_FIND_DATAW</code>结构体中的保留字段<code>dwReserved0</code>：（该方法只对<code>dwFileAttributes</code>含有<code>FILE_ATTRIBUTE_REPARSE_POINT</code>的文件有用）<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">DWORD <span class="title">ReparseTag</span><span class="params">(<span class="keyword">const</span> std::wstring &amp;wPath)</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> DWORD DEFAULT_REPARSE_TAG = <span class="number">0</span>;</span><br><span class="line">    WIN32_FIND_DATAW findFileData&#123;&#125;;</span><br><span class="line">    HANDLE fileHandle = ::<span class="built_in">FindFirstFileW</span>(wPath.<span class="built_in">c_str</span>(), &amp;findFileData);</span><br><span class="line">    <span class="keyword">if</span> (fileHandle == INVALID_HANDLE_VALUE) &#123;</span><br><span class="line">        <span class="keyword">return</span> DEFAULT_REPARSE_TAG;</span><br><span class="line">    &#125;</span><br><span class="line">    ::<span class="built_in">FindClose</span>(fileHandle);</span><br><span class="line">    <span class="keyword">return</span> findFileData.dwReserved0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="判断软连接"><a href="#判断软连接" class="headerlink" title="判断软连接"></a>判断软连接</h3><p><strong>所有用<code>mklink</code>创建出的指向文件的符号链接和<code>mklink /D</code>创建出的指向目录的符号链接，这里统称Symbolic文件。只有它们的Reparse Tag等于<code>IO_REPARSE_TAG_SYMLINK</code>，而<code>mklink /J</code>创建出的目录链接，其Reparse Tag等于<code>IO_REPARSE_TAG_MOUNT_POINT</code></strong></p>
+<p>由于目录链接Reparse Tag表现为挂载点，所以判断文件是否是软连接不能只用Reparse Tag。<br>我们不妨先撇下判断软连接，转而寻求另一条道路：尝试获取软连接指向的目标路径，如果成功获得，就说明这是个软连接。</p>
+<p>获取软连接的目标路径是一个比较麻烦的事，查到现在也没查到什么适合的官方API，但是我翻到了<code>DeviceIoControl</code> API传入<code>FSCTL_GET_REPARSE_POINT</code>调用似乎可以查到Reparse Point的元数据。其结果存放在一个结构体<code>_REPARSE_DATA_BUFFER</code>中：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * These structure is used for Interal Windows API. </span></span><br><span class="line"><span class="comment"> * There&#x27;s no associated import library to define them, so developers must define them maunally</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/ns-ntifs-_reparse_data_buffer?redirectedfrom=MSDN */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">REPARSE_DATA_BUFFER</span> &#123;</span></span><br><span class="line">    ULONG  ReparseTag;</span><br><span class="line">    USHORT ReparseDataLength;</span><br><span class="line">    USHORT Reserved;</span><br><span class="line">    <span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">            USHORT SubstituteNameOffset;</span><br><span class="line">            USHORT SubstituteNameLength;</span><br><span class="line">            USHORT PrintNameOffset;</span><br><span class="line">            USHORT PrintNameLength;</span><br><span class="line">            ULONG  Flags;</span><br><span class="line">            WCHAR  PathBuffer[<span class="number">1</span>];</span><br><span class="line">        &#125; SymbolicLinkReparseBuffer;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">            USHORT SubstituteNameOffset;</span><br><span class="line">            USHORT SubstituteNameLength;</span><br><span class="line">            USHORT PrintNameOffset;</span><br><span class="line">            USHORT PrintNameLength;</span><br><span class="line">            WCHAR  PathBuffer[<span class="number">1</span>];</span><br><span class="line">        &#125; MountPointReparseBuffer;</span><br><span class="line">        <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">            UCHAR DataBuffer[<span class="number">1</span>];</span><br><span class="line">        &#125; GenericReparseBuffer;</span><br><span class="line">    &#125; DUMMYUNIONNAME;</span><br><span class="line">&#125; REPARSE_DATA_BUFFER, * PREPARSE_DATA_BUFFER;</span><br></pre></td></tr></table></figure><br>Win32 API文档只给出了结构体<a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/ns-ntifs-_reparse_data_buffer?redirectedfrom=MSD">_REPARSE_DATA_BUFFER</a>的定义但无法再任何公开的官方头文件中引入这个结构体，因为它是一个Windows内部API用的结构体，需要我们手动在自己的代码中定义。接着就是用<code>FSCTL_GET_REPARSE_POINT</code>获得该结构体的内容：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment"> * return pointer to REPARSE_DATA_BUFFER which store target info of file with reparse attribute,</span></span><br><span class="line"><span class="comment"> * need to free memory if return non-nullptr value</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> REPARSE_DATA_BUFFER* <span class="title">GetReparseDataBufferW</span><span class="params">(<span class="keyword">const</span> std::wstring&amp; wPath)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    REPARSE_DATA_BUFFER* pReparseBuffer = <span class="literal">nullptr</span>;</span><br><span class="line">    DWORD dwSize;</span><br><span class="line">    <span class="comment">/* Open the file for read */</span></span><br><span class="line">    HANDLE hFile = ::<span class="built_in">CreateFileW</span>(</span><br><span class="line">        wPath.<span class="built_in">c_str</span>(),</span><br><span class="line">        GENERIC_READ,</span><br><span class="line">        FILE_SHARE_READ,</span><br><span class="line">        <span class="literal">nullptr</span>,</span><br><span class="line">        OPEN_EXISTING,</span><br><span class="line">        FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT,</span><br><span class="line">        <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (hFile == INVALID_HANDLE_VALUE) &#123;</span><br><span class="line">        <span class="comment">/* failed */</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/* Allocated areas info */</span></span><br><span class="line">    pReparseBuffer = (REPARSE_DATA_BUFFER*)::<span class="built_in">malloc</span>(MAXIMUM_REPARSE_DATA_BUFFER_SIZE);</span><br><span class="line">    <span class="keyword">if</span> (pReparseBuffer == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">        <span class="comment">/* malloc failed */</span></span><br><span class="line">        ::<span class="built_in">CloseHandle</span>(hFile);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">bool</span> ret = ::<span class="built_in">DeviceIoControl</span>(</span><br><span class="line">        hFile,</span><br><span class="line">        FSCTL_GET_REPARSE_POINT,</span><br><span class="line">        <span class="literal">nullptr</span>,</span><br><span class="line">        <span class="number">0</span>,</span><br><span class="line">        pReparseBuffer,</span><br><span class="line">        MAXIMUM_REPARSE_DATA_BUFFER_SIZE,</span><br><span class="line">        &amp;dwSize,</span><br><span class="line">        <span class="literal">nullptr</span>);</span><br><span class="line">    <span class="keyword">if</span> (!ret) &#123;</span><br><span class="line">        <span class="comment">/* failed */</span></span><br><span class="line">        ::<span class="built_in">free</span>(pReparseBuffer);</span><br><span class="line">        ::<span class="built_in">CloseHandle</span>(hFile);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    ::<span class="built_in">CloseHandle</span>(hFile);</span><br><span class="line">    <span class="keyword">return</span> pReparseBuffer;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过<code>REPARSE_DATA_BUFFER</code>获取链接目标路径：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function">std::optional&lt;std::wstring&gt; <span class="title">SymlinkTargetPathW</span><span class="params">(<span class="keyword">const</span> std::wstring&amp; m_wPath)</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    REPARSE_DATA_BUFFER* pReparseBuffer = <span class="built_in">GetReparseDataBufferW</span>(m_wPath);</span><br><span class="line">    <span class="keyword">if</span> (pReparseBuffer == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">        <span class="comment">/* failed */</span></span><br><span class="line">        <span class="keyword">return</span> std::nullopt;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    REPARSE_DATA_BUFFER* pReparseBuffer = <span class="built_in">GetReparseDataBufferW</span>(m_wPath);</span><br><span class="line">    USHORT targetNameIndex = pReparseBuffer-&gt;MountPointReparseBuffer.SubstituteNameOffset / <span class="built_in"><span class="keyword">sizeof</span></span>(WCHAR);</span><br><span class="line">    USHORT targetNameLength = pReparseBuffer-&gt;MountPointReparseBuffer.SubstituteNameLength / <span class="built_in"><span class="keyword">sizeof</span></span>(WCHAR);</span><br><span class="line">    USHORT displayNameIndex = pReparseBuffer-&gt;MountPointReparseBuffer.PrintNameOffset / <span class="built_in"><span class="keyword">sizeof</span></span>(WCHAR);</span><br><span class="line">    USHORT displayNameLength = pReparseBuffer-&gt;MountPointReparseBuffer.PrintNameLength / <span class="built_in"><span class="keyword">sizeof</span></span>(WCHAR);</span><br><span class="line">    WCHAR* targetName = &amp;pReparseBuffer-&gt;MountPointReparseBuffer.PathBuffer[targetNameIndex];</span><br><span class="line">    WCHAR* displayName = &amp;pReparseBuffer-&gt;MountPointReparseBuffer.PathBuffer[displayNameIndex];</span><br><span class="line">    wTarget.<span class="built_in">assign</span>(targetName, targetName + targetNameLength);</span><br><span class="line">    wPrintName.<span class="built_in">assign</span>(displayName, displayName + displayNameLength);</span><br><span class="line">    ::<span class="built_in">free</span>(pReparseBuffer);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> std::make_optional&lt;std::wstring&gt;(wPrintName);</span><br></pre></td></tr></table></figure><br>通过实验发现无论Reparse Tag是<code>IO_REPARSE_TAG_MOUNT_POINT</code>的<code>Junction</code>还是Reparse Tag是<code>IO_REPARSE_TAG_SYMLINK</code>的<code>Symbolic</code>都可以通过这种方式拿到。所以可以通过尝试用这种方法获取链接目标路径来判断是否是一个软连接。</p>
+<blockquote>
+<p>参考：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/googleprojectzero/symboliclink-testing-tools/blob/main/CommonUtils/ReparsePoint.cpp">googleprojectzero/symboliclink-testing-tools</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/46383428/get-the-immediate-target-path-from-symlink-reparse-point">Get the immediate target path from symlink/reparse point</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/winioctl/ni-winioctl-fsctl_get_reparse_point?redirectedfrom=MSDN">FSCTL_GET_REPARSE_POINT IOCTL (winioctl.h)</a></li>
+</ul>
+</blockquote>
+<p>上述方法中我们获取的是软连接的立即指向路径、及存在级联重定向场景时下一个目标的路径。如果要获取最终指向的目标路径，可以在<code>CreateFileW</code>时候不传入<code>FILE_FLAG_OPEN_REPARSE_POINT</code>开启重定向，并用<code>GetFinalPathNameByHandle</code> API根据句柄拿到最终路径：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* return final path of reparse target */</span></span><br><span class="line"><span class="function">std::optional&lt;std::wstring&gt; <span class="title">StatResult::FinalPathW</span><span class="params">()</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    BY_HANDLE_FILE_INFORMATION handleFileInformation&#123;&#125;;</span><br><span class="line">    HANDLE hFile = ::<span class="built_in">CreateFileW</span>(</span><br><span class="line">        m_wPath.<span class="built_in">c_str</span>(),</span><br><span class="line">        GENERIC_READ,</span><br><span class="line">        FILE_SHARE_READ,</span><br><span class="line">        <span class="literal">nullptr</span>,</span><br><span class="line">        OPEN_EXISTING,</span><br><span class="line">        FILE_FLAG_BACKUP_SEMANTICS,</span><br><span class="line">        <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (hFile == INVALID_HANDLE_VALUE) &#123;</span><br><span class="line">        <span class="keyword">return</span> std::nullopt;</span><br><span class="line">    &#125;</span><br><span class="line">    WCHAR wPathBuff[MAX_PATH] = <span class="string">L&quot;&quot;</span>;</span><br><span class="line">    DWORD length = ::<span class="built_in">GetFinalPathNameByHandleW</span>(hFile, wPathBuff, MAX_PATH, FILE_NAME_NORMALIZED);</span><br><span class="line">    <span class="keyword">if</span> (length == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">/* failed */</span></span><br><span class="line">        ::<span class="built_in">CloseHandle</span>(hFile);</span><br><span class="line">        <span class="keyword">return</span> std::nullopt;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (length &gt;= MAX_PATH) &#123;</span><br><span class="line">        DWORD extendLength = length + <span class="number">1</span>;</span><br><span class="line">        WCHAR* wPathExtendBuff = <span class="keyword">new</span> WCHAR[extendLength];</span><br><span class="line">        <span class="keyword">if</span> (::<span class="built_in">GetFinalPathNameByHandleW</span>(hFile, wPathExtendBuff, extendLength, FILE_NAME_NORMALIZED) == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">/* failed */</span></span><br><span class="line">            <span class="keyword">delete</span>[] wPathExtendBuff;</span><br><span class="line">            ::<span class="built_in">CloseHandle</span>(hFile);</span><br><span class="line">            <span class="keyword">return</span> std::nullopt;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/* succeed */</span></span><br><span class="line">        ::<span class="built_in">CloseHandle</span>(hFile);</span><br><span class="line">        <span class="function">std::wstring <span class="title">wTargetPath</span><span class="params">(wPathExtendBuff)</span></span>;</span><br><span class="line">        <span class="keyword">delete</span>[] wPathExtendBuff;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">NormalizeWin32PathW</span>(wTargetPath);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/* succeed */</span></span><br><span class="line">    ::<span class="built_in">CloseHandle</span>(hFile);</span><br><span class="line">    <span class="function">std::wstring <span class="title">wTargetPath</span><span class="params">(wPathBuff)</span></span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">NormalizeWin32PathW</span>(wTargetPath);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="判断挂载点"><a href="#判断挂载点" class="headerlink" title="判断挂载点"></a>判断挂载点</h3><p>对于挂载点，它的Reparse Tag一定是<code>IO_REPARSE_TAG_MOUNT_POINT</code>，但是由于对于该Reparse Tag的还可能是目录链接Junction，则可以通过尝试获取路径对于的挂载设备名来判断该路径是不是一个挂载点。获取挂载点设备名可以用<code>GetVolumeNameForVolumeMountPointW</code> API，它接受一个<code>\</code>结尾的目录路径，返回对应的设备名。如果执行成功则返回TRUE，说吗这是个挂载点。<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * If this sparse point has IO_REPARSE_TAG_MOUNT_POINT tag, it maybe a device mount point or a junction link</span></span><br><span class="line"><span class="comment"> * if it&#x27;s device   point, GetVolumeNameForVolumeMountPointW can accquire device name</span></span><br><span class="line"><span class="comment"> * if it&#x27;s junction link, GetVolumeNameForVolumeMountPointW will return false</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">std::optional&lt;std::wstring&gt; <span class="title">MountedDeviceNameW</span><span class="params">(<span class="keyword">const</span> std::wstring&amp; wPath)</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    WCHAR deviceNameBuff[MAX_PATH] = <span class="string">L&quot;&quot;</span>;</span><br><span class="line">    std::wstring wCanonicalPath = <span class="built_in">CanonicalPathW</span>();</span><br><span class="line">    <span class="comment">/* GetVolumeNameForVolumeMountPointW require input path to end with backslash */</span></span><br><span class="line">    <span class="keyword">if</span> (wCanonicalPath.<span class="built_in">back</span>() != <span class="string">L&#x27;\\&#x27;</span>) &#123;</span><br><span class="line">        wCanonicalPath.<span class="built_in">push_back</span>(<span class="string">L&#x27;\\&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (::<span class="built_in">GetVolumeNameForVolumeMountPointW</span>(wCanonicalPath.<span class="built_in">c_str</span>(), deviceNameBuff, MAX_PATH)) &#123;</span><br><span class="line">        <span class="keyword">return</span> std::make_optional&lt;std::wstring&gt;(deviceNameBuff);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> std::nullopt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果路径是一个挂载点，则它一定不是一个软连接。如果是路径IO_REPARSE_TAG_MOUNT_POINT</p>
+<pre class="mermaid">flowchart TD
+Open(输入文件) --> CreateFileW
+CreateFileW[CreateFileW传入<br>FILE_FLAG_OPEN_REPARSE_POINT禁用重定向] --> GetFileInformationByHandle
+GetFileInformationByHandle[GetFileInformationByHandle<br>获取dwFileAttributes] --> Query
+Query{查询dwFileAttributes<br>是否有FILE_ATTRIBUTE_SPARSE_FILE<br>符号位}
+Query --Y--> TagQuery
+Query --N--> CommonFile(普通文件)
+TagQuery[查询Sparse Tag] --> CheckSymlinkTag
+CheckSymlinkTag{检查Sparse Tag<br>是否等于IO_REPARSE_TAG_SYMLINK} --Y--> Symbolic(符号链接)
+CheckSymlinkTag --N--> QuerySparseBuffer[查询_REPARSE_DATA_BUFFER<br>尝试获取链接目标信息]
+QuerySparseBuffer --> CheckQuerySparseBuffer{查询目标路径成功}
+CheckQuerySparseBuffer --Y--> Junction(目录链接)
+CheckQuerySparseBuffer --N--> CheckQueryMount{查询挂载点信息成功}
+CheckQueryMount --Y--> MountPoint(挂载点)
+CheckQueryMount --N--> Known(未知Reparse类型)</pre>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Windows/" rel="tag"># Windows</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/02/28/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F1/" rel="prev" title="Windows文件系统概述(一)基本概念">
+      <i class="fa fa-chevron-left"></i> Windows文件系统概述(一)基本概念
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F3/" rel="next" title="Windows文件系统概述(三)ADS">
+      Windows文件系统概述(三)ADS <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#mklink"><span class="nav-number">1.</span> <span class="nav-text">mklink</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%BD%AF%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.1.</span> <span class="nav-text">创建软连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%B1%E6%95%88%E8%BD%AF%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.2.</span> <span class="nav-text">失效软连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%A7%E8%81%94%E8%BD%AF%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.3.</span> <span class="nav-text">级联软连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E8%BD%AF%E9%93%BE%E6%8E%A5"><span class="nav-number">1.4.</span> <span class="nav-text">删除软链接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Win32-API"><span class="nav-number">2.</span> <span class="nav-text">Win32 API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E8%BD%AF%E8%BF%9E%E6%8E%A5"><span class="nav-number">2.1.</span> <span class="nav-text">判断软连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E6%8C%82%E8%BD%BD%E7%82%B9"><span class="nav-number">2.2.</span> <span class="nav-text">判断挂载点</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">610k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">9:15</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F2/";
+    this.page.identifier = "2023/03/19/Windows文件系统2/";
+    this.page.title = "Windows文件系统概述(二)指向点";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
