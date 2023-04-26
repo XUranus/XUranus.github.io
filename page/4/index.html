@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">120</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">122</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -202,6 +202,221 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/16/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/07/16/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/" class="post-title-link" itemprop="url">深入理解Linux文件系统--软链接与硬链接</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-07-16 11:28:03" itemprop="dateCreated datePublished" datetime="2022-07-16T11:28:03Z">2022-07-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-07 01:35:10" itemprop="dateModified" datetime="2022-08-07T01:35:10Z">2022-08-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E8%AF%9D%E5%AD%98%E5%82%A8/" itemprop="url" rel="index"><span itemprop="name">大话存储</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2022/07/16/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/16/深入理解Linux文件系统/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="inode"><a href="#inode" class="headerlink" title="inode"></a>inode</h2><p>硬盘的最小存储单位是扇区(Sector)，块(Block)由多个扇区组成。文件数据存储在块中。块的最常见的大小是4Kb，约为8个连续的扇区组成（每个扇区存储512字节）。计算机的内存是基于字节编址的，就像一个文件可能会占用多个Block，但是一个块只能存放一个文件。</p>
+<p>虽然，我们将文件存储在了块(Block)中，但是我们还需要一个空间来存储文件的元数据(Meta Data)，如：某个文件被分成几块、每一块在的地址、文件拥有者，创建时间，权限，大小等。这种存储文件元信息的区域就叫inode，译为索引节点(Index Node)。 每个文件都指向一个inode，存储文件的元信息。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/07/16/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/10/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E6%96%87%E4%BB%B6%E5%BF%AB%E7%85%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/07/10/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E6%96%87%E4%BB%B6%E5%BF%AB%E7%85%A7/" class="post-title-link" itemprop="url">深入理解文件快照</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-07-10 08:38:54" itemprop="dateCreated datePublished" datetime="2022-07-10T08:38:54Z">2022-07-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-08-07 01:36:17" itemprop="dateModified" datetime="2022-08-07T01:36:17Z">2022-08-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E8%AF%9D%E5%AD%98%E5%82%A8/" itemprop="url" rel="index"><span itemprop="name">大话存储</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2022/07/10/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E6%96%87%E4%BB%B6%E5%BF%AB%E7%85%A7/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/10/深入理解文件快照/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>131</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/32441736/cow-vs-row-snapshot-technologies">cow-vs-row-snapshot-technologies</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/dalei9243/article/details/106628611">什么是全量备份,增量备份,差异备份?</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/337088463">什么是完全备份，差异备份，增量备份？</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43466473/article/details/88262084">数据库全备份、差量备份和增量备份</a></li>
+<li><a target="_blank" rel="noopener" href="https://support.huawei.com/enterprise/en/doc/EDOC1100200561">COW and ROW Snapshot Working Principles</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/64595897">存储系统的快照技术</a></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -335,7 +550,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-10 06:07:45" itemprop="dateModified" datetime="2023-04-10T06:07:45Z">2023-04-10</time>
+                <time title="修改时间：2023-04-26 22:25:49" itemprop="dateModified" datetime="2023-04-26T22:25:49Z">2023-04-26</time>
               </span>
 
           
@@ -357,13 +572,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>3.7k</span>
+              <span>7.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>3 分钟</span>
+              <span>7 分钟</span>
             </span>
 
         </div>
@@ -375,7 +590,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h3 id="std-isdigit"><a href="#std-isdigit" class="headerlink" title="std::isdigit"></a>std::isdigit</h3><p>判断一个字符是否是数字，通常可以这样实现：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">IsDigit</span><span class="params">(<span class="keyword">char</span> ch)</span> </span>&#123; <span class="keyword">return</span> ch &gt;= <span class="string">&#x27;0&#x27;</span> &amp;&amp; ch &lt;= <span class="string">&#x27;9&#x27;</span>; &#125;</span><br></pre></td></tr></table></figure><br>也可以直接用<code>std::isdigit</code><br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">char</span> ch = <span class="string">&#x27;8&#x27;</span>;</span><br><span class="line"><span class="keyword">if</span> (std::<span class="built_in">isdigit</span>(ch)) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+          <p>本文记录一些常用的C++标准库使用技巧</p>
+<h3 id="std-isdigit"><a href="#std-isdigit" class="headerlink" title="std::isdigit"></a>std::isdigit</h3><p>判断一个字符是否是数字，通常可以这样实现：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">IsDigit</span><span class="params">(<span class="keyword">char</span> ch)</span> </span>&#123; <span class="keyword">return</span> ch &gt;= <span class="string">&#x27;0&#x27;</span> &amp;&amp; ch &lt;= <span class="string">&#x27;9&#x27;</span>; &#125;</span><br></pre></td></tr></table></figure><br>也可以直接用<code>std::isdigit</code><br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">char</span> ch = <span class="string">&#x27;8&#x27;</span>;</span><br><span class="line"><span class="keyword">if</span> (std::<span class="built_in">isdigit</span>(ch)) &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/07/04/C-%E5%B8%B8%E7%94%A8STL%E6%8A%80%E5%B7%A7/#more" rel="contents">
@@ -499,223 +715,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3std-allocator/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3std-allocator/" class="post-title-link" itemprop="url">深入理解std::allocator<T></a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-07-03 21:34:17" itemprop="dateCreated datePublished" datetime="2022-07-03T21:34:17Z">2022-07-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-07-17 02:00:48" itemprop="dateModified" datetime="2022-07-17T02:00:48Z">2022-07-17</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3std-allocator/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/04/深入理解std-allocator/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>3.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>请求堆上分配内存需要操作系统的参与，频繁的向请求内存开销很大。为了优化这个问题，可以把预先分配一部分内存放在池子里。</p>
-<p>C++在堆上创建对象一般是用<code>new</code>，<code>new</code>的执行包含了两个过程：</p>
-<ol>
-<li>分配内存</li>
-<li>初始化对象</li>
-</ol>
-<p>而<code>delete</code>的执行也包含了两个过程：</p>
-<ol>
-<li>对象析构</li>
-<li>释放内存</li>
-</ol>
-<p>当创建单个对象的时候，我们拥有构造对象所需的值，我们通常希望内存分配和对象初始化组合在一起；但是连续分配一堆对象的时候，我们往往希望分配内存和对象初始化分离，先分配一大快内存，在需要时再按需执行对象的初始化，此时如果将内存分配和对象初始化放在一起则会导致不必要的性能开销。例如<code>new std::vector&lt;T&gt;(10)</code>，我们希望只分配10个<code>T</code>类型的空间，而不执行<code>T</code>的默认构造方法，只有在<code>emplace_back</code>的时候才对内存初始化。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3std-allocator/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/02/%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/07/02/%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="post-title-link" itemprop="url">远程调试环境搭建</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-07-02 15:28:30" itemprop="dateCreated datePublished" datetime="2022-07-02T15:28:30Z">2022-07-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-07-17 05:57:29" itemprop="dateModified" datetime="2022-07-17T05:57:29Z">2022-07-17</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2022/07/02/%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/02/远程调试环境搭建/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>4.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>由于平时一直使用Arch Linux环境写代码，但是公司只给用Windows，对Windows MinGW开发环境的场景觉得很不顺手。由于业务是Linux业务，在本地开发无法编译，需要使用远程编译机编译。这种模式使得调试程序只能远端编译后，在远端不使用GDB，而GDB命令行不仅难用还有高昂的学习成本。最近新发现一写远程开发/调试的方案，再次整理出来以应付C++跨平台开发的场景。</p>
-</blockquote>
-<h2 id="创建样例程序"><a href="#创建样例程序" class="headerlink" title="创建样例程序"></a>创建样例程序</h2><ul>
-<li>本机环境：Windows X64</li>
-<li>远端环境：Linux（Armbian）aarch64</li>
-<li>本地IDE: VSCode<br>创建一个CMake项目用于演示：<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.</span><br><span class="line">├── build/</span><br><span class="line">├── CMakeLists.txt</span><br><span class="line">├── include/</span><br><span class="line">│   └── Student.h</span><br><span class="line">└── src/</span><br><span class="line">    ├── main.cpp</span><br><span class="line">    └── Student.cpp</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/07/02/%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -783,7 +786,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-count">122</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -832,12 +835,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">610k</span>
+    <span title="站点总字数">621k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:15</span>
+    <span title="站点阅读时长">9:25</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
