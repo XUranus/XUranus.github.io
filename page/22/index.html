@@ -119,7 +119,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">58</span></a>
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">59</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">122</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">124</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -202,6 +202,209 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/10/09/Linux%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/10/09/Linux%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B/" class="post-title-link" itemprop="url">Linux多线程编程</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-10-08 16:30:47" itemprop="dateCreated datePublished" datetime="2018-10-08T16:30:47Z">2018-10-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2018/10/09/Linux%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/10/09/Linux多线程编程/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>535</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>创建一个线程默认的状态是joinable, 如果一个线程结束运行但没有被join,则它的状态类似于进程中的Zombie Process,即还有一部分资源没有被回收（退出状态码），所以创建线程者应该<code>pthread_join()</code>来等待线程运行结束，并可得到线程的退出代码，回收其资源（类似于<code>wait()</code>,<code>waitpid()</code>)</p>
+<p>但是调用<code>pthread_join(pthread_id)</code>后，如果该线程没有运行结束，调用者会被阻塞，在有些情况下我们并不希望如此，比如在Web服务器中当主线程为每个新来的链接创建一个子线程进行处理的时候，主线程并不希望因为调用<code>pthread_join()</code>而阻塞（因为还要继续处理之后到来的链接），这时可以在子线程中加入代码<code>pthread_detach(pthread_self())</code>,或者父线程调用<code>pthread_detach(thread_id)</code>（非阻塞，可立即返回），这将该子线程的状态设置为detached,则该线程运行结束后会自动释放所有资源。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2018/10/09/Linux%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BC%96%E7%A8%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/10/08/%E6%A0%91%E8%8E%93%E6%B4%BE%E5%BC%80%E5%90%AF%E6%97%A0%E7%BA%BFAP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/10/08/%E6%A0%91%E8%8E%93%E6%B4%BE%E5%BC%80%E5%90%AF%E6%97%A0%E7%BA%BFAP/" class="post-title-link" itemprop="url">树莓派开启无线AP</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-10-08 14:02:15" itemprop="dateCreated datePublished" datetime="2018-10-08T14:02:15Z">2018-10-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-06-18 12:37:52" itemprop="dateModified" datetime="2022-06-18T12:37:52Z">2022-06-18</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2018/10/08/%E6%A0%91%E8%8E%93%E6%B4%BE%E5%BC%80%E5%90%AF%E6%97%A0%E7%BA%BFAP/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/10/08/树莓派开启无线AP/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>1.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>2022.6 本文对于现在的Raspberry Pi OS已经不适用，移步<a target="_blank" rel="noopener" href="https://www.raspberrypi.com/documentation/computers/configuration.html#before-you-begin">官方文档</a></p>
+<p>之前尝试了树莓派用作无限AP的教程，大多都只能获得ipv4地址，本文参考一篇教程，可以让树莓派给接入设备分配ipv6地址</p>
+</blockquote>
+<p>原文链接：<a target="_blank" rel="noopener" href="https://thepi.io/how-to-use-your-raspberry-pi-as-a-wireless-access-point/">How to use your Raspberry Pi as a wireless access point</a></p>
+<p>环境：原生Raspbian</p>
+<h3 id="安装和更新Raspbian"><a href="#安装和更新Raspbian" class="headerlink" title="安装和更新Raspbian"></a>安装和更新Raspbian</h3><p>因为<code>hostapd</code>和<code>dnsmasq</code>对依赖的版本要求很高，需要先更新系统：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get upgrade</span><br></pre></td></tr></table></figure><br>更新后可能依然提示依赖版本过低，所以最好先<code>sudo reboot</code><br>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2018/10/08/%E6%A0%91%E8%8E%93%E6%B4%BE%E5%BC%80%E5%90%AF%E6%97%A0%E7%BA%BFAP/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -529,225 +732,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/10/06/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E6%9C%AC%E5%AE%B9%E5%99%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/10/06/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E6%9C%AC%E5%AE%B9%E5%99%A8/" class="post-title-link" itemprop="url">R语言学习（一）基本容器</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-10-05 22:30:09" itemprop="dateCreated datePublished" datetime="2018-10-05T22:30:09Z">2018-10-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">R语言学习</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2018/10/06/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E6%9C%AC%E5%AE%B9%E5%99%A8/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/10/06/R语言学习（一）基本容器/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>10k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>9 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>R语言是一门数据处理语言，本文记录R语言学习的过程和一些注意点</p>
-</blockquote>
-<h2 id="基本数据结构"><a href="#基本数据结构" class="headerlink" title="基本数据结构"></a>基本数据结构</h2><p>对于数据集行和列的不同术语：</p>
-<ul>
-<li>统计学：观测(observation)/变量(variable)</li>
-<li>数据分析师：记录(record)/字段(field)</li>
-<li>机器学习与数据挖掘：示例(example)/属性(attribute)</li>
-</ul>
-<p>R的数据结构包括向量，数组，数据框和列表，R可以处理的数据类型成为模式(modes)，包括数值型，字符型，布尔型，复数型和原生型（字节）</p>
-<p>向量，矩阵，数组的本质是数组，唯独分别是一维，二维，更高，三者必须有相同的模式，而列表每一个元素可以是不同类型，是一个广义表。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/10/06/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%B8%80%EF%BC%89%E5%9F%BA%E6%9C%AC%E5%AE%B9%E5%99%A8/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/09/29/Archlinux%E4%B8%8BRStudio%E7%9A%84%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/09/29/Archlinux%E4%B8%8BRStudio%E7%9A%84%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/" class="post-title-link" itemprop="url">Archlinux下RStudio的问题汇总</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-09-28 17:47:52" itemprop="dateCreated datePublished" datetime="2018-09-28T17:47:52Z">2018-09-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2018/09/29/Archlinux%E4%B8%8BRStudio%E7%9A%84%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/09/29/Archlinux下RStudio的问题汇总/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>472</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>记录Archlinux下RStudio使用的一些坑</p>
-</blockquote>
-<h3 id="安装R"><a href="#安装R" class="headerlink" title="安装R"></a>安装R</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">yaourt -S r #安装R</span><br><span class="line">yaourt rstudio-desktop-bin #安装R的IDE</span><br></pre></td></tr></table></figure>
-<p>控制台输入<code>R</code>进入交互界面</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/09/29/Archlinux%E4%B8%8BRStudio%E7%9A%84%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -819,7 +803,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">122</span>
+          <span class="site-state-item-count">124</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -832,7 +816,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-count">59</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -868,12 +852,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">621k</span>
+    <span title="站点总字数">638k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:25</span>
+    <span title="站点阅读时长">9:40</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>

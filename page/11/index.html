@@ -119,7 +119,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">58</span></a>
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">59</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">122</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">124</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -202,6 +202,212 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/03/30/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%9A%84%E5%87%A0%E7%A7%8D%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/03/30/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%9A%84%E5%87%A0%E7%A7%8D%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/" class="post-title-link" itemprop="url">分布式ID的几种生成方案</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-30 11:53:59" itemprop="dateCreated datePublished" datetime="2021-03-30T11:53:59Z">2021-03-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/03/30/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%9A%84%E5%87%A0%E7%A7%8D%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/30/分布式ID的几种生成方案/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>分布式系统中往往涉及生成唯一ID的业务：例如多个模块产生一类数据库的记录，需要保证记录的ID互不冲突。较优的ID生成规则往往需要满足：</p>
+<ul>
+<li>唯一性：生成的ID全局上唯一，冲突的概率几乎为0</li>
+<li>有序性：生成的ID按照某种规则有序，便于数据库的插入和排序</li>
+<li>可用性：在高并发下依然能正确生成唯一的ID</li>
+<li>高性能：每次生成唯一ID的相应速度要快</li>
+<li>自主性：不依赖中心认证即可自主生成唯一的ID</li>
+<li>安全性：不暴露系统和业务相关信息</li>
+</ul>
+<p>这里总结一下主要的ID生成方案。<br>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/03/30/%E5%88%86%E5%B8%83%E5%BC%8FID%E7%9A%84%E5%87%A0%E7%A7%8D%E7%94%9F%E6%88%90%E6%96%B9%E6%A1%88/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/03/29/Samba%E6%8B%B7%E8%B4%9D%E6%96%87%E4%BB%B6%E7%9A%84pre-allowcate%E6%9C%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/03/29/Samba%E6%8B%B7%E8%B4%9D%E6%96%87%E4%BB%B6%E7%9A%84pre-allowcate%E6%9C%BA%E5%88%B6/" class="post-title-link" itemprop="url">Samba拷贝文件的pre-allowcate机制</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-29 14:26:05" itemprop="dateCreated datePublished" datetime="2021-03-29T14:26:05Z">2021-03-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-02-19 07:36:14" itemprop="dateModified" datetime="2023-02-19T07:36:14Z">2023-02-19</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/03/29/Samba%E6%8B%B7%E8%B4%9D%E6%96%87%E4%BB%B6%E7%9A%84pre-allowcate%E6%9C%BA%E5%88%B6/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/29/Samba拷贝文件的pre-allowcate机制/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>2.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>最近的项目出现了samba的文件拷贝的BUG，项目主要流程是：windows端通过samba协议拷贝一个文件夹到Linux的samba server上，Linux的samba server所在节点运行着一个Python程序，它监听者文件大小的变化，一旦文件夹大小60秒不变，就判断文件上传完成，开始对文件进行处理。</p>
+<p>起初上传包含大量小文件的文件夹并没有出现问题，但是传大文件（压缩包）的时候，会发现文件损坏无法解压。起初我以为是压缩包太大，多个任务的压缩包一起解压造成内存不够，于是设置了失败重新解压的机制。但是后来发现实际上一个大文件也会造成解压失败，日志显示重新解压了几百次，还是失败。之后又是设计解压重试时间间隔，还是失败。于是把传上去解压失败的压缩包拷贝到本地，发现打不开，文件真的损坏了！于是突发奇想，用Hex Editor查看了一下文件结构：<br><img src="2.png" alt=""></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/03/29/Samba%E6%8B%B7%E8%B4%9D%E6%96%87%E4%BB%B6%E7%9A%84pre-allowcate%E6%9C%BA%E5%88%B6/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -501,238 +707,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/03/18/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%882%EF%BC%89%E5%A4%96%E5%AD%98%E7%AE%97%E6%B3%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/03/18/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%882%EF%BC%89%E5%A4%96%E5%AD%98%E7%AE%97%E6%B3%95/" class="post-title-link" itemprop="url">大数据算法（2）外存算法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-03-18 14:57:47" itemprop="dateCreated datePublished" datetime="2021-03-18T14:57:47Z">2021-03-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">大数据算法</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2021/03/18/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%882%EF%BC%89%E5%A4%96%E5%AD%98%E7%AE%97%E6%B3%95/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/18/大数据算法（2）外存算法/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>2.8k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>当数据量太大，传统的随机存储模型失效，此时就需要外存算法</p>
-<h1 id="外存算法概述"><a href="#外存算法概述" class="headerlink" title="外存算法概述"></a>外存算法概述</h1><p>传统的存储模型假设有无限内存（RAM），统一的访问代价，该模型简单易懂。而现代的计算机有复杂的存储层次：<br><img src="1.png" alt=""><br>通过多级存储的机制，增大了存储量。较慢的存储层次更加远离CPU。由于磁盘访问速度比内存访问慢了2个数量级，根据局部性原理，为了减少访问次数，数据的传输以块（block）为基本单位来平摊访问代价（每个块8-16字节）。</p>
-<p>如今的操作系统大多能通过先进的分页和预取策略优化集中区域数据的访问，但是如果数据访问过于分散，再优秀的操作系统也无法发挥优势。所以，设计外存算法要考虑I/O问题。</p>
-<p>传统算法的执行时间往往随着数据量的增长线性增长，但数据量特别大的时候，处理时间会急剧上升。原因是内存不够，虚存会不断访问磁盘，进行swap，造成抖动。<br><img src="2.png" alt=""></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/03/18/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%882%EF%BC%89%E5%A4%96%E5%AD%98%E7%AE%97%E6%B3%95/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/03/17/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%881%EF%BC%89%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/03/17/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%881%EF%BC%89%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95/" class="post-title-link" itemprop="url">大数据算法（1）亚线性算法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-03-17 14:57:47" itemprop="dateCreated datePublished" datetime="2021-03-17T14:57:47Z">2021-03-17</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">大数据算法</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2021/03/17/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%881%EF%BC%89%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/03/17/大数据算法（1）亚线性算法/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>8.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>7 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>本文为icourse哈工大课程<a target="_blank" rel="noopener" href="https://www.icourse163.org/learn/HIT-10001">《大数据算法》</a>笔记</p>
-</blockquote>
-<h1 id="大数据算法概述"><a href="#大数据算法概述" class="headerlink" title="大数据算法概述"></a>大数据算法概述</h1><h2 id="大数据4个V"><a href="#大数据4个V" class="headerlink" title="大数据4个V"></a>大数据4个V</h2><ul>
-<li>Volume：数据规模大</li>
-<li>Variet：数据类型多，多源异构</li>
-<li>Velocity：处理速度快</li>
-<li>Value：基于深度分析的新价值</li>
-</ul>
-<h2 id="大数据上问题求解计算问题的过程"><a href="#大数据上问题求解计算问题的过程" class="headerlink" title="大数据上问题求解计算问题的过程"></a>大数据上问题求解计算问题的过程</h2><ol>
-<li>先判断是否可以计算。一个普通数据量上都不能计算的问题，在大数据上，也不可计算</li>
-<li>判断在现有的<strong>资源约束</strong>下，<strong>时间约束</strong>下，<strong>数据量</strong>下，是否是<strong>能行可计算</strong></li>
-<li>算法分析与设计</li>
-<li>编程实现算法(Hadoop/Spark)</li>
-<li>软件系统构造</li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/03/17/%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95%EF%BC%881%EF%BC%89%E4%BA%9A%E7%BA%BF%E6%80%A7%E7%AE%97%E6%B3%95/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -804,7 +778,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">122</span>
+          <span class="site-state-item-count">124</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -817,7 +791,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-count">59</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -853,12 +827,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">621k</span>
+    <span title="站点总字数">638k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:25</span>
+    <span title="站点阅读时长">9:40</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
@@ -932,59 +906,6 @@ if (document.querySelectorAll('pre.mermaid').length) {
   
 
   
-      
-
-<script>
-  if (typeof MathJax === 'undefined') {
-    window.MathJax = {
-      loader: {
-        source: {
-          '[tex]/amsCd': '[tex]/amscd',
-          '[tex]/AMScd': '[tex]/amscd'
-        }
-      },
-      tex: {
-        inlineMath: {'[+]': [['$', '$']]},
-        tags: 'ams'
-      },
-      options: {
-        renderActions: {
-          findScript: [10, doc => {
-            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
-              const display = !!node.type.match(/; *mode=display/);
-              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
-              const text = document.createTextNode('');
-              node.parentNode.replaceChild(text, node);
-              math.start = {node: text, delim: '', n: 0};
-              math.end = {node: text, delim: '', n: 0};
-              doc.math.push(math);
-            });
-          }, '', false],
-          insertedScript: [200, () => {
-            document.querySelectorAll('mjx-container').forEach(node => {
-              let target = node.parentNode;
-              if (target.nodeName.toLowerCase() === 'li') {
-                target.parentNode.classList.add('has-jax');
-              }
-            });
-          }, '', false]
-        }
-      }
-    };
-    (function () {
-      var script = document.createElement('script');
-      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
-      script.defer = true;
-      document.head.appendChild(script);
-    })();
-  } else {
-    MathJax.startup.document.state(0);
-    MathJax.texReset();
-    MathJax.typeset();
-  }
-</script>
-
-    
 
   
 

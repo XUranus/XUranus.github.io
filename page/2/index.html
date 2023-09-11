@@ -119,7 +119,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">58</span></a>
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">59</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">122</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">124</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -206,6 +206,215 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/04/03/%E8%A7%A3%E5%86%B3C-%E4%B8%ADsleep%E5%AF%B9%E7%B3%BB%E7%BB%9F%E6%97%B6%E9%97%B4%E7%9A%84%E4%BE%9D%E8%B5%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/04/03/%E8%A7%A3%E5%86%B3C-%E4%B8%ADsleep%E5%AF%B9%E7%B3%BB%E7%BB%9F%E6%97%B6%E9%97%B4%E7%9A%84%E4%BE%9D%E8%B5%96/" class="post-title-link" itemprop="url">解决C++中sleep对系统时间的依赖</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-02 21:35:09" itemprop="dateCreated datePublished" datetime="2023-04-02T21:35:09Z">2023-04-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-09-10 14:06:34" itemprop="dateModified" datetime="2023-09-10T14:06:34Z">2023-09-10</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2023/04/03/%E8%A7%A3%E5%86%B3C-%E4%B8%ADsleep%E5%AF%B9%E7%B3%BB%E7%BB%9F%E6%97%B6%E9%97%B4%E7%9A%84%E4%BE%9D%E8%B5%96/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/04/03/解决C-中sleep对系统时间的依赖/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>2.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>最近遇到一个业务上修改Windows系统时间导致程序“卡住”的问题，经定位是<code>std::this_thread::sleep_for</code>函数阻塞线程时间长于预期。例如将系统时间往后调一小时，原本阻塞一秒的<code>std::this_thread::sleep_for</code>居然阻塞了一小时之久。查阅相关资料发现是<code>std::this_thread::sleep_for</code>的实现依赖于系统时间，如果系统时间修改则其行为不符合预期。</p>
+<p>问了ChatGPT解决方案，它的回答是：</p>
+<blockquote>
+<p>在C++中，sleep函数是用于暂停程序执行指定时间的。当系统时间被修改时，和sleep相关的函数例如<code>std::this_thread::sleep_for</code>和<code>std::this_thread::sleep_util</code>可能会表现出异常行为，因为它通常依赖于系统时钟。为了规避这个问题，你可以使用<code>std::chrono</code>库中的高精度时钟（<code>std::chrono::steady_clock</code>）来实现延时操作，因为它不受系统时间修改的影响。</p>
+<p>以下是使用<code>std::this_thread::sleep_for</code>和<code>std::chrono::steady_clock</code>实现稳定延时的示例代码：</p>
+</blockquote>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/04/03/%E8%A7%A3%E5%86%B3C-%E4%B8%ADsleep%E5%AF%B9%E7%B3%BB%E7%BB%9F%E6%97%B6%E9%97%B4%E7%9A%84%E4%BE%9D%E8%B5%96/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/03/21/%E8%AE%B0%E5%BD%95%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B4%A9%E6%BA%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/03/21/%E8%AE%B0%E5%BD%95%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B4%A9%E6%BA%83/" class="post-title-link" itemprop="url">记录程序的崩溃</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-03-20 21:49:02" itemprop="dateCreated datePublished" datetime="2023-03-20T21:49:02Z">2023-03-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-10 06:07:45" itemprop="dateModified" datetime="2023-04-10T06:07:45Z">2023-04-10</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2023/03/21/%E8%AE%B0%E5%BD%95%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B4%A9%E6%BA%83/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/03/21/记录程序的崩溃/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>17k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>16 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Windows捕获Crash"><a href="#Windows捕获Crash" class="headerlink" title="Windows捕获Crash"></a>Windows捕获Crash</h2><p>打开<code>regedit.exe</code>在注册表中找到<code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting</code><br>项，新建3个“字符串值”：配置<code>DumpCount = 10</code>，<code>DumpFolder = C:\XUranusDump</code>，<code>DumpType = 2</code>如图所示：</p>
+<p><img src="regedit.png" alt=""></p>
+<p>其中DumpType代表的含义是：</p>
+<ul>
+<li>0 ：Create a Custom Dump  </li>
+<li>1 ：Mini Dump  </li>
+<li>2 ：Full Dump  </li>
+</ul>
+<p>这里配置将会在程序崩溃时在<code>C:\XUranusDump</code>目录下生成完整的Dump信息，最多生成10个。生成的Dump信息以<code>*.dmp</code>文件形式存在：</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/03/21/%E8%AE%B0%E5%BD%95%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%B4%A9%E6%BA%83/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/03/20/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -237,7 +446,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-26 22:25:49" itemprop="dateModified" datetime="2023-04-26T22:25:49Z">2023-04-26</time>
+                <time title="修改时间：2023-05-05 22:15:31" itemprop="dateModified" datetime="2023-05-05T22:15:31Z">2023-05-05</time>
               </span>
 
           
@@ -259,13 +468,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>4.5k</span>
+              <span>7.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>4 分钟</span>
+              <span>7 分钟</span>
             </span>
 
         </div>
@@ -282,10 +491,10 @@
 </blockquote>
 <h2 id="Security-Desciptor与Linux-ACL"><a href="#Security-Desciptor与Linux-ACL" class="headerlink" title="Security Desciptor与Linux ACL"></a>Security Desciptor与Linux ACL</h2><p>Windows安全描述符和Linux ACL（访问控制列表）都是操作系统用于管理文件和目录权限的机制。尽管它们的目的相似，但它们的实现和功能有所不同。以下是 Windows安全描述符和Linux ACL之间的一些主要区别：</p>
 <ul>
-<li>操作系统：Windows安全描述符用于 Microsoft Windows操作系统，而Linux ACL用于基于Linux的操作系统。</li>
+<li>操作系统：Windows安全描述符用于Microsoft Windows操作系统，而Linux ACL用于基于Linux的操作系统。</li>
 <li>数据结构：Windows安全描述符使用一个复杂的数据结构，包括安全标识符（SID）、访问控制列表（ACL）和一组其他属性。Linux ACL由一系列的访问控制项（ACE）组成，每个ACE都包含一个标识符（用户或组）、权限和权限类型。</li>
-<li>继承：Windows安全描述符可以支持多层次的权限继承，文件和目录可以从父目录继承权限。Linux ACL也支持继承，但实现方式略有不同，使用默认 ACL来定义新文件和目录的权限。</li>
-<li>权限管理：Windows安全描述符提供了详细的权限管理，包括读取、写入、执行、删除等多种操作。Linux ACL也提供了类似的权限管理，包括读取、写入和执行，但相对来说较为简单。</li>
+<li>继承：Windows安全描述符可以支持多层次的权限继承，文件和目录可以从父目录继承权限。Linux ACL也支持继承，但实现方式略有不同，使用默认ACL来定义新文件和目录的权限。</li>
+<li>权限管理：Windows安全描述符提供了详细的权限管理，包括读取、写入、执行、删除等多种操作。Linux ACL也提供了类似的权限管理，包括读取、写入和执行(rwx)，但相对来说较为简单。</li>
 <li>权限类型：Windows安全描述符包括两种类型的 ACL，即访问控制列表（DACL）和系统访问控制列表（SACL）。DACL用于控制文件和目录的访问权限，而 SACL用于记录对象的访问事件。Linux ACL只提供一种 ACL类型，用于控制访问权限。</li>
 <li>用户和组：Windows和Linux都使用用户和组来管理权限，但它们的实现方式不同。Windows使用安全标识符（SID）来表示用户和组，而Linux使用用户 ID（UID）和组 ID（GID）。</li>
 <li>工具和命令：Windows和Linux使用不同的工具和命令来管理文件和目录的权限。Windows中常用的工具包括图形界面和命令行工具，如“icacls”和“cacls”。在Linux系统中，可以使用命令如“chmod”、“chown”和“setfacl”等来管理权限。</li>
@@ -348,7 +557,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-10 06:07:45" itemprop="dateModified" datetime="2023-04-10T06:07:45Z">2023-04-10</time>
+                <time title="修改时间：2023-09-10 14:06:34" itemprop="dateModified" datetime="2023-09-10T14:06:34Z">2023-09-10</time>
               </span>
 
           
@@ -393,6 +602,7 @@
 <blockquote>
 <p>项目完整地址见<a target="_blank" rel="noopener" href="https://github.com/XUranus/Win32VSSWrapper">https://github.com/XUranus/Win32VSSWrapper</a><br>下文所说的<strong>卷影副本</strong>和<strong>快照</strong>属于一个概念</p>
 </blockquote>
+<h2 id="vssadmin卷操作"><a href="#vssadmin卷操作" class="headerlink" title="vssadmin卷操作"></a>vssadmin卷操作</h2><p>所有支持VSS的Windows系统已经提供了一个管理卷影副本的命令行工具vssadmin。使用<strong>管理员权限</strong>进入cmd，执行卷影副本命令<code>vssadmin</code>，可以看到所有支持的命令：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\WINDOWS\system32&gt;vssadmin</span><br><span class="line">vssadmin 1.1 - 卷影复制服务管理命令行工具</span><br><span class="line">(C) 版权所有 2001-2013 Microsoft Corp.</span><br><span class="line"></span><br><span class="line">---- 支持的命令 ----</span><br><span class="line"></span><br><span class="line">Delete Shadows        - 删除卷影副本</span><br><span class="line">List Providers        - 列出已注册的卷影副本提供程序</span><br><span class="line">List Shadows          - 列出现有卷影副本</span><br><span class="line">List ShadowStorage    - 列出卷影副本存储关联</span><br><span class="line">List Volumes          - 列出可以进行卷影副本处理的卷</span><br><span class="line">List Writers          - 列出订阅的卷影副本写入程序</span><br><span class="line">Resize ShadowStorage  - 调整卷影副本存储关联的大小</span><br></pre></td></tr></table></figure></p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2023/03/20/Windows%E5%88%9B%E5%BB%BA%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC/#more" rel="contents">
@@ -450,7 +660,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-26 22:25:49" itemprop="dateModified" datetime="2023-04-26T22:25:49Z">2023-04-26</time>
+                <time title="修改时间：2023-09-10 14:06:34" itemprop="dateModified" datetime="2023-09-10T14:06:34Z">2023-09-10</time>
               </span>
 
           
@@ -492,214 +702,11 @@
       
           <p>Alternative Data Streams (ADS)是Windows文件系统中引入的一项功能，可以为文件关联额外的数据流。这项功能的诞生原因是为了提高文件系统的兼容性和功能性，特别是与Macintosh和Unix系统创建的文件进行交互时。</p>
 <p>在Macintosh和Unix系统中，文件可以具有多个数据流，而Windows文件系统中最初只支持一个数据流。为了使Windows文件系统与其他操作系统更兼容，Microsoft引入了ADS功能，使Windows文件系统能够处理多个数据流。这项功能可以用于存储文件的元数据，如作者、创建日期、修改日期等，还可以用于存储图像和音频文件的缩略图、元数据等。</p>
+<p>ADS功能可以提供重要的功能和灵活性，但也带来了一些安全风险。因为ADS可以隐藏在文件中，不容易被普通的文件系统API或一些防病毒软件所发现，因此，它也可能被恶意软件利用来隐藏其存在，使得系统的安全受到威胁。</p>
+<p>尽管如此，ADS仍然被保留在Windows文件系统中，因为它在某些应用程序和使用情况下提供了重要的功能。但是，用户和组织需要意识到ADS所带来的安全风险，并采取措施来减轻这些风险，例如使用专门设计用于检测ADS中隐藏的恶意软件的防病毒软件等。本文将介绍ADS的创建和检测，以及如何用Win32 API读写ADS。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F3/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F2/" class="post-title-link" itemprop="url">Windows文件系统概述(二)指向点</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-03-19 14:23:17" itemprop="dateCreated datePublished" datetime="2023-03-19T14:23:17Z">2023-03-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-10 06:07:45" itemprop="dateModified" datetime="2023-04-10T06:07:45Z">2023-04-10</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F2/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/03/19/Windows文件系统2/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>13k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>12 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>上一篇文件我们主要介绍了Windows文件系统的基本特性及文档阅读方式，本文将介绍Windows文件系统中一种特殊的概念：<strong>指向点（Reparse Point）</strong></p>
-</blockquote>
-<p>回顾上一章节，我们在文件<code>dwFileAttributes</code>依据符号位<code>FILE_ATTRIBUTE_REPARSE_POINT</code>实现了一个方法：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">StatResult::IsReparsePoint</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (m_handleFileInformation.dwFileAttributes &amp; FILE_ATTRIBUTE_REPARSE_POINT) != <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>我们还没有说明这个方法的意义，该方法说明<strong>该文件是一个指向点（Reparse Point）</strong>。Reparse Point是一种特殊机制，用于实现Windows文件系统的重定向。Windows的挂载和软连接就是基于它实现的。在详解<code>FILE_ATTRIBUTE_REPARSE_POINT</code>之前，我们先从Windows软链接开始看起。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F2/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/02/28/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/02/28/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F1/" class="post-title-link" itemprop="url">Windows文件系统概述(一)基本概念</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-02-28 12:56:37" itemprop="dateCreated datePublished" datetime="2023-02-28T12:56:37Z">2023-02-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-10 06:07:45" itemprop="dateModified" datetime="2023-04-10T06:07:45Z">2023-04-10</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2023/02/28/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F1/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/02/28/Windows文件系统1/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>20k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>18 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>最近接触Windows文件备份相关的业务，从Win32 API入手对Windows文件系统的基本概念做一个总结。学习Windows文件系统最好方式还是阅读<a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/fileapi">官方文档</a>，本文只是对相关概念进行粗浅的介绍，权当抛砖引玉。<br>本文完整代码见：<a target="_blank" rel="noopener" href="https://github.com/XUranus/FileSystemUtil">https://github.com/XUranus/FileSystemUtil</a></p>
-</blockquote>
-<h2 id="Win32-API-Doc"><a href="#Win32-API-Doc" class="headerlink" title="Win32 API Doc"></a>Win32 API Doc</h2><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/fileapi">官方文档</a>。文档会详细描述每一个API的入参、出参、返回的字段含义和取值范围，部分还会给出Example程序。</p>
-<p>Windows程序开发一般使用MSVC，和GCC有不少区别。为了更有效率的学习Windows文件系统，在介绍文件系统之前，本文先给Linux转Windows的开发者介绍一下Windows的编码和文档阅读方式，磨刀不误砍柴工。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/02/28/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F1/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -790,7 +797,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">122</span>
+          <span class="site-state-item-count">124</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -803,7 +810,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-count">59</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -839,12 +846,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">621k</span>
+    <span title="站点总字数">638k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:25</span>
+    <span title="站点阅读时长">9:40</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>

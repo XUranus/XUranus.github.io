@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="基于卷做的备份&#x2F;恢复有较大局限性，例如对于文件系统使用率比较低的场景，使用卷备份会导致磁盘利用率低；例如文件系统中文件普遍比较大的场景，卷备份也难以发挥出性能优势。但是卷备份在特定场景下也有不小的优势：卷备份主机硬盘取证的领域都是常见的业务，通过备份整卷可以获得很高的备份&#x2F;恢复速度，备份系统卷可以直接恢复操作系统。本系列以卷备份作为专题，介绍卷的基本概念以及备份恢复及后续数据利用的几种解决方案。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="卷备份（一）基本概念与备份引擎的实现">
+<meta property="og:url" content="http://xuranus.github.io/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD1/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="基于卷做的备份&#x2F;恢复有较大局限性，例如对于文件系统使用率比较低的场景，使用卷备份会导致磁盘利用率低；例如文件系统中文件普遍比较大的场景，卷备份也难以发挥出性能优势。但是卷备份在特定场景下也有不小的优势：卷备份主机硬盘取证的领域都是常见的业务，通过备份整卷可以获得很高的备份&#x2F;恢复速度，备份系统卷可以直接恢复操作系统。本系列以卷备份作为专题，介绍卷的基本概念以及备份恢复及后续数据利用的几种解决方案。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD1/volume-vs-partition-2.png">
+<meta property="og:image" content="http://xuranus.github.io/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD1/volume-vs-partition-1.png">
+<meta property="article:published_time" content="2023-08-31T18:37:02.000Z">
+<meta property="article:modified_time" content="2023-09-10T14:06:34.565Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="卷备份">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD1/volume-vs-partition-2.png">
+
+<link rel="canonical" href="http://xuranus.github.io/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>卷备份（一）基本概念与备份引擎的实现 | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">59</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">124</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          卷备份（一）基本概念与备份引擎的实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-08-31 18:37:02" itemprop="dateCreated datePublished" datetime="2023-08-31T18:37:02Z">2023-08-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-09-10 14:06:34" itemprop="dateModified" datetime="2023-09-10T14:06:34Z">2023-09-10</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD1/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/09/01/卷备份1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>6.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>基于卷做的备份/恢复有较大局限性，例如对于文件系统使用率比较低的场景，使用卷备份会导致磁盘利用率低；例如文件系统中文件普遍比较大的场景，卷备份也难以发挥出性能优势。但是卷备份在特定场景下也有不小的优势：卷备份主机硬盘取证的领域都是常见的业务，通过备份整卷可以获得很高的备份/恢复速度，备份系统卷可以直接恢复操作系统。本系列以卷备份作为专题，介绍卷的基本概念以及备份恢复及后续数据利用的几种解决方案。</p>
+</blockquote>
+<h1 id="卷、分区、磁盘的基本概念"><a href="#卷、分区、磁盘的基本概念" class="headerlink" title="卷、分区、磁盘的基本概念"></a>卷、分区、磁盘的基本概念</h1><p>作为本系列第一章，本文先介绍什么是卷。卷（Volume）分区（Partition）以及硬盘（Hard disk）是一组常常被混淆的概念。硬盘是物理上的概念，通常常用的硬盘有机械硬盘（Hard Disk Drive）和固态硬盘（Solid State）等，本文则不做详述。卷和分区都是存储区域，两者相似但不相同：<strong>卷是一个拥有单一文件系统的可访问的存储区域，分区是一个硬盘上划分出的一部分</strong>。这句话意思是，分区往往是一个具体的概念，存在于具体磁盘上的某一<em>连续的</em>具体区域，分区可以不带文件系统（通常没有被初始化的RAW分区也算分区）。卷则是一个抽象的概念，它必须和单一文件系统强关联，且一个卷可能存在于一个或多个磁盘中。由于卷是逻辑的概念，对于Linux/Windows操作系统会表现出差异性，而物理分区则是构成逻辑卷的基础，所以先从分区谈起。</p>
+<span id="more"></span>
+<h2 id="分区"><a href="#分区" class="headerlink" title="分区"></a>分区</h2><p>无论是Linux还是Windows，划分硬盘分区都使用GPT或者MBR分区表，每张磁盘都仅仅支持一个分布表用于定义磁盘布局，它们有MBR和GPT两种：</p>
+<ul>
+<li>主引导记录(Master Boot Record)：MBR是一种Windows上常见的较老的分区模式，在硬盘头部占用512字节。由于MBR使用32字节标记逻辑块地址，按照每块512KB计算，MBR分区有最大2TB的限制。MBR支持的分区数也很有限，最大支持四个主分区（Primary Partition）或者三个主分区带一个扩展分区（Extend Partition）。使用MBR分区的系统盘只能以BIOS(Legacy)的方式引导。</li>
+<li>GUID分区表(GUID Partition Table)：GPT是较新的一种分区模式，在硬盘头部和尾部都占用部分空间且可以扩展。GPT能突破MBR的种种限制，支持高达128个主分区，分区大小能达到9.4ZB。使用GPT作为分区表的系统盘使用EFI引导，需要BIOS支持EFI（一般现代计算机都已经支持EFI）。</li>
+</ul>
+<p>GPT分配的每个分区都是主分区，MBR可以分配4主或者3主+1扩展，而<strong>扩展分区上又可以进一步划分逻辑分区（Logical Partition）</strong>。谈论主分区、扩展分区、逻辑分区一般都是就Windows + MBR的场景而言：</p>
+<ul>
+<li>主分区：最多4个。<strong>需要分配驱动器号</strong>，可以用作系统盘<code>C:\</code></li>
+<li>扩展分区：最多1个，其中可以再包含若干逻辑分区。</li>
+<li>逻辑分区：只能用于存放数据信息，不可用于系统盘。<strong>可以不分配驱动器号。</strong></li>
+</ul>
+<p><img src="volume-vs-partition-2.png" alt=""></p>
+<h2 id="卷"><a href="#卷" class="headerlink" title="卷"></a>卷</h2><p>卷是建立在分区之上更加抽象的概念，一个卷可以占用一个或多个分区，可以占用不在同一块硬盘上的不同分区，所以卷永久远超分区的扩展性。即使MBR只支持2TB的分区，也可以通过卷创建更大的文件系统。由于卷是逻辑上的概念，不同操作系统对于卷的概念的定义、实现和管理都不一致。</p>
+<h3 id="LDM、基础磁盘与动态磁盘"><a href="#LDM、基础磁盘与动态磁盘" class="headerlink" title="LDM、基础磁盘与动态磁盘"></a>LDM、基础磁盘与动态磁盘</h3><p>Windows引入了基础磁盘（Basic Disk）和动态磁盘（Dynamic Disk）的概念。对于Windows而言，卷和分区的显著差别是：<strong>分区是创建在基础磁盘之上的，而卷是创建在动态磁盘之上的</strong>。在Windows的磁盘管理中可以设置磁盘是基础磁盘或是动态磁盘：<img src="volume-vs-partition-1.png" alt="">。右击磁盘可以选择将基础磁盘转变为动态磁盘，整个转化过程是无损的。相反，将动态磁盘转为基本磁盘则是不支持的（需要借助三方工具）。动态磁盘的头部和尾部区域都被写入了特定的元数据用于描述动态磁盘的分区布局以支持更强大的可扩展性。基于动态磁盘创建的卷有如下几种类型：</p>
+<ul>
+<li>简单卷（Simple Volume）：占用一个磁盘上的一个分区。简单卷是个人PC上最常见的卷，通过Windows磁盘管理器右击RAW分区创建简单卷。</li>
+<li>镜像卷（Mirrored Volume）：使用位于两个不同硬盘的副本来保持数据冗余，所有的写操作都会在两个磁盘上分别进行。镜像卷可以实现数据容灾，在一个硬盘不可用时依然保障数据安全。</li>
+<li>条带卷（Striped Volume）：又称RAID0，使用两个以上磁盘的分区创建逻辑卷，每次写操作只会在一个磁盘上进行。提供多通道数，可以提高I/O吞吐量。不提供数据冗余，不能实现容灾，且任意磁盘损坏都会导致数据丢失，是<strong>可靠性最低</strong>的一种卷。</li>
+<li>跨区卷（Spanned Volume）：通过把多个磁盘的分区合并成一个逻辑卷，分区之间有先后顺序，之后之前的分区用满了才会用下一个分区。可以提升卷容量。不提供数据冗余，不能实现容灾。</li>
+<li>RAID-5卷：通过使用三个及以上的磁盘，统合条带卷、跨区卷和镜像卷的优势，维护数据多副本冗余，可以在部分磁盘失效后快速恢复数据。既能提高吞吐量，又能扩展卷空间，还能容灾。</li>
+</ul>
+<p>Windows上的卷一般通过LDM（Logical Disk Manager）管理，LDM基于Basic Disk/Dynamic Disk机制实现，通过在硬盘的头尾写入特定元数据，记录动态磁盘的相互关系从而构成逻辑卷。</p>
+<blockquote>
+<p>无论动态磁盘还是基础磁盘，都有分区表，且都是MBR/GPT其一。</p>
+</blockquote>
+<h3 id="LVM与DeviceMapper"><a href="#LVM与DeviceMapper" class="headerlink" title="LVM与DeviceMapper"></a>LVM与DeviceMapper</h3><p>而Linux上的卷一般通过LVM（Logical Volume Manager）管理，LVM提供从多个块设备创建LVM卷、管理卷组、弹性扩容、打快照等能力，底层依赖于Linux的DeviceMapper。DeviceMapper可以从多个块设备中创建类似Windows上几类逻辑卷：mirror、stripped、linear(Windows的Spanned Volume)、RAID。此外，DeviceMapper还可以用于实现加密文件系统的加密层。有关DeviceMapper的CLI程序<code>dmsetup</code>的使用方法可以参考：<a target="_blank" rel="noopener" href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/logical_volume_manager_administration/device_mapper">Appendix A. The Device Mapper</a></p>
+<p>DeviceMapper创建的设备一般位于<code>/dev/dm-X</code>，被软连接链接到<code>/dev/mapper/$dmDevName</code></p>
+<blockquote>
+<p><code>/dev/dm-X</code>形如<code>/dev/dm-0</code>，<code>/dev/dm-1</code>…. <code>/dev/mapper/$dmDevName</code>中的<code>$dmDevName</code>标记一个DeviceMapper设备的唯一名称。发送给DeviceMapper的创建的块设备路径的I/O请求会被Kernal中的DeviceMapper驱动根据用户配置的规则映射到不同的目标磁盘的不同偏移量，创建/删除设备的控制信息则由DeviceMappper控制设备<code>/dev/mapper/control</code>转发。LVM创建<code>vg1</code>卷组中名为<code>lv1</code>的逻辑卷，则会映射到<code>/dev/mapper/vg1-lv1</code>，通过指向对这些路径执行<code>mkfs</code>可以初始化卷的文件系统并创建逻辑卷。</p>
+</blockquote>
+<h1 id="获取卷的信息"><a href="#获取卷的信息" class="headerlink" title="获取卷的信息"></a>获取卷的信息</h1><p>以上介绍了Windows/Linux下卷的基本概念，可知本系列为何称为“卷备份”而不是“分区备份”或者“磁盘备份”。备份卷，自然只需与操作系统抽象出的卷设备交互即可，无需感知组成卷的分区在磁盘上如何分布。要备份卷设备，就是要备份卷的元数据（大小、UUID、挂载信息……）与卷中二进制数据。接下来就介绍如何操作系统平台相关API读取卷的信息。</p>
+<h2 id="使用POSIX-API读取LINUX卷信息"><a href="#使用POSIX-API读取LINUX卷信息" class="headerlink" title="使用POSIX API读取LINUX卷信息"></a>使用POSIX API读取LINUX卷信息</h2><p>Linux上所有设备被当成文件的形式映射在<code>/dev</code>目录下。<code>/dev</code>下包含块设备，字符设备，无论虚拟设备还是物理设备。SATA设备被映射为<code>/dev/sda</code>,<code>/dev/sdb</code>,<code>/dev/sdc</code>…..。nvme SSD设备被映射为<code>/dev/nvmen1</code>,<code>/dev/nvmen2</code>…..。对于块设备中的分区在尾部加上数字区分，例如<code>/dev/sda1</code>，<code>/dev/sda2</code>……。LVM卷或者DeviceMapper管理的其他卷存放于<code>/dev/dm-X</code>并链接到<code>/dev/mapper/$dmDeviceName</code>下。</p>
+<p>对于Linux上的卷设备都表现为块设备，支持按照偏移量读取和写入，所以可以直接当成为超大文件读写，直接使用POSIX API提供的<code>open()</code>,<code>close()</code>,<code>read()</code>,<code>write()</code>,<code>flush()</code>,<code>lseek()</code>即可。需要注意的是读写卷设备往往需要<code>root</code>用户组权限，执行备份操作<code>O_RDONLY</code>打开并读取卷数据时卷可以被挂载，但是恢复卷数据时<strong>以<code>O_RDWR</code>打开并写入卷信息时卷必须解挂载！否则会报<code>EACCES</code>错误</strong>。</p>
+<p>Linux下获取卷大小可以用<code>BLKGETSIZE64</code>的<code>ioctl</code>读取块设备大小，实例代码如下：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">uint64_t</span> <span class="title">GetVolumeSizeLinux</span><span class="params">(<span class="keyword">const</span> std::string&amp; devicePath)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> fd = ::<span class="built_in">open</span>(devicePath.<span class="built_in">c_str</span>(), O_RDONLY);</span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// failed to open device</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">uint64_t</span> size = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (::<span class="built_in">ioctl</span>(fd, BLKGETSIZE64, &amp;size) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        ::<span class="built_in">close</span>(fd);</span><br><span class="line">        <span class="comment">// failed to execute ioctl BLKGETSIZE64</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    ::<span class="built_in">close</span>(fd);</span><br><span class="line">    <span class="keyword">return</span> size;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="使用WIN32-API读取Windows卷信息"><a href="#使用WIN32-API读取Windows卷信息" class="headerlink" title="使用WIN32 API读取Windows卷信息"></a>使用WIN32 API读取Windows卷信息</h2><p>NT内核下也沿袭了Linux“设备皆文件的”的设计思想，例如硬盘、光驱等设备拥有各自的设备路径：<code>\Device\HarddiskVolume1</code>，<code>\Device\HarddiskVolume2</code>，<code>\Device\CdRom0</code>……。WIN32读写卷设备的方法和POSIX API类似，使用<code>CreateFile()</code>获取打开设备句柄，用<code>ReadFile()</code>、<code>WriteFile()</code>读写卷，用<code>CloseHandle()</code>关闭句柄。</p>
+<p>WIN32 API提供了<code>IOCTL_DISK_GET_LENGTH_INFO</code>的<code>DeviceIoControl</code>调用获取卷大小，示例代码如下：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">uint64_t</span> <span class="title">GetVolumeSizeWin32</span><span class="params">(<span class="keyword">const</span> std::wstring&amp; wDevicePath)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Open the device</span></span><br><span class="line">    HANDLE hDevice = ::<span class="built_in">CreateFileW</span>(</span><br><span class="line">        wDevicePath.<span class="built_in">c_str</span>(),</span><br><span class="line">        GENERIC_READ,</span><br><span class="line">        FILE_SHARE_READ | FILE_SHARE_WRITE,</span><br><span class="line">        <span class="literal">nullptr</span>,</span><br><span class="line">        OPEN_EXISTING,</span><br><span class="line">        FILE_FLAG_BACKUP_SEMANTICS,</span><br><span class="line">        <span class="literal">nullptr</span>);</span><br><span class="line">    <span class="keyword">if</span> (hDevice == INVALID_HANDLE_VALUE) &#123;</span><br><span class="line">        <span class="comment">// Failed to open handle</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Query the length information</span></span><br><span class="line">    GET_LENGTH_INFORMATION lengthInfo &#123;&#125;;</span><br><span class="line">    DWORD bytesReturned = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (!::<span class="built_in">DeviceIoControl</span>(</span><br><span class="line">        hDevice,</span><br><span class="line">        IOCTL_DISK_GET_LENGTH_INFO,</span><br><span class="line">        <span class="literal">nullptr</span>,</span><br><span class="line">        <span class="number">0</span>,</span><br><span class="line">        &amp;lengthInfo,</span><br><span class="line">        <span class="built_in"><span class="keyword">sizeof</span></span>(GET_LENGTH_INFORMATION),</span><br><span class="line">        &amp;bytesReturned,</span><br><span class="line">        <span class="literal">nullptr</span>)) &#123;</span><br><span class="line">        <span class="comment">// Failed to query length, failed to call IOCTL_DISK_GET_LENGTH_INFO</span></span><br><span class="line">        ::<span class="built_in">CloseHandle</span>(hDevice);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    ::<span class="built_in">CloseHandle</span>(hDevice);</span><br><span class="line">    <span class="keyword">return</span> lengthInfo.Length.QuadPart;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>有关卷的其他信息可以试用<code>[GetVolumeInfomationByHandle()](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getvolumeinformationbyhandlew)</code>获取，涉及卷序列号，卷名等属性。</p>
+<p>有关使用系统API实现卷备份引擎的相关内容，将在之后章节详细讲述。</p>
+<h1 id="快照与一致性备份"><a href="#快照与一致性备份" class="headerlink" title="快照与一致性备份"></a>快照与一致性备份</h1><p>由于被挂载的卷可能在备份过程中被其他进程写入数据，导致备份的卷副本爆发保障一致性。在文件备份中，这种不一致性往往只表现在副本中部分大文件失效，而卷备份副本的不一致性则是致命的，他会导致整个卷副本的数据失效。所以卷备份保障一致性无非就两种做法：</p>
+<ul>
+<li>解挂载卷：在备份卷设备前将卷对应的文件系统解挂载。这种方法可以保障备份的过程中卷的数据不发生变动，裸机备份就是用的这种思路。但是实际上处于生产环境的卷设备很难在业务不中断的场景下解挂载，于是用的更多的还是打快照。</li>
+<li>快照卷：Windows提供的VSS和Linux的LVM提供的快照能力可以基于某个卷创建快照卷。快照卷也是一类卷，实际备份的过程中应该从快照卷读取数据写入副本来保证卷副本的一致性。</li>
+</ul>
+<h1 id="备份引擎实现"><a href="#备份引擎实现" class="headerlink" title="备份引擎实现"></a>备份引擎实现</h1><p>之前章节介绍了卷的基本概念以及读写接口，为卷备份引擎的实现提供了基础。本章介绍卷的备份与恢复的主要流程，涉及全量备份，永久增量备份，卷恢复。至于不做增量备份的原因，是因为笔者认为：卷增量副本对于数据利用的价值不大，想要挂载卷副本时需要先还原出全量副本。因此本章只讨论全量备份和永久增量备份两种方案，而恢复的副本则只需要考虑全量副本或者合成全量副本。</p>
+<h2 id="场景描述"><a href="#场景描述" class="headerlink" title="场景描述"></a>场景描述</h2><p>卷备份引擎应该具有以下三种使用场景：</p>
+<ul>
+<li>全量备份：从卷中读取全部数据，写入副本文件，同时为卷中数据生成对应的元数据</li>
+<li>永久增量备份：从卷中读取全部数据，同全量数据做对比，基于上一次全量副本只写入修改的数据，生成<strong>合成全量副本</strong>，同时生成新的合成全量副本对应的元数据</li>
+<li>卷恢复：从卷副本中读取数据，写入到卷设备</li>
+</ul>
+<p>其中元数据包含了卷的基本信息，如：大小，挂载点，设备路径，等。为了实现永久增量备份，还需要按块计算卷数据的对应checksum。例如，备份同时按照每4MB计算数据对应的SHA2 checksum，依次存下来。下一次增量备份时同样按快计算相同位置的数据并比对，将checksum变动的块写入到新的合成全量副本中。</p>
+<h2 id="备份恢复引擎"><a href="#备份恢复引擎" class="headerlink" title="备份恢复引擎"></a>备份恢复引擎</h2><p>备份引擎由Reader，Hasher，和Writer三个组件构成，分别用于实现读数据，对数据哈希，写入数据。haserQueue和writerQueue是分别用作Reader和Hasher以及Hasher和Writer通信的阻塞队列。Reader启动后打开一个卷或者一个副本文件，主线程不断按照4MB的大小读取数据，将数据Push进hasherQueue。Hasher订阅hasherQueue，不断Pop出数据块，并计算块对应的SHA2 checksum，如果是增量备份场景则与上一次全量副本对应位置块的checksum做比对，有差异则Push给writerQueue；如果是全量备份或者则无需比对直接Push给writerQueue。Writer启动后打开卷或者副本文件，主线程订阅writerQueue，不断Pop出数据块并写入目标位置。</p>
+<pre class="mermaid">sequenceDiagram
+  participant Reader
+  participant Hasher
+  participant Writer
+
+  Reader->>Hasher: Read 4MB Data
+  Hasher->>Hasher: Calculate SHA2 checksum
+  Hasher->>Writer: Push Data to writerQueue (if different)
+
+  alt Incremental Backup
+    Hasher-->>Hasher: Compare with previous checksum
+  end
+
+  Writer->>Writer: Write Data</pre>
+
+<p>卷恢复流程则只涉及Reader和Writer，只需要readQueue来沟通Reader和Writer即可，无需Hasher和HasherQueue参与。</p>
+<p>由于卷可能会很大，而存储副本的文件大小受限于文件系统的支持的最大文件大小，实际存储副本文件时，需要对副本进行切片。一个备份任务可以拆分成几个会话（Session）进行，每个Session都对应上述的流程，备份卷的一块切片（Slice）并分别存入一个切片副本文件中。恢复则对副本中各个切片文件逐一恢复。</p>
+<blockquote>
+<p>完整代码见<a target="_blank" rel="noopener" href="https://github.com/XUranus/VolumeBackup">https://github.com/XUranus/VolumeBackup</a></p>
+</blockquote>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Device_mapper">Device mapper - Wikipedia</a></li>
+<li><a target="_blank" rel="noopener" href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/logical_volume_manager_administration/device_mapper">Appendix A. The Device Mapper</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.minitool.com/partition-disk/volume-vs-partition.html">What’s the Difference Between Volume and Partition on Windows OS?</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%8D%B7%E5%A4%87%E4%BB%BD/" rel="tag"># 卷备份</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/04/16/C-%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" rel="prev" title="C++中的函数式编程">
+      <i class="fa fa-chevron-left"></i> C++中的函数式编程
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD2/" rel="next" title="卷备份（二）挂载副本镜像">
+      卷备份（二）挂载副本镜像 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%B7%E3%80%81%E5%88%86%E5%8C%BA%E3%80%81%E7%A3%81%E7%9B%98%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">卷、分区、磁盘的基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%8C%BA"><span class="nav-number">1.1.</span> <span class="nav-text">分区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%B7"><span class="nav-number">1.2.</span> <span class="nav-text">卷</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LDM%E3%80%81%E5%9F%BA%E7%A1%80%E7%A3%81%E7%9B%98%E4%B8%8E%E5%8A%A8%E6%80%81%E7%A3%81%E7%9B%98"><span class="nav-number">1.2.1.</span> <span class="nav-text">LDM、基础磁盘与动态磁盘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LVM%E4%B8%8EDeviceMapper"><span class="nav-number">1.2.2.</span> <span class="nav-text">LVM与DeviceMapper</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%8D%B7%E7%9A%84%E4%BF%A1%E6%81%AF"><span class="nav-number">2.</span> <span class="nav-text">获取卷的信息</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8POSIX-API%E8%AF%BB%E5%8F%96LINUX%E5%8D%B7%E4%BF%A1%E6%81%AF"><span class="nav-number">2.1.</span> <span class="nav-text">使用POSIX API读取LINUX卷信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8WIN32-API%E8%AF%BB%E5%8F%96Windows%E5%8D%B7%E4%BF%A1%E6%81%AF"><span class="nav-number">2.2.</span> <span class="nav-text">使用WIN32 API读取Windows卷信息</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BF%AB%E7%85%A7%E4%B8%8E%E4%B8%80%E8%87%B4%E6%80%A7%E5%A4%87%E4%BB%BD"><span class="nav-number">3.</span> <span class="nav-text">快照与一致性备份</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%87%E4%BB%BD%E5%BC%95%E6%93%8E%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">备份引擎实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF%E6%8F%8F%E8%BF%B0"><span class="nav-number">4.1.</span> <span class="nav-text">场景描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D%E5%BC%95%E6%93%8E"><span class="nav-number">4.2.</span> <span class="nav-text">备份恢复引擎</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.3.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">124</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">59</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">638k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">9:40</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD1/";
+    this.page.identifier = "2023/09/01/卷备份1/";
+    this.page.title = "卷备份（一）基本概念与备份引擎的实现";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

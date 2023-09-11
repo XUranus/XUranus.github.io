@@ -28,7 +28,7 @@
 <meta property="og:description" content="Windows Server 2008以上的版本，管理员可以通过卷影副本服务（Volume Shadow Service）在指定的卷上创建备份的卷影副本。卷影副本类似于快照(Snapshot)，用户可以基于快照卷恢复到之前某个时间的版本，备份软件也可基于快照做一致性备份。因此，它可以极大保护服务器的数据安全。 本文就介绍VSS相关操作以及如何用C++调用相关API。  项目完整地址见https:&#x2F;">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-03-20T12:57:29.000Z">
-<meta property="article:modified_time" content="2023-04-10T06:07:45.255Z">
+<meta property="article:modified_time" content="2023-09-10T14:06:34.562Z">
 <meta property="article:author" content="XUranus">
 <meta property="article:tag" content="文件系统">
 <meta property="article:tag" content="快照">
@@ -124,7 +124,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">58</span></a>
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">59</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -134,7 +134,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">122</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">124</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -242,7 +242,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-10 06:07:45" itemprop="dateModified" datetime="2023-04-10T06:07:45Z">2023-04-10</time>
+                <time title="修改时间：2023-09-10 14:06:34" itemprop="dateModified" datetime="2023-09-10T14:06:34Z">2023-09-10</time>
               </span>
 
           
@@ -287,8 +287,9 @@
 <blockquote>
 <p>项目完整地址见<a target="_blank" rel="noopener" href="https://github.com/XUranus/Win32VSSWrapper">https://github.com/XUranus/Win32VSSWrapper</a><br>下文所说的<strong>卷影副本</strong>和<strong>快照</strong>属于一个概念</p>
 </blockquote>
+<h2 id="vssadmin卷操作"><a href="#vssadmin卷操作" class="headerlink" title="vssadmin卷操作"></a>vssadmin卷操作</h2><p>所有支持VSS的Windows系统已经提供了一个管理卷影副本的命令行工具vssadmin。使用<strong>管理员权限</strong>进入cmd，执行卷影副本命令<code>vssadmin</code>，可以看到所有支持的命令：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\WINDOWS\system32&gt;vssadmin</span><br><span class="line">vssadmin 1.1 - 卷影复制服务管理命令行工具</span><br><span class="line">(C) 版权所有 2001-2013 Microsoft Corp.</span><br><span class="line"></span><br><span class="line">---- 支持的命令 ----</span><br><span class="line"></span><br><span class="line">Delete Shadows        - 删除卷影副本</span><br><span class="line">List Providers        - 列出已注册的卷影副本提供程序</span><br><span class="line">List Shadows          - 列出现有卷影副本</span><br><span class="line">List ShadowStorage    - 列出卷影副本存储关联</span><br><span class="line">List Volumes          - 列出可以进行卷影副本处理的卷</span><br><span class="line">List Writers          - 列出订阅的卷影副本写入程序</span><br><span class="line">Resize ShadowStorage  - 调整卷影副本存储关联的大小</span><br></pre></td></tr></table></figure></p>
 <span id="more"></span>
-<h2 id="vssadmin卷操作"><a href="#vssadmin卷操作" class="headerlink" title="vssadmin卷操作"></a>vssadmin卷操作</h2><p>所有支持VSS的Windows系统已经提供了一个管理卷影副本的命令行工具vssadmin。使用<strong>管理员权限</strong>进入cmd，执行卷影副本命令<code>vssadmin</code>，可以看到所有支持的命令：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\WINDOWS\system32&gt;vssadmin</span><br><span class="line">vssadmin 1.1 - 卷影复制服务管理命令行工具</span><br><span class="line">(C) 版权所有 2001-2013 Microsoft Corp.</span><br><span class="line"></span><br><span class="line">---- 支持的命令 ----</span><br><span class="line"></span><br><span class="line">Delete Shadows        - 删除卷影副本</span><br><span class="line">List Providers        - 列出已注册的卷影副本提供程序</span><br><span class="line">List Shadows          - 列出现有卷影副本</span><br><span class="line">List ShadowStorage    - 列出卷影副本存储关联</span><br><span class="line">List Volumes          - 列出可以进行卷影副本处理的卷</span><br><span class="line">List Writers          - 列出订阅的卷影副本写入程序</span><br><span class="line">Resize ShadowStorage  - 调整卷影副本存储关联的大小</span><br></pre></td></tr></table></figure><br>这里我们主要讨论副本的创建、删除、查询。首先用<code>vssadmin list shadows</code>列出所有卷影副本：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\WINDOWS\system32&gt;vssadmin list shadows</span><br><span class="line">vssadmin 1.1 - 卷影复制服务管理命令行工具</span><br><span class="line">(C) 版权所有 2001-2013 Microsoft Corp.</span><br><span class="line"></span><br><span class="line">卷影副本集 ID: &#123;d85162e7-db49-4035-956e-465e1a7f3747&#125; 的内容</span><br><span class="line">   在创建时间: 2023/1/17 13:46:05 含有 1 个卷影副本</span><br><span class="line">      卷影副本 ID: &#123;f8bf1cfc-ddab-47ad-8156-3f1f45f70641&#125;</span><br><span class="line">         原始卷: (C:)\\?\Volume&#123;a501f5cc-311e-423c-bc58-94a6c1b6b509&#125;\</span><br><span class="line">         卷影副本卷: \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1</span><br><span class="line">         源起机器: DESKTOP-TODPNBO</span><br><span class="line">         服务机器: DESKTOP-TODPNBO</span><br><span class="line">         提供程序: &#x27;Microsoft Software Shadow Copy provider 1.0&#x27;</span><br><span class="line">         类型: ClientAccessibleWriters</span><br><span class="line">         属性: 持续, 客户端可访问, 无自动释放, 差异, 自动还原</span><br><span class="line"></span><br><span class="line">卷影副本集 ID: &#123;1abe303d-eb32-445a-ae78-72432980191b&#125; 的内容</span><br><span class="line">   在创建时间: 2023/1/18 23:38:42 含有 1 个卷影副本</span><br><span class="line">      卷影副本 ID: &#123;5fee2842-be4e-4477-86c6-1c0c28221a4f&#125;</span><br><span class="line">         原始卷: (C:)\\?\Volume&#123;a501f5cc-311e-423c-bc58-94a6c1b6b509&#125;\</span><br><span class="line">         卷影副本卷: \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy2</span><br><span class="line">         源起机器: DESKTOP-TODPNBO</span><br><span class="line">         服务机器: DESKTOP-TODPNBO</span><br><span class="line">         提供程序: &#x27;Microsoft Software Shadow Copy provider 1.0&#x27;</span><br><span class="line">         类型: ClientAccessibleWriters</span><br><span class="line">         属性: 持续, 客户端可访问, 无自动释放, 差异, 自动还原</span><br></pre></td></tr></table></figure><br><code>vssadmin list shadows</code>可以展开每个副本的详细信息，包含：</p>
+<p>这里我们主要讨论副本的创建、删除、查询。首先用<code>vssadmin list shadows</code>列出所有卷影副本：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\WINDOWS\system32&gt;vssadmin list shadows</span><br><span class="line">vssadmin 1.1 - 卷影复制服务管理命令行工具</span><br><span class="line">(C) 版权所有 2001-2013 Microsoft Corp.</span><br><span class="line"></span><br><span class="line">卷影副本集 ID: &#123;d85162e7-db49-4035-956e-465e1a7f3747&#125; 的内容</span><br><span class="line">   在创建时间: 2023/1/17 13:46:05 含有 1 个卷影副本</span><br><span class="line">      卷影副本 ID: &#123;f8bf1cfc-ddab-47ad-8156-3f1f45f70641&#125;</span><br><span class="line">         原始卷: (C:)\\?\Volume&#123;a501f5cc-311e-423c-bc58-94a6c1b6b509&#125;\</span><br><span class="line">         卷影副本卷: \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1</span><br><span class="line">         源起机器: DESKTOP-TODPNBO</span><br><span class="line">         服务机器: DESKTOP-TODPNBO</span><br><span class="line">         提供程序: &#x27;Microsoft Software Shadow Copy provider 1.0&#x27;</span><br><span class="line">         类型: ClientAccessibleWriters</span><br><span class="line">         属性: 持续, 客户端可访问, 无自动释放, 差异, 自动还原</span><br><span class="line"></span><br><span class="line">卷影副本集 ID: &#123;1abe303d-eb32-445a-ae78-72432980191b&#125; 的内容</span><br><span class="line">   在创建时间: 2023/1/18 23:38:42 含有 1 个卷影副本</span><br><span class="line">      卷影副本 ID: &#123;5fee2842-be4e-4477-86c6-1c0c28221a4f&#125;</span><br><span class="line">         原始卷: (C:)\\?\Volume&#123;a501f5cc-311e-423c-bc58-94a6c1b6b509&#125;\</span><br><span class="line">         卷影副本卷: \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy2</span><br><span class="line">         源起机器: DESKTOP-TODPNBO</span><br><span class="line">         服务机器: DESKTOP-TODPNBO</span><br><span class="line">         提供程序: &#x27;Microsoft Software Shadow Copy provider 1.0&#x27;</span><br><span class="line">         类型: ClientAccessibleWriters</span><br><span class="line">         属性: 持续, 客户端可访问, 无自动释放, 差异, 自动还原</span><br></pre></td></tr></table></figure><br><code>vssadmin list shadows</code>可以展开每个副本的详细信息，包含：</p>
 <ul>
 <li>卷影副本ID：这是每个VSS快照的唯一GUID标识符</li>
 <li>卷影副本集ID：一个副本集可以是一个或多个同时创建的快照集合，一个副本集也有一个GUID标识符。一个快照只对应一个副本集，而一个副本集可能会包含多个快照。</li>
@@ -445,7 +446,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">122</span>
+          <span class="site-state-item-count">124</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -458,7 +459,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-count">59</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -494,12 +495,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">621k</span>
+    <span title="站点总字数">638k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:25</span>
+    <span title="站点阅读时长">9:40</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
