@@ -206,7 +206,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD2/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/10/23/%E4%BB%8ELDAP%E5%88%B0ActiveDirectory/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -220,7 +220,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD2/" class="post-title-link" itemprop="url">卷备份（二）挂载副本镜像</a>
+            <a href="/2023/10/23/%E4%BB%8ELDAP%E5%88%B0ActiveDirectory/" class="post-title-link" itemprop="url">从LDAP到Active Directory</a>
         </h2>
 
         <div class="post-meta">
@@ -229,16 +229,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2023-08-31 18:37:12" itemprop="dateCreated datePublished" datetime="2023-08-31T18:37:12Z">2023-08-31</time>
+              <time title="创建时间：2023-10-22 17:42:25 / 修改时间：09:42:31" itemprop="dateCreated datePublished" datetime="2023-10-22T17:42:25Z">2023-10-22</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-09-10 14:06:34" itemprop="dateModified" datetime="2023-09-10T14:06:34Z">2023-09-10</time>
-              </span>
 
           
   
@@ -249,8 +243,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD2/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/09/01/卷备份2/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2023/10/23/%E4%BB%8ELDAP%E5%88%B0ActiveDirectory/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/10/23/从LDAP到ActiveDirectory/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -259,13 +253,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>4.2k</span>
+              <span>0</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>4 分钟</span>
+              <span>1 分钟</span>
             </span>
 
         </div>
@@ -277,22 +271,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <blockquote>
-<p>备份后的卷数据往往以磁盘二进制镜像的形式出现，卷中的数据需要将挂载镜像成文件系统后才能访问并进行后续的数据利用，所以卷挂载是卷副本数据利用的前提。上文文末提到的卷备份方案为分片备份，会产生一个或多个卷的切片副本文件，所以对于此类副本的挂载方案需要支持从一个或者多个切片副本文件中挂载。本章探讨Windows和Linux下卷副本镜像的几种挂载方案的优劣与各自的局限性。</p>
-</blockquote>
-<h1 id="镜像文件"><a href="#镜像文件" class="headerlink" title="镜像文件"></a>镜像文件</h1><p>可以用于挂载的磁盘镜像文件一般有<code>*.bin</code>,<code>*.iso</code>,<code>*.img</code>,<code>*.dmg</code>等格式。其中<code>*.bin</code>作为一种非标准格式，没有通过的格式规范，因从也没有通用打开方式（上文提到的备份引擎产生的卷的切片副本文件即是如此，以<code>$start.$length.copydata.bin</code>作为名称）。而其他三种后缀名对应的格式一般有明确的定义，且分别被各大操作系支持。在讨论卷副本挂载方案之前，我们需要了解这些格式的实际定义。</p>
-<ol>
-<li>ISO:<br>ISO文件一般是光盘的镜像，需要遵循<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/ISO_9660">ISO 9660</a>标准或者<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Universal_Disk_Format">UDF</a>格式标准。ISO文件拥有头部，数据段，ISO 9660/UDF应看作一种独立的文件系统，很明显这种格式的ISO文件不适合用于通用的硬盘镜像的挂载。此类ISO文件在Windows上可以双击直接挂载并分配驱动器卷标，也可通过WIN32 API调用<a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddcdrm/ni-ntddcdrm-ioctl_cdrom_load_media">IOCTL_CDROM_LOAD_MEDIA_IOCTL</a>挂载。Linux上可以使用<code>mount -o loop</code>或者<code>mount -t iso8660</code>直接挂载这类文件。</li>
-</ol>
-<p>也有一些ISO文件不遵循ISO 9660/UDF格式规范，他们可能是磁盘的逐扇区（Sector-By-Sector）拷贝，Windows不支持直接挂载这种文件，挂载他们需要用到三方工具例如ImDisk。这类Sector-By-Sector Copy的文件实际上应该归为IMG文件。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD2/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
+          
       
     </div>
 
@@ -311,7 +290,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD1/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%8E%A2%E7%A9%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/march72.jpg">
@@ -325,7 +304,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD1/" class="post-title-link" itemprop="url">卷备份（一）基本概念与备份引擎的实现</a>
+            <a href="/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%8E%A2%E7%A9%B6/" class="post-title-link" itemprop="url">卷备份的实现方案探究</a>
         </h2>
 
         <div class="post-meta">
@@ -342,7 +321,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-09-10 14:06:34" itemprop="dateModified" datetime="2023-09-10T14:06:34Z">2023-09-10</time>
+                <time title="修改时间：2023-10-22 09:40:06" itemprop="dateModified" datetime="2023-10-22T09:40:06Z">2023-10-22</time>
               </span>
 
           
@@ -354,8 +333,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD1/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/09/01/卷备份1/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%8E%A2%E7%A9%B6/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/09/01/卷备份的实现方案探究/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -364,13 +343,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>6.9k</span>
+              <span>13k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>6 分钟</span>
+              <span>11 分钟</span>
             </span>
 
         </div>
@@ -383,12 +362,12 @@
 
       
           <blockquote>
-<p>基于卷做的备份/恢复有较大局限性，例如对于文件系统使用率比较低的场景，使用卷备份会导致磁盘利用率低；例如文件系统中文件普遍比较大的场景，卷备份也难以发挥出性能优势。但是卷备份在特定场景下也有不小的优势：卷备份主机硬盘取证的领域都是常见的业务，通过备份整卷可以获得很高的备份/恢复速度，备份系统卷可以直接恢复操作系统。本系列以卷备份作为专题，介绍卷的基本概念以及备份恢复及后续数据利用的几种解决方案。</p>
+<p>虽然基于卷做的备份/恢复有较大局限性，例如对于文件系统使用率比较低的场景，使用卷备份会导致磁盘利用率低；例如文件系统中文件普遍比较大的场景，卷备份也难以发挥出性能优势，但是卷备份在特定场景下也有不小的优势：卷备份主机硬盘取证的领域都是常见的业务，通过备份整卷可以获得很高的备份/恢复速度，备份系统卷可以直接恢复操作系统。本文从介绍卷的基本概念出发，总结Windows/Linux平台下卷备份恢复及后续副本数据利用的几种方案。笔者基于本文提到的技术方案，自己实现了一套卷备份工具，实现了对于Windows/Linux下卷的全量备份和永久增量备份、卷副本的恢复以及卷副本的即使挂载。源码见：<a target="_blank" rel="noopener" href="https://github.com/XUranus/VolumeBackup">https://github.com/XUranus/VolumeBackup</a>，本位可看作该项目的文档。</p>
 </blockquote>
-<h1 id="卷、分区、磁盘的基本概念"><a href="#卷、分区、磁盘的基本概念" class="headerlink" title="卷、分区、磁盘的基本概念"></a>卷、分区、磁盘的基本概念</h1><p>作为本系列第一章，本文先介绍什么是卷。卷（Volume）分区（Partition）以及硬盘（Hard disk）是一组常常被混淆的概念。硬盘是物理上的概念，通常常用的硬盘有机械硬盘（Hard Disk Drive）和固态硬盘（Solid State）等，本文则不做详述。卷和分区都是存储区域，两者相似但不相同：<strong>卷是一个拥有单一文件系统的可访问的存储区域，分区是一个硬盘上划分出的一部分</strong>。这句话意思是，分区往往是一个具体的概念，存在于具体磁盘上的某一<em>连续的</em>具体区域，分区可以不带文件系统（通常没有被初始化的RAW分区也算分区）。卷则是一个抽象的概念，它必须和单一文件系统强关联，且一个卷可能存在于一个或多个磁盘中。由于卷是逻辑的概念，对于Linux/Windows操作系统会表现出差异性，而物理分区则是构成逻辑卷的基础，所以先从分区谈起。</p>
+<h1 id="卷、分区、磁盘的基本概念"><a href="#卷、分区、磁盘的基本概念" class="headerlink" title="卷、分区、磁盘的基本概念"></a>卷、分区、磁盘的基本概念</h1><p>在开始描述卷的备份恢复逻辑之前，先介绍一下什么是卷，因为卷（Volume）分区（Partition）以及硬盘（Hard disk）是一组常常被混淆的概念。硬盘是物理上的概念，通常常用的硬盘有机械硬盘（Hard Disk Drive）和固态硬盘（Solid State）等，本文则不做详述。卷和分区都是存储区域，两者相似但不相同：<strong>卷是一个拥有单一文件系统的可访问的存储区域，分区是一个硬盘上划分出的一部分</strong>。这句话意思是，分区往往是一个具体的概念，存在于具体磁盘上的某一<em>连续的</em>具体区域，分区可以不带文件系统（通常没有被初始化的RAW分区也算分区）。卷则是一个抽象的概念，它必须和单一文件系统强关联，且一个卷可能存在于一个或多个磁盘中。由于卷是逻辑的概念，对于Linux/Windows操作系统会表现出差异性，而物理分区则是构成逻辑卷的基础，所以又得先从分区谈起。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD1/#more" rel="contents">
+              <a class="btn" href="/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%8E%A2%E7%A9%B6/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -846,12 +825,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">638k</span>
+    <span title="站点总字数">639k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:40</span>
+    <span title="站点阅读时长">9:41</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
