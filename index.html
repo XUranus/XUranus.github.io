@@ -321,7 +321,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-10-22 09:40:06" itemprop="dateModified" datetime="2023-10-22T09:40:06Z">2023-10-22</time>
+                <time title="修改时间：2023-11-03 14:08:45" itemprop="dateModified" datetime="2023-11-03T14:08:45Z">2023-11-03</time>
               </span>
 
           
@@ -349,7 +349,7 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>11 分钟</span>
+              <span>12 分钟</span>
             </span>
 
         </div>
@@ -362,9 +362,9 @@
 
       
           <blockquote>
-<p>虽然基于卷做的备份/恢复有较大局限性，例如对于文件系统使用率比较低的场景，使用卷备份会导致磁盘利用率低；例如文件系统中文件普遍比较大的场景，卷备份也难以发挥出性能优势，但是卷备份在特定场景下也有不小的优势：卷备份主机硬盘取证的领域都是常见的业务，通过备份整卷可以获得很高的备份/恢复速度，备份系统卷可以直接恢复操作系统。本文从介绍卷的基本概念出发，总结Windows/Linux平台下卷备份恢复及后续副本数据利用的几种方案。笔者基于本文提到的技术方案，自己实现了一套卷备份工具，实现了对于Windows/Linux下卷的全量备份和永久增量备份、卷副本的恢复以及卷副本的即使挂载。源码见：<a target="_blank" rel="noopener" href="https://github.com/XUranus/VolumeBackup">https://github.com/XUranus/VolumeBackup</a>，本位可看作该项目的文档。</p>
+<p>虽然基于卷做的备份/恢复有较大局限性：对于文件系统使用率比较低的场景使用卷备份会导致副本存储空间利用率低，而备份的文件普遍比较大的场景下使用文件级备份也能获取不错的性能且能高效使用存储空间，但卷备份在特定场景下也有不小的优势：卷备份主机硬盘取证的领域都是常见的业务，通过备份整卷可以获得很高的备份/恢复速度，备份系统卷可以直接恢复操作系统。本文从介绍卷的基本概念出发，总结Windows/Linux平台下卷备份恢复及后续副本数据利用的几种方案。笔者基于本文提到的技术方案，自己实现了一套卷备份工具，实现了对于Windows/Linux下卷的全量备份和永久增量备份、卷副本的恢复以及卷副本的及时挂载。源码见：<a target="_blank" rel="noopener" href="https://github.com/XUranus/VolumeBackup">https://github.com/XUranus/VolumeBackup</a>，本文可看作该项目的文档。</p>
 </blockquote>
-<h1 id="卷、分区、磁盘的基本概念"><a href="#卷、分区、磁盘的基本概念" class="headerlink" title="卷、分区、磁盘的基本概念"></a>卷、分区、磁盘的基本概念</h1><p>在开始描述卷的备份恢复逻辑之前，先介绍一下什么是卷，因为卷（Volume）分区（Partition）以及硬盘（Hard disk）是一组常常被混淆的概念。硬盘是物理上的概念，通常常用的硬盘有机械硬盘（Hard Disk Drive）和固态硬盘（Solid State）等，本文则不做详述。卷和分区都是存储区域，两者相似但不相同：<strong>卷是一个拥有单一文件系统的可访问的存储区域，分区是一个硬盘上划分出的一部分</strong>。这句话意思是，分区往往是一个具体的概念，存在于具体磁盘上的某一<em>连续的</em>具体区域，分区可以不带文件系统（通常没有被初始化的RAW分区也算分区）。卷则是一个抽象的概念，它必须和单一文件系统强关联，且一个卷可能存在于一个或多个磁盘中。由于卷是逻辑的概念，对于Linux/Windows操作系统会表现出差异性，而物理分区则是构成逻辑卷的基础，所以又得先从分区谈起。</p>
+<h1 id="卷、分区、磁盘的基本概念"><a href="#卷、分区、磁盘的基本概念" class="headerlink" title="卷、分区、磁盘的基本概念"></a>卷、分区、磁盘的基本概念</h1><p>在开始描述卷的备份/恢复逻辑之前，先介绍一下什么是卷，因为卷（Volume）、分区（Partition）以及硬盘（Hard disk）是一组常常被混淆的概念。硬盘是物理上的概念，常用的硬盘有机械硬盘（Hard Disk Drive）和固态硬盘（Solid State Disk）等，有关硬件本文则不做详述。卷和分区都是数据的存储区域，两者相似但不相同：<strong>卷是一个拥有单一文件系统的可访问的存储区域，分区是一个硬盘上划分出的一部分</strong>。这句话意思是，分区往往是一个具体的概念，存在于具体磁盘上的某一<em>连续的</em>具体区域，分区可以不带文件系统（通常没有被初始化的RAW分区也算分区）。卷则是一个抽象的概念，它必须和单一文件系统强关联，且一个卷可能存在于一个或多个磁盘中。由于卷是逻辑的概念，对于Linux/Windows操作系统会表现出差异性，而物理分区则是构成逻辑卷的基础，所以欲深入理解卷又得先从分区谈起。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%8E%A2%E7%A9%B6/#more" rel="contents">
@@ -904,6 +904,59 @@ if (document.querySelectorAll('pre.mermaid').length) {
   
 
   
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
