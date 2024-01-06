@@ -119,7 +119,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">59</span></a>
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">60</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">124</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">126</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -202,6 +202,210 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/03/20/Windows%E5%88%9B%E5%BB%BA%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/03/20/Windows%E5%88%9B%E5%BB%BA%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC/" class="post-title-link" itemprop="url">Windows创建卷影副本</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-03-20 12:57:29" itemprop="dateCreated datePublished" datetime="2023-03-20T12:57:29Z">2023-03-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-09-10 14:06:34" itemprop="dateModified" datetime="2023-09-10T14:06:34Z">2023-09-10</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2023/03/20/Windows%E5%88%9B%E5%BB%BA%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/03/20/Windows创建卷影副本/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Windows Server 2008以上的版本，管理员可以通过卷影副本服务（Volume Shadow Service）在<strong>指定的</strong>卷上创建备份的<strong>卷影副本</strong>。卷影副本类似于快照(Snapshot)，用户可以基于快照卷恢复到之前某个时间的版本，备份软件也可基于快照做一致性备份。因此，它可以极大保护服务器的数据安全。</p>
+<p>本文就介绍VSS相关操作以及如何用C++调用相关API。</p>
+<blockquote>
+<p>项目完整地址见<a target="_blank" rel="noopener" href="https://github.com/XUranus/Win32VSSWrapper">https://github.com/XUranus/Win32VSSWrapper</a><br>下文所说的<strong>卷影副本</strong>和<strong>快照</strong>属于一个概念</p>
+</blockquote>
+<h2 id="vssadmin卷操作"><a href="#vssadmin卷操作" class="headerlink" title="vssadmin卷操作"></a>vssadmin卷操作</h2><p>所有支持VSS的Windows系统已经提供了一个管理卷影副本的命令行工具vssadmin。使用<strong>管理员权限</strong>进入cmd，执行卷影副本命令<code>vssadmin</code>，可以看到所有支持的命令：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\WINDOWS\system32&gt;vssadmin</span><br><span class="line">vssadmin 1.1 - 卷影复制服务管理命令行工具</span><br><span class="line">(C) 版权所有 2001-2013 Microsoft Corp.</span><br><span class="line"></span><br><span class="line">---- 支持的命令 ----</span><br><span class="line"></span><br><span class="line">Delete Shadows        - 删除卷影副本</span><br><span class="line">List Providers        - 列出已注册的卷影副本提供程序</span><br><span class="line">List Shadows          - 列出现有卷影副本</span><br><span class="line">List ShadowStorage    - 列出卷影副本存储关联</span><br><span class="line">List Volumes          - 列出可以进行卷影副本处理的卷</span><br><span class="line">List Writers          - 列出订阅的卷影副本写入程序</span><br><span class="line">Resize ShadowStorage  - 调整卷影副本存储关联的大小</span><br></pre></td></tr></table></figure></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/03/20/Windows%E5%88%9B%E5%BB%BA%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F3/" class="post-title-link" itemprop="url">Windows文件系统概述(三)ADS</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-03-19 14:23:20" itemprop="dateCreated datePublished" datetime="2023-03-19T14:23:20Z">2023-03-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-09-10 14:06:34" itemprop="dateModified" datetime="2023-09-10T14:06:34Z">2023-09-10</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F3/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/03/19/Windows文件系统3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>5.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Alternative Data Streams (ADS)是Windows文件系统中引入的一项功能，可以为文件关联额外的数据流。这项功能的诞生原因是为了提高文件系统的兼容性和功能性，特别是与Macintosh和Unix系统创建的文件进行交互时。</p>
+<p>在Macintosh和Unix系统中，文件可以具有多个数据流，而Windows文件系统中最初只支持一个数据流。为了使Windows文件系统与其他操作系统更兼容，Microsoft引入了ADS功能，使Windows文件系统能够处理多个数据流。这项功能可以用于存储文件的元数据，如作者、创建日期、修改日期等，还可以用于存储图像和音频文件的缩略图、元数据等。</p>
+<p>ADS功能可以提供重要的功能和灵活性，但也带来了一些安全风险。因为ADS可以隐藏在文件中，不容易被普通的文件系统API或一些防病毒软件所发现，因此，它也可能被恶意软件利用来隐藏其存在，使得系统的安全受到威胁。</p>
+<p>尽管如此，ADS仍然被保留在Windows文件系统中，因为它在某些应用程序和使用情况下提供了重要的功能。但是，用户和组织需要意识到ADS所带来的安全风险，并采取措施来减轻这些风险，例如使用专门设计用于检测ADS中隐藏的恶意软件的防病毒软件等。本文将介绍ADS的创建和检测，以及如何用Win32 API读写ADS。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F3/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -513,211 +717,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/11/27/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7Json%E5%BA%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/11/27/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7Json%E5%BA%93/" class="post-title-link" itemprop="url">用C++实现一个轻量级Json库</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-11-27 09:18:02" itemprop="dateCreated datePublished" datetime="2022-11-27T09:18:02Z">2022-11-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-03-11 11:03:32" itemprop="dateModified" datetime="2023-03-11T11:03:32Z">2023-03-11</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2022/11/27/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7Json%E5%BA%93/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/11/27/用C-实现一个轻量级Json库/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>31k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>28 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>项目地址<a target="_blank" rel="noopener" href="https://github.com/XUranus/minijson">https://github.com/XUranus/minijson</a></p>
-</blockquote>
-<p>JSON是非常常用的结构对象序列化方式。相比于其他基于字节流的序列化方案（thrift，protobuff），JSON易于阅读和编辑；相较于同样基于文本的序列化方案XML，JSON在网络传输占用更小的空间。JSON很好平衡了序列化/反序列化的性能、可读性、空间占用的问题。</p>
-<p>很多语言都在标准库中添加了JSON相关的API，但C/C++还没有。C++较为完善的开源JSON库有jsoncpp。这篇文件将介绍如何用1K行左右的代码实现一个精简C++的Json库。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/11/27/%E7%94%A8C-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BD%BB%E9%87%8F%E7%BA%A7Json%E5%BA%93/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/08/15/CPP%E4%B8%AD%E7%9A%84%E5%87%A0%E7%A7%8Dcast/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/08/15/CPP%E4%B8%AD%E7%9A%84%E5%87%A0%E7%A7%8Dcast/" class="post-title-link" itemprop="url">C++中的几种cast</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-08-14 18:11:03" itemprop="dateCreated datePublished" datetime="2022-08-14T18:11:03Z">2022-08-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-03-12 14:33:45" itemprop="dateModified" datetime="2023-03-12T14:33:45Z">2023-03-12</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2022/08/15/CPP%E4%B8%AD%E7%9A%84%E5%87%A0%E7%A7%8Dcast/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/08/15/CPP中的几种cast/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>3.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>C++虽然集成了C语言的explict cast和implict cast策略，但是作为一门更现代的语言，C++额外提供了一些类型检查，如检查指针和基础类型的转换，基类和派生类的转换等来提高编程的安全性。<br>主要有<code>const_cast</code>,<code>reinterpret_cast</code>,<code>static_cast</code>,<code>dynamic_cast</code>。其中<code>const_cast</code>主要用于处理<code>const</code>修饰，功能单一，可以看作一类，其他三类可以看作另一类。</p>
-<h2 id="const-cast"><a href="#const-cast" class="headerlink" title="const_cast"></a>const_cast</h2><p><code>const_cast</code>一般用于强制修改一个类型的<strong>读写权限</strong>，例如实现常量到变量引用的转换，以实现修改一些常量的目的。<strong>强制转换的类型必须是指针或引用。</strong><br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> v = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">int</span> &amp;mutv = std::<span class="keyword">const_cast</span>&lt;<span class="keyword">int</span>&amp;&gt;(v);</span><br><span class="line">mutv++;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *p = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">int</span> *mutp = std::<span class="keyword">const_cast</span>&lt;<span class="keyword">int</span>*&gt;(p);</span><br><span class="line">(*mutp)++;</span><br></pre></td></tr></table></figure></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/08/15/CPP%E4%B8%AD%E7%9A%84%E5%87%A0%E7%A7%8Dcast/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -785,7 +788,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">124</span>
+          <span class="site-state-item-count">126</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -798,7 +801,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">59</span>
+        <span class="site-state-item-count">60</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -825,7 +828,7 @@
 <div class="copyright">
   
   &copy; 2017 – 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -834,12 +837,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">639k</span>
+    <span title="站点总字数">669k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:41</span>
+    <span title="站点阅读时长">10:08</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>

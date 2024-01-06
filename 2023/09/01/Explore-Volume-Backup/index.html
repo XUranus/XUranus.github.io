@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="Although volume-based backup&#x2F;restore has significant limitations: using volume backup in scenarios with low file system utilization will result in low copy storage space utilization. In scenarios whe">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Explore Volume Backup">
+<meta property="og:url" content="http://xuranus.github.io/2023/09/01/Explore-Volume-Backup/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="Although volume-based backup&#x2F;restore has significant limitations: using volume backup in scenarios with low file system utilization will result in low copy storage space utilization. In scenarios whe">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2023/09/01/Explore-Volume-Backup/volume-vs-partition-2.png">
+<meta property="og:image" content="http://xuranus.github.io/2023/09/01/Explore-Volume-Backup/volume-vs-partition-1.png">
+<meta property="og:image" content="http://xuranus.github.io/2023/09/01/Explore-Volume-Backup/GPTPartition.drawio.png">
+<meta property="article:published_time" content="2023-08-31T18:37:02.000Z">
+<meta property="article:modified_time" content="2024-01-06T09:58:28.917Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="DataProtect">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2023/09/01/Explore-Volume-Backup/volume-vs-partition-2.png">
+
+<link rel="canonical" href="http://xuranus.github.io/2023/09/01/Explore-Volume-Backup/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Explore Volume Backup | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">60</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">126</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/09/01/Explore-Volume-Backup/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Explore Volume Backup
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-08-31 18:37:02" itemprop="dateCreated datePublished" datetime="2023-08-31T18:37:02Z">2023-08-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-06 09:58:28" itemprop="dateModified" datetime="2024-01-06T09:58:28Z">2024-01-06</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2023/09/01/Explore-Volume-Backup/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/09/01/Explore-Volume-Backup/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>27k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>25 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>Although volume-based backup/restore has significant limitations: using volume backup in scenarios with low file system utilization will result in low copy storage space utilization. In scenarios where the backed-up files are generally large, file-level backup can achieve good performance and efficiently use storage space. However, volume backup also has advantages in specific scenarios: it is common in the field of forensic examination of host hard disks based on volume backup. Backup of the entire volume can achieve high backup/restore speed, and the system volume backup can directly restore the operating system. This article starts by introducing the basic concepts of volumes, summarizing several solutions for volume backup, recovery, and subsequent utilization of copy data on the Windows/Linux platforms. Based on the technical solutions mentioned in this article, the author has implemented a set of volume backup tools, achieving full backup and permanent incremental backup of volumes under Windows/Linux, as well as recovery and timely mounting of volume copies. The source code can be found at: <a target="_blank" rel="noopener" href="https://github.com/XUranus/VolumeBackup">https://github.com/XUranus/VolumeBackup</a>, and this article can be considered as documentation for this project.</p>
+</blockquote>
+<h1 id="Basic-Concepts-of-Volumes-Partitions-and-Disks"><a href="#Basic-Concepts-of-Volumes-Partitions-and-Disks" class="headerlink" title="Basic Concepts of Volumes, Partitions, and Disks"></a>Basic Concepts of Volumes, Partitions, and Disks</h1><p>Before describing the logic of volume backup/restore, let’s first introduce what a volume is because volume (Volume), partition (Partition), and hard disk (Hard disk) are often confused concepts. The hard disk is a physical concept, with commonly used hard disks such as Hard Disk Drive (HDD) and Solid State Disk (SSD), but this article does not go into detail about hardware. Volumes and partitions are both storage areas for data, similar but not the same: <strong>a volume is an accessible storage area with a single file system, and a partition is a part of a hard disk partitioned out</strong>. This means that a partition is often a specific concept, existing in a continuous specific area on a specific disk. A partition may not have a file system (typically an uninitialized RAW partition is also considered a partition). A volume, on the other hand, is an abstract concept that must be strongly associated with a single file system, and a volume may exist on one or more disks. Since a volume is a logical concept, it exhibits differences for Linux/Windows operating systems, and physical partitions are the basis for forming logical volumes, so to understand volumes deeply, we need to start with partitions.</p>
+<span id="more"></span>
+<h2 id="Partition"><a href="#Partition" class="headerlink" title="Partition"></a>Partition</h2><p>Whether it’s Linux or Windows, hard disk partitioning uses GPT or MBR partition tables, and each disk supports only one partition table to define the disk layout. There are two types: MBR and GPT:</p>
+<ul>
+<li><p>Master Boot Record (MBR): MBR is an older partitioning scheme commonly used on Windows, occupying the first 512 bytes of the disk header. Since MBR uses 32-bit addressing for logical block addresses, the address space is only $2^{32}$, resulting in a maximum space limitation of $2^{41}B = 2TB$ when calculated at 512B per block. MBR has limited support for the number of partitions, with a maximum of four primary partitions or three primary partitions with one extended partition. The system disk that uses MBR partitioning can only boot in BIOS (Legacy) mode.</p>
+</li>
+<li><p>GUID Partition Table (GPT): GPT is a newer partitioning scheme, occupying part of the space at the beginning and end of the disk and is expandable. GPT can overcome various limitations of MBR, supporting up to 128 primary partitions, and partition sizes can reach 9.4ZB. System disks using GPT as the partition table boot using EFI, requiring BIOS support for EFI (generally supported by modern computers).</p>
+</li>
+</ul>
+<p><strong>Each partition allocated by GPT is considered a primary partition</strong>. MBR can allocate 4 primary partitions or 3 primary partitions and 1 extended partition, and <strong>on the extended partition, logical partitions (Logical Partition) can be further divided</strong>. Discussing primary partitions, extended partitions, and logical partitions generally applies to the Windows + MBR scenario:</p>
+<ul>
+<li>Primary Partitions: Up to 4. <strong>Requires assignment of drive letters</strong> and can be used as the system drive <code>C:\</code>.</li>
+<li>Extended Partition: Up to 1, which can contain several logical partitions.</li>
+<li>Logical Partition: Only used for storing data information, not for the system drive. <strong>Drive letters are not required to be assigned</strong>.</li>
+</ul>
+<p><img src="volume-vs-partition-2.png" alt=""></p>
+<h2 id="Volume"><a href="#Volume" class="headerlink" title="Volume"></a>Volume</h2><p>A volume is a more abstract concept built on top of partitions, <strong>a volume can occupy one or more partitions</strong>, and it can occupy different partitions not on the same hard disk, giving volumes a scalability that far exceeds partitions. Even if MBR only supports partitions up to 2TB, larger file systems can be created by spanning multiple partitions through volumes. Since volumes are a logical concept, their definition, implementation, and management vary across different operating systems.</p>
+<h3 id="LDM-Basic-Disk-and-Dynamic-Disk"><a href="#LDM-Basic-Disk-and-Dynamic-Disk" class="headerlink" title="LDM, Basic Disk, and Dynamic Disk"></a>LDM, Basic Disk, and Dynamic Disk</h3><p>Windows introduces the concepts of Basic Disk and Dynamic Disk. For Windows, the significant difference between volumes and partitions is that <strong>partitions are created on Basic Disks, while volumes are created on Dynamic Disks</strong>. In Windows <em>Disk Management</em>, you can set a disk to be a Basic Disk or a Dynamic Disk: <img src="volume-vs-partition-1.png" alt="">. Right-clicking on a disk allows you to convert a Basic Disk to a Dynamic Disk, and this conversion process is lossless. Conversely, converting a Dynamic Disk to a Basic Disk is not supported (requires third-party tools). The head and tail areas of a Dynamic Disk have specific metadata written to describe the partition layout to support more powerful scalability. Volumes created based on Dynamic Disks have the following types:</p>
+<ul>
+<li>Simple Volume: Occupies one partition on a disk. Simple volumes are the most common on PCs, created by right-clicking on a RAW partition in Windows Disk Manager.</li>
+<li>Mirrored Volume: Maintains data redundancy using copies located on two different hard disks. All write operations are performed on both disks separately, and read operations can be load-balanced between the two disks to improve performance. Mirrored volumes provide data resilience, ensuring data safety even when one disk is unavailable.</li>
+<li>Striped Volume: Also known as RAID 0, it creates a logical volume using partitions on two or more disks, and each write operation is performed on only one disk. This mechanism provides multiple channels, improving I/O throughput. However, Striped Volumes do not provide data redundancy, cannot achieve data resilience, and any disk failure leads to data loss, making it the <strong>least reliable</strong> type of volume.</li>
+<li>Spanned Volume: Merges partitions from multiple disks into a logical volume, with a sequential order among partitions. It increases volume capacity but does not provide data redundancy and cannot achieve data resilience.</li>
+<li>RAID-5 Volume: Uses three or more disks, consolidating the advantages of Striped, Spanned, and Mirrored Volumes. It maintains redundant copies of data and can quickly recover data after partial disk failure. It not only improves throughput but also expands volume space while providing data resilience.</li>
+</ul>
+<p>Volumes on Windows are generally managed through LDM (Logical Disk Manager), which is based on the Basic Disk/Dynamic Disk mechanism. By writing specific metadata at the head and tail of the hard disk, LDM records the relationships between dynamic disks to form logical volumes.</p>
+<blockquote>
+<p>Note: Whether it’s a Dynamic Disk or a Basic Disk, each has its partition table, and it is either MBR or GPT.</p>
+</blockquote>
+<h3 id="LVM-and-DeviceMapper"><a href="#LVM-and-DeviceMapper" class="headerlink" title="LVM and DeviceMapper"></a>LVM and DeviceMapper</h3><p>On Linux, volumes are generally managed through LVM (Logical Volume Manager). LVM provides capabilities such as creating LVM volumes from multiple block devices, managing volume groups, elastic resizing, snapshotting, etc. It relies on Linux’s DeviceMapper. DeviceMapper can create various logical volumes similar to several types on Windows: mirror, striped, linear (Windows’ Spanned Volume), RAID. Additionally, DeviceMapper can be used to implement the encryption layer of encrypted file systems. The usage of the CLI program <code>dmsetup</code> for DeviceMapper can be found in <a target="_blank" rel="noopener" href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/logical_volume_manager_administration/device_mapper">Appendix A. The Device Mapper</a>.</p>
+<p>Devices created by DeviceMapper have a path format like <code>/dev/dm-X</code> and are symlinked to <code>/dev/mapper/$dmDevName</code>.</p>
+<blockquote>
+<p><code>/dev/dm-X</code> looks like <code>/dev/dm-0</code>, <code>/dev/dm-1</code>, etc., and <code>$dmDevName</code> in <code>/dev/mapper/$dmDevName</code> represents a unique name for a DeviceMapper device. I/O requests for block device paths created by DeviceMapper are mapped to different target disk offsets by the DeviceMapper driver in the Linux Kernel according to user-configured rules (DM Table). The control information for creating/deleting devices is controlled by DeviceMapper forwarding to the control device <code>/dev/mapper/control</code>. Creating an LVM volume, such as <code>lv1</code> in volume group <code>vg1</code>, will be mapped to <code>/dev/mapper/vg1-lv1</code>, and initializing the volume’s file system and creating logical volumes can be done by pointing to these virtually created logical block devices using <code>mkfs</code>.</p>
+</blockquote>
+<h1 id="Retrieving-Volume-Information"><a href="#Retrieving-Volume-Information" class="headerlink" title="Retrieving Volume Information"></a>Retrieving Volume Information</h1><p>The above discussion covered the basic concepts of volumes on Windows and Linux. At this point, readers should understand why the title is “Volume Backup” rather than “Partition Backup” or “Disk Backup.” To back up a volume, you only need to interact with the volume devices abstracted by the operating system, without needing to be aware of how the partitions constituting the volume are distributed on the disk. Volumes are strongly related to file systems, and volumes are the meaningful concepts that we actually need to back up. To back up a volume device means backing up the metadata of the volume (size, UUID, mount information, etc.) and the binary data within the volume. Next, let’s explore how to use platform-specific APIs to read volume information.</p>
+<h2 id="Using-POSIX-API-to-Read-Linux-Volume-Information"><a href="#Using-POSIX-API-to-Read-Linux-Volume-Information" class="headerlink" title="Using POSIX API to Read Linux Volume Information"></a>Using POSIX API to Read Linux Volume Information</h2><p>On Linux, all devices are mapped as files under the <code>/dev</code> directory. <code>/dev</code> contains block devices, character devices, whether virtual or physical. SATA devices are mapped as <code>/dev/sda</code>, <code>/dev/sdb</code>, <code>/dev/sdc</code>, and so on. NVMe SSD devices are mapped as <code>/dev/nvmen1</code>, <code>/dev/nvmen2</code>, and so forth. Partitions within block devices are distinguished by appending a number to the end, such as <code>/dev/sda1</code>, <code>/dev/sda2</code>, and so on. LVM volumes or other volumes managed by DeviceMapper are stored under <code>/dev/dm-X</code> and linked to <code>/dev/mapper/$dmDeviceName</code>.</p>
+<p>Volume devices on Linux are presented as block devices, supporting read and write operations based on offsets. Since Linux follows the principle of “everything is a file,” volumes can be treated as extremely large files for reading and writing—directly using the <code>open()</code>, <code>close()</code>, <code>read()</code>, <code>write()</code>, <code>flush()</code>, and <code>lseek()</code> interfaces provided by POSIX API. It is important to note that reading and writing to volume devices often require <code>root</code> group permissions. When performing backup operations, opening and reading the volume data in <code>O_RDONLY</code> mode can be done while the volume is mounted. However, when restoring volume data and opening it in <code>O_RDWR</code> mode to write volume information, the volume must be unmounted! Otherwise, an <code>EACCES</code> error will occur.</p>
+<p>To obtain the size of a volume on Linux, the <code>ioctl</code> command with <code>BLKGETSIZE64</code> can be used to read the size of the block device. Once the volume size is obtained, the data can be read and written in blocks.</p>
+<h2 id="Using-Win32-API-to-Read-Windows-Volume-Information"><a href="#Using-Win32-API-to-Read-Windows-Volume-Information" class="headerlink" title="Using Win32 API to Read Windows Volume Information"></a>Using Win32 API to Read Windows Volume Information</h2><p>The NT kernel to some extent also inherits the design philosophy of “devices are files” from Linux. For example, devices such as hard drives and optical drives have their own device paths, such as the drive device <code>\Device\PhysicalDriveX</code>, disk volume device <code>\Device\HarddiskVolumeX</code>, snapshot volume <code>\Device\VolumeShadowCopyX</code>, and optical drive device <code>\Device\CdRomX</code>. The <code>X</code> represents an incremented number. Paths starting with <code>\Device</code> are DOS paths used only by the kernel, and user-mode programs generally use the soft links they map to, such as <code>\Device\HarddiskVolumeX</code> being mapped to <code>\\.\HarddiskVolumeX</code>. When calling Win32 API functions in user mode, it is essential to use user-mode device paths.</p>
+<p>Windows does not have the concept of actively mounting. For volumes where common file systems (NTFS/FAT32/ExFAT) are present on Windows, as long as the device is connected, the file system will be automatically recognized. Volumes with recognized file systems can be accessed directly using the volume path regardless of whether they have obtained a drive letter. Whether to automatically obtain a drive letter is determined by partition properties. On Windows, <code>FindFirstVolumeW()</code> and <code>FindNextVolumeW()</code> can be used to enumerate all recognized volume names in GUID format. The corresponding device path for a volume name can be obtained using the <code>QueryDosDeviceW()</code> method. Reading and writing volume devices on Windows using Win32 API is similar to using POSIX API. The <code>CreateFile()</code> function is used to obtain the device handle for the opened volume path, and then the <code>ReadFile()</code> and <code>WriteFile()</code> functions are used to read and write the volume. Finally, the <code>CloseHandle()</code> function is used to close the handle.</p>
+<p>The Win32 API provides the <code>IOCTL_DISK_GET_LENGTH_INFO</code> command for <code>DeviceIoControl</code> calls to get the size of a volume. Other information about the volume can be obtained using <code>[GetVolumeInfomationByHandle()](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getvolumeinformationbyhandlew)</code> (involving volume serial number, volume name, and other attributes).</p>
+<h1 id="Snapshots-and-Consistent-Backups"><a href="#Snapshots-and-Consistent-Backups" class="headerlink" title="Snapshots and Consistent Backups"></a>Snapshots and Consistent Backups</h1><p>Mounted volumes may be written to by other processes during the backup process, causing the generated volume copy to be inconsistent. In file backups, this inconsistency often manifests in some files having meaningless content in the copy. In contrast, the inconsistency in volume backup copies is fatal: it renders the entire volume copy data invalid. Therefore, there are two main approaches to ensuring consistency in volume backups:</p>
+<ul>
+<li><p>Unmount the Volume: Unmount the volume associated with the file system before backing up the volume device. This method ensures that the data in the volume does not change during the backup process. This approach is commonly used in bare-metal backups. However, in a production environment, unmounting volume devices without interrupting business operations can be challenging. As a result, snapshots are used more frequently.</p>
+</li>
+<li><p>Volume Snapshot: Windows provides Volume Shadow Copy Service (VSS), and Linux’s Logical Volume Manager (LVM) offers snapshot capabilities, allowing the creation of a snapshot volume based on a particular volume. A snapshot volume is a type of logical volume, and during the actual backup process, data should be read from the snapshot volume and written to the copy to ensure the consistency of the volume copy.</p>
+</li>
+</ul>
+<h1 id="Backup-Engine-Implementation"><a href="#Backup-Engine-Implementation" class="headerlink" title="Backup Engine Implementation"></a>Backup Engine Implementation</h1><p>Previous sections introduced the basic concepts of volumes and the read/write interfaces, laying the foundation for the implementation of the volume backup engine. This section outlines the main processes of volume backup/restore, involving full backups, permanent incremental backups, and full restores. The reason for not implementing incremental backups is that the author believes that incremental copies of volumes do not add much value to data utilization. To mount a volume copy, a full copy needs to be restored first. Therefore, this section only discusses full backups and permanent incremental backups, while the restoration of copies only needs to consider full copies/synthetic full copies.</p>
+<h2 id="Scenario-Description"><a href="#Scenario-Description" class="headerlink" title="Scenario Description"></a>Scenario Description</h2><p>The volume backup engine should support the following three scenarios:</p>
+<ul>
+<li>Full Backup: Read all data from the volume, write it to the copy file, and generate corresponding metadata for the volume data.</li>
+<li>Permanent Incremental Backup: Read all data from the volume, compare it with the data in the full copy, overwrite only the modified parts based on the previous full copy, generate a <strong>synthetic full copy</strong>, and create new metadata for the synthetic full copy for the next permanent incremental backup.</li>
+<li>Volume Restore: Read data from the volume copy and write it to the volume device.</li>
+</ul>
+<p>The metadata includes basic information about the volume, such as size, mount point, device path, etc. To implement permanent incremental backups, the metadata also needs to include the checksum corresponding to the volume data on a block-by-block basis. For example, during backup, the volume is split into fixed-sized blocks (e.g., 4MB), and the SHA2 checksum for each block is calculated and stored. In the next incremental backup, the volume is split into blocks based on the block size used in the previous full backup, and the SHA2 for each block is calculated and compared. Only the blocks with changed SHA2 values are synchronously written to the new synthetic full copy. The choice of backup block size needs to balance performance and storage resource utilization.</p>
+<h2 id="Backup-and-Restore-Engine"><a href="#Backup-and-Restore-Engine" class="headerlink" title="Backup and Restore Engine"></a>Backup and Restore Engine</h2><p>In summary, the volume backup/restore process is a rather simple read-write flow. During backup, data is read from the volume device and written to the file. During restore, data is read from the file and written to the volume device. Considering the logic of full backups and permanent incremental backups, only an additional hashing process is needed before read and write to generate a full SHA2 checksum file and compare the checksum of the previous blocks during incremental backups to decide whether to perform the write operation.</p>
+<p>Therefore, the backup engine can consist of three components: Reader, Hasher, and Writer, responsible for reading data, hashing data, and writing data, respectively. The <code>hasherQueue</code> and <code>writerQueue</code> are used as blocking queues for communication between the Reader and Hasher, as well as the Hasher and Writer. After the Reader is started, it opens a volume or a copy file, and the main thread continuously reads data in 4MB chunks, pushing the data into the <code>hasherQueue</code>. The Hasher subscribes to <code>hasherQueue</code>, continuously pops data blocks, calculates the SHA2 checksum for each block, and if it’s an incremental backup scenario, compares the checksum of the block at the corresponding position in the previous full copy. If there is a difference, it is pushed to the <code>writerQueue</code>. If it’s a full backup or there’s no need for comparison, it is directly pushed to the <code>writerQueue</code>. After the Writer is started, it opens the volume or copy file, and the main thread subscribes to <code>writerQueue</code>, continuously pops data blocks, and writes them to the target location.</p>
+<pre class="mermaid">sequenceDiagram
+  participant Reader
+  participant Hasher
+  participant Writer
+
+  Reader->>Hasher: Read 4MB Data
+  Hasher->>Hasher: Calculate SHA2 checksum
+  Hasher->>Writer: Push Data to writerQueue (if different)
+
+  alt Incremental Backup
+    Hasher-->>Hasher: Compare with previous checksum
+  end
+
+  Writer->>Writer: Write Data</pre>
+
+<p>The volume recovery process involves only the Reader and Writer, utilizing the readQueue to communicate between them. Hasher and HasherQueue are not required.</p>
+<p>The implementation of this process in <a target="_blank" rel="noopener" href="https://github.com/XUranus/VolumeBackup">VolumeBackup</a> uses segmented backup in the form of a sliding window. Since a volume can be large, the backup time for a single volume can be lengthy. To address this, the backup task for a volume is split into multiple backup subtasks, allowing each subtask to back up a segment of the volume. Within a single subtask, checkpoints are recorded, enabling restart in case of subtask failure to enhance availability. Segmented backup also allows the segmented storage of meta and checkpoint files, facilitating loading into memory at once. When the replica type is set to <code>CopyFormat::BIN</code>, segmented backup generates replica files that are split into multiple sliced replica files based on the window size. This facilitates storing replica files on file systems with a single-file size limit, such as FAT32.</p>
+<h1 id="Volume-Replica-Mounting"><a href="#Volume-Replica-Mounting" class="headerlink" title="Volume Replica Mounting"></a>Volume Replica Mounting</h1><p>The data of a backed-up volume often appears in the form of a disk binary image. To access and utilize the data, the volume needs to be mounted as a file system from the image. Therefore, mounting is a prerequisite for utilizing the data of a volume replica. The previously mentioned volume backup scheme involves segmented backup, resulting in one or more sliced replica files for a volume. Thus, the mounting solution for such replicas needs to support mounting from one or multiple sliced replica files. This chapter discusses the advantages and limitations of various mounting solutions for volume replica images on Windows and Linux.</p>
+<h2 id="Image-Files"><a href="#Image-Files" class="headerlink" title="Image Files"></a>Image Files</h2><p>Commonly used disk image files for mounting include <code>*.bin</code>, <code>*.iso</code>, <code>*.img</code>, <code>*.dmg</code>, and similar formats. Among them, <code>*.bin</code> is a non-standard format without universally accepted specifications or a standard opening method (the sliced replica files generated by the backup engine mentioned earlier follow this format, using <code>$start.$length.copydata.bin</code> as the filename). The other three formats generally have defined standards and are supported by major operating systems. Before discussing volume replica mounting solutions, it’s essential to understand the practical definitions of these formats.</p>
+<ol>
+<li>ISO:<br>ISO files are typically images of optical discs and must adhere to the <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/ISO_9660">ISO 9660</a> or <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Universal_Disk_Format">UDF</a> format standards. ISO files have headers and data segments. ISO 9660/UDF should be treated as independent file systems. Clearly, this format of ISO files is not suitable for universal hard disk image mounting. On Windows, these ISO files can be mounted by double-clicking, assigning a drive label. Alternatively, they can be mounted using Win32 API calls like <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddcdrm/ni-ntddcdrm-ioctl_cdrom_load_media">IOCTL_CDROM_LOAD_MEDIA_IOCTL</a>. On Linux, the files can be mounted using <code>mount -o loop</code> or <code>mount -t iso8660</code>.</li>
+</ol>
+<p>There are also ISO files that do not adhere to the ISO 9660/UDF format standards. They may be sector-by-sector copies of the disk. Windows does not support directly mounting these files; third-party tools like ImDisk are needed. These sector-by-sector copy files should actually be classified as IMG files.</p>
+<!--more-->
+<ol>
+<li>IMG:<br>IMG format is generally a sector-by-sector copy of the entire disk, providing a complete description of the volume’s information. Windows typically requires third-party software to mount these files. Mounting IMG files is common in electronic forensics scenarios. <a target="_blank" rel="noopener" href="https://www.hackingarticles.in/multiple-ways-to-mount-raw-images-windows/">Mutiple Ways To Mount Raw Image Windows</a> introduces several third-party mounting tools for these files, such as <a target="_blank" rel="noopener" href="https://www.osforensics.com/tools/mount-disk-images.html">OSFMount</a>, <a target="_blank" rel="noopener" href="https://arsenalrecon.com/products/arsenal-image-mounter">Arsenal Image Mounter</a>, <a target="_blank" rel="noopener" href="https://github.com/LTRData/ImDisk">ImDisk</a>, and others.</li>
+</ol>
+<p>On Linux, mounting such files can be done by first creating a loop device using <code>losetup</code> and then using the <code>mount</code> command to specify the file system type and other mounting parameters for the corresponding loop device. For example:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mkdir /mnt/imagemount</span><br><span class="line">sudo losetup $(losetup -f) /path/to/imagefile.img <span class="comment"># bind /dev/loopX to imagefile.img</span></span><br><span class="line">sudo mount -t ext4 -o ro /dev/loopX /mnt/imagemount <span class="comment"># specify fs type, mount option, loop device, and image path</span></span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>DMG:<br>As a common image format on MacOS, DMG is only supported on MacOS.</li>
+</ol>
+<h2 id="Mounting-Solutions"><a href="#Mounting-Solutions" class="headerlink" title="Mounting Solutions"></a>Mounting Solutions</h2><p>By comparing the differences between various common image files, we can conclude that the volume replicas generated in our volume backup, containing any file system, are closer to the IMG format. For such sector-by-sector copy files, Linux can use the loopback device driver for mounting, while Windows requires alternative solutions, such as the introduction of third-party tools like ImDisk.</p>
+<p>Due to the introduction of the concept of <strong>slices</strong> in our volume replicas (a volume replica consists of one or more fragments that save different positions of the volume), our mounting process becomes more complex. Next, we will compare the advantages and disadvantages of several volume replica mounting solutions on Linux and Windows in this context.</p>
+<h3 id="Linux-Mounting-Based-on-loopback-Device-devicemapper"><a href="#Linux-Mounting-Based-on-loopback-Device-devicemapper" class="headerlink" title="Linux Mounting Based on loopback Device/devicemapper"></a>Linux Mounting Based on loopback Device/devicemapper</h3><p>On Linux, replica files can be associated (attached) with a loopback device. The loopback module will bind a <code>/dev/loopX</code> block device path (where <code>X</code> is a number) to each associated device, and this device path can be used for subsequent mounting. If the replica contains only one image file, and that unique image file contains the entire volume, it can be mounted directly:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mkdir /mnt/imagemount</span><br><span class="line">sudo losetup $(losetup -f) /path/to/imagefile.bin <span class="comment"># bind /dev/loopX to imagefile.bin</span></span><br><span class="line">sudo mount -t ext4 -o ro /dev/loopX /mnt/imagemount <span class="comment"># specify fs type, mount option, loop device, and image path</span></span><br></pre></td></tr></table></figure>
+<p>Here, <code>losetup -f</code> is used to return an available loopback device path, such as <code>/dev/loop0</code>. <code>sudo losetup /dev/loop0 /path/to/imagefile.bin</code> associates <code>imagefile.bin</code> with <code>/dev/loop0</code>, with the default sector size being 512B. All I/O to <code>/dev/loop0</code> will be mapped to the associated <code>imagefile.bin</code> file.</p>
+<p>If the replica consists of multiple image files, for example, a 3GB replica is split into 3 slices of 1GB each, stored as:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/path/to/imagefile.0.1073741824.bin</span><br><span class="line">/path/to/imagefile.1073741824.1073741824.bin</span><br><span class="line">/path/to/imagefile.2147483648.1073741824.bin</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>imagefile.0.1073741824.bin</code> denotes a length of 1073741824 bytes starting from 0, and <code>imagefile.1073741824.1073741824.bin</code> denotes a length of 1073741824 bytes starting from 1073741824, and so on.</p>
+</blockquote>
+<p>Linux provides the devicemapper driver to create logical devices, where the ability to create a <code>linear</code> device can be used to create a spanned volume across multiple volume devices. For the aforementioned replica composed of three files, each can be mounted as separate loopback block devices: <code>/dev/loop0</code>, <code>/dev/loop1</code>, <code>/dev/loop2</code>. Each device has 1073741824B / 512B = 2097152 sectors. Using the <code>dmsetup</code> command-line tool, a <code>linear</code> target device can be created with the <code>dm-sample-tbl.txt</code> file describing the start sector, sector count, type (<code>linear</code>), block device path, and target block device’s start sector for each mapping target block device:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">0 2097152 linear /dev/loop0 0</span><br><span class="line">2097152 2097152 linear /dev/loop1 0</span><br><span class="line">4194304 2097152 linear /dev/loop2 0</span><br></pre></td></tr></table></figure>
+<p>Then, use <code>dmsetup create sample-volume dm-sample-tbl.txt</code> to create a dm volume named <code>sample-volume</code>. If successful, a device with the path <code>/dev/mapper/sample-volume</code> will be created under <code>/dev/mapper</code>. Afterward, this device can be mounted using the <code>mount</code> command.</p>
+<pre class="mermaid">graph TD
+  subgraph Volume Copy
+    A[Check Number of Image Files]
+    B[Is there only one image file?]
+    C[Attach Image File to Loop Device]
+    D[Mount Loop Device]
+    E[Done]
+    F[Attach All Image Files to Loop Devices]
+    G[Create Linear DM Device]
+    H[Mount DM Device]
+  end
+
+  A -->|Yes| B
+  B -->|Yes| C
+  C --> D
+  D --> E
+  B -->|No| F
+  F --> G
+  G --> H
+  H --> E</pre>
+
+<h2 id="Mounting-Solutions-1"><a href="#Mounting-Solutions-1" class="headerlink" title="Mounting Solutions"></a>Mounting Solutions</h2><p>In the AOSP source code, examples of creating, deleting, and finding devicemapper volumes using the user-space API in <code>dm-ioctl.h</code> are provided. You can refer to the code at <a target="_blank" rel="noopener" href="https://android.googlesource.com/platform/system/core/+/refs/heads/main/fs_mgr/libdm">https://android.googlesource.com/platform/system/core/+/refs/heads/main/fs_mgr/libdm</a>.</p>
+<p>Mounting volume replicas on Linux using loopback devices and devicemapper allows for in-place mounting with zero copying. This can be considered a relatively ideal mounting solution.</p>
+<h3 id="Windows-Mounting-Based-on-VHD"><a href="#Windows-Mounting-Based-on-VHD" class="headerlink" title="Windows Mounting Based on VHD"></a>Windows Mounting Based on VHD</h3><p>On Windows, only images that comply with ISO 9660/UDF standards can be directly mounted. Other images can only be mounted directly in the form of Virtual Hard Disk (VHD) files. VHD/VHDX is a virtual disk technology provided by Windows for creating virtual disks from files, similar to the loopback device in Linux. However, compared to the loopback device, both VHD and VHDX have additional headers and footers used to record disk metadata (size, version, etc.). VHD/VHDX supports fixed-length volumes or dynamically sized volumes. Fixed-length volumes allocate space on the disk when creating the VHD/VHDX file, while dynamic volumes only create a portion of the space initially and expand the file size as needed based on subsequent writes. Dynamic disk files, in addition to basic Header/Footer, also require maintaining a block allocation table, making them have a more complex file structure.</p>
+<p>VHD format is not supported by Linux, and the dynamic disk file format cannot describe the original volume information sector-by-sector. Therefore, it <strong>cannot be used as a cross-platform replica storage solution</strong>. VHD can be used for older Windows versions, supporting a maximum volume size of 2040GB. VHDX files are supported after Windows Server 2012, with a maximum volume size of 64TB and a more complex file structure. VHD files also do not support slicing, so a new VHD/VHDX file needs to be created from the replica slice before mounting, resulting in 1x <strong>additional space consumption</strong>.</p>
+<blockquote>
+<p>The article <a target="_blank" rel="noopener" href="https://leonzandman.com/2007/10/26/splitting-a-virtual-pc-vhd/">Splitting a Virtual PC VHD</a> mentions that VHD slicing (naming as <code>.v01</code>, <code>.v02</code>, etc.) is only suitable for scenarios where Hyper-V virtual machines are read and cannot be used for general host mounting.</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/XUranus/VolumeBackup">VolumeBackup</a> uses the approach of backing up Windows volumes into VHD and VHDX formats. <code>VirtDisk.h</code> provides APIs for operating on VHD/VHDX. The process of writing data to a virtual disk file is as follows:</p>
+<ol>
+<li>Use <code>CreateVirtualDisk()</code> to create a virtual disk file, specifying the disk size and type (dynamic or fixed-length). In reality, the disk size needs to be larger than the volume’s size to reserve space for GPT/MBR partition tables. Additionally, GPT-formatted disks in Windows require creating a Header MSR (Microsoft Reservation) partition and a 2MB reserved partition at the end of the disk.</li>
+<li>Use <code>OpenVirtualDisk()</code> to open the virtual disk file and obtain the handle. Then use <code>AttachVirtualDisk()</code> to load the dynamic disk. At this point, the virtual disk will be assigned a disk device path <code>\\.\PhysicalDriveX</code>.</li>
+<li>Open the disk based on the disk device path, obtain the disk handle, use <code>IOCTL_DISK_CREATE_DISK</code> to initialize the disk as a GPT format, and use <code>IOCTL_DISK_SET_DRIVE_LAYOUT_EX</code> to initialize the MSR and replica data partitions. Upon success, the replica data partition will be automatically mounted and assigned a volume device path <code>\\.\HarddiskVolumeX</code>.</li>
+<li>Use <code>CreateFile()</code> to open the volume device path and obtain the volume device handle, allowing regular file I/O for reading and writing to the volume device. After reading and writing are complete, use <code>DetachVirtualDisk()</code> to unmount the virtual disk.</li>
+</ol>
+<p>The process of recovering data from VHD/VHDX format replicas is similar; just attach the virtual disk using <code>AttachVirtualDisk()</code> and obtain the replica volume device path.</p>
+<p>The partition format of GPT virtual disk replicas used by <a target="_blank" rel="noopener" href="https://github.com/XUranus/VolumeBackup">VolumeBackup</a> is as follows:</p>
+<p><img src="GPTPartition.drawio.png" alt="GPT Partition Format"></p>
+<blockquote>
+<p>In practical testing, fixed-length VHD/VHDX disks are created without size limitations. The terms “VHD 2040GB” and “VHDX 64TB” apply only to dynamic disks. Therefore, using VHD/VHDX format replicas for storing Windows volume replicas is a feasible backup solution. After initializing the GPT partition using <code>IOCTL_DISK_CREATE_DISK</code>, a <code>sleep</code> of a few seconds is required before executing <code>IOCTL_DISK_SET_DRIVE_LAYOUT_EX</code> to successfully initialize all partitions. This part of the MSDN documentation is not very clear, and the author has not found a solution: <em>When specifying a GUID partition table (GPT) as the PARTITION_STYLE of the CREATE_DISK structure, an application should wait for the MSR partition arrival before sending the IOCTL_DISK_SET_DRIVE_LAYOUT_EX control code. For more information about device notification, see RegisterDeviceNotification</em>. <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/winioctl/ni-winioctl-ioctl_disk_create_disk">https://learn.microsoft.com/en-us/windows/win32/api/winioctl/ni-winioctl-ioctl_disk_create_disk</a></p>
+</blockquote>
+<h3 id="Windows-Mounting-Based-on-ImDisk"><a href="#Windows-Mounting-Based-on-ImDisk" class="headerlink" title="Windows Mounting Based on ImDisk"></a>Windows Mounting Based on ImDisk</h3><p>For Windows, a mounting solution that does not require copying the replica and is not constrained by the replica’s size seems to be limited to the use of third-party tools, with ImDisk being one example. By reading the <a target="_blank" rel="noopener" href="https://github.com/LTRData/ImDisk">ImDisk source code</a>, it is evident that ImDisk registers a driver in the Windows kernel to create a virtual disk. The driver translates all I/O requests to this virtual disk into corresponding file I/O requests, similar to implementing a loopback device on Windows. However, since writing a driver involves kernel development and any slight mistake could lead to a production environment crash, this solution is not recommended.</p>
+<h1 id="Reference："><a href="#Reference：" class="headerlink" title="Reference："></a>Reference：</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Device_mapper">Device mapper - Wikipedia</a></li>
+<li><a target="_blank" rel="noopener" href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/logical_volume_manager_administration/device_mapper">Appendix A. The Device Mapper</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.minitool.com/partition-disk/volume-vs-partition.html">What’s the Difference Between Volume and Partition on Windows OS?</a></li>
+<li><a target="_blank" rel="noopener" href="http://pig.made-it.com/devicemapper.html">The Device Mapper</a></li>
+<li><a target="_blank" rel="noopener" href="https://android.googlesource.com/platform/system/core/+/refs/heads/main/fs_mgr/libdm">AOSP libdm</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.hackingarticles.in/multiple-ways-to-mount-raw-images-windows/">Mutiple Ways To Mount Raw Image Windows</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.osforensics.com/tools/mount-disk-images.html">OSFMount</a></li>
+<li><a target="_blank" rel="noopener" href="https://arsenalrecon.com/products/arsenal-image-mounter">Arsenal Image Mounter</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/LTRData/ImDisk">ImDisk GitHub</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DataProtect/" rel="tag"># DataProtect</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/04/16/C-%E4%B8%AD%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" rel="prev" title="C++中的函数式编程">
+      <i class="fa fa-chevron-left"></i> C++中的函数式编程
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%8E%A2%E7%A9%B6/" rel="next" title="卷备份的实现方案探究">
+      卷备份的实现方案探究 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Basic-Concepts-of-Volumes-Partitions-and-Disks"><span class="nav-number">1.</span> <span class="nav-text">Basic Concepts of Volumes, Partitions, and Disks</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Partition"><span class="nav-number">1.1.</span> <span class="nav-text">Partition</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Volume"><span class="nav-number">1.2.</span> <span class="nav-text">Volume</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LDM-Basic-Disk-and-Dynamic-Disk"><span class="nav-number">1.2.1.</span> <span class="nav-text">LDM, Basic Disk, and Dynamic Disk</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LVM-and-DeviceMapper"><span class="nav-number">1.2.2.</span> <span class="nav-text">LVM and DeviceMapper</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Retrieving-Volume-Information"><span class="nav-number">2.</span> <span class="nav-text">Retrieving Volume Information</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Using-POSIX-API-to-Read-Linux-Volume-Information"><span class="nav-number">2.1.</span> <span class="nav-text">Using POSIX API to Read Linux Volume Information</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Using-Win32-API-to-Read-Windows-Volume-Information"><span class="nav-number">2.2.</span> <span class="nav-text">Using Win32 API to Read Windows Volume Information</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Snapshots-and-Consistent-Backups"><span class="nav-number">3.</span> <span class="nav-text">Snapshots and Consistent Backups</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Backup-Engine-Implementation"><span class="nav-number">4.</span> <span class="nav-text">Backup Engine Implementation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Scenario-Description"><span class="nav-number">4.1.</span> <span class="nav-text">Scenario Description</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Backup-and-Restore-Engine"><span class="nav-number">4.2.</span> <span class="nav-text">Backup and Restore Engine</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Volume-Replica-Mounting"><span class="nav-number">5.</span> <span class="nav-text">Volume Replica Mounting</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Image-Files"><span class="nav-number">5.1.</span> <span class="nav-text">Image Files</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mounting-Solutions"><span class="nav-number">5.2.</span> <span class="nav-text">Mounting Solutions</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux-Mounting-Based-on-loopback-Device-devicemapper"><span class="nav-number">5.2.1.</span> <span class="nav-text">Linux Mounting Based on loopback Device&#x2F;devicemapper</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mounting-Solutions-1"><span class="nav-number">5.3.</span> <span class="nav-text">Mounting Solutions</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Windows-Mounting-Based-on-VHD"><span class="nav-number">5.3.1.</span> <span class="nav-text">Windows Mounting Based on VHD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Windows-Mounting-Based-on-ImDisk"><span class="nav-number">5.3.2.</span> <span class="nav-text">Windows Mounting Based on ImDisk</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference%EF%BC%9A"><span class="nav-number">6.</span> <span class="nav-text">Reference：</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/march72.jpg">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">Blog of XUranus</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">669k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:08</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2023/09/01/Explore-Volume-Backup/";
+    this.page.identifier = "2023/09/01/Explore-Volume-Backup/";
+    this.page.title = "Explore Volume Backup";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

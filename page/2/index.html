@@ -119,7 +119,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">59</span></a>
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">60</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">124</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">126</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -202,6 +202,223 @@
 
           <div class="content index posts-expand">
             
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/04/15/%E6%89%A9%E5%B1%95std-queue%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97%E4%B8%8E%E6%97%A0%E7%A9%B7%E9%98%9F%E5%88%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/04/15/%E6%89%A9%E5%B1%95std-queue%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97%E4%B8%8E%E6%97%A0%E7%A9%B7%E9%98%9F%E5%88%97/" class="post-title-link" itemprop="url">扩展std::queue——阻塞队列与无穷队列</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-15 09:59:09" itemprop="dateCreated datePublished" datetime="2023-04-15T09:59:09Z">2023-04-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-09-10 14:06:34" itemprop="dateModified" datetime="2023-09-10T14:06:34Z">2023-09-10</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2023/04/15/%E6%89%A9%E5%B1%95std-queue%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97%E4%B8%8E%E6%97%A0%E7%A9%B7%E9%98%9F%E5%88%97/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/04/15/扩展std-queue阻塞队列与无穷队列/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>2.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="C-中的锁"><a href="#C-中的锁" class="headerlink" title="C++中的锁"></a>C++中的锁</h2><h3 id="互斥锁"><a href="#互斥锁" class="headerlink" title="互斥锁"></a>互斥锁</h3><p>mutex(mutual exclusion)是C++中一种用于保证资源在某一时刻只有一个线程访问的同步原语(synchronization primitive)。这用于避免竞态条件(race conditions)并保证共享数据的线程安全访问。</p>
+<p>一个最基本的使用互斥锁<code>std::mutex</code>进行线程互斥访问的例子：</p>
+<ol>
+<li>引入相关头文件<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;mutex&gt;</span></span></span><br></pre></td></tr></table></figure></li>
+<li>定义互斥锁，用于保障共享资源的互斥访问<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">std::mutex mtx;</span><br><span class="line"><span class="keyword">int</span> shared_counter = <span class="number">0</span>; <span class="comment">// Shared data</span></span><br></pre></td></tr></table></figure></li>
+<li>定义函数<code>incrementCounter</code>多次增加共享资源计数<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">incrementCounter</span><span class="params">(<span class="keyword">int</span> times)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; times; i++) &#123;</span><br><span class="line">        mtx.<span class="built_in">lock</span>(); <span class="comment">// Acquire the lock</span></span><br><span class="line">        shared_counter++; <span class="comment">// Safely access the shared data</span></span><br><span class="line">        mtx.<span class="built_in">unlock</span>(); <span class="comment">// Release the lock</span></span><br><span class="line">        std::this_thread::<span class="built_in">sleep_for</span>(std::chrono::<span class="built_in">milliseconds</span>(<span class="number">1</span>)); <span class="comment">// Sleep for a while (optional)</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/04/15/%E6%89%A9%E5%B1%95std-queue%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97%E4%B8%8E%E6%97%A0%E7%A9%B7%E9%98%9F%E5%88%97/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/04/10/RasberryPi%E6%90%AD%E5%BB%BANAS%E6%9C%8D%E5%8A%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="Blog of XUranus">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/04/10/RasberryPi%E6%90%AD%E5%BB%BANAS%E6%9C%8D%E5%8A%A1/" class="post-title-link" itemprop="url">RasberryPi搭建NAS服务</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-04-10 14:09:57" itemprop="dateCreated datePublished" datetime="2023-04-10T14:09:57Z">2023-04-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-09-10 14:06:34" itemprop="dateModified" datetime="2023-09-10T14:06:34Z">2023-09-10</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2023/04/10/RasberryPi%E6%90%AD%E5%BB%BANAS%E6%9C%8D%E5%8A%A1/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/04/10/RasberryPi搭建NAS服务/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>1.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="创建NFS服务"><a href="#创建NFS服务" class="headerlink" title="创建NFS服务"></a>创建NFS服务</h2><p>NFS(Network File System)用于Linux文件系统的跨网络文件共享。在Linux上搭建NFS服务的步骤如下：</p>
+<ol>
+<li><p>安装NFS服务相关包<br>如果系统是<code>Debian</code>系（Ubuntu、Raspian）:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install nfs-kernel-server</span><br></pre></td></tr></table></figure>
+<p>如果系统三<code>CentOS/RHEL/Fedora</code>之类使用<code>yum</code>作为包关系器:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo yum install nfs-utils</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置共享目录<br>创建你想通过NFS共享的目录。例如，共享的目录为<code>~/shared_folder</code>。<br>修改<code>/etc/exports</code>文件配置NFS共享路径：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo vim /etc/exports</span><br></pre></td></tr></table></figure>
+<p>为每一个需要共享的目录分别添加对应的配置条目，格式如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/directory/to/share client_IP(options)</span><br></pre></td></tr></table></figure>
+<p>例如，<code>~/shared_folder</code>目录以IP ‘192.168.1.100’共享并给它配置读写权限(Read-Write)</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/home/username/shared_folder 192.168.1.100(rw,sync,no_root_squash,no_subtree_check)</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/04/10/RasberryPi%E6%90%AD%E5%BB%BANAS%E6%9C%8D%E5%8A%A1/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
       
   
   
@@ -522,214 +739,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/03/20/Windows%E5%88%9B%E5%BB%BA%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/03/20/Windows%E5%88%9B%E5%BB%BA%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC/" class="post-title-link" itemprop="url">Windows创建卷影副本</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-03-20 12:57:29" itemprop="dateCreated datePublished" datetime="2023-03-20T12:57:29Z">2023-03-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-09-10 14:06:34" itemprop="dateModified" datetime="2023-09-10T14:06:34Z">2023-09-10</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2023/03/20/Windows%E5%88%9B%E5%BB%BA%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/03/20/Windows创建卷影副本/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>12k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>11 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Windows Server 2008以上的版本，管理员可以通过卷影副本服务（Volume Shadow Service）在<strong>指定的</strong>卷上创建备份的<strong>卷影副本</strong>。卷影副本类似于快照(Snapshot)，用户可以基于快照卷恢复到之前某个时间的版本，备份软件也可基于快照做一致性备份。因此，它可以极大保护服务器的数据安全。</p>
-<p>本文就介绍VSS相关操作以及如何用C++调用相关API。</p>
-<blockquote>
-<p>项目完整地址见<a target="_blank" rel="noopener" href="https://github.com/XUranus/Win32VSSWrapper">https://github.com/XUranus/Win32VSSWrapper</a><br>下文所说的<strong>卷影副本</strong>和<strong>快照</strong>属于一个概念</p>
-</blockquote>
-<h2 id="vssadmin卷操作"><a href="#vssadmin卷操作" class="headerlink" title="vssadmin卷操作"></a>vssadmin卷操作</h2><p>所有支持VSS的Windows系统已经提供了一个管理卷影副本的命令行工具vssadmin。使用<strong>管理员权限</strong>进入cmd，执行卷影副本命令<code>vssadmin</code>，可以看到所有支持的命令：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">C:\WINDOWS\system32&gt;vssadmin</span><br><span class="line">vssadmin 1.1 - 卷影复制服务管理命令行工具</span><br><span class="line">(C) 版权所有 2001-2013 Microsoft Corp.</span><br><span class="line"></span><br><span class="line">---- 支持的命令 ----</span><br><span class="line"></span><br><span class="line">Delete Shadows        - 删除卷影副本</span><br><span class="line">List Providers        - 列出已注册的卷影副本提供程序</span><br><span class="line">List Shadows          - 列出现有卷影副本</span><br><span class="line">List ShadowStorage    - 列出卷影副本存储关联</span><br><span class="line">List Volumes          - 列出可以进行卷影副本处理的卷</span><br><span class="line">List Writers          - 列出订阅的卷影副本写入程序</span><br><span class="line">Resize ShadowStorage  - 调整卷影副本存储关联的大小</span><br></pre></td></tr></table></figure></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/03/20/Windows%E5%88%9B%E5%BB%BA%E5%8D%B7%E5%BD%B1%E5%89%AF%E6%9C%AC/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F3/" class="post-title-link" itemprop="url">Windows文件系统概述(三)ADS</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-03-19 14:23:20" itemprop="dateCreated datePublished" datetime="2023-03-19T14:23:20Z">2023-03-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-09-10 14:06:34" itemprop="dateModified" datetime="2023-09-10T14:06:34Z">2023-09-10</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F3/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/03/19/Windows文件系统3/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>5.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Alternative Data Streams (ADS)是Windows文件系统中引入的一项功能，可以为文件关联额外的数据流。这项功能的诞生原因是为了提高文件系统的兼容性和功能性，特别是与Macintosh和Unix系统创建的文件进行交互时。</p>
-<p>在Macintosh和Unix系统中，文件可以具有多个数据流，而Windows文件系统中最初只支持一个数据流。为了使Windows文件系统与其他操作系统更兼容，Microsoft引入了ADS功能，使Windows文件系统能够处理多个数据流。这项功能可以用于存储文件的元数据，如作者、创建日期、修改日期等，还可以用于存储图像和音频文件的缩略图、元数据等。</p>
-<p>ADS功能可以提供重要的功能和灵活性，但也带来了一些安全风险。因为ADS可以隐藏在文件中，不容易被普通的文件系统API或一些防病毒软件所发现，因此，它也可能被恶意软件利用来隐藏其存在，使得系统的安全受到威胁。</p>
-<p>尽管如此，ADS仍然被保留在Windows文件系统中，因为它在某些应用程序和使用情况下提供了重要的功能。但是，用户和组织需要意识到ADS所带来的安全风险，并采取措施来减轻这些风险，例如使用专门设计用于检测ADS中隐藏的恶意软件的防病毒软件等。本文将介绍ADS的创建和检测，以及如何用Win32 API读写ADS。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/03/19/Windows%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F3/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -797,7 +810,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">124</span>
+          <span class="site-state-item-count">126</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -810,7 +823,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">59</span>
+        <span class="site-state-item-count">60</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -837,7 +850,7 @@
 <div class="copyright">
   
   &copy; 2017 – 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -846,12 +859,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">639k</span>
+    <span title="站点总字数">669k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">9:41</span>
+    <span title="站点阅读时长">10:08</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
