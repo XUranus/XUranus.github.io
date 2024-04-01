@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="Blog of XUranus">
+  <meta name="description" content="找工作中...躺平摆烂">
 <meta property="og:type" content="website">
 <meta property="og:title" content="XUranus">
 <meta property="og:url" content="http://xuranus.github.io/page/6/index.html">
 <meta property="og:site_name" content="XUranus">
-<meta property="og:description" content="Blog of XUranus">
+<meta property="og:description" content="找工作中...躺平摆烂">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="XUranus">
 <meta name="twitter:card" content="summary">
@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">126</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">128</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -206,12 +206,222 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Git%E5%BF%AB%E7%85%A7%E6%9C%BA%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="找工作中...躺平摆烂">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Git%E5%BF%AB%E7%85%A7%E6%9C%BA%E5%88%B6/" class="post-title-link" itemprop="url">深入理解Git的发展历史</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-07-03 21:35:21" itemprop="dateCreated datePublished" datetime="2022-07-03T21:35:21Z">2022-07-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-07-10 13:42:33" itemprop="dateModified" datetime="2022-07-10T13:42:33Z">2022-07-10</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Git%E5%BF%AB%E7%85%A7%E6%9C%BA%E5%88%B6/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/04/深入理解Git快照机制/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>研究大牛的作品是接近大牛的必要步骤——膜Linus Torvalds</p>
+</blockquote>
+<h2 id="版本控制的发展历史"><a href="#版本控制的发展历史" class="headerlink" title="版本控制的发展历史"></a>版本控制的发展历史</h2><p>创建一个<code>README.md</code>文件，写入两行文字:<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Git is a distributed, open source version control system.</span><br><span class="line">You can install git on Linux using binary release.</span><br></pre></td></tr></table></figure><br>我们将它作为这个文件的第一个版本，之后有一天，我想再对它做一点修改：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Git is a distributed, open source version control system.</span><br><span class="line">You can install git on Linux, Windows using binary release.</span><br><span class="line">Or you can compile from source code.</span><br></pre></td></tr></table></figure><br>在版本控制系统还没有出现之前，人们总是用不同的文件名来区分不同的文件版本。如果想未来能回滚到之前的版本，此时只能用<code>README_2.md</code>来去分它。随着版本越来越多，文件名越来越长，管理大量版本的文件成为了噩梦。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Git%E5%BF%AB%E7%85%A7%E6%9C%BA%E5%88%B6/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3std-allocator/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="找工作中...躺平摆烂">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3std-allocator/" class="post-title-link" itemprop="url">深入理解std::allocator<T></a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-07-03 21:34:17" itemprop="dateCreated datePublished" datetime="2022-07-03T21:34:17Z">2022-07-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-07-17 02:00:48" itemprop="dateModified" datetime="2022-07-17T02:00:48Z">2022-07-17</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3std-allocator/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/07/04/深入理解std-allocator/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>3.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>请求堆上分配内存需要操作系统的参与，频繁的向请求内存开销很大。为了优化这个问题，可以把预先分配一部分内存放在池子里。</p>
+<p>C++在堆上创建对象一般是用<code>new</code>，<code>new</code>的执行包含了两个过程：</p>
+<ol>
+<li>分配内存</li>
+<li>初始化对象</li>
+</ol>
+<p>而<code>delete</code>的执行也包含了两个过程：</p>
+<ol>
+<li>对象析构</li>
+<li>释放内存</li>
+</ol>
+<p>当创建单个对象的时候，我们拥有构造对象所需的值，我们通常希望内存分配和对象初始化组合在一起；但是连续分配一堆对象的时候，我们往往希望分配内存和对象初始化分离，先分配一大快内存，在需要时再按需执行对象的初始化，此时如果将内存分配和对象初始化放在一起则会导致不必要的性能开销。例如<code>new std::vector&lt;T&gt;(10)</code>，我们希望只分配10个<code>T</code>类型的空间，而不执行<code>T</code>的默认构造方法，只有在<code>emplace_back</code>的时候才对内存初始化。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/07/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3std-allocator/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/07/02/%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
       <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
+      <meta itemprop="description" content="找工作中...躺平摆烂">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -313,9 +523,9 @@
     <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/06/27/CMake%E9%9B%86%E6%88%90gtest/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
       <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
+      <meta itemprop="description" content="找工作中...躺平摆烂">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -413,9 +623,9 @@
     <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/06/26/VIM%E9%85%8D%E7%BD%AE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
       <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
+      <meta itemprop="description" content="找工作中...躺平摆烂">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -501,204 +711,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/06/24/C-%E6%98%93%E9%94%99%E6%A6%82%E5%BF%B5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/06/24/C-%E6%98%93%E9%94%99%E6%A6%82%E5%BF%B5/" class="post-title-link" itemprop="url">C++易错概念</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-06-23 22:33:29 / 修改时间：14:50:09" itemprop="dateCreated datePublished" datetime="2022-06-23T22:33:29Z">2022-06-23</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2022/06/24/C-%E6%98%93%E9%94%99%E6%A6%82%E5%BF%B5/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/06/24/C-易错概念/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>666</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h2><p>构造函数不能定义为虚函数</p>
-<p>构造器的执行过程分为两个阶段：<strong>初始化</strong>和<strong>普通计算</strong><br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Demo</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">int</span> value1;</span><br><span class="line">  <span class="keyword">int</span> value2;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">Demo</span>(<span class="keyword">int</span> v1, <span class="keyword">int</span> v2):<span class="built_in">value2</span>(v2), <span class="built_in">value1</span>(v1) &#123; <span class="comment">// 初始化</span></span><br><span class="line">    <span class="comment">// 普通计算</span></span><br><span class="line">  &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/06/24/C-%E6%98%93%E9%94%99%E6%A6%82%E5%BF%B5/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2022/05/22/Orange-Pi-Zero%E5%88%9B%E5%BB%BA%E6%97%A0%E7%BA%BF%E7%83%AD%E7%82%B9/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/05/22/Orange-Pi-Zero%E5%88%9B%E5%BB%BA%E6%97%A0%E7%BA%BF%E7%83%AD%E7%82%B9/" class="post-title-link" itemprop="url">Orange Pi Zero创建无线热点</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-05-21 16:09:59" itemprop="dateCreated datePublished" datetime="2022-05-21T16:09:59Z">2022-05-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-06-18 08:53:19" itemprop="dateModified" datetime="2022-06-18T08:53:19Z">2022-06-18</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2022/05/22/Orange-Pi-Zero%E5%88%9B%E5%BB%BA%E6%97%A0%E7%BA%BF%E7%83%AD%E7%82%B9/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2022/05/22/Orange-Pi-Zero创建无线热点/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>3.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <blockquote>
-<p>想从已有的一个WiFi热点搭建另一个NAT WiFi热点，首先想到的解决方案就是用树莓派hostapd搭建个低功耗的路由器。但是我树莓派丢在了老家当机顶盒，打开淘宝想买个新的被最近飞涨的价格吓到了，于是打算尝试国产山寨开发板Orange Pi</p>
-</blockquote>
-<ul>
-<li>型号：Orange Pi Zero</li>
-</ul>
-<p><img src="1.jpg" alt=""></p>
-<p>用Orange Pi Zero内置WiFi网卡，以及额外的一个USB WiFi网卡来实现创建NAT WiFi子网。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/05/22/Orange-Pi-Zero%E5%88%9B%E5%BB%BA%E6%97%A0%E7%BA%BF%E7%83%AD%E7%82%B9/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -761,16 +773,16 @@
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="XUranus"
-      src="/assets/march72.jpg">
+      src="/assets/venti-4-genshin-impact-usagif.gif">
   <p class="site-author-name" itemprop="name">XUranus</p>
-  <div class="site-description" itemprop="description">Blog of XUranus</div>
+  <div class="site-description" itemprop="description">找工作中...躺平摆烂</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-count">128</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -788,6 +800,14 @@
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/XUranus" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;XUranus" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:xuranus42@qq.com" title="E-Mail → mailto:xuranus42@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
 
 
 
@@ -819,12 +839,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">669k</span>
+    <span title="站点总字数">690k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">10:08</span>
+    <span title="站点阅读时长">10:27</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
@@ -882,7 +902,7 @@
 
 <script>
 if (document.querySelectorAll('pre.mermaid').length) {
-  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js', () => {
     mermaid.initialize({
       theme    : 'forest',
       logLevel : 3,

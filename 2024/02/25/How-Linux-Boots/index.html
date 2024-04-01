@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="I have been wondering how operating system boots since the first time I installed my ArchLinux: What happened when I pressed the power on button? Why my computer knows where the system is installed? W">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How Linux Boots">
+<meta property="og:url" content="http://xuranus.github.io/2024/02/25/How-Linux-Boots/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="I have been wondering how operating system boots since the first time I installed my ArchLinux: What happened when I pressed the power on button? Why my computer knows where the system is installed? W">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2024/02/25/How-Linux-Boots/boot-into-recovery-mode-ubuntu-1.jpg">
+<meta property="og:image" content="http://xuranus.github.io/2024/02/25/How-Linux-Boots/customize-grub.png">
+<meta property="og:image" content="http://xuranus.github.io/2024/02/25/How-Linux-Boots/Ubuntu-Grub-Console.png">
+<meta property="article:published_time" content="2024-02-24T17:36:54.000Z">
+<meta property="article:modified_time" content="2024-03-31T14:34:43.336Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2024/02/25/How-Linux-Boots/boot-into-recovery-mode-ubuntu-1.jpg">
+
+<link rel="canonical" href="http://xuranus.github.io/2024/02/25/How-Linux-Boots/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>How Linux Boots | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">60</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">128</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2024/02/25/How-Linux-Boots/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="找工作中...躺平摆烂">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          How Linux Boots
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-02-24 17:36:54" itemprop="dateCreated datePublished" datetime="2024-02-24T17:36:54Z">2024-02-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-03-31 14:34:43" itemprop="dateModified" datetime="2024-03-31T14:34:43Z">2024-03-31</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2024/02/25/How-Linux-Boots/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2024/02/25/How-Linux-Boots/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>11 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>I have been wondering how operating system boots since the first time I installed my ArchLinux: What happened when I pressed the power on button? Why my computer knows where the system is installed? Why I need to run <code>grub2-install</code> and <code>grub2-mkconfig</code> from a rescue live CD when my Archlinux failed to boot after an update?</p>
+<p>It just so happens that I’m working on a requirement of <strong>Bare Metal Recovery</strong> these days. Not only do we have to restore volumes sector by sector, but also “starts up recovery” is required. We need to mount origin volumes to a Linux live CD media and run commands like <code>grub2-install</code> and <code>grub2-mkconfig</code> to fix the start up items of the origin system, otherwise the system won’t boot after BMR performed. The two commands works on most cases, however, sometimes <code>grub2-install</code> will fail, sometimes <code>grub2-mkconfig</code> will succeed but origin system still can’t boot normally after restart and only got a GRUB shell prompted instead. These strange problems on specified distro force me to delve into the booting procedure of Linux, to figure out what is GRUB, and what did these commands actually do to the disk.</p>
+<p>I will make a brief summary in this article of what I have learned these days about the os booting process, including BIOS/UEFI booting, GRUB bootloader, etc. I hope this blog might help for those who are also a newbie to such realm.</p>
+<h2 id="BIOS-booting-amp-UEFI-booting"><a href="#BIOS-booting-amp-UEFI-booting" class="headerlink" title="BIOS booting &amp; UEFI booting"></a>BIOS booting &amp; UEFI booting</h2><p>I seached from wikipedia and learned that modern computers usually have two ways for booting an operating system: <strong>BIOS (Basic Input/Output System)</strong> and <strong>UEFI (Unified Extensive Firmware Interface)</strong>. They are both firmware interfaces that are responsible for initializing hardware components during the booting process of a computer. However, they differ in several aspects:</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>Aspect/Type</th>
+<th>BIOS</th>
+<th>UEFI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Legacy vs Modern Technology</strong></td>
+<td>BIOS is the older technology, dating back to the 1970s. It has been the standard firmware interface for PCs for many years.</td>
+<td>UEFI is a more modern replacement for BIOS. It was developed to overcome limitations of BIOS and to provide more features and capabilities.</td>
+</tr>
+<tr>
+<td><strong>Boot Process</strong></td>
+<td>BIOS follows a traditional boot process where it looks for the Master Boot Record (MBR) on the boot device and executes the boot loader stored in the MBR.</td>
+<td>UEFI, on the other hand, follows a more flexible and modular boot process. It uses GUID Partition Table (GPT) instead of MBR, and it can directly execute EFI applications stored in the EFI System Partition (ESP). UEFI also supports secure boot, which ensures that only trusted software is loaded during the boot process.</td>
+</tr>
+<tr>
+<td><strong>Compatibility</strong></td>
+<td>BIOS has limited support for modern hardware features and larger storage devices. It also has compatibility issues with some advanced features like Secure Boot</td>
+<td>UEFI provides better support for modern hardware, larger storage devices, and advanced features like Secure Boot. It also supports backward compatibility with legacy BIOS systems through a compatibility support module (CSM).</td>
+</tr>
+<tr>
+<td><strong>User Interface</strong></td>
+<td>BIOS typically has a text-based user interface accessed by pressing a key (e.g., Del, F2) during system startup.</td>
+<td>UEFI often provides a graphical user interface (GUI) with mouse support for configuration and settings, making it more user-friendly.</td>
+</tr>
+<tr>
+<td><strong>Size and Extensibility</strong></td>
+<td>BIOS has a limited firmware size and functionality, making it less extensible.</td>
+<td>UEFI has a larger firmware size and is more extensible, allowing for more features and capabilities to be added.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<span id="more"></span>
+<p>In summary, while both BIOS and UEFI serve the same purpose of initializing hardware during the boot process, UEFI offers several advantages over BIOS, including support for modern hardware, flexibility, security features like Secure Boot, and a more user-friendly interface.</p>
+<h2 id="The-GRUB-Bootloader"><a href="#The-GRUB-Bootloader" class="headerlink" title="The GRUB Bootloader"></a>The GRUB Bootloader</h2><p>When computer powers on, bothing BIOS booting and UEFI booting won’t directly search where the operating system is, they will look for the “bootloaders” instead. A bootloader is a small program that resides in the boot sector of a storage device, such as a hard drive, solid-state drive (SSD), or a USB drive. Its primary function is to load and execute the operating system kernel to start the boot process of a computer or device.</p>
+<p>Here are some common bootloaders used in various operating systems:</p>
+<ul>
+<li>GRUB (GRand Unified Bootloader): GRUB is a widely used bootloader for Linux-based operating systems. It supports multiple operating systems and provides a boot menu for selecting the desired operating system or kernel.</li>
+<li>GRUB2: an updated version of GRUB with improved features and functionalities</li>
+<li>LILO (LInux LOader): the earliest bootloaders used for Linux systems. It has been largely replaced by GRUB but is still used in some older systems.</li>
+<li>Syslinux: a lightweight bootloader that is commonly used for booting Linux distributions from removable media, such as USB drives or CDs.</li>
+<li>Windows Boot Manager (Bootmgr): the bootloader used in Windows Vista/7/8/10. It is responsible for loading the Windows kernel and booting the Windows operating system.</li>
+<li>NTLDR (NT Loader): used in Windows NT-based operating systems, including Windows NT/2000/XP. It has been replaced by Bootmgr in newer versions of Windows.</li>
+<li>EFI/UEFI Boot Manager: UEFI includes a built-in boot manager that replaces traditional BIOS-based bootloaders. It is responsible for loading and executing EFI applications, including bootloaders for different operating systems.</li>
+</ul>
+<p>GRUB, as mentioned earlier, is well-known for Linux users. It is responsible for managing the boot process of a computer, allowing users to select which operating system to boot into when multiple operating systems are installed on the same machine at one time. I will only talk about the GRUB2 bootloader in the later part, all ‘bootloader’ or ‘GRUB2’ mentioned later can be viewed as ‘GRUB2’.</p>
+<p>GRUB can provide both a text-based menu and a GUI based, prettfied UI for user to select:<br><img src="boot-into-recovery-mode-ubuntu-1.jpg" alt="boot-into-recovery-mode-ubuntu"></p>
+<p><img src="customize-grub.png" alt="customize-grub"></p>
+<p>when GRUB menu is shown, you can press ‘e’ to edit the boot command of the current menu entry, e.g, change the kernel argument of switch to use another kernel. You can also press ‘c’ to enter the GRUB shell : this shell always prompt when there’s no valid boot entry, you may also encountered such case if your system failed to boot after an update. The GRUB shell provides some basic commands that you may use it to rescue your system without reinstalling it:</p>
+<ul>
+<li><code>ls</code> : list the disks and partitions/volumes that can be recognized by GRUB. Once GRUB has the required mods loaded, it can recognize far more than the disks. If GRUB loaded the <code>xfs</code> module, it can detect XFS partition. If GRUB loaded the <code>lvm</code> module, it can even recognize LVM volume! These can all be done without kernel loaded! <code>ls</code> command can also list files and directories inside the partition if it’s filesystem is known to GRUB, so it’s really useful when we want to check if the files needed for booting is missing.</li>
+<li><code>insmod</code> : load the specified module, e.g. <code>insmod xfs</code>. GRUB won’t pack all modules and load to memory at once when booting, some optional may be need to load from disk explictly after core modules has been loaded.</li>
+<li><code>set</code> : check the GRUB variables set. GRUB has many variables defined, such as <code>root</code> (to control the current directory), <code>kernel</code> (to determine which kernel to use) and <code>initrd</code> (sepecify which initramfs to use).</li>
+</ul>
+<p><img src="Ubuntu-Grub-Console.png" alt="Ubuntu-Grub-Console"></p>
+<h3 id="grub2-conf"><a href="#grub2-conf" class="headerlink" title="grub2.conf"></a>grub2.conf</h3><p>Once the GRUB menu or GRUB shell shown, it means the bootloader is loaded successfully. So next step is to boot the operating system, and that’s what the bootloader — GRUB will do. After GRUB is loaded, it is responsible for loading Linux kernel. So, how it knows what to do next? E.G. Where to find the kernel to load? Which system to boot if there’s multiple system existing on same machine? It’s time to introduce <code>grub2.cfg</code>, the GRUB configuation file. When GRUB is loaded into memory, it will perform initialization by following the scripts in <code>grub2.cfg</code>.</p>
+<p>This is a simple <code>grub2.cfg</code> example providing two boot entries, one normal mode and one recovery mode: </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># /boot/grub2/grub2.cfg</span><br><span class="line"># Set default boot entry</span><br><span class="line">set default=0</span><br><span class="line"># Set timeout for the boot menu (in seconds)</span><br><span class="line">set timeout=5</span><br><span class="line"></span><br><span class="line">insmod xfs</span><br><span class="line"># Define boot menu entries</span><br><span class="line">menuentry &quot;Ubuntu Linux, with Linux 5.4.0-104-generic&quot; &#123;</span><br><span class="line">    linux /boot/vmlinuz-5.4.0-104-generic root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX ro quiet splash</span><br><span class="line">    initrd /boot/initrd.img-5.4.0-104-generic</span><br><span class="line">&#125;</span><br><span class="line">menuentry &quot;Ubuntu Linux, with Linux 5.4.0-104-generic (recovery mode)&quot; &#123;</span><br><span class="line">    linux /boot/vmlinuz-5.4.0-104-generic root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX ro recovery nomodeset</span><br><span class="line">    initrd /boot/initrd.img-5.4.0-104-generic</span><br><span class="line">&#125;</span><br><span class="line"># Additional configuration entries can be added her</span><br></pre></td></tr></table></figure>
+<p>We can notice that each entry specified variable <code>linux</code> and <code>initrd</code>, setting the kernel and the initramfs to use. The arguments followed by linux kernel path are passed to kernel when booting, that can be read from <code>/proc/cmdline</code> later.</p>
+<p>If no GRUB menu is not shown and GRUB shell prompted instead, it usually indicate GRUB cannot found any valid boot entry, which is usually cause by missing <code>grub2.cfg</code>. Depending on your Linux distribution, the <code>grub2.cfg</code> file might be located in different directories such as <code>/boot/grub/grub2.cfg</code> or <code>/boot/efi/EFI/&lt;distro&gt;/grub2.cfg</code>. Find the correct path for your system. If you doubt the boot failure is caused by missing <code>grub2.cfg</code>, you can use grub shell to check if your <code>grub2.cfg</code> exits, also check if <code>prefix</code> variable is set to a path containing no <code>grub2.cfg</code> by mistake.</p>
+<h3 id="Linux-booting-process-overview"><a href="#Linux-booting-process-overview" class="headerlink" title="Linux booting process overview"></a>Linux booting process overview</h3><p>I summarize the Linux system booting process generated by chatgpt into a timeline consisting four main stage. The timeline provides a basic inituition of how Linux boots : <strong>The hardware loads the bootloader, the bootloader loads the kernel, kernel init userspace</strong>. We will only discuss the case using GRUB as bootloader, so we will use GRUB to represent bootloader.</p>
+<pre class="mermaid">timeline
+    title Linux System Boot Process
+    Hardware Initialization 
+        : [Power On] When you turn on your computer, the BIOS (or UEFI firmware) performs initial hardware checks and starts the boot process.
+        : [BIOS/UEFI Initialization] The BIOS or UEFI firmware initializes hardware components such as CPU, memory, and storage devices.
+        : [Boot Device Selection] The BIOS or UEFI firmware locates and loads the boot loader from the boot device. This could be a hard drive, solid-state drive, or other storage media.
+    GRUB Stage
+        : [GRUB Stage 1] The first stage of GRUB is installed in the Master Boot Record (MBR) or the boot sector of the boot device. Its primary role is to load the next stage of GRUB.
+        : [GRUB Stage 1.5/Stage 2] Depending on the configuration, GRUB may have an intermediate stage (Stage 1.5) installed between Stage 1 and Stage 2. Stage 2 is the main part of GRUB responsible for loading the operating system.
+        : [GRUB Configuration] GRUB reads its configuration file (usually grub.cfg) to determine which operating systems are installed and how to boot them. This file contains information about kernel locations, boot parameters, and other options.
+        : [Loading Linux Kernel] Based on the configuration, GRUB loads the Linux kernel (vmlinuz) into memory. It may also load an initial RAM disk (initrd or initramfs) if necessary.
+    Kernel Stage
+        : [Kernel Initialization] The Linux kernel starts executing and initializes essential system components such as memory management, device drivers, and the root file system.
+    User Space Stage
+        : [Init Process] The kernel starts the init process, which is typically the first user-space process. The init process is responsible for starting system services and initializing the user environment.
+        : [User Space Initialization] Once the init process completes its tasks, the system is fully initialized, and the user can interact with the operating system through the shell or a graphical interface.</pre>
+
+<p>The hardware initialization process is done by hardware maunufactor so I won’t pay much attention to this part. So let’s start from <em>GRUB Stage</em> first, we need to know where GRUB is located and loaded.</p>
+<h2 id="How-GRUB-is-loaded"><a href="#How-GRUB-is-loaded" class="headerlink" title="How GRUB is loaded"></a>How GRUB is loaded</h2><p>This GRUB loading process of BIOS differs from the process of UEFI so we have to discuss it separately.</p>
+<h3 id="BIOS-bootstrap"><a href="#BIOS-bootstrap" class="headerlink" title="BIOS bootstrap"></a>BIOS bootstrap</h3><p>If a computer use BIOS bootstrap, the BIOS will check the bootstrap signature at the MBR sector (the first sector, 512B) of the disk. If the disk contains valid bootstrap signature, the bootstrap instruction written at the first sector will be executed to load the instruction of next stage. This stage is <em>GRUB Stage 1</em>, the instruction size is limited to several hundred bytes. The area where the core instruction of GRUB resides is known as the “embedding area” or “post-MBR gap,” is usually unpartitioned space on the disk between MBR sector and the first partition. From the <code>sfdisk -d</code> command we can see, on most modern Linux distro, the “embedding area” is reserved from 1 sector to 2047 sector, takes a space about 2048 * 512B = 1MiB:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">➜  bin sudo sfdisk -d /dev/sda</span><br><span class="line">label: gpt</span><br><span class="line">label-id: 5B490ADF-AAFE-6441-851E-8F63D915BDBC</span><br><span class="line">device: /dev/sda</span><br><span class="line">unit: sectors</span><br><span class="line">first-lba: 34</span><br><span class="line">last-lba: 1953525134</span><br><span class="line">sector-size: 512</span><br><span class="line"></span><br><span class="line">/dev/sda1 : start=        2048, size=     1024000, <span class="built_in">type</span>=0FC63DAF-8483-4772-8E79-3D69D8477DE4, uuid=1AA2633E-44BC-3541-AA90-93D3AF1FD033</span><br><span class="line">/dev/sda2 : start=     1026048, size=  1952497664, <span class="built_in">type</span>=0FC63DAF-8483-4772-8E79-3D69D8477DE4, uuid=55C425F0-D00F-8341-B517-B610223183B3</span><br></pre></td></tr></table></figure></p>
+<p>The bootstrap instruction of “GRUB Stage 1.5/Stage 2” is stored as image <code>core.img</code> is typically installed in the area immediately following the Master Boot Record of the disk. This area, known as the “embedding area” or “post-MBR gap,” is usually unpartitioned space on the disk and is where the GRUB core resides. During the GRUB installation process, the <code>core.img</code> is written directly to the disk using low-level disk writing utilities such as <code>dd</code>. This process involves embedding the core image into the disk sectors following the MBR, ensuring that the BIOS can locate and load it during the boot process.</p>
+<p>When using <code>grub-install -target=i386-pc /dev/sda</code> command to install GRUB, </p>
+<h3 id="UEFI-bootstrap"><a href="#UEFI-bootstrap" class="headerlink" title="UEFI bootstrap"></a>UEFI bootstrap</h3><h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Master_boot_record#:~:text=A%20master%20boot%20record%20(MBR,PC%2Dcompatible%20systems%20and%20beyond.">Wikipedia: Master Boot Record</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/01/06/Bare-Metal-Recovery-Solution-On-Linux/" rel="prev" title="Bare Metal Recovery Solution On Linux">
+      <i class="fa fa-chevron-left"></i> Bare Metal Recovery Solution On Linux
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/02/25/Custom-your-Linux-live-CD-with-linux-live/" rel="next" title="Custom your Linux live CD with linux-live">
+      Custom your Linux live CD with linux-live <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#BIOS-booting-amp-UEFI-booting"><span class="nav-number">1.</span> <span class="nav-text">BIOS booting &amp; UEFI booting</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#The-GRUB-Bootloader"><span class="nav-number">2.</span> <span class="nav-text">The GRUB Bootloader</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#grub2-conf"><span class="nav-number">2.1.</span> <span class="nav-text">grub2.conf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux-booting-process-overview"><span class="nav-number">2.2.</span> <span class="nav-text">Linux booting process overview</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How-GRUB-is-loaded"><span class="nav-number">3.</span> <span class="nav-text">How GRUB is loaded</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#BIOS-bootstrap"><span class="nav-number">3.1.</span> <span class="nav-text">BIOS bootstrap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UEFI-bootstrap"><span class="nav-number">3.2.</span> <span class="nav-text">UEFI bootstrap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">4.</span> <span class="nav-text">References</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/venti-4-genshin-impact-usagif.gif">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">找工作中...躺平摆烂</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">128</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/XUranus" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;XUranus" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:xuranus42@qq.com" title="E-Mail → mailto:xuranus42@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">690k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:27</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2024/02/25/How-Linux-Boots/";
+    this.page.identifier = "2024/02/25/How-Linux-Boots/";
+    this.page.title = "How Linux Boots";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

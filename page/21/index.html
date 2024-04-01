@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="Blog of XUranus">
+  <meta name="description" content="找工作中...躺平摆烂">
 <meta property="og:type" content="website">
 <meta property="og:title" content="XUranus">
 <meta property="og:url" content="http://xuranus.github.io/page/21/index.html">
 <meta property="og:site_name" content="XUranus">
-<meta property="og:description" content="Blog of XUranus">
+<meta property="og:description" content="找工作中...躺平摆烂">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="XUranus">
 <meta name="twitter:card" content="summary">
@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">126</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">128</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -206,12 +206,219 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/11/03/jupyter-notebook%E7%9A%84%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="找工作中...躺平摆烂">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/11/03/jupyter-notebook%E7%9A%84%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">jupyter notebook的使用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-03 14:13:08" itemprop="dateCreated datePublished" datetime="2018-11-03T14:13:08Z">2018-11-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2018/11/03/jupyter-notebook%E7%9A%84%E4%BD%BF%E7%94%A8/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/11/03/jupyter-notebook的使用/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>812</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>Jupyter Notebook（此前被称为 IPython notebook）是一个交互式笔记本，支持运行 40 多种编程语言。</p>
+</blockquote>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><ul>
+<li>环境：Archlinux</li>
+<li>包管理:conda</li>
+</ul>
+<p>conda中已经自带jupyter的包，如果不用conda，也可以用pip<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo pip install jupyter</span><br></pre></td></tr></table></figure><br>运行：<code>jupyter notebook</code>，弹出浏览器即可使用了</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2018/11/03/jupyter-notebook%E7%9A%84%E4%BD%BF%E7%94%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/11/02/Archlinux%E4%BD%BF%E7%94%A8Anaconda/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="找工作中...躺平摆烂">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2018/11/02/Archlinux%E4%BD%BF%E7%94%A8Anaconda/" class="post-title-link" itemprop="url">Archlinux使用Anaconda</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-02 12:36:59" itemprop="dateCreated datePublished" datetime="2018-11-02T12:36:59Z">2018-11-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2018/11/02/Archlinux%E4%BD%BF%E7%94%A8Anaconda/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/11/02/Archlinux使用Anaconda/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>1.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>conda是python的另一个包管理器，和pip并不通用 </p>
+</blockquote>
+<h1 id="Anaconda的安装"><a href="#Anaconda的安装" class="headerlink" title="Anaconda的安装"></a>Anaconda的安装</h1><p>首先Arch上已经安装了Python 3.7.1和python-pip，此时控制台输入Python，输出如下：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Python 3.7.1 (default, Oct 22 2018, 10:41:28) </span><br><span class="line">[GCC 8.2.1 20180831] on linux</span><br><span class="line">Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.</span><br><span class="line">&gt;&gt;&gt; </span><br></pre></td></tr></table></figure><br>之后安装Anaconda</p>
+<p>通过pacman：<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo pacman -S anaconda</span><br></pre></td></tr></table></figure><br>然后将<code>/opt/anaconda/bin</code>添加到<code>PATH</code>环境变量中</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2018/11/02/Archlinux%E4%BD%BF%E7%94%A8Anaconda/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/11/02/Python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
       <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
+      <meta itemprop="description" content="找工作中...躺平摆烂">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -311,9 +518,9 @@
     <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/11/01/%E6%95%B0%E6%8D%AE%E6%8C%96%E6%8E%98/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
       <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
+      <meta itemprop="description" content="找工作中...躺平摆烂">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -422,9 +629,9 @@
     <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/10/31/R%E8%AF%AD%E8%A8%80%E5%AD%A6%E4%B9%A0%EF%BC%88%E4%BA%94%EF%BC%89ggplot/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
       <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
+      <meta itemprop="description" content="找工作中...躺平摆烂">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -527,218 +734,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/10/24/Archlinux%E9%85%8D%E7%BD%AEtensorflow/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/10/24/Archlinux%E9%85%8D%E7%BD%AEtensorflow/" class="post-title-link" itemprop="url">Archlinux配置tensorflow</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-10-23 16:51:22" itemprop="dateCreated datePublished" datetime="2018-10-23T16:51:22Z">2018-10-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2018/10/24/Archlinux%E9%85%8D%E7%BD%AEtensorflow/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/10/24/Archlinux配置tensorflow/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>274</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>安装python<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo pacman -S python</span><br><span class="line">sudo pacman -S python-pip</span><br></pre></td></tr></table></figure></p>
-<p>安装tensorflow<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo pacman -S python-tensorflow-cuda</span><br><span class="line">sudo pacman -S　python-pillow</span><br></pre></td></tr></table></figure></p>
-<p>如果出现Header和Library不符的情况，可以重装h5py<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo pip uninstall h5py</span><br><span class="line">sudo pip install h5py</span><br></pre></td></tr></table></figure><br>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/10/24/Archlinux%E9%85%8D%E7%BD%AEtensorflow/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/10/21/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BB%84%E4%BB%B6%E4%B8%8EWeb%E6%9C%8D%E5%8A%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/10/21/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BB%84%E4%BB%B6%E4%B8%8EWeb%E6%9C%8D%E5%8A%A1/" class="post-title-link" itemprop="url">分布式组件与Web服务</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-10-21 14:01:03" itemprop="dateCreated datePublished" datetime="2018-10-21T14:01:03Z">2018-10-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2018/10/21/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BB%84%E4%BB%B6%E4%B8%8EWeb%E6%9C%8D%E5%8A%A1/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/10/21/分布式组件与Web服务/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>6.9k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>6 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="分布式组件导论"><a href="#分布式组件导论" class="headerlink" title="分布式组件导论"></a>分布式组件导论</h1><h2 id="课程介绍"><a href="#课程介绍" class="headerlink" title="课程介绍"></a>课程介绍</h2><p>web服务是中间件的自然演化和企业平台整合的结果，他们想把www,英特网和社会全球化整合为一体，尤其在经济层面。</p>
-<p>我们本次课程要回答的问题是：<strong>什么是web服务，web服务如今能做什么</strong></p>
-<p>课程目标：</p>
-<ul>
-<li>理解web服务<ul>
-<li>为了能理解web服务，我们需要后退一步去看看分布式信息系统在过去十几年中变化的历史。</li>
-</ul>
-</li>
-<li>把web服务应用化<ul>
-<li>我们将回顾如今基本的web服务技术，并且详细讨论SOAP,UDDI,WSDL,SOA,BPEL</li>
-<li>我们也将探讨这些规格如今可以做什么，他们缺失了什么导致他们不能成为有效的工具投入商用</li>
-<li>课程目的旨在培养一种对当今web service技术和可能性的批判思维。</li>
-</ul>
-</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/10/21/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BB%84%E4%BB%B6%E4%B8%8EWeb%E6%9C%8D%E5%8A%A1/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -801,16 +796,16 @@
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="XUranus"
-      src="/assets/march72.jpg">
+      src="/assets/venti-4-genshin-impact-usagif.gif">
   <p class="site-author-name" itemprop="name">XUranus</p>
-  <div class="site-description" itemprop="description">Blog of XUranus</div>
+  <div class="site-description" itemprop="description">找工作中...躺平摆烂</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-count">128</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -828,6 +823,14 @@
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/XUranus" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;XUranus" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:xuranus42@qq.com" title="E-Mail → mailto:xuranus42@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
 
 
 
@@ -859,12 +862,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">669k</span>
+    <span title="站点总字数">690k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">10:08</span>
+    <span title="站点阅读时长">10:27</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
@@ -922,7 +925,7 @@
 
 <script>
 if (document.querySelectorAll('pre.mermaid').length) {
-  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js', () => {
     mermaid.initialize({
       theme    : 'forest',
       logLevel : 3,

@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="Blog of XUranus">
+  <meta name="description" content="找工作中...躺平摆烂">
 <meta property="og:type" content="website">
 <meta property="og:title" content="XUranus">
 <meta property="og:url" content="http://xuranus.github.io/page/10/index.html">
 <meta property="og:site_name" content="XUranus">
-<meta property="og:description" content="Blog of XUranus">
+<meta property="og:description" content="找工作中...躺平摆烂">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="XUranus">
 <meta name="twitter:card" content="summary">
@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">126</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">128</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -206,12 +206,219 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/22/%E6%97%A5%E5%BF%97%E5%A4%84%E7%90%86%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%90%AD%E5%BB%BA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="找工作中...躺平摆烂">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/22/%E6%97%A5%E5%BF%97%E5%A4%84%E7%90%86%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%90%AD%E5%BB%BA/" class="post-title-link" itemprop="url">日志处理系统的搭建</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-22 15:24:27" itemprop="dateCreated datePublished" datetime="2021-04-22T15:24:27Z">2021-04-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/04/22/%E6%97%A5%E5%BF%97%E5%A4%84%E7%90%86%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%90%AD%E5%BB%BA/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/22/日志处理系统的搭建/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>3.1k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>服务运行的过程中就会不断产生日志，日志的常见用途有：</p>
+<ul>
+<li>查看某个时间段的错误原因</li>
+<li>分析某个接口的召回率</li>
+<li>记录接口的输入输出参数，在升级接口的时候做回归测试</li>
+</ul>
+<p>对于单点服务的日志只需要用<code>awk</code>，<code>grep</code>命令即可获取需要的信息，但在分布式系统中，管理分布在各个节点的日志就会变得很麻烦，需要有一个系统采集各个节点的日志几种储存。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/04/22/%E6%97%A5%E5%BF%97%E5%A4%84%E7%90%86%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%90%AD%E5%BB%BA/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/07/Linux%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%89%8B%E5%86%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="找工作中...躺平摆烂">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/07/Linux%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%89%8B%E5%86%8C/" class="post-title-link" itemprop="url">Linux常用工具手册</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-07 14:31:55" itemprop="dateCreated datePublished" datetime="2021-04-07T14:31:55Z">2021-04-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2021/04/07/Linux%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%89%8B%E5%86%8C/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/07/Linux常用工具手册/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>4.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>整理多而杂的常用工具，以备日后查找用</p>
+</blockquote>
+<h2 id="route"><a href="#route" class="headerlink" title="route"></a>route</h2><p><code>route</code>用于查看路由表<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ route</span><br><span class="line">Kernel IP routing table</span><br><span class="line">Destination     Gateway         Genmask         Flags Metric Ref    Use Iface</span><br><span class="line">default         DESKTOP-N0ED40G 0.0.0.0         UG    100    0        0 eth0</span><br><span class="line">link-local      0.0.0.0         255.255.0.0     U     1000   0        0 eth0</span><br><span class="line">172.19.80.0     0.0.0.0         255.255.240.0   U     100    0        0 eth0</span><br></pre></td></tr></table></figure><br><code>Destination</code>，<code>Gateway</code>，<code>Genmask</code>分别表示目的网络号，网关，子网掩码。例如要访问<code>172.19.89.119</code>，按行与<code>Genmask</code>向与，结果是<code>172.19.80.0</code>，与第三行<code>Destination</code>相匹配，所以选择第三行配置。如果访问某个IP找不到匹配的路由项，则选<code>default</code>（第一行）。</p>
+<p><code>Flags</code>中<code>U</code>表示<code>used</code>，<code>G</code>表示<code>Gateway</code>，<code>H</code>表示<code>Host</code>。<code>Iface</code>表示路由对应的网卡。</p>
+<p>添加一条路由：<code>route add -net 10.0.0.0/24 dev ens160</code></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/04/07/Linux%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E6%89%8B%E5%86%8C/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/07/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
       <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
+      <meta itemprop="description" content="找工作中...躺平摆烂">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -313,9 +520,9 @@
     <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/07/%E5%B8%B8%E8%A7%81Web%E6%94%BB%E5%87%BB%E4%B8%8E%E5%BA%94%E5%AF%B9%E6%96%B9%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
       <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
+      <meta itemprop="description" content="找工作中...躺平摆烂">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -423,9 +630,9 @@
     <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/07/Docker%E5%85%A5%E9%97%A8%EF%BC%88%E4%B8%80%EF%BC%89%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
       <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
+      <meta itemprop="description" content="找工作中...躺平摆烂">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -518,224 +725,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/07/Java%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/07/Java%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">Java逃逸分析</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-06 19:52:56" itemprop="dateCreated datePublished" datetime="2021-04-06T19:52:56Z">2021-04-06</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2021/04/07/Java%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/07/Java逃逸分析/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>2.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>一般来说Java的对象都是在堆上生成，但是如果一个对象只在<strong>当前函数内</strong>被使用，那么它可以被分配在栈上。栈上的数据在函数返回时被回收，从而大大减轻了GC的压力。</p>
-<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p><strong>由Java Hotspot分析对象的使用范围是否只在当前函数内有效，然后控制其在堆分配空间的技术就叫逃逸分析（Escape Analysis）</strong>。</p>
-<p>逃逸分析的相关参数如下：</p>
-<ul>
-<li>开启逃逸分析：<code>-XX:+DoEscapeAnalysis</code></li>
-<li>关闭逃逸分析：<code>-XX:-DoEscapeAnalysis</code></li>
-<li>显示分析结果：<code>-XX:+PrintEscapeAnalysis</code></li>
-</ul>
-<h2 id="GC性能分析"><a href="#GC性能分析" class="headerlink" title="GC性能分析"></a>GC性能分析</h2><p>接下来就一个具体例子测试逃逸分析是否能优化GC的性能。在IDEA中设置<code>VM Option</code>。</p>
-<ul>
-<li>堆最大10m，最小也10m，来让其尽快进入GC状态：<code>-Xmx10m -Xms10m</code>。</li>
-<li>开启GC的打印<code>-XX:+PrintGC</code></li>
-<li>由于Java SE 6u23+之后默认开启了逃逸分析，这里需要先关掉它：<code>-XX:-DoEscapeAnalysis</code></li>
-</ul>
-<p>最终<code>VM Option</code>如下：<code>-Xmx10m -Xms10m -XX:+PrintGC -XX:-DoEscapeAnalysis</code></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/04/07/Java%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2021/04/02/HTTP%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%8F%91%E5%B1%95%E5%8F%B2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/march72.jpg">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="Blog of XUranus">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/02/HTTP%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%8F%91%E5%B1%95%E5%8F%B2/" class="post-title-link" itemprop="url">HTTP协议的发展史</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-02 14:21:19" itemprop="dateCreated datePublished" datetime="2021-04-02T14:21:19Z">2021-04-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2021/04/02/HTTP%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%8F%91%E5%B1%95%E5%8F%B2/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2021/04/02/HTTP协议的发展史/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>2.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="HTTP-0-9"><a href="#HTTP-0-9" class="headerlink" title="HTTP/0.9"></a>HTTP/0.9</h2><p>1991年发布的HTTP/0.9只是一个草案，纯文本格式。蒂姆.伯纳斯.李 最初设想的系统里的文档都是只读的，所以只允许用”GET”动作从服务器上获取HTML文档，并且在响应请求之后立即关闭连接，功能非常有限。此时的HTTP协议没有请求头和请求体的概念，只能用于只读文档请求。</p>
-<h2 id="HTTP-1-0"><a href="#HTTP-1-0" class="headerlink" title="HTTP/1.0"></a>HTTP/1.0</h2><p>时隔5年，发布的HTTP/1.0</p>
-<ul>
-<li>规定了HTTP的请求头，请求体，以及响应头，相应体的概念，并在Header里引入了协议版本号</li>
-<li>支持了GET，POST，HEAD等多种方法。</li>
-<li>增加了HTTP相应状态码的概念</li>
-<li>传输从数据不再仅限于文本</li>
-</ul>
-<p>此时的HTTP协议已经和如今的HTTP协议极为类似了。HTTP/1.0采用了短链接，即每次请求一个资源都需要建立一个TCP请求，完成一整套握手和挥手的过程。如：当有100个图片资源时，就会发起100个TCP请求。频繁的连接建立与断开极大消耗了资源。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/04/02/HTTP%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%8F%91%E5%B1%95%E5%8F%B2/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -798,16 +787,16 @@
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="XUranus"
-      src="/assets/march72.jpg">
+      src="/assets/venti-4-genshin-impact-usagif.gif">
   <p class="site-author-name" itemprop="name">XUranus</p>
-  <div class="site-description" itemprop="description">Blog of XUranus</div>
+  <div class="site-description" itemprop="description">找工作中...躺平摆烂</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">126</span>
+          <span class="site-state-item-count">128</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -825,6 +814,14 @@
       </div>
   </nav>
 </div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/XUranus" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;XUranus" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:xuranus42@qq.com" title="E-Mail → mailto:xuranus42@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
 
 
 
@@ -856,12 +853,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">669k</span>
+    <span title="站点总字数">690k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">10:08</span>
+    <span title="站点阅读时长">10:27</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
@@ -919,7 +916,7 @@
 
 <script>
 if (document.querySelectorAll('pre.mermaid').length) {
-  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js', () => {
     mermaid.initialize({
       theme    : 'forest',
       logLevel : 3,
