@@ -17,20 +17,26 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
-  <meta name="description" content="Recently I was working on a Linux Bare Metal Recovery releated requirement. Users will be allowed to use a customed Linux live CD to run a temporary Linux system without making any changes to the stor">
+  <meta name="description" content="Recently I was working on a Linux Bare Metal Recovery releated requirement. Users should be allowed to use a customed Linux live CD to start a temporary Linux operating system that won’t make any chan">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Custom your Linux live CD with linux-live">
+<meta property="og:title" content="Custom your Linux live CD using linux-live">
 <meta property="og:url" content="http://xuranus.github.io/2024/02/25/Custom-your-Linux-live-CD-with-linux-live/index.html">
 <meta property="og:site_name" content="XUranus">
-<meta property="og:description" content="Recently I was working on a Linux Bare Metal Recovery releated requirement. Users will be allowed to use a customed Linux live CD to run a temporary Linux system without making any changes to the stor">
+<meta property="og:description" content="Recently I was working on a Linux Bare Metal Recovery releated requirement. Users should be allowed to use a customed Linux live CD to start a temporary Linux operating system that won’t make any chan">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2024/02/25/Custom-your-Linux-live-CD-with-linux-live/live-linux-isolinux.png">
+<meta property="og:image" content="http://xuranus.github.io/2024/02/25/Custom-your-Linux-live-CD-with-linux-live/qemu-euler-aarch64-install.png">
+<meta property="og:image" content="http://xuranus.github.io/2024/02/25/Custom-your-Linux-live-CD-with-linux-live/virt-manager-create-new-instance.png">
+<meta property="og:image" content="http://xuranus.github.io/2024/02/25/Custom-your-Linux-live-CD-with-linux-live/live-linux-grub.png">
 <meta property="article:published_time" content="2024-02-25T15:18:07.000Z">
-<meta property="article:modified_time" content="2024-03-04T04:32:56.248Z">
+<meta property="article:modified_time" content="2024-04-05T14:32:37.720Z">
 <meta property="article:author" content="XUranus">
+<meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2024/02/25/Custom-your-Linux-live-CD-with-linux-live/live-linux-isolinux.png">
 
 <link rel="canonical" href="http://xuranus.github.io/2024/02/25/Custom-your-Linux-live-CD-with-linux-live/">
 
@@ -45,7 +51,7 @@
   };
 </script>
 
-  <title>Custom your Linux live CD with linux-live | XUranus</title>
+  <title>Custom your Linux live CD using linux-live | XUranus</title>
   
 
 
@@ -121,7 +127,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">60</span></a>
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">59</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -131,7 +137,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">128</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">127</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -222,7 +228,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Custom your Linux live CD with linux-live
+          Custom your Linux live CD using linux-live
         </h1>
 
         <div class="post-meta">
@@ -239,7 +245,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-04 04:32:56" itemprop="dateModified" datetime="2024-03-04T04:32:56Z">2024-03-04</time>
+                <time title="修改时间：2024-04-05 14:32:37" itemprop="dateModified" datetime="2024-04-05T14:32:37Z">2024-04-05</time>
               </span>
 
           
@@ -261,13 +267,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>9.1k</span>
+              <span>6.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>8 分钟</span>
+              <span>6 分钟</span>
             </span>
 
         </div>
@@ -279,24 +285,38 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>Recently I was working on a <em>Linux Bare Metal Recovery</em> releated requirement. Users will be allowed to use a customed Linux live CD to run a temporary Linux system without making any changes to the storage, and then use the build-in tool to perform system recovery. So we need to find a way to custom our a Linux recovery live CD.</p>
-<p>Due to I’m a newbie in such area, I searched a lot of linux live kit project from GitHub wishing to found a available solution. They are mostly some sorts of shell scripts to pack some specified Linux distro into a ISO file. I found the <a target="_blank" rel="noopener" href="https://github.com/Tomas-M/linux-live/blob/master/config">linux-live</a> project by <a target="_blank" rel="noopener" href="https://github.com/Tomas-M/linux-live/blob/master/config">Tomas-M</a> can pack any Linux system whose kernel supports <em>squashfs</em> , <em>aufs</em> and <em>overlayfs</em>. I just need to clone the project, and edit the <code>config</code> file in it to configure the path of our <em>vmlinuz</em> image and to select which paths need to be packed:</p>
+        <p>Recently I was working on a <em>Linux Bare Metal Recovery</em> releated requirement. Users should be allowed to use a customed Linux live CD to start a temporary Linux operating system that won’t make any changes to the storage, and then they can use the build-in tools to perform system recovery, e.g. using <code>sfdisk</code> to restore the volume/partition data and using GRUB toolchains to fix the startup items. Thus, we need to find a way to custom our a Linux recovery live CD firstly.</p>
+<p>Due to I’m a newbie in such area, I googled about the Linux live CD and found there’s already some out-of-the-box images like <a target="_blank" rel="noopener" href="https://www.slax.org/">Slax</a>. However, it does not provide the feature customization kit so that does not meet our expectation. I searched linux live kit project from GitHub wishing to found a available solution. The projects are mainly some sorts of shell scripts to pack specified Linux distro into a ISO file.</p>
+<p>I found the <a target="_blank" rel="noopener" href="https://github.com/Tomas-M/linux-live/blob/master/config">linux-live</a> project by <a target="_blank" rel="noopener" href="https://github.com/Tomas-M/linux-live/blob/master/config">Tomas-M</a> can pack any Linux system whose kernel supports <em>squashfs</em> , <em>aufs</em> and <em>overlayfs</em> into an live CD ISO image. All I need to do is just clone the project, make some configuration and run a script to produce the target ISO, which is quite simple and flexible. Here’s the steps in detail:</p>
+<ol>
+<li><p>clone the project to a directory that won’t be packed latter, for example <code>/opt</code>.</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /opt &amp;&amp; git <span class="built_in">clone</span> https://github.com/Tomas-M/linux-live.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>edit the <code>linux-live/config</code> file to filter which directories need to be packed:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Kernel file, will be copied to your Live Kit</span><br><span class="line"># Your kernel must support aufs and squashfs. Debian Jessie&#x27;s kernel is ready</span><br><span class="line"># out of the box.</span><br><span class="line">VMLINUZ=/vmlinuz</span><br><span class="line"></span><br><span class="line"># List of directories for root filesystem</span><br><span class="line"># No subdirectories are allowed, no slashes,</span><br><span class="line"># so You can&#x27;t use /var/tmp here for example</span><br><span class="line"># Exclude directories like proc sys tmp</span><br><span class="line">MKMOD=&quot;bin etc home lib lib64 libx32 root sbin srv usr var&quot;</span><br></pre></td></tr></table></figure>
+<p>use <code>find /boot | grep vmlinuz</code> to find where the <em>vmlinuz</em> image is and create a <code>/vmlinuz</code> symlink to that path:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ find /boot | grep vmlinuz</span><br><span class="line">/boot/vmlinuz-0-rescue-2348d36f53074ace8b9850051a3d34b5</span><br><span class="line">/boot/vmlinuz-5.10.0-182.0.0.95.oe2203sp3.x86_64</span><br><span class="line">$ ln -s /boot/vmlinuz-5.10.0-182.0.0.95.oe2203sp3.x86_64 /vmlinuz</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
 <span id="more"></span>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Kernel file, will be copied to your Live Kit</span><br><span class="line"># Your kernel must support aufs and squashfs. Debian Jessie&#x27;s kernel is ready</span><br><span class="line"># out of the box.</span><br><span class="line">VMLINUZ=/vmlinuz</span><br><span class="line"></span><br><span class="line"># List of directories for root filesystem</span><br><span class="line"># No subdirectories are allowed, no slashes,</span><br><span class="line"># so You can&#x27;t use /var/tmp here for example</span><br><span class="line"># Exclude directories like proc sys tmp</span><br><span class="line">MKMOD=&quot;bin etc home lib lib64 libx32 opt root sbin srv usr var&quot;</span><br></pre></td></tr></table></figure>
-<p>I’m using an Archlinux, and I use <code>find /boot | grep vmlinuz</code> to find where the <em>vmlinuz</em> image is:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ find /boot | grep vmlinuz</span><br><span class="line">/boot/vmlinuz-linux</span><br></pre></td></tr></table></figure></p>
-<p>The <a target="_blank" rel="noopener" href="https://github.com/Tomas-M/linux-live/blob/master/config">linux-live</a> project is cloned to <code>/opt</code> and I don’t want it to be packed into live CD, so my <code>config</code> file finally looks like:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Kernel file, will be copied to your Live Kit</span><br><span class="line"># Your kernel must support aufs and squashfs. Debian Jessie&#x27;s kernel is ready</span><br><span class="line"># out of the box.</span><br><span class="line">VMLINUZ=/boot/vmlinuz-linux</span><br><span class="line"></span><br><span class="line"># List of directories for root filesystem</span><br><span class="line"># No subdirectories are allowed, no slashes,</span><br><span class="line"># so You can&#x27;t use /var/tmp here for example</span><br><span class="line"># Exclude directories like proc sys tmp</span><br><span class="line">MKMOD=&quot;bin etc home lib lib64 libx32 root sbin srv usr var&quot;</span><br></pre></td></tr></table></figure>
-<p>After that, run <code>./build</code>. a temporary folder and two shell scripts will be generated to <code>/tmp</code>：<br><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">/tmp</span><br><span class="line">  |-- /linux-data</span><br><span class="line">  |-- gen_linux_iso.sh</span><br><span class="line">  |-- gen_linux_zip.sh</span><br></pre></td></tr></table></figure><br>The <code>/linux-data</code> directory contains a <em>squashfs</em> image of the root filesystem and some bootfiles. The two scripts are used to generate ISO image or ZIP file from the <code>/linux-data</code>. I ran <code>gen_linux_iso.sh</code> and got an ISO image at <code>/tmp/linux-x86_64.iso</code>. I use VMware to create a new virtual machine, attach the ISO file to CD-ROM and chose to boot from CD-ROM. It works! A ugly boot background shows and the systems loads successfully!</p>
-<p>However several days later, I found that the ISO cannot boot from UEFI(the previous vm is booted from BIOS). What’s worse, the <a target="_blank" rel="noopener" href="https://github.com/Tomas-M/linux-live/blob/master/config">linux-live</a> project cannot build ISO image from aarch64 platform. I checked the build log and found it print error when executing <code>initramfs_create</code>. It fails because it uses some compiled binary utils like <code>busybox</code> and <code>eject</code>… in <code>initramfs/static</code>! So, this live kit won’t build definitely without doing any change to it! Now, to sum up, the live kit can only build ISO which works on x86_64 platform and support BIOS booting only, but we need to build ISO works on both x86_64 and aarch64 and can be boot from both UEFI and BIOS. I think, the binary utils format issue can solved by recompiling aarch64 platform, but the UEFI booting issue is really hard for me for I have no idea about how Linux boots from ISO! </p>
-<p>I have written a blog <em><a href="/2024/02/25/How-Linux-Boots/">How Linux Boots</a></em> discussing how Linux boot from disk, but this time things got a little different cause we are trying to boot from a optical disk.</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost]<span class="comment"># find /boot | grep vmlinuz</span></span><br><span class="line">/boot/.vmlinuz-5.10.0-182.0.0.95.oe2203sp3.x86_64.hmac</span><br><span class="line">/boot/vmlinuz-0-rescue-2348d36f53074ace8b9850051a3d34b5</span><br><span class="line">/boot/vmlinuz-5.10.0-182.0.0.95.oe2203sp3.x86_64</span><br><span class="line"></span><br><span class="line">[root@localhost]<span class="comment"># ln -s /boot/vmlinuz-5.10.0-182.0.0.95.oe2203sp3.x86_64 /vmlinuz</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost]<span class="comment"># which genisoimage </span></span><br><span class="line">/usr/bin/genisoimage</span><br><span class="line">[root@localhost]<span class="comment"># which mkisofs </span></span><br><span class="line">/usr/bin/mkisofs</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost]<span class="comment"># find /lib/modules | grep -E &quot;overlay|aufs&quot;</span></span><br><span class="line">/lib/modules/5.10.0-182.0.0.95.oe2203sp3.x86_64/kernel/fs/overlayfs</span><br><span class="line">/lib/modules/5.10.0-182.0.0.95.oe2203sp3.x86_64/kernel/fs/overlayfs/overlay.ko.xz</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost linux-live]<span class="comment"># sh build</span></span><br><span class="line">Changing current directory to /opt/linux-live</span><br><span class="line">Building initramfs image...</span><br><span class="line">Parallel mksquashfs: Using 4 processors</span><br><span class="line">Creating 4.0 filesystem on /tmp/linux-data-8316/linux/modules/01-core.sb, block size 1048576.</span><br><span class="line">[======================================================/  ] 64467/65815  97%</span><br><span class="line">Failed to <span class="built_in">read</span> file /var/lib/nfs/rpc_pipefs/gssd/clntXX/info, creating empty file</span><br><span class="line">[======================================================/  ] 64475/65815  97%Failed to <span class="built_in">read</span> file /var/lib/nfs/rpc_pipefs/nfs/clnt84/info, creating empty file</span><br><span class="line">[======================================================/  ] 64475/65815  97%Failed to <span class="built_in">read</span> file /var/lib/nfs/rpc_pipefs/nfs/clnt85/info, creating empty file</span><br><span class="line">[=======================================================/ ] 65776/65815  99%</span><br><span class="line">Unrecognised xattr prefix system.posix_acl_default</span><br><span class="line">[=======================================================\ ] 65795/65815  99%</span><br><span class="line">File /var/<span class="built_in">log</span>/audit/audit.log changed size <span class="keyword">while</span> reading filesystem, attempting to re-read</span><br><span class="line">File /var/<span class="built_in">log</span>/messages changed size <span class="keyword">while</span> reading filesystem, attempting to re-read</span><br><span class="line">File /var/<span class="built_in">log</span>/secure changed size <span class="keyword">while</span> reading filesystem, attempting to re-read</span><br><span class="line">File /var/<span class="built_in">log</span>/tuned/tuned.log changed size <span class="keyword">while</span> reading filesystem, attempting to re-read</span><br><span class="line">File /var/<span class="built_in">log</span>/wtmp changed size <span class="keyword">while</span> reading filesystem, attempting to re-read</span><br><span class="line">[========================================================/] 65815/65815 100%</span><br><span class="line"></span><br><span class="line">Exportable Squashfs 4.0 filesystem, xz compressed, data block size 1048576</span><br><span class="line">        compressed data, compressed metadata, compressed fragments,</span><br><span class="line">        compressed xattrs, compressed ids</span><br><span class="line">        duplicates are removed</span><br><span class="line">Filesystem size 571828.03 Kbytes (558.43 Mbytes)</span><br><span class="line">        29.76% of uncompressed filesystem size (1921430.20 Kbytes)</span><br><span class="line">Inode table size 692350 bytes (676.12 Kbytes)</span><br><span class="line">        15.35% of uncompressed inode table size (4510054 bytes)</span><br><span class="line">Directory table size 776770 bytes (758.56 Kbytes)</span><br><span class="line">        36.98% of uncompressed directory table size (2100297 bytes)</span><br><span class="line">Xattr table size 259810 bytes (253.72 Kbytes)</span><br><span class="line">        85.14% of uncompressed xattr table size (305164 bytes)</span><br><span class="line">Number of duplicate files found 7758</span><br><span class="line">Number of inodes 84423</span><br><span class="line">Number of files 69878</span><br><span class="line">Number of fragments 1327</span><br><span class="line">Number of symbolic links 1962</span><br><span class="line">Number of device nodes 0</span><br><span class="line">Number of fifo nodes 1</span><br><span class="line">Number of socket nodes 1</span><br><span class="line">Number of directories 12581</span><br><span class="line">Number of ids (unique uids + gids) 22</span><br><span class="line">Number of uids 9</span><br><span class="line">        root (0)</span><br><span class="line">        polkitd (995)</span><br><span class="line">        setroubleshoot (994)</span><br><span class="line">        tss (59)</span><br><span class="line">        chrony (992)</span><br><span class="line">        dhcpd (177)</span><br><span class="line">        rpcuser (29)</span><br><span class="line">        unbound (997)</span><br><span class="line">        rpc (32)</span><br><span class="line">Number of gids 19</span><br><span class="line">        root (0)</span><br><span class="line">        chrony (988)</span><br><span class="line">        polkitd (993)</span><br><span class="line">        ssh_keys (994)</span><br><span class="line">        tss (59)</span><br><span class="line">        cgred (992)</span><br><span class="line">        slocate (21)</span><br><span class="line">        stapusr (156)</span><br><span class="line">        tty (5)</span><br><span class="line">        cockpit-ws (989)</span><br><span class="line">        dbus (81)</span><br><span class="line">        utmp (22)</span><br><span class="line">        utempter (35)</span><br><span class="line">        wheel (10)</span><br><span class="line">        dhcpd (177)</span><br><span class="line">        rpcuser (29)</span><br><span class="line">        setroubleshoot (990)</span><br><span class="line">        unbound (996)</span><br><span class="line">        mail (12)</span><br><span class="line">-----------------------------</span><br><span class="line">Finished. Find your result <span class="keyword">in</span> /tmp/linux-data-8316</span><br><span class="line">To build ISO, run: /tmp/gen_linux_iso.sh</span><br><span class="line">To build ZIP, run: /tmp/gen_linux_zip.sh</span><br></pre></td></tr></table></figure>
-<h2 id="ISOLINUX-amp-GRUB"><a href="#ISOLINUX-amp-GRUB" class="headerlink" title="ISOLINUX &amp; GRUB"></a>ISOLINUX &amp; GRUB</h2><h2 id="ISO9660-amp-El-Torito"><a href="#ISO9660-amp-El-Torito" class="headerlink" title="ISO9660 &amp; El Torito"></a>ISO9660 &amp; El Torito</h2><h2 id="Build-EFI-image"><a href="#Build-EFI-image" class="headerlink" title="Build EFI image"></a>Build EFI image</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cp /mnt/sr0/images/efiboot.img /opt</span><br><span class="line">mount /dev/sr0 /mnt/sr0/</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>run <code>linux-live/build</code> script, a temporary folder named <code>linux-data-xxx</code> containning data to be packed and two shell scripts that used to produce ISO or ZIP file will be generated to <code>/tmp</code>：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ tree /tmp</span><br><span class="line">/tmp</span><br><span class="line">  |-- /linux-data-xxxx</span><br><span class="line">  |-- gen_linux_iso.sh</span><br><span class="line">  |-- gen_linux_zip.sh</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>run <code>/tmp/gen_linux_iso.sh</code> and an ISO image <code>/tmp/linux-x86_64.iso</code> will be packed.</p>
+</li>
+</ol>
+<p>After the four simple steps are done, I created a new virtual machine in VMWare, attached this ISO image to virtual CD-ROM and chose to boot from CD-ROM. It works! A ugly boot background shows and the systems loads successfully!</p>
+<p><img src="live-linux-isolinux.png" alt="live-linux-isolinux"></p>
+<p>However, several days later, I found that the ISO cannot boot on UEFI mode (the previous vm is booted from BIOS). What’s worse, the <a target="_blank" rel="noopener" href="https://github.com/Tomas-M/linux-live">linux-live</a> kit cannot build ISO image from aarch64 platform. I checked the build log and found it output error when executing <code>initramfs_create</code>. It fails because the build scripts require some pre-compiled binaries like <code>busybox</code>, <code>eject</code>, <code>mkfs.xfs</code> placed in directory <code>initramfs/static</code>. Thus, this kit won’t work on such case definitely without performing any modification to it! Now, to sum up, this live kit can only produce ISO image which works on x86_64 platform and support BIOS booting only, but our requirement is to build ISO image that works on both x86_64 and aarch64, and can boot from both UEFI and BIOS. I think, the binaries platform issue can solved by recompiling them on aarch64 platform, but the UEFI booting issue is really hard for me since I have no idea about how Linux boots from ISO! </p>
+<p>I have written a blog <em><a href="/2024/02/25/How-Linux-Boots/">How Linux Boots</a></em> introducing how Linux boot from disk, but this time things got a little different as we are trying to boot from ISO image, or say, a optical disk.</p>
+<h2 id="ISOLINUX-amp-GRUB"><a href="#ISOLINUX-amp-GRUB" class="headerlink" title="ISOLINUX &amp; GRUB"></a>ISOLINUX &amp; GRUB</h2><p>// isolinux is designed for ISO boot specificly<br><img src="qemu-euler-aarch64-install.png" alt="qemu-euler-aarch64-install"><br><img src="virt-manager-create-new-instance.png" alt="virt-manager-create-new-instance"><br><img src="live-linux-grub.png" alt="live-linux-grub"></p>
+<h2 id="ISO9660-amp-El-Torito"><a href="#ISO9660-amp-El-Torito" class="headerlink" title="ISO9660 &amp; El Torito"></a>ISO9660 &amp; El Torito</h2><p>// iso8660 standard and El Torito boot</p>
+<h2 id="Build-x86-64-EFI-ISO-image"><a href="#Build-x86-64-EFI-ISO-image" class="headerlink" title="Build x86_64 EFI ISO image"></a>Build x86_64 EFI ISO image</h2><p>// replace ESP image and El torito boot entry</p>
+<p>// build hybrid CD</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cp /mnt/sr0/images/efiboot.img /opt</span><br><span class="line">mount /dev/sr0 /mnt/sr0/</span><br></pre></td></tr></table></figure>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]# tree /mnt/sr0/</span><br><span class="line">/mnt/sr0/</span><br><span class="line">├── docs</span><br><span class="line">│   ├── OpenEuler-Software-License.docx</span><br><span class="line">│   └── TRANS.TBL</span><br><span class="line">├── EFI</span><br><span class="line">│   ├── BOOT</span><br><span class="line">│   │   ├── BOOTX64.EFI</span><br><span class="line">│   │   ├── fonts</span><br><span class="line">│   │   │   ├── TRANS.TBL</span><br><span class="line">│   │   │   └── unicode.pf2</span><br><span class="line">│   │   ├── grub.cfg</span><br><span class="line">│   │   ├── grubx64.efi</span><br><span class="line">│   │   ├── mmx64.efi</span><br><span class="line">│   │   └── TRANS.TBL</span><br><span class="line">│   └── TRANS.TBL</span><br><span class="line">├── images</span><br><span class="line">│   ├── efiboot.img</span><br><span class="line">│   ├── install.img</span><br><span class="line">│   ├── pxeboot</span><br><span class="line">│   │   ├── initrd.img</span><br><span class="line">│   │   ├── TRANS.TBL</span><br><span class="line">│   │   └── vmlinuz</span><br><span class="line">│   └── TRANS.TBL</span><br><span class="line">├── isolinux</span><br><span class="line">│   ├── boot.cat</span><br><span class="line">│   ├── boot.msg</span><br><span class="line">│   ├── grub.conf</span><br><span class="line">│   ├── initrd.img</span><br><span class="line">│   ├── isolinux.bin</span><br><span class="line">│   ├── isolinux.cfg</span><br><span class="line">│   ├── ldlinux.c32</span><br><span class="line">│   ├── libcom32.c32</span><br><span class="line">│   ├── libutil.c32</span><br><span class="line">│   ├── splash.png</span><br><span class="line">│   ├── TRANS.TBL</span><br><span class="line">│   ├── vesamenu.c32</span><br><span class="line">│   └── vmlinuz</span><br></pre></td></tr></table></figure>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># mkdir /mnt/efiboot</span></span><br><span class="line">[root@localhost ~]<span class="comment"># file /opt/efiboot.img </span></span><br><span class="line">/opt/efiboot.img: DOS/MBR boot sector, code offset 0x3c+2, OEM-ID <span class="string">&quot;mkfs.fat&quot;</span>, sectors/cluster 4, reserved sectors 4, root entries 512, sectors 14336 (volumes &lt;=32 MB), Media descriptor 0xf8, sectors/FAT 12, sectors/track 32, serial number 0xea69884d, label: <span class="string">&quot;ANACONDA   &quot;</span>, FAT (12 bit)</span><br><span class="line">[root@localhost ~]<span class="comment"># mount /opt/efiboot.img /mnt/efiboot/</span></span><br><span class="line">[root@localhost ~]<span class="comment"># tree /mnt/efiboot/</span></span><br><span class="line">/mnt/efiboot/</span><br><span class="line">└── EFI</span><br><span class="line">    └── BOOT</span><br><span class="line">        ├── BOOTX64.EFI</span><br><span class="line">        ├── fonts</span><br><span class="line">        │   └── unicode.pf2</span><br><span class="line">        ├── grub.cfg</span><br><span class="line">        ├── grubx64.efi</span><br><span class="line">        └── mmx64.efi</span><br><span class="line"></span><br><span class="line">3 directories, 5 files</span><br></pre></td></tr></table></figure>
-<h2 id="Generate-ISO-file-using-mkisofs"><a href="#Generate-ISO-file-using-mkisofs" class="headerlink" title="Generate ISO file using mkisofs"></a>Generate ISO file using mkisofs</h2><p>Live kit is a USB disk or optical disk that provides a portable way to allow you take your OS everywhere. You can use a live kit to </p>
 <h2 id="Support-aarch64"><a href="#Support-aarch64" class="headerlink" title="Support aarch64"></a>Support aarch64</h2><h3 id="Install-qemu"><a href="#Install-qemu" class="headerlink" title="Install qemu"></a>Install qemu</h3><p>Since I only have an <em>ArchLinux x86_64</em> PC, I need to use <em>qemu</em> to simulate a AARCH environment to get an <em>OpenEuler aarch64</em> system installed.</p>
 <p>Firstly, type <code>sudo pacman -S qemu-full qemu-system-aarch64 virt-manager dnsmasq</code> to install <em>qemu</em> and <em>virt-manager</em>. <a target="_blank" rel="noopener" href="https://wiki.archlinux.org/title/Virt-manager">virt-manager</a> is a nice user graphic interface for qemu that function like VMware to allow aarch64 operating system run on my x86_64 PC.</p>
 <p>compile from source:<br>build <code>ninja</code><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ wget https://github.com/ninja-build/ninja/archive/refs/tags/v1.10.2.tar.gz</span><br><span class="line">$ tar zxvf v1.10.2.tar.gz &amp;&amp; <span class="built_in">cd</span> ninja-1.10.2</span><br><span class="line">$ ./configure.py --bootstrap</span><br><span class="line">$ sudo cp ninja /usr/bin</span><br></pre></td></tr></table></figure><br>build qemu<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ mkdir build &amp;&amp; <span class="built_in">cd</span> build</span><br><span class="line">$ sudo mkdir -p /usr/<span class="built_in">local</span>/qemu</span><br><span class="line">$ ../configure --enable-virtfs --target-list=aarch64-softmmu,arm-softmmu --prefix=/usr/<span class="built_in">local</span>/qemu</span><br><span class="line">$ make -j16</span><br><span class="line">$ sudo make install</span><br></pre></td></tr></table></figure><br>add <em>/usr/local/qemu/bin</em> to <code>$PATH</code></p>
@@ -315,6 +335,9 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
 
         
 
@@ -394,7 +417,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ISOLINUX-amp-GRUB"><span class="nav-number">1.</span> <span class="nav-text">ISOLINUX &amp; GRUB</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ISO9660-amp-El-Torito"><span class="nav-number">2.</span> <span class="nav-text">ISO9660 &amp; El Torito</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Build-EFI-image"><span class="nav-number">3.</span> <span class="nav-text">Build EFI image</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Generate-ISO-file-using-mkisofs"><span class="nav-number">4.</span> <span class="nav-text">Generate ISO file using mkisofs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Support-aarch64"><span class="nav-number">5.</span> <span class="nav-text">Support aarch64</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Install-qemu"><span class="nav-number">5.1.</span> <span class="nav-text">Install qemu</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ISOLINUX-amp-GRUB"><span class="nav-number">1.</span> <span class="nav-text">ISOLINUX &amp; GRUB</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ISO9660-amp-El-Torito"><span class="nav-number">2.</span> <span class="nav-text">ISO9660 &amp; El Torito</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Build-x86-64-EFI-ISO-image"><span class="nav-number">3.</span> <span class="nav-text">Build x86_64 EFI ISO image</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Support-aarch64"><span class="nav-number">4.</span> <span class="nav-text">Support aarch64</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Install-qemu"><span class="nav-number">4.1.</span> <span class="nav-text">Install qemu</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -410,7 +433,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">128</span>
+          <span class="site-state-item-count">127</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -423,7 +446,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-count">59</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -467,12 +490,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">690k</span>
+    <span title="站点总字数">684k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">10:27</span>
+    <span title="站点阅读时长">10:22</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
@@ -563,7 +586,7 @@ if (document.querySelectorAll('pre.mermaid').length) {
   var disqus_config = function() {
     this.page.url = "http://xuranus.github.io/2024/02/25/Custom-your-Linux-live-CD-with-linux-live/";
     this.page.identifier = "2024/02/25/Custom-your-Linux-live-CD-with-linux-live/";
-    this.page.title = "Custom your Linux live CD with linux-live";
+    this.page.title = "Custom your Linux live CD using linux-live";
     };
   NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
     if (window.DISQUS) {

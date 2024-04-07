@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
   <meta name="description" content="I have been wondering how operating system boots since the first time I installed my ArchLinux: What happened when I pressed the power on button? Why my computer knows where the system is installed? W">
@@ -27,15 +27,17 @@
 <meta property="og:site_name" content="XUranus">
 <meta property="og:description" content="I have been wondering how operating system boots since the first time I installed my ArchLinux: What happened when I pressed the power on button? Why my computer knows where the system is installed? W">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2024/02/25/How-Linux-Boots/mbr-stage1.jpg">
+<meta property="og:image" content="http://xuranus.github.io/2024/02/25/How-Linux-Boots/mbr-stage1.5.jpg">
 <meta property="og:image" content="http://xuranus.github.io/2024/02/25/How-Linux-Boots/boot-into-recovery-mode-ubuntu-1.jpg">
 <meta property="og:image" content="http://xuranus.github.io/2024/02/25/How-Linux-Boots/customize-grub.png">
 <meta property="og:image" content="http://xuranus.github.io/2024/02/25/How-Linux-Boots/Ubuntu-Grub-Console.png">
 <meta property="article:published_time" content="2024-02-24T17:36:54.000Z">
-<meta property="article:modified_time" content="2024-03-31T14:34:43.336Z">
+<meta property="article:modified_time" content="2024-04-06T13:42:42.796Z">
 <meta property="article:author" content="XUranus">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://xuranus.github.io/2024/02/25/How-Linux-Boots/boot-into-recovery-mode-ubuntu-1.jpg">
+<meta name="twitter:image" content="http://xuranus.github.io/2024/02/25/How-Linux-Boots/mbr-stage1.jpg">
 
 <link rel="canonical" href="http://xuranus.github.io/2024/02/25/How-Linux-Boots/">
 
@@ -126,7 +128,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">60</span></a>
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">59</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -136,7 +138,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">128</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">127</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -244,7 +246,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-31 14:34:43" itemprop="dateModified" datetime="2024-03-31T14:34:43Z">2024-03-31</time>
+                <time title="修改时间：2024-04-06 13:42:42" itemprop="dateModified" datetime="2024-04-06T13:42:42Z">2024-04-06</time>
               </span>
 
           
@@ -266,13 +268,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>12k</span>
+              <span>21k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>11 分钟</span>
+              <span>19 分钟</span>
             </span>
 
         </div>
@@ -327,8 +329,8 @@
 </table>
 </div>
 <span id="more"></span>
-<p>In summary, while both BIOS and UEFI serve the same purpose of initializing hardware during the boot process, UEFI offers several advantages over BIOS, including support for modern hardware, flexibility, security features like Secure Boot, and a more user-friendly interface.</p>
-<h2 id="The-GRUB-Bootloader"><a href="#The-GRUB-Bootloader" class="headerlink" title="The GRUB Bootloader"></a>The GRUB Bootloader</h2><p>When computer powers on, bothing BIOS booting and UEFI booting won’t directly search where the operating system is, they will look for the “bootloaders” instead. A bootloader is a small program that resides in the boot sector of a storage device, such as a hard drive, solid-state drive (SSD), or a USB drive. Its primary function is to load and execute the operating system kernel to start the boot process of a computer or device.</p>
+<h3 id="Bootloaders"><a href="#Bootloaders" class="headerlink" title="Bootloaders"></a>Bootloaders</h3><p>In summary, while both BIOS and UEFI serve the same purpose of initializing hardware during the boot process, UEFI offers several advantages over BIOS, including support for modern hardware, flexibility, security features like Secure Boot, and a more user-friendly interface.</p>
+<p>When computer powers on, bothing BIOS booting and UEFI booting won’t directly search where the operating system is, they will look for the “bootloaders” instead. A bootloader is a small program that resides in the boot sector of a storage device, such as a hard drive, solid-state drive (SSD), or a USB drive. Its primary function is to load and execute the operating system kernel to start the boot process of a computer or device.</p>
 <p>Here are some common bootloaders used in various operating systems:</p>
 <ul>
 <li>GRUB (GRand Unified Bootloader): GRUB is a widely used bootloader for Linux-based operating systems. It supports multiple operating systems and provides a boot menu for selecting the desired operating system or kernel.</li>
@@ -339,22 +341,113 @@
 <li>NTLDR (NT Loader): used in Windows NT-based operating systems, including Windows NT/2000/XP. It has been replaced by Bootmgr in newer versions of Windows.</li>
 <li>EFI/UEFI Boot Manager: UEFI includes a built-in boot manager that replaces traditional BIOS-based bootloaders. It is responsible for loading and executing EFI applications, including bootloaders for different operating systems.</li>
 </ul>
-<p>GRUB, as mentioned earlier, is well-known for Linux users. It is responsible for managing the boot process of a computer, allowing users to select which operating system to boot into when multiple operating systems are installed on the same machine at one time. I will only talk about the GRUB2 bootloader in the later part, all ‘bootloader’ or ‘GRUB2’ mentioned later can be viewed as ‘GRUB2’.</p>
-<p>GRUB can provide both a text-based menu and a GUI based, prettfied UI for user to select:<br><img src="boot-into-recovery-mode-ubuntu-1.jpg" alt="boot-into-recovery-mode-ubuntu"></p>
-<p><img src="customize-grub.png" alt="customize-grub"></p>
-<p>when GRUB menu is shown, you can press ‘e’ to edit the boot command of the current menu entry, e.g, change the kernel argument of switch to use another kernel. You can also press ‘c’ to enter the GRUB shell : this shell always prompt when there’s no valid boot entry, you may also encountered such case if your system failed to boot after an update. The GRUB shell provides some basic commands that you may use it to rescue your system without reinstalling it:</p>
+<p>GRUB, as mentioned earlier, is well-known for Linux users. It is responsible for managing the boot process of a computer, allowing users to select which operating system to boot into when multiple operating systems are installed on the same machine at one time. Since the fact that nearly all modern Linux operating system using GRUB as the default bootloader, I will only talk about the GRUB2 in the later part, all ‘bootloader’ or ‘GRUB’ mentioned later can be viewed as ‘GRUB2’.</p>
+<p>The hardware initialization process is done by hardware maunufactor so I won’t pay much attention to this part. So firstly we need to figure out how GRUB is located and loaded. This process on BIOS mode differs from that on UEFI mode, so we have to discuss it separately.</p>
+<h3 id="How-BIOS-load-GRUB"><a href="#How-BIOS-load-GRUB" class="headerlink" title="How BIOS load GRUB"></a>How BIOS load GRUB</h3><p>If a computer use BIOS bootstrap, the BIOS will check the bootstrap signature at the MBR sector (the first sector, 512B) of the disk.</p>
+<blockquote>
+<p>read this wiki for more information about MBR : <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Master_boot_record">https://en.wikipedia.org/wiki/Master_boot_record</a></p>
+</blockquote>
+<p>If the disk contains valid bootstrap signature, the bootstrap instruction written at the first sector will be executed. This stage is called <em>GRUB Stage 1</em>, the instruction size is limited to several hundred bytes so it’s designed only aim to load the instruction of next stage.<br><img src="mbr-stage1.jpg" alt="mbr-stage1"></p>
+<p>The area where the core instruction of GRUB (<code>core.img</code>) resides is known as the “embedding area” or “post-MBR gap,” is usually unpartitioned space on the disk between MBR sector and the first partition. This part is known as <em>GRUB stage 1.5</em> or <em>GRUB stage 2</em>. This is the part that need to be loaded by <em>GRUB Stage 1</em>.<br><img src="mbr-stage1.5.jpg" alt="mbr-stage1.5"></p>
+<blockquote>
+<p>the <code>core.img</code> is written directly to the disk using low-level disk writing utilities such as <code>dd</code>. </p>
+</blockquote>
+<p>From the <code>sfdisk -d</code> command we can see, on most modern Linux distro, the “embedding area” is reserved from 1 sector to 2047 sector, taking space about 2048 * 512B = 1MiB:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">➜  sudo sfdisk -d /dev/sda</span><br><span class="line">label: gpt</span><br><span class="line">label-id: 5B490ADF-AAFE-6441-851E-8F63D915BDBC</span><br><span class="line">device: /dev/sda</span><br><span class="line">unit: sectors</span><br><span class="line">first-lba: 34</span><br><span class="line">last-lba: 1953525134</span><br><span class="line">sector-size: 512</span><br><span class="line"></span><br><span class="line">/dev/sda1 : start=        2048, size=     1024000, <span class="built_in">type</span>=0FC63DAF-8483-4772-8E79-3D69D8477DE4, uuid=1AA2633E-44BC-3541-AA90-93D3AF1FD033</span><br><span class="line">/dev/sda2 : start=     1026048, size=  1952497664, <span class="built_in">type</span>=0FC63DAF-8483-4772-8E79-3D69D8477DE4, uuid=55C425F0-D00F-8341-B517-B610223183B3</span><br></pre></td></tr></table></figure>
+<p>Now, let’s go back to the question ‘what does <code>grub2-install</code> do to the disk?’. When we using <code>grub2-install -target=i386-pc /dev/sda</code> command to install GRUB, we are installing GRUB in BIOS mode. This opeation makes two modification to the disk:</p>
+<ol>
+<li>Dump GRUB core image (<em>GRUB Stage 1.5/2</em>) to “post-MBR gap” of <code>/dev/sda</code>.</li>
+<li>Write the necessary boot code and configuration data (<em>GRUB Stage 1</em>) to the MBR of <code>/dev/sda</code>.</li>
+</ol>
+<p>However, when comes to UEFI mode, all things get a little bit different.</p>
+<h3 id="How-UEFI-load-GRUB"><a href="#How-UEFI-load-GRUB" class="headerlink" title="How UEFI load GRUB"></a>How UEFI load GRUB</h3><p>If a host boots on UEFI mode, after the hardware check is done, the UEFI firmware reads specific files from the <em>EFI System Partition (ESP)</em> during the boot process. The primary file it looks for is: </p>
 <ul>
-<li><code>ls</code> : list the disks and partitions/volumes that can be recognized by GRUB. Once GRUB has the required mods loaded, it can recognize far more than the disks. If GRUB loaded the <code>xfs</code> module, it can detect XFS partition. If GRUB loaded the <code>lvm</code> module, it can even recognize LVM volume! These can all be done without kernel loaded! <code>ls</code> command can also list files and directories inside the partition if it’s filesystem is known to GRUB, so it’s really useful when we want to check if the files needed for booting is missing.</li>
-<li><code>insmod</code> : load the specified module, e.g. <code>insmod xfs</code>. GRUB won’t pack all modules and load to memory at once when booting, some optional may be need to load from disk explictly after core modules has been loaded.</li>
-<li><code>set</code> : check the GRUB variables set. GRUB has many variables defined, such as <code>root</code> (to control the current directory), <code>kernel</code> (to determine which kernel to use) and <code>initrd</code> (sepecify which initramfs to use).</li>
+<li><strong>Boot Loader</strong>: The UEFI firmware typically reads the boot loader file specified in the <em>boot configuration data (BCD)</em> or in the firmware’s boot manager settings. The boot loader file is usually located at <code>/EFI/BOOT/bootx64.efi</code> for 64-bit systems or <code>/EFI/BOOT/bootia32.efi</code> for 32-bit systems. This file is responsible for initiating the boot process and loading the operating system kernel.</li>
+</ul>
+<p>Additionally, the UEFI firmware may read other files from the ESP depending on the system configuration and boot options. These files may include:</p>
+<ul>
+<li><strong>Boot Manager Configuration</strong>: Configuration files related to the UEFI boot manager, such as <code>/EFI/Microsoft/Boot/BCD</code> or <code>/EFI/Boot/BCD</code>.</li>
+<li><strong>Operating System Boot Loader</strong>: The boot loader for the specific operating system installed on the system, located at paths like <code>/EFI/&lt;Operating_System&gt;/bootx64.efi</code>.</li>
+</ul>
+<p>The <strong>EFI System Partition (ESP)</strong> is an independent partition on a disk, typically formatted with the FAT32 file system. It’s used by computers adhering to the UEFI specification for storing boot loader and other system files required for the boot process. The ESP is usually mounted at <code>/boot/efi</code> in Linux systems and contains files necessary for the boot process, such as boot loaders, boot manager configurations, and firmware executables. For example, structure of an ESP partition of Ubuntu mounted at <code>/boot/efi</code> may looks like :<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├── EFI</span><br><span class="line">│   ├── ubuntu</span><br><span class="line">│   │   ├── bootx64.efi</span><br><span class="line">│   │   ├── fonts</span><br><span class="line">│   │   │   ├── TRANS.TBL</span><br><span class="line">│   │   │   └── unicode.pf2</span><br><span class="line">│   │   ├── grub.cfg</span><br><span class="line">│   │   ├── grubx64.efi</span><br><span class="line">│   │   ├── mmx64.efi</span><br><span class="line">│   │   └── TRANS.TBL</span><br><span class="line">│   └── TRANS.TBL</span><br></pre></td></tr></table></figure></p>
+<p>In this case, UEFI booting process may looks like this:</p>
+<ol>
+<li>UEFI firmware search all FAT32 partitions on disks partitioned by GPT and find a valid ESP</li>
+<li>UEFI firmware found the bootloader <code>/EFI/ubuntu/bootx64.efi</code> in this ESP and load it into memory</li>
+<li>The UEFI bootloader <code>/EFI/ubuntu/bootx64.efi</code> load GRUB executable <code>/EFI/ubuntu/grubx64.efi</code></li>
+</ol>
+<p>the <code>grub2-install</code> command to install GRUB in UEFI mode should be like <code>grub2-install --target=x86_64-efi --efi-directory=/boot/efi</code>. This command installs the GRUB bootloader onto the EFI System Partition (ESP) of your disk. You need to sepecify a directory, or say ESP mount point, as a target to store the UEFI loader files rather than provide a block device like <code>/dev/sda</code>.</p>
+<blockquote>
+<p>According to the UEFI specification, a disk should only contain one EFI System Partition (ESP). The ESP is a unique partition designated for storing boot loaders and other essential boot files for the UEFI boot process. Having multiple ESPs on a single disk could lead to confusion for the UEFI firmware and the boot manager, as they rely on a single ESP to locate and load the necessary boot files. Therefore, it’s recommended to have only one ESP per disk when using UEFI booting. However, a PC may allowed to contain multiple ESP partition by having multiple disks each containing a valid ESP, the firmware determines which disk to boot from based on the boot order settings configured in the UEFI firmware. </p>
+</blockquote>
+<h2 id="How-GRUB-boot-Linux"><a href="#How-GRUB-boot-Linux" class="headerlink" title="How GRUB boot Linux"></a>How GRUB boot Linux</h2><p>When GRUB is loaded by BIOS/UEFI firmware, it takes the control and we don’t need to care the difference between BIOS booting and UEFI booting from now on.</p>
+<p>GRUB can provide both a text-based menu and a GUI based, prettfied UI for user to select which boot option to use:<br><img src="boot-into-recovery-mode-ubuntu-1.jpg" alt="boot-into-recovery-mode-ubuntu"></p>
+<p><img src="customize-grub.png" alt="customize-grub"></p>
+<h3 id="GRUB-shell"><a href="#GRUB-shell" class="headerlink" title="GRUB shell"></a>GRUB shell</h3><p>when GRUB menu is shown, you can press ‘e’ to edit the boot command of the current menu entry, e.g, modify the kernel argument or the kernel image path in order to switch another kernel. You can also press ‘c’ to enter the GRUB shell : this shell always prompt when there’s no valid boot entry.(You may also encounter such case if your system failed to boot after an update). The GRUB shell provides some basic commands that you may use to rescue your system without reinstalling:</p>
+<ul>
+<li><code>ls</code> : list the block devices, e.g, disks, that can be recognized by GRUB. Once GRUB has the required modules loaded, it can recognize far more than the disks. If GRUB loaded the <code>xfs</code> module, it can detect and list XFS partitions. If GRUB loaded the <code>lvm</code> module, it can even recognize LVM volume! These can all be done without kernel loaded! That’s why GRUB can even boot OS from btrfs or xfs filesystem managed by LVM. <code>ls</code> command can also list files and directories inside the partition if it’s filesystem is known to GRUB, so it’s really useful when we want to check if the files needed for booting is missing when boot failed.</li>
+<li><code>insmod</code> : load the specified module, e.g. <code>insmod xfs</code>. GRUB won’t load all modules into memory when started, some optional external modules may be need to load from disk explictly after core modules has been loaded.</li>
+<li><code>set</code> : check and set the GRUB environment variables. GRUB has many variables defined, such as <code>root</code> (to control the current directory and partitions/volumes), <code>linux</code> (to determine which linux kernel to use) and <code>initrd</code> (sepecify which initramfs to use).</li>
 </ul>
 <p><img src="Ubuntu-Grub-Console.png" alt="Ubuntu-Grub-Console"></p>
-<h3 id="grub2-conf"><a href="#grub2-conf" class="headerlink" title="grub2.conf"></a>grub2.conf</h3><p>Once the GRUB menu or GRUB shell shown, it means the bootloader is loaded successfully. So next step is to boot the operating system, and that’s what the bootloader — GRUB will do. After GRUB is loaded, it is responsible for loading Linux kernel. So, how it knows what to do next? E.G. Where to find the kernel to load? Which system to boot if there’s multiple system existing on same machine? It’s time to introduce <code>grub2.cfg</code>, the GRUB configuation file. When GRUB is loaded into memory, it will perform initialization by following the scripts in <code>grub2.cfg</code>.</p>
-<p>This is a simple <code>grub2.cfg</code> example providing two boot entries, one normal mode and one recovery mode: </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># /boot/grub2/grub2.cfg</span><br><span class="line"># Set default boot entry</span><br><span class="line">set default=0</span><br><span class="line"># Set timeout for the boot menu (in seconds)</span><br><span class="line">set timeout=5</span><br><span class="line"></span><br><span class="line">insmod xfs</span><br><span class="line"># Define boot menu entries</span><br><span class="line">menuentry &quot;Ubuntu Linux, with Linux 5.4.0-104-generic&quot; &#123;</span><br><span class="line">    linux /boot/vmlinuz-5.4.0-104-generic root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX ro quiet splash</span><br><span class="line">    initrd /boot/initrd.img-5.4.0-104-generic</span><br><span class="line">&#125;</span><br><span class="line">menuentry &quot;Ubuntu Linux, with Linux 5.4.0-104-generic (recovery mode)&quot; &#123;</span><br><span class="line">    linux /boot/vmlinuz-5.4.0-104-generic root=UUID=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX ro recovery nomodeset</span><br><span class="line">    initrd /boot/initrd.img-5.4.0-104-generic</span><br><span class="line">&#125;</span><br><span class="line"># Additional configuration entries can be added her</span><br></pre></td></tr></table></figure>
-<p>We can notice that each entry specified variable <code>linux</code> and <code>initrd</code>, setting the kernel and the initramfs to use. The arguments followed by linux kernel path are passed to kernel when booting, that can be read from <code>/proc/cmdline</code> later.</p>
-<p>If no GRUB menu is not shown and GRUB shell prompted instead, it usually indicate GRUB cannot found any valid boot entry, which is usually cause by missing <code>grub2.cfg</code>. Depending on your Linux distribution, the <code>grub2.cfg</code> file might be located in different directories such as <code>/boot/grub/grub2.cfg</code> or <code>/boot/efi/EFI/&lt;distro&gt;/grub2.cfg</code>. Find the correct path for your system. If you doubt the boot failure is caused by missing <code>grub2.cfg</code>, you can use grub shell to check if your <code>grub2.cfg</code> exits, also check if <code>prefix</code> variable is set to a path containing no <code>grub2.cfg</code> by mistake.</p>
-<h3 id="Linux-booting-process-overview"><a href="#Linux-booting-process-overview" class="headerlink" title="Linux booting process overview"></a>Linux booting process overview</h3><p>I summarize the Linux system booting process generated by chatgpt into a timeline consisting four main stage. The timeline provides a basic inituition of how Linux boots : <strong>The hardware loads the bootloader, the bootloader loads the kernel, kernel init userspace</strong>. We will only discuss the case using GRUB as bootloader, so we will use GRUB to represent bootloader.</p>
+<blockquote>
+<p>For more GRUB commands : <a target="_blank" rel="noopener" href="https://www.gnu.org/software/grub/manual/legacy/Command_002dline-and-menu-entry-commands.html">https://www.gnu.org/software/grub/manual/legacy/Command_002dline-and-menu-entry-commands.html</a></p>
+</blockquote>
+<h3 id="grub2-conf"><a href="#grub2-conf" class="headerlink" title="grub2.conf"></a>grub2.conf</h3><p>Once the GRUB menu or GRUB shell shown, it indicates that the bootloader is loaded successfully. So next step is to boot the operating system, and that’s what the GRUB is responsible to do. However, how it knows what to do next? e.g. where to find the linux kernel to load into memory? Which system to boot if there’s multiple system existing on same machine? It’s time to introduce <code>grub.cfg</code>, the GRUB configuation file. It contains the settings and options used by GRUB to display the boot menu and manage the boot process. When GRUB is loaded into memory, it will perform initialization by following the ‘scripts’ in <code>grub.cfg</code>.</p>
+<p>GRUB will always search <code>grub.cfg</code> in directory set by variable <code>prefix</code>. For example, if you type <code>set</code> in your GRUB shell and get the output: <code>prefix=(hd0, gpt1)/EFI/ubuntu</code>, it means GRUB will use the <code>/EFI/ubuntu/grub.cfg</code> file from the first GPT partition of disk <code>hd0</code>. If no GRUB menu is not shown but GRUB shell got prompted instead, this usually indicate GRUB cannot find any valid boot menu entry to list, such issue is usually caused by missing <code>grub.cfg</code> file. Depending on your Linux distribution, the <code>grub.cfg</code> file might be located in different position such as <code>/boot/grub/grub.cfg</code> or <code>/boot/efi/EFI/&lt;distro&gt;/grub.cfg</code>. Find the correct path for your system. If you need to confirm that the boot failure is caused by missing <code>grub.cfg</code> file, you can press ‘c’ to open GRUB shell to check if your <code>grub.cfg</code> exists in the directory marked by <code>prefix</code>.</p>
+<p>Here is a simple <code>grub.cfg</code> example providing two boot entries, one normal mode and one recovery mode: </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># /boot/grub2/grub.cfg</span><br><span class="line"># Set default boot entry</span><br><span class="line">set default=0</span><br><span class="line"># Set timeout for the boot menu (in seconds)</span><br><span class="line">set timeout=5</span><br><span class="line"></span><br><span class="line">insmod xfs</span><br><span class="line"></span><br><span class="line">set root=(hd0, gpt2)</span><br><span class="line"></span><br><span class="line"># Define boot menu entries</span><br><span class="line">menuentry &quot;Ubuntu, with Linux, with Linux 4.13.0-12-generic&quot; &#123;</span><br><span class="line">    linux /boot/vmlinuz-4.13.0-12-generic root=UUID=097b1995-9ded-418b-a62f-ed1342f82cd1 ro quiet splash</span><br><span class="line">    initrd /boot/initrd.img-4.13.0-12-generic</span><br><span class="line">&#125;</span><br><span class="line">menuentry &quot;Ubuntu, with Linux, with Linux 4.13.0-12-generic (recovery mode)&quot; &#123;</span><br><span class="line">    linux /boot/vmlinuz-4.13.0-12-generic root=UUID=097b1995-9ded-418b-a62f-ed1342f82cd1 ro recovery nomodeset</span><br><span class="line">    initrd /boot/initrd.img-4.13.0-12-generic</span><br><span class="line">&#125;</span><br><span class="line"># Additional configuration entries can be added her</span><br></pre></td></tr></table></figure>
+<p>The <code>grub.cfg</code> can be viewed as a script file, which should be interpreted and executed from up to down. First twos line of instruction: <code>set default=0</code> and <code>set timeout=5</code> define two GRUB environment variables, telling GRUB to use first menu entry as default, and set 5 seconds as the timeout for the boot menu. <code>insmod xfs</code> load the xfs module for the purpose to make GRUB able to read files from xfs partition. These syntax in <code>grub.cfg</code> is the same as what we might use in GRUB shell, that’s why I say this configuration file can be viewed as a ‘script’ like bash.</p>
+<p>We can notice that there’re two <code>menuentry</code> blocks representing two menu entry for user to choose at boot time, each entry have environment variable <code>linux</code> and <code>initrd</code>, specifying the path of linux kernel and the initramfs to use. The arguments followed by linux kernel path are passed to kernel when booting, that can be read from <code>/proc/cmdline</code> after Linux kernel loaded. If you have other systems, e.g, Windows or OSX installed on other partitions, you can add new <code>menuentry</code> to configure them, that’s how choosing which os to boot from multiple systems is implemented.</p>
+<p>This <code>grub.cfg</code> set <code>root</code> environment variable to <code>(hd0, gpt2)</code>, means that GRUB will use the second GPT partition of disk <code>hd0</code> as ‘root’ partition. Since <code>root</code> is defined, hence it’s no need to explictlty specify disk or partition prefix to locate a file path. The kernel path <code>/boot/vmlinuz-4.13.0-12-generic</code> is implictly defined as <code>(hd0, gpt2)/boot/vmlinuz-4.13.0-12-generic</code>. To avoid failure of unable to locate the file path cause by change of the disks, it’s more recommend to use partition label or filesystem UUID to define the <code>root</code>:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># use uuid to mark the root partition</span><br><span class="line">search --no-floppy --fs-uuid --set 097b1995-9ded-418b-a62f-ed1342f82cd1</span><br><span class="line"># ...</span><br><span class="line"># use label to mark the partition</span><br><span class="line">search --no-floppy --label --set &#x27;Linux Ubuntu System&#x27;</span><br></pre></td></tr></table></figure>
+<p>In many Linux distributions, including Ubuntu, the <code>/boot/grub2/grub.cfg</code> file is generated automatically by scripts during system updates or kernel installations. These scripts may gather information about the system’s configuration and generate the appropriate menu entries and kernel parameters based on that information. It’s important to note that manually editing the <code>/boot/grub2/grub.cfg</code> file is generally not recommended, as changes made to this file may be overwritten during system updates or kernel installations. Instead, configuration changes should be made in the appropriate configuration files in <code>/etc/grub.d/</code> or by editing the <code>/etc/default/grub</code> file and then regenerating the <code>grub.cfg</code> file using the <code>grub-mkconfig</code> command.</p>
+<p>If all GRUB environment variables are configured normally, the kernel will be loaded into memory and GRUB will pass the control to Linux kernel. So, at this time, just forget GRUB, it’s time for Linux to show up!</p>
+<h2 id="How-Linux-start"><a href="#How-Linux-start" class="headerlink" title="How Linux start"></a>How Linux start</h2><p>As mentioned in the <code>grub.cfg</code> above, <strong>vmlinuz</strong> and <strong>initrd</strong> are essential components of the Linux boot process, each serving a distinct role:</p>
+<ul>
+<li><p><strong>vmlinuz (Kernel Image)</strong>:<br>The vmlinuz file is the compressed Linux kernel image.<br>It contains the core functionality of the Linux operating system, including device drivers, memory management, process management, and system calls.<br>During the boot process, GRUB loads the vmlinuz kernel image into memory and hands over control to it.<br>The kernel then initializes the hardware, mounts the root filesystem, and starts the init process (usually <code>/sbin/init</code>).</p>
+</li>
+<li><p><strong>initrd (Initial RAM Disk)</strong>:<br>The initrd is an initial RAM disk image used by the kernel during the boot process.<br>It contains a minimal filesystem with essential tools and drivers needed to mount the actual root filesystem.<br>The initrd is loaded into memory by the bootloader along with the kernel (vmlinuz) before the actual root filesystem is mounted.<br>Once the initrd is loaded, the kernel executes the init program within the initrd, which is typically a small script responsible for locating and mounting the real root filesystem.<br>The initrd is particularly useful in situations where the kernel does not have built-in support for the storage controller or filesystem needed to access the root filesystem. It provides a temporary environment to load the necessary drivers and modules to access the root filesystem.</p>
+</li>
+</ul>
+<p>In summary, vmlinuz is the compressed Linux kernel image containing the core OS functionality, while initrd is an initial RAM disk image used by the kernel during boot to facilitate the mounting of the real root filesystem. Both are crucial components of the Linux boot process, working together to initialize the system and load the operating system into memory.</p>
+<p>let’s go backup to one of the menu entry defined in <code>grub.cfg</code>:<br><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># grub.cfg</span><br><span class="line"># ....</span><br><span class="line">menuentry &quot;Ubuntu, with Linux, with Linux 4.13.0-12-generic&quot; &#123;</span><br><span class="line">    linux /boot/vmlinuz-4.13.0-12-generic root=UUID=097b1995-9ded-418b-a62f-ed1342f82cd1 ro quiet splash</span><br><span class="line">    initrd /boot/initrd.img-4.13.0-12-generic</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>root=UUID=097b1995-9ded-418b-a62f-ed1342f82cd1</code> specified the root filesystem that need to be mounted later for the kernel, that’s where the ‘Linux System’ really resides. If we check the <code>/etc/fstab</code>:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cat /etc/fstab</span><br><span class="line"><span class="comment"># &lt;file system&gt;                             &lt;mount point&gt;  &lt;type&gt;  &lt;options&gt;                &lt;dump&gt; &lt;fsck&gt;</span></span><br><span class="line">UUID=E46E-7C86                              /boot/efi       vfat    defaults                  0     2</span><br><span class="line">UUID=097b1995-9ded-418b-a62f-ed1342f82cd1   /               ext4    defaults,x-systemd.growfs 0     1</span><br></pre></td></tr></table></figure><br>We may find <code>UUID=097b1995-9ded-418b-a62f-ed1342f82cd1</code> is exactly the root filesystem! If root filesystem is managed by LVM and it’s device path is <code>/dev/ubuntu/root</code>, it’s ok to replace <code>root=UUID=097b1995-9ded-418b-a62f-ed1342f82cd1</code> to <code>root=/dev/ubuntu/root</code>.</p>
+<p>Here is the typical Linux boot process after GRUB load the kernel:</p>
+<ol>
+<li><p><strong>Linux Kernel Initialization</strong>:</p>
+<ul>
+<li>Once the bootloader hands over control to the Linux kernel, the kernel begins its initialization process.</li>
+<li>The kernel performs hardware detection and initialization, including the CPU, memory, storage devices, and other peripherals.</li>
+<li>It sets up the initial system environment, establishes the root filesystem, and starts the init process.</li>
+</ul>
+</li>
+<li><p><strong>Init Process</strong>:</p>
+<ul>
+<li>The init process is the first user-space process started by the kernel and has process ID (PID) 1.</li>
+<li>Depending on the Linux distribution and init system (SysVinit, systemd, etc.), the init process may perform various tasks, including system initialization, service startup, and configuration management.</li>
+</ul>
+</li>
+<li><p><strong>User-Space Initialization</strong>:</p>
+<ul>
+<li>After the init process completes its tasks, the system transitions into user-space.</li>
+<li>User-space initialization involves starting essential system services, daemons, and user applications specified in the runlevel or systemd targets.</li>
+</ul>
+</li>
+<li><p><strong>Login Manager or Console Login</strong>:</p>
+<ul>
+<li>If a graphical desktop environment is configured, a login manager (such as GDM, LightDM, or SDDM) presents a login screen where users can authenticate and start their graphical session.</li>
+<li>Alternatively, on systems without a graphical environment or in multi-user mode, the user may be presented with a console login prompt.</li>
+</ul>
+</li>
+<li><p><strong>User Session</strong>:</p>
+<ul>
+<li>Once logged in, the user gains access to the desktop environment or command-line interface (CLI) and can start using the system to perform various tasks.</li>
+</ul>
+</li>
+</ol>
+<p>Throughout the boot process, various configuration files, scripts, and system utilities are executed to configure and initialize the system, ensuring a smooth transition from the initial hardware initialization to a fully functional Linux environment.</p>
+<p>At last, let me summarize the complete Linux system booting process into a timeline to describe what happens when your press down the power button:</p>
 <pre class="mermaid">timeline
     title Linux System Boot Process
     Hardware Initialization 
@@ -372,13 +465,12 @@
         : [Init Process] The kernel starts the init process, which is typically the first user-space process. The init process is responsible for starting system services and initializing the user environment.
         : [User Space Initialization] Once the init process completes its tasks, the system is fully initialized, and the user can interact with the operating system through the shell or a graphical interface.</pre>
 
-<p>The hardware initialization process is done by hardware maunufactor so I won’t pay much attention to this part. So let’s start from <em>GRUB Stage</em> first, we need to know where GRUB is located and loaded.</p>
-<h2 id="How-GRUB-is-loaded"><a href="#How-GRUB-is-loaded" class="headerlink" title="How GRUB is loaded"></a>How GRUB is loaded</h2><p>This GRUB loading process of BIOS differs from the process of UEFI so we have to discuss it separately.</p>
-<h3 id="BIOS-bootstrap"><a href="#BIOS-bootstrap" class="headerlink" title="BIOS bootstrap"></a>BIOS bootstrap</h3><p>If a computer use BIOS bootstrap, the BIOS will check the bootstrap signature at the MBR sector (the first sector, 512B) of the disk. If the disk contains valid bootstrap signature, the bootstrap instruction written at the first sector will be executed to load the instruction of next stage. This stage is <em>GRUB Stage 1</em>, the instruction size is limited to several hundred bytes. The area where the core instruction of GRUB resides is known as the “embedding area” or “post-MBR gap,” is usually unpartitioned space on the disk between MBR sector and the first partition. From the <code>sfdisk -d</code> command we can see, on most modern Linux distro, the “embedding area” is reserved from 1 sector to 2047 sector, takes a space about 2048 * 512B = 1MiB:<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">➜  bin sudo sfdisk -d /dev/sda</span><br><span class="line">label: gpt</span><br><span class="line">label-id: 5B490ADF-AAFE-6441-851E-8F63D915BDBC</span><br><span class="line">device: /dev/sda</span><br><span class="line">unit: sectors</span><br><span class="line">first-lba: 34</span><br><span class="line">last-lba: 1953525134</span><br><span class="line">sector-size: 512</span><br><span class="line"></span><br><span class="line">/dev/sda1 : start=        2048, size=     1024000, <span class="built_in">type</span>=0FC63DAF-8483-4772-8E79-3D69D8477DE4, uuid=1AA2633E-44BC-3541-AA90-93D3AF1FD033</span><br><span class="line">/dev/sda2 : start=     1026048, size=  1952497664, <span class="built_in">type</span>=0FC63DAF-8483-4772-8E79-3D69D8477DE4, uuid=55C425F0-D00F-8341-B517-B610223183B3</span><br></pre></td></tr></table></figure></p>
-<p>The bootstrap instruction of “GRUB Stage 1.5/Stage 2” is stored as image <code>core.img</code> is typically installed in the area immediately following the Master Boot Record of the disk. This area, known as the “embedding area” or “post-MBR gap,” is usually unpartitioned space on the disk and is where the GRUB core resides. During the GRUB installation process, the <code>core.img</code> is written directly to the disk using low-level disk writing utilities such as <code>dd</code>. This process involves embedding the core image into the disk sectors following the MBR, ensuring that the BIOS can locate and load it during the boot process.</p>
-<p>When using <code>grub-install -target=i386-pc /dev/sda</code> command to install GRUB, </p>
-<h3 id="UEFI-bootstrap"><a href="#UEFI-bootstrap" class="headerlink" title="UEFI bootstrap"></a>UEFI bootstrap</h3><h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Master_boot_record#:~:text=A%20master%20boot%20record%20(MBR,PC%2Dcompatible%20systems%20and%20beyond.">Wikipedia: Master Boot Record</a></li>
+
+
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Master_boot_record">Wikipedia: Master Boot Record</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.tecmint.com/rescue-repair-and-reinstall-grub-boot-loader-in-ubuntu/">How to Rescue, Repair and Reinstall GRUB Boot Loader in Ubuntu</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.gnu.org/software/grub/manual/legacy/Command_002dline-and-menu-entry-commands.html">GRUB shell commands</a></li>
 </ul>
 
     </div>
@@ -402,8 +494,8 @@
       <i class="fa fa-chevron-left"></i> Bare Metal Recovery Solution On Linux
     </a></div>
       <div class="post-nav-item">
-    <a href="/2024/02/25/Custom-your-Linux-live-CD-with-linux-live/" rel="next" title="Custom your Linux live CD with linux-live">
-      Custom your Linux live CD with linux-live <i class="fa fa-chevron-right"></i>
+    <a href="/2024/02/25/Custom-your-Linux-live-CD-with-linux-live/" rel="next" title="Custom your Linux live CD using linux-live">
+      Custom your Linux live CD using linux-live <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -473,7 +565,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#BIOS-booting-amp-UEFI-booting"><span class="nav-number">1.</span> <span class="nav-text">BIOS booting &amp; UEFI booting</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#The-GRUB-Bootloader"><span class="nav-number">2.</span> <span class="nav-text">The GRUB Bootloader</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#grub2-conf"><span class="nav-number">2.1.</span> <span class="nav-text">grub2.conf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux-booting-process-overview"><span class="nav-number">2.2.</span> <span class="nav-text">Linux booting process overview</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How-GRUB-is-loaded"><span class="nav-number">3.</span> <span class="nav-text">How GRUB is loaded</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#BIOS-bootstrap"><span class="nav-number">3.1.</span> <span class="nav-text">BIOS bootstrap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UEFI-bootstrap"><span class="nav-number">3.2.</span> <span class="nav-text">UEFI bootstrap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">4.</span> <span class="nav-text">References</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#BIOS-booting-amp-UEFI-booting"><span class="nav-number">1.</span> <span class="nav-text">BIOS booting &amp; UEFI booting</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Bootloaders"><span class="nav-number">1.1.</span> <span class="nav-text">Bootloaders</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#How-BIOS-load-GRUB"><span class="nav-number">1.2.</span> <span class="nav-text">How BIOS load GRUB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#How-UEFI-load-GRUB"><span class="nav-number">1.3.</span> <span class="nav-text">How UEFI load GRUB</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How-GRUB-boot-Linux"><span class="nav-number">2.</span> <span class="nav-text">How GRUB boot Linux</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GRUB-shell"><span class="nav-number">2.1.</span> <span class="nav-text">GRUB shell</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#grub2-conf"><span class="nav-number">2.2.</span> <span class="nav-text">grub2.conf</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How-Linux-start"><span class="nav-number">3.</span> <span class="nav-text">How Linux start</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">4.</span> <span class="nav-text">References</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -489,7 +581,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">128</span>
+          <span class="site-state-item-count">127</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -502,7 +594,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-count">59</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -546,12 +638,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">690k</span>
+    <span title="站点总字数">684k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">10:27</span>
+    <span title="站点阅读时长">10:22</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>

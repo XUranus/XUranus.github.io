@@ -17,7 +17,7 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
   </script>
 
   <meta name="description" content="找工作中...躺平摆烂">
@@ -119,7 +119,7 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">60</span></a>
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">59</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">128</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">127</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -220,7 +220,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2024/02/25/Custom-your-Linux-live-CD-with-linux-live/" class="post-title-link" itemprop="url">Custom your Linux live CD with linux-live</a>
+            <a href="/2024/02/25/Custom-your-Linux-live-CD-with-linux-live/" class="post-title-link" itemprop="url">Custom your Linux live CD using linux-live</a>
         </h2>
 
         <div class="post-meta">
@@ -237,7 +237,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-04 04:32:56" itemprop="dateModified" datetime="2024-03-04T04:32:56Z">2024-03-04</time>
+                <time title="修改时间：2024-04-05 14:32:37" itemprop="dateModified" datetime="2024-04-05T14:32:37Z">2024-04-05</time>
               </span>
 
           
@@ -259,13 +259,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>9.1k</span>
+              <span>6.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>8 分钟</span>
+              <span>6 分钟</span>
             </span>
 
         </div>
@@ -277,8 +277,19 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>Recently I was working on a <em>Linux Bare Metal Recovery</em> releated requirement. Users will be allowed to use a customed Linux live CD to run a temporary Linux system without making any changes to the storage, and then use the build-in tool to perform system recovery. So we need to find a way to custom our a Linux recovery live CD.</p>
-<p>Due to I’m a newbie in such area, I searched a lot of linux live kit project from GitHub wishing to found a available solution. They are mostly some sorts of shell scripts to pack some specified Linux distro into a ISO file. I found the <a target="_blank" rel="noopener" href="https://github.com/Tomas-M/linux-live/blob/master/config">linux-live</a> project by <a target="_blank" rel="noopener" href="https://github.com/Tomas-M/linux-live/blob/master/config">Tomas-M</a> can pack any Linux system whose kernel supports <em>squashfs</em> , <em>aufs</em> and <em>overlayfs</em>. I just need to clone the project, and edit the <code>config</code> file in it to configure the path of our <em>vmlinuz</em> image and to select which paths need to be packed:</p>
+          <p>Recently I was working on a <em>Linux Bare Metal Recovery</em> releated requirement. Users should be allowed to use a customed Linux live CD to start a temporary Linux operating system that won’t make any changes to the storage, and then they can use the build-in tools to perform system recovery, e.g. using <code>sfdisk</code> to restore the volume/partition data and using GRUB toolchains to fix the startup items. Thus, we need to find a way to custom our a Linux recovery live CD firstly.</p>
+<p>Due to I’m a newbie in such area, I googled about the Linux live CD and found there’s already some out-of-the-box images like <a target="_blank" rel="noopener" href="https://www.slax.org/">Slax</a>. However, it does not provide the feature customization kit so that does not meet our expectation. I searched linux live kit project from GitHub wishing to found a available solution. The projects are mainly some sorts of shell scripts to pack specified Linux distro into a ISO file.</p>
+<p>I found the <a target="_blank" rel="noopener" href="https://github.com/Tomas-M/linux-live/blob/master/config">linux-live</a> project by <a target="_blank" rel="noopener" href="https://github.com/Tomas-M/linux-live/blob/master/config">Tomas-M</a> can pack any Linux system whose kernel supports <em>squashfs</em> , <em>aufs</em> and <em>overlayfs</em> into an live CD ISO image. All I need to do is just clone the project, make some configuration and run a script to produce the target ISO, which is quite simple and flexible. Here’s the steps in detail:</p>
+<ol>
+<li><p>clone the project to a directory that won’t be packed latter, for example <code>/opt</code>.</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /opt &amp;&amp; git <span class="built_in">clone</span> https://github.com/Tomas-M/linux-live.git</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>edit the <code>linux-live/config</code> file to filter which directories need to be packed:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Kernel file, will be copied to your Live Kit</span><br><span class="line"># Your kernel must support aufs and squashfs. Debian Jessie&#x27;s kernel is ready</span><br><span class="line"># out of the box.</span><br><span class="line">VMLINUZ=/vmlinuz</span><br><span class="line"></span><br><span class="line"># List of directories for root filesystem</span><br><span class="line"># No subdirectories are allowed, no slashes,</span><br><span class="line"># so You can&#x27;t use /var/tmp here for example</span><br><span class="line"># Exclude directories like proc sys tmp</span><br><span class="line">MKMOD=&quot;bin etc home lib lib64 libx32 root sbin srv usr var&quot;</span><br></pre></td></tr></table></figure>
+<p>use <code>find /boot | grep vmlinuz</code> to find where the <em>vmlinuz</em> image is and create a <code>/vmlinuz</code> symlink to that path:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ find /boot | grep vmlinuz</span><br><span class="line">/boot/vmlinuz-0-rescue-2348d36f53074ace8b9850051a3d34b5</span><br><span class="line">/boot/vmlinuz-5.10.0-182.0.0.95.oe2203sp3.x86_64</span><br><span class="line">$ ln -s /boot/vmlinuz-5.10.0-182.0.0.95.oe2203sp3.x86_64 /vmlinuz</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2024/02/25/Custom-your-Linux-live-CD-with-linux-live/#more" rel="contents">
@@ -336,7 +347,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-31 14:34:43" itemprop="dateModified" datetime="2024-03-31T14:34:43Z">2024-03-31</time>
+                <time title="修改时间：2024-04-06 13:42:42" itemprop="dateModified" datetime="2024-04-06T13:42:42Z">2024-04-06</time>
               </span>
 
           
@@ -358,13 +369,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>12k</span>
+              <span>21k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>11 分钟</span>
+              <span>19 分钟</span>
             </span>
 
         </div>
@@ -467,10 +478,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2024-01-06 11:45:37 / 修改时间：10:31:22" itemprop="dateCreated datePublished" datetime="2024-01-06T11:45:37Z">2024-01-06</time>
+              <time title="创建时间：2024-01-06 11:45:37" itemprop="dateCreated datePublished" datetime="2024-01-06T11:45:37Z">2024-01-06</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-05 12:17:01" itemprop="dateModified" datetime="2024-04-05T12:17:01Z">2024-04-05</time>
+              </span>
 
           
   
@@ -511,6 +528,13 @@
       
           <p>When we talk about <strong>BMR (Bare Metal Recovery)</strong>, we are talking about a solution to recovery the operating system, the configurations and the documents. Distinguished from fileset backup and restore, BMR is usually used as the last resort for disaster recovery. This blog shows an feasible solution for BMR on Linux system.</p>
 <p>I implemented a volume backup utility mentioned in the article before: <a target="_blank" rel="noopener" href="https://github.com/XUranus/VolumeBackup">VolumeBackup</a>. This utility can perform full backup and forever increment backup to generate a volume copy with a <code>*.img</code> format, which can be used to perform block level recovery from. Actually, some free software providing mature BMR solution, e.g., <a target="_blank" rel="noopener" href="https://clonezilla.org/">CloneZilla</a>, peforms BMR via cloning full partition or even full disk. Block-level backup is much faster than file-level backup, thus proven to be an effective way for BMR.</p>
+<h2 id="How-to-backup"><a href="#How-to-backup" class="headerlink" title="How to backup"></a>How to backup</h2><p>To recover a Linux system fully, we need to backup it fully firstly. What we need to backup contains:</p>
+<ol>
+<li><strong>System state</strong>: This part contains system startup items like grub configurations, partition table, network configuration and so on. </li>
+</ol>
+<p>The <code>/boot</code> folder stores EFI files, grub configuration and other files that are required for  system startup, so it’s must be backuped. This directory neither contains too much files nor takes too much space (usually smaller than 500MB) so we can backup/recover it just at file-level. <code>boot</code> partition is usually initialized as a small standlone partition with <em>FAT32</em> filesystem and must be the first partition on a disk with <em>GPT</em> partition table.</p>
+<p>The root partition mentioned in the article refers to the volume that mount to <code>/</code>. It’s similiar to <code>C:\</code> on Windows system where we call it <em>System Drive</em> and it’s must be backuped for BMR. Root partition is the place where Linux System and it’s applications and services installed, it may be large so it’s recommened to backup at block-level. If your root partition use a filesystem supporting snapshot creation like btrfs, you can create a snapshot and using VolumeBackup utility to clone it to a image format copy from the snapshot. If your root volume is a LVM logical volume, you can create the snapshot using LVM tools and perform the volume backup as well. If your root partition does not support consistency backup, you can shutdown the system and insert a new media to boot from, and backup the root volume from the new media. </p>
+<p>Disk infomation and partitions infomation are also required to backup, they will be needed to recreate the partitions when doing BMR for the reason the partition infomation may be corrupted as well. If you are using LVM to manage your volumes, you alse need to backup your PV,VG,LV infomation.</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2024/01/06/Bare-Metal-Recovery-Solution-On-Linux/#more" rel="contents">
@@ -621,7 +645,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%8E%A2%E7%A9%B6/">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2023/09/01/Explore-Volume-Backup/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
@@ -635,7 +659,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%8E%A2%E7%A9%B6/" class="post-title-link" itemprop="url">卷备份的实现方案探究</a>
+            <a href="/2023/09/01/Explore-Volume-Backup/" class="post-title-link" itemprop="url">Explore Volume Backup</a>
         </h2>
 
         <div class="post-meta">
@@ -652,7 +676,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-11-03 14:08:45" itemprop="dateModified" datetime="2023-11-03T14:08:45Z">2023-11-03</time>
+                <time title="修改时间：2024-01-06 09:58:28" itemprop="dateModified" datetime="2024-01-06T09:58:28Z">2024-01-06</time>
               </span>
 
           
@@ -664,8 +688,8 @@
       </span>
       <span class="post-meta-item-text">Disqus：</span>
     
-    <a title="disqus" href="/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%8E%A2%E7%A9%B6/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/09/01/卷备份的实现方案探究/" itemprop="commentCount"></span>
+    <a title="disqus" href="/2023/09/01/Explore-Volume-Backup/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2023/09/01/Explore-Volume-Backup/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -674,13 +698,13 @@
               <span class="post-meta-item-icon">
                 <i class="far fa-file-word"></i>
               </span>
-              <span>13k</span>
+              <span>27k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
-              <span>12 分钟</span>
+              <span>25 分钟</span>
             </span>
 
         </div>
@@ -693,12 +717,12 @@
 
       
           <blockquote>
-<p>虽然基于卷做的备份/恢复有较大局限性：对于文件系统使用率比较低的场景使用卷备份会导致副本存储空间利用率低，而备份的文件普遍比较大的场景下使用文件级备份也能获取不错的性能且能高效使用存储空间，但卷备份在特定场景下也有不小的优势：卷备份主机硬盘取证的领域都是常见的业务，通过备份整卷可以获得很高的备份/恢复速度，备份系统卷可以直接恢复操作系统。本文从介绍卷的基本概念出发，总结Windows/Linux平台下卷备份恢复及后续副本数据利用的几种方案。笔者基于本文提到的技术方案，自己实现了一套卷备份工具，实现了对于Windows/Linux下卷的全量备份和永久增量备份、卷副本的恢复以及卷副本的及时挂载。源码见：<a target="_blank" rel="noopener" href="https://github.com/XUranus/VolumeBackup">https://github.com/XUranus/VolumeBackup</a>，本文可看作该项目的文档。</p>
+<p>Although volume-based backup/restore has significant limitations: using volume backup in scenarios with low file system utilization will result in low copy storage space utilization. In scenarios where the backed-up files are generally large, file-level backup can achieve good performance and efficiently use storage space. However, volume backup also has advantages in specific scenarios: it is common in the field of forensic examination of host hard disks based on volume backup. Backup of the entire volume can achieve high backup/restore speed, and the system volume backup can directly restore the operating system. This article starts by introducing the basic concepts of volumes, summarizing several solutions for volume backup, recovery, and subsequent utilization of copy data on the Windows/Linux platforms. Based on the technical solutions mentioned in this article, the author has implemented a set of volume backup tools, achieving full backup and permanent incremental backup of volumes under Windows/Linux, as well as recovery and timely mounting of volume copies. The source code can be found at: <a target="_blank" rel="noopener" href="https://github.com/XUranus/VolumeBackup">https://github.com/XUranus/VolumeBackup</a>, and this article can be considered as documentation for this project.</p>
 </blockquote>
-<h1 id="卷、分区、磁盘的基本概念"><a href="#卷、分区、磁盘的基本概念" class="headerlink" title="卷、分区、磁盘的基本概念"></a>卷、分区、磁盘的基本概念</h1><p>在开始描述卷的备份/恢复逻辑之前，先介绍一下什么是卷，因为卷（Volume）、分区（Partition）以及硬盘（Hard disk）是一组常常被混淆的概念。硬盘是物理上的概念，常用的硬盘有机械硬盘（Hard Disk Drive）和固态硬盘（Solid State Disk）等，有关硬件本文则不做详述。卷和分区都是数据的存储区域，两者相似但不相同：<strong>卷是一个拥有单一文件系统的可访问的存储区域，分区是一个硬盘上划分出的一部分</strong>。这句话意思是，分区往往是一个具体的概念，存在于具体磁盘上的某一<em>连续的</em>具体区域，分区可以不带文件系统（通常没有被初始化的RAW分区也算分区）。卷则是一个抽象的概念，它必须和单一文件系统强关联，且一个卷可能存在于一个或多个磁盘中。由于卷是逻辑的概念，对于Linux/Windows操作系统会表现出差异性，而物理分区则是构成逻辑卷的基础，所以欲深入理解卷又得先从分区谈起。</p>
+<h1 id="Basic-Concepts-of-Volumes-Partitions-and-Disks"><a href="#Basic-Concepts-of-Volumes-Partitions-and-Disks" class="headerlink" title="Basic Concepts of Volumes, Partitions, and Disks"></a>Basic Concepts of Volumes, Partitions, and Disks</h1><p>Before describing the logic of volume backup/restore, let’s first introduce what a volume is because volume (Volume), partition (Partition), and hard disk (Hard disk) are often confused concepts. The hard disk is a physical concept, with commonly used hard disks such as Hard Disk Drive (HDD) and Solid State Disk (SSD), but this article does not go into detail about hardware. Volumes and partitions are both storage areas for data, similar but not the same: <strong>a volume is an accessible storage area with a single file system, and a partition is a part of a hard disk partitioned out</strong>. This means that a partition is often a specific concept, existing in a continuous specific area on a specific disk. A partition may not have a file system (typically an uninitialized RAW partition is also considered a partition). A volume, on the other hand, is an abstract concept that must be strongly associated with a single file system, and a volume may exist on one or more disks. Since a volume is a logical concept, it exhibits differences for Linux/Windows operating systems, and physical partitions are the basis for forming logical volumes, so to understand volumes deeply, we need to start with partitions.</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2023/09/01/%E5%8D%B7%E5%A4%87%E4%BB%BD%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E6%8E%A2%E7%A9%B6/#more" rel="contents">
+              <a class="btn" href="/2023/09/01/Explore-Volume-Backup/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -789,7 +813,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">128</span>
+          <span class="site-state-item-count">127</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -802,7 +826,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-count">59</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -846,12 +870,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">690k</span>
+    <span title="站点总字数">684k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">10:27</span>
+    <span title="站点阅读时长">10:22</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
