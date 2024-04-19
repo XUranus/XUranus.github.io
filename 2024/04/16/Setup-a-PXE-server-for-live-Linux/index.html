@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"xuranus.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="I wrote a blog Custom your Linux live CD using linux-live two months ago, explaning how to make a “live Linux CD” to provide user with a rescue OS for recovering the corrupted system data. Our busines">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Setup a PXE server for live Linux">
+<meta property="og:url" content="http://xuranus.github.io/2024/04/16/Setup-a-PXE-server-for-live-Linux/index.html">
+<meta property="og:site_name" content="XUranus">
+<meta property="og:description" content="I wrote a blog Custom your Linux live CD using linux-live two months ago, explaning how to make a “live Linux CD” to provide user with a rescue OS for recovering the corrupted system data. Our busines">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://xuranus.github.io/2024/04/16/Setup-a-PXE-server-for-live-Linux/Screenshot_20240419_191544.png">
+<meta property="og:image" content="http://xuranus.github.io/2024/04/16/Setup-a-PXE-server-for-live-Linux/Screenshot_20240417_221540.png">
+<meta property="og:image" content="http://xuranus.github.io/2024/04/16/Setup-a-PXE-server-for-live-Linux/Screenshot_20240302_221714.png">
+<meta property="article:published_time" content="2024-04-15T22:14:34.000Z">
+<meta property="article:modified_time" content="2024-04-19T12:46:48.967Z">
+<meta property="article:author" content="XUranus">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xuranus.github.io/2024/04/16/Setup-a-PXE-server-for-live-Linux/Screenshot_20240419_191544.png">
+
+<link rel="canonical" href="http://xuranus.github.io/2024/04/16/Setup-a-PXE-server-for-live-Linux/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Setup a PXE server for live Linux | XUranus</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XUranus</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">常应常静，常清净矣</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">59</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="th fa-fw"></i>分类<span class="badge">6</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">127</span></a>
+
+  </li>
+        <li class="menu-item menu-item-plan">
+
+    <a href="/plan" rel="section"><i class="plane fa-fw"></i>计划</a>
+
+  </li>
+        <li class="menu-item menu-item-friends">
+
+    <a href="/friends" rel="section"><i class="star fa-fw"></i>友链</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-sticky">
+
+    <a href="/sticky" rel="section"><i class="sitemap fa-fw"></i>便签</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2024/04/16/Setup-a-PXE-server-for-live-Linux/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="找工作中...躺平摆烂">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Setup a PXE server for live Linux
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-04-15 22:14:34" itemprop="dateCreated datePublished" datetime="2024-04-15T22:14:34Z">2024-04-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-19 12:46:48" itemprop="dateModified" datetime="2024-04-19T12:46:48Z">2024-04-19</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2024/04/16/Setup-a-PXE-server-for-live-Linux/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2024/04/16/Setup-a-PXE-server-for-live-Linux/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>7.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>7 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>I wrote a blog <em><a href="Custom-your-Linux-live-CD-with-linux-live">Custom your Linux live CD using linux-live</a></em> two months ago, explaning how to make a “live Linux CD” to provide user with a rescue OS for recovering the corrupted system data. Our business recently came up with a new need to simplify this process: let users boot directly from the network without the hassle of creating a liveCD or liveUSB from the ISO image. To archieve this goal, we need to use a technology called PXE.</p>
+<p><em>PXE</em> stands for <em>Preboot Execution Environment</em>. It’s a standardized client-server architecture that allows a computer to boot and run software even if there is no operating system installed on the local hard drive. PXE is commonly used in enterprise environments for tasks like operating system deployment, diskless booting, and remote troubleshooting. It’s particularly useful for large-scale deployments where manually installing or updating operating systems on individual machines would be impractical.</p>
+<blockquote>
+<p>The first time I was exposed to this technology was when I was participating in the ACM competition in college. As the organizer of the competition, our school installed Ubuntu in batches on hundreds of computers in the competition venue at the same time. This gave me a huge shock because it’s so efficient that I feel like it’s like magic. It took me a long time to realize that this was PXE boot. Only one PXE server and a LAN are needed to initialize hundreds of computers at the same time.</p>
+</blockquote>
+<p>In this article I will show you how to boot from the Linux live OS via network and unravel the mysteries of PXE. I assume you have some baisc knowledge on Linux boot process. If you are not familiar with it, I recommend you to read this article I wrote before : <a href="/2024/02/25/How-Linux-Boots/">How Linux Boots</a>.</p>
+<h2 id="How-PXE-works"><a href="#How-PXE-works" class="headerlink" title="How PXE works"></a>How PXE works</h2><p>Here’s how PXE typically works:</p>
+<p><img src="Screenshot_20240419_191544.png" alt=""></p>
+<p><strong>PXE Client</strong> is The computer that needs to boot from the network (i.e., the one without a valid local operating system). The client computer’s network interface card (NIC) must support PXE. Most modern NICs have PXE support built-in. When a PXE-capable client boots up, it sends out a special <strong>DHCP</strong> (<em>Dynamic Host Configuration Protocol</em>) request on the network. The DHCP server responds with the IP address of a PXE server and the location of the boot file. The client then downloads the boot file using <strong>TFTP</strong> (<em>Trivial File Transfer Protocol</em>) and executes it. This boot file typically contains a bootloader such as GRUB or SYSLINUX, which can then load an operating system image over the network.</p>
+<span id="more"></span>
+<p>Here’s a detailed sequence diagram explaning the process on how PXE server interact with TFTP server, DHCP server and HTTP sever.</p>
+<pre class="mermaid">sequenceDiagram
+  participant PXE-Client
+  participant TFTP-Server
+  participant DHCP-Server
+  participant HTTP-Server
+
+  PXE-Client->>DHCP-Server: Request IP Address
+  DHCP-Server->>PXE-Client: Return IP Address of TFTP Server and the location of bootstrap file (pxelinux.0)
+  PXE-Client->>TFTP-Server: Request bootstrap file (pxelinux.0)
+  TFTP-Server->>PXE-Client: Transfer bootstrap file (pxelinux.0)
+  PXE-Client->>PXE-Client: Execute bootstrap (pxelinux.0), request configuration file (pxelinux.cfg)
+  PXE-Client->>PXE-Client: Load PXE configuration files
+  PXE-Client->>PXE-Client: User select boot menu entry
+  PXE-Client->>TFTP-Server: Request Linux kernel (vmlinuz), initramfs
+  TFTP-Server->>PXE-Client: Transfer Linux kernel (vmlinuz), initramfs
+  PXE-Client->>TFTP-Server: Load and run Linux kernel with specified kernel arguments in PXE configuration
+  PXE-Client->>HTTP-Server: Request other data (*.rpm, *.iso) via HTTP
+  HTTP-Server->>PXE-Client: Response data</pre>
+
+<p>After the bootloader (i.e., GRUB or SYSLINUX) load the kernel and initramfs, the kernel will begin to take control and load more data for future use. For example, if you using PXE to install Linux OS, you may need a HTTP server to host the repodata and <em>RPM</em> packages, the address of the HTTP server might need to be provided to kernel as a argument. Your can also use to SMB/NFS/SFTP/FTP server to replace HTTP (It all depend on how your initramfs will load data). </p>
+<p>The TFTP service, DHCP service and HTTP service can be hosted on the same PXE server. It will be much more clear and simple:</p>
+<pre class="mermaid">sequenceDiagram
+  participant PXE-Client
+  participant PXE-Server
+
+  PXE-Client->>PXE-Server: Request IP Address
+  PXE-Server->>PXE-Client: Return IP Address of TFTP Server and the location of bootstrap file (pxelinux.0)
+  PXE-Client->>PXE-Server: Request bootstrap file (pxelinux.0)
+  PXE-Server->>PXE-Client: Transfer bootstrap file (pxelinux.0)
+  PXE-Client->>PXE-Client: Execute bootstrap (pxelinux.0), request configuration file (pxelinux.cfg)
+  PXE-Client->>PXE-Client: Load PXE configuration files
+  PXE-Client->>PXE-Client: User select boot menu entry
+  PXE-Client->>PXE-Server: Request Linux kernel (vmlinuz), initramfs
+  PXE-Server->>PXE-Client: Transfer Linux kernel (vmlinuz), initramfs
+  PXE-Client->>PXE-Server: Load and run Linux kernel with specified kernel arguments in PXE configuration
+  PXE-Client->>PXE-Server: Request other data (*.rpm, *.iso) via HTTP
+  PXE-Server->>PXE-Client: Response data</pre>
+
+<h2 id="Setup-PXE-server"><a href="#Setup-PXE-server" class="headerlink" title="Setup PXE server"></a>Setup PXE server</h2><p>To setup a simple PXE server quickly, I choose to use <em>OpenEuler 22.03</em> as the server to host the three service, you can simply use <em>yum</em> to install the related packages : <code>sudo yum install -y dhcp xinetd tftp-server</code></p>
+<ol>
+<li><p><strong>Configure DHCP and TFTP server</strong></p>
+<p> configure <code>/etc/dhcp/dhcpd.conf</code> as following:</p>
+ <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">allow booting;</span><br><span class="line">allow bootp;</span><br><span class="line">ddns-update-style interim;</span><br><span class="line">ignore client-updates;</span><br><span class="line">subnet 192.168.114.0 netmask 255.255.255.0 &#123;</span><br><span class="line">    option subnet-mask 255.255.255.0;</span><br><span class="line">    option domain-name-servers 192.168.114.0;</span><br><span class="line">    range dynamic-bootp 192.168.114.100 192.168.114.200;</span><br><span class="line">    default-lease-time 21600;</span><br><span class="line">    max-lease-time 43200;</span><br><span class="line">    next-server 192.168.114.10;</span><br><span class="line">    filename &quot;pxelinux.0&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>If you are going to setup PXE server for x86_64 client, you may use SYSLINUX or ISOLINUX as the bootloader, the <code>filename</code> here should be <code>&quot;pxelinux.0&quot;</code>. If you want to setup it for AARCH64 client, you may use GRUB instead, and the <code>filename</code> should be replaced by <code>&quot;grubaa64.efi&quot;</code>  (you may search it in ESP partition)</p>
+</blockquote>
+<p> edit <code>/etc/xinetd.d/tftp</code>, modify the <code>disable = yes</code> to <code>disable = no</code></p>
+ <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">service &#123;</span><br><span class="line">    socket_type = dgram</span><br><span class="line">    protocol = udp</span><br><span class="line">    wait = yes</span><br><span class="line">    user = root</span><br><span class="line">    server = /usr/sbin/in.tftpd</span><br><span class="line">    server_args = -s /var/lib/tftpboot</span><br><span class="line">    disable = no</span><br><span class="line">    per_source = 11</span><br><span class="line">    cps = 100 2</span><br><span class="line">    flags = IPV4</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> Once the services are configured, close the <code>firewalld</code>, restart and enable the <code>dhcpd</code>, <code>xinetd</code> service:</p>
+ <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ sudo systemctl <span class="built_in">disable</span> firewalld</span><br><span class="line">$ sudo systemctl restart dhcpd</span><br><span class="line">$ sudo systemctl restart xinetd</span><br><span class="line">$ sudo systemctl <span class="built_in">enable</span> dhcpd</span><br><span class="line">$ sudo systemctl <span class="built_in">enable</span> xinetd</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Copy boot files to TFTP server root</strong></p>
+<p> Copy the boot files, kernel image and initramfs image to the root of TFTP server. The root directory should be configured in <code>/etc/xinetd.d/tftp</code> as <code>/var/lib/tftpboot</code> by default.</p>
+ <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># copy boot files</span></span><br><span class="line">$ sudo cp /path/to/&#123;pxelinux.0, vesamenu.c32, syslinux.bin ...&#125; /var/lib/tftpboot</span><br><span class="line"><span class="comment"># copy kernel and initramfs</span></span><br><span class="line">$ sudo cp /path/to/&#123;vmlinuz, initramfs.img&#125; /var/lib/tftpboot</span><br></pre></td></tr></table></figure>
+<p> For x86_64 clients that use bootloader like ISOLINUX or SYSLINUX: the bootfiles may contain the following files:</p>
+ <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ls /var/lib/tftpboot</span><br><span class="line">ldlinux.c32   libutil.c32  pxelinux.0  syslinux.com  vesamenu.c32 isolinux.bin  libcom32.c32</span><br></pre></td></tr></table></figure>
+<p> For aarch64 clients that use GRUB: the bootfiles may be like: </p>
+ <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ls /var/lib/tftpboot</span><br><span class="line">BOOTAA64.EFI  grubaa64.efi  mmaa64.efi</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Configure boot configuration file</strong></p>
+<p> For x86_64 clients that use bootloader like ISOLINUX or SYSLINUX, the boot configuration will be read from <code>pxelinux.cfg/default</code>.</p>
+ <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ sudo mkdir /var/lib/tftpboot/pxelinux.cfg</span><br><span class="line">$ vim /var/lib/tftpboot/pxelinux.cfg/default</span><br></pre></td></tr></table></figure>
+<p> Create the configuration at <code>/var/lib/tftpboot/pxelinux.cfg</code> and configure it:</p>
+ <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">UI vesamenu.c32</span><br><span class="line"></span><br><span class="line">LABEL default</span><br><span class="line">MENU LABEL Run Linux</span><br><span class="line">KERNEL vmlinuz</span><br><span class="line">APPEND vga=769 initrd=initramfs.img load_ramdisk=1 prompt_ramdisk=0 rw printk.time=0 apparmor=0 from=http://192.168.114.10/linux-x86_64.iso</span><br></pre></td></tr></table></figure>
+<p> The configuration file will use the TFTP server root <code>/var/lib/tftpboot</code> as the root directory (i.e, the <code>vmlinuz</code> refers to <code>/var/lib/tftpboot/vmlinuz</code> while <code>initramfs.img</code> refers to <code>/var/lib/tftpboot/initramfs.img</code>)</p>
+<p> <img src="Screenshot_20240417_221540.png" alt=""></p>
+<p> <img src="Screenshot_20240302_221714.png" alt=""></p>
+<p> For aarch64 clients that use GRUB as the bootloader, you just need to configure <code>/var/lib/tftpboot/grub.cfg</code> instead.</p>
+</li>
+<li><p><strong>Configure HTTP server</strong></p>
+<p> Configure the PXE client to boot from network and reboot it, it will works if all procedure was done correctly!</p>
+</li>
+</ol>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1X4411d73m?p=2&amp;vd_source=7b12ced4d39cf756884de8d6e05af036">https://www.bilibili.com/video/BV1X4411d73m?p=2&amp;vd_source=7b12ced4d39cf756884de8d6e05af036</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV12Q4y1P7Lb/?vd_source=7b12ced4d39cf756884de8d6e05af036">https://www.bilibili.com/video/BV12Q4y1P7Lb/?vd_source=7b12ced4d39cf756884de8d6e05af036</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/jacklee26/set-up-pxe-server-on-ubuntu20-04-and-window-10-e69733c1de87">Set up PXE Server on Ubuntu20.04 and Window 10</a></li>
+<li><a target="_blank" rel="noopener" href="https://superuser.com/questions/1198764/how-to-pxe-boot-with-arm">How to PXE boot with ARM?</a></li>
+<li><a target="_blank" rel="noopener" href="https://reintech.io/blog/configure-pxe-boot-server-ubuntu-2004">Configuring a PXE Boot Server on Ubuntu 20.04</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/02/25/Custom-your-Linux-live-CD-with-linux-live/" rel="prev" title="Custom your Linux live CD using linux-live">
+      <i class="fa fa-chevron-left"></i> Custom your Linux live CD using linux-live
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <div>
+        <blockquote><b>Disqus评论区没有正常加载，请使用科学上网</b></blockquote>
+      </div>
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#How-PXE-works"><span class="nav-number">1.</span> <span class="nav-text">How PXE works</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Setup-PXE-server"><span class="nav-number">2.</span> <span class="nav-text">Setup PXE server</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">3.</span> <span class="nav-text">References</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="XUranus"
+      src="/assets/venti-4-genshin-impact-usagif.gif">
+  <p class="site-author-name" itemprop="name">XUranus</p>
+  <div class="site-description" itemprop="description">找工作中...躺平摆烂</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">59</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/XUranus" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;XUranus" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:xuranus42@qq.com" title="E-Mail → mailto:xuranus42@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">XUranus</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">700k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">10:36</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+    <script defer src="/lib/three/three-waves.min.js"></script>
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'dark',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+  
+
+  
+
+  
+
+<script>
+  function loadCount() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://XUranus.disqus.com/count.js';
+    s.id = 'dsq-count-scr';
+    (d.head || d.body).appendChild(s);
+  }
+  // defer loading until the whole page loading is completed
+  window.addEventListener('load', loadCount, false);
+</script>
+<script>
+  var disqus_config = function() {
+    this.page.url = "http://xuranus.github.io/2024/04/16/Setup-a-PXE-server-for-live-Linux/";
+    this.page.identifier = "2024/04/16/Setup-a-PXE-server-for-live-Linux/";
+    this.page.title = "Setup a PXE server for live Linux";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://XUranus.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+
+  <div id="chat_input">
+    <input id="question" type="text" placeholder="陪我聊聊天吧" onkeypress="return onKeyPress(event)"/>
+</div>
+
+<style> 
+#chat_input{
+    width: 200px;
+    height: 40px;
+    position: fixed;
+    bottom: 5px;
+    left: 50px;
+} 
+
+#question{
+    border: none;/*取消输入框边框*/
+    border-bottom: 1px #aaaaaa solid;/*设置下边框*/
+    background-color: transparent;/*背景透明*/
+    padding: 5px;
+}
+
+/*手机端不显示*/
+@media screen and (max-width: 480px) {
+    #chat_input{
+        display: none;
+    }
+    #live2d-widget{
+        display: none;
+    }
+}
+</style>
+
+<script>
+function onKeyPress(e){ //在聊天框按下回车事件处理
+
+  function popDialogAndShow(message) { //显示对话框
+    let live2d_dialog = document.getElementsByClassName("live2d-widget-dialog")[0]  //获取对话框
+    live2d_dialog.style.opacity=1 //显示对话框
+    live2d_dialog.innerHTML = message 
+    window.setTimeout(()=>{ live2d_dialog.style.opacity = 0 }, 10000) //10秒后隐藏对话框 
+  }
+
+  var keyCode = null;
+  if(e.which) {
+      keyCode = e.which;
+  } else if(e.keyCode) {
+      keyCode = e.keyCode;
+  }
+
+  if(keyCode == 13) { //如果按下回车
+      var question_box = document.getElementById('question') // 获取输入框中的问题
+      var question = question_box.value
+      question_box.value = "" //清空输入框内容并禁用输入框
+      question_box.setAttribute("disabled","disabled")
+      var api_key = "f9ead0aad301411392637cc46708c5cd" //图灵机器人KEY,需要申请
+      var url = 'https://www.tuling123.com/openapi/api?key='+api_key+'&info='+encodeURIComponent(question)
+
+      var xhr = new XMLHttpRequest()   // 通过XHR发送一个GET请求
+      xhr.onreadystatechange = ()=>{
+        question_box.removeAttribute('disabled');
+        if(xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var responseJSON = eval('('+ xhr.responseText +')') //反序列化返回的JSON
+            let message = (responseJSON['code'] == 100000 ? responseJSON['text']: '今日对话次数已用完')
+            popDialogAndShow(message)
+          } else {
+            console.error(xhr.statusText);
+            popDialogAndShow('网络错误：'+xhr.statusText)
+          }
+        }
+      };
+
+      xhr.onerror = (e)=> {
+        console.error(xhr.statusText);
+        popDialogAndShow('网络错误：'+xhr.statusText)
+      };
+
+      xhr.open('GET',url)
+      xhr.send()
+  }
+}
+</script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/umaru.model.json"},"display":{"position":"left","width":200,"height":400,"hOffset":20,"vOffset":30},"mobile":{"show":true,"scale":0.5},"rect":{"opacity":0.7},"dialog":{"enable":true,"hitokoto":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
