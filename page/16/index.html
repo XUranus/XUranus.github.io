@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">127</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">125</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -202,207 +202,6 @@
 
           <div class="content index posts-expand">
             
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/11/26/mongodb%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="To be a Rustacean">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/11/26/mongodb%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">MongoDB学习笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-11-25 19:59:15" itemprop="dateCreated datePublished" datetime="2019-11-25T19:59:15Z">2019-11-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/11/26/mongodb%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/26/mongodb学习笔记/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>2.8k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><h2 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h2><p>和mysql的对比压力测试：<a target="_blank" rel="noopener" href="https://blog.csdn.net/zombres/article/details/82020931">链接</a></p>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>mongodb官方<a target="_blank" rel="noopener" href="https://www.mongodb.com/download-center/community">下载地址</a>，archlinux下的<a target="_blank" rel="noopener" href="https://www.vultr.com/docs/how-to-install-mongodb-4-0-on-arch-linux">安装教程</a>提供了编译和二进制两种方式，编译需要180G空间，长达7小时。也可以使用AUR的<code>mongodb-bin</code>二进制包。</p>
-<p>出于偷懒考虑，直接<code>yaourt -S mongodb-bin</code></p>
-<p>启动：<code>sudo systemctl start mongodb --now</code>,此时使用<code>netstat -ntl</code>可以看到27017端口开启，这是mongodb的默认端口，<code>mongo</code>测试链接，成功进入交互命令行。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mongod <span class="comment"># 启动服务</span></span></span><br><span class="line"><span class="meta">$</span><span class="bash"> mongo <span class="comment"># 链接服务器</span></span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> db.version() <span class="comment">#查看版本</span></span></span><br><span class="line">4.2.1</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> show dbs <span class="comment"># 查看数据库</span></span></span><br><span class="line">admin   0.000GB</span><br><span class="line">config  0.000GB</span><br><span class="line">local   0.000GB</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> use admin <span class="comment"># 使用admin数据库</span></span></span><br><span class="line">switched to db admin</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> show collections <span class="comment"># 显示数据库中的集合</span></span></span><br><span class="line">system.version</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> db <span class="comment"># 显示当前所在/所操作的数据库的名称</span></span></span><br><span class="line">admin</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> var x = <span class="string">&quot;hello world&quot;</span> <span class="comment"># 类似js的交互语言</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> <span class="built_in">print</span>(x) <span class="comment"># 输出x</span></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> <span class="keyword">function</span> f&#123; <span class="comment"># 定义函数</span></span></span><br><span class="line">   return &quot;hello&quot;</span><br><span class="line">  &#125;</span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> f() <span class="comment"># 调用函数</span></span></span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/11/26/mongodb%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/11/26/flutter%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="To be a Rustacean">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/11/26/flutter%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">Flutter学习笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-11-25 17:54:33" itemprop="dateCreated datePublished" datetime="2019-11-25T17:54:33Z">2019-11-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-01-22 13:38:02" itemprop="dateModified" datetime="2022-01-22T13:38:02Z">2022-01-22</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2019/11/26/flutter%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/11/26/flutter学习笔记/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>605</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>flutter是google的移动UI框架，可以在ios和andriod上快速构建App，使用Dart语言。官网<code>https://flutter.dev/</code></p>
-<p>flutter和RN(React Native)生成的是原生的应用，而不是类似Cordova的H5页面（最大40fps）。RN对于复杂的view要多次叠加渲染，最大60fps。flutter使用了自己的GDI和硬件加速，最大达到120fps，甚至被用于开发游戏。但目前RN的生态依旧是第一。flutter优秀组件：<a target="_blank" rel="noopener" href="https://github.com/Solido/awesome-flutter">awesome-flutter</a></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/11/26/flutter%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
       
   
   
@@ -725,10 +524,225 @@
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/06/09/%E6%A0%A1%E5%9B%AD%E7%BD%91%E4%B8%8B%E7%9A%84ipv6%E4%BB%A3%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="To be a Rustacean">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/06/09/%E6%A0%A1%E5%9B%AD%E7%BD%91%E4%B8%8B%E7%9A%84ipv6%E4%BB%A3%E7%90%86/" class="post-title-link" itemprop="url">校园网下的ipv6代理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-06-09 06:22:30" itemprop="dateCreated datePublished" datetime="2019-06-09T06:22:30Z">2019-06-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/06/09/%E6%A0%A1%E5%9B%AD%E7%BD%91%E4%B8%8B%E7%9A%84ipv6%E4%BB%A3%E7%90%86/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/06/09/校园网下的ipv6代理/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>968</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>本人坐标东北某三本985，最近赶上学校网络系统大换代，于是帐号就被恶意盗用了，月初60G的流量就给我用掉了70G……这两年网速越来越快，视频画质越来越好，动辄看个直播就是几个G，25快60G是真的不够用的，每个月流量费超出得几十甚至上百。加之这次帐号盗用事件，我便确定了不再用校园网。但奈何隔壁联通的CNC PPPoE太不安全，还卡，还dns污染，于是我又想起了ipv6代理。</p>
+<p>目前，教育网基本你已经覆盖ipv6，在我们学校。ipv6的流量不计费，得益于这一点，某些能被解析v6地址的网站（google全家桶）是可以在教育网下使用的，但是国内的网站大部分不行。于是我们需要一个ipv6的shaodowsocks代理，找一台ipv6服务器。</p>
+<p>之前我玩vulter的时候，就搭过ipv6的梯子，但最短半天就被封，而且vulter时常抽风，10M最高的带宽，还顶着高ping，使用很不稳定，就弃了。最近我用google搜ss，居然无意搜到一个ipv6的shadowsocks帐号提供商：<a target="_blank" rel="noopener" href="https://home.shadowsocks.ch/aff.php?aff=26899">链接地址</a>。<br>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/06/09/%E6%A0%A1%E5%9B%AD%E7%BD%91%E4%B8%8B%E7%9A%84ipv6%E4%BB%A3%E7%90%86/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2019/06/05/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Ruby/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="To be a Rustacean">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/06/05/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Ruby/" class="post-title-link" itemprop="url">七周七语言之-Ruby</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-06-05 10:30:36" itemprop="dateCreated datePublished" datetime="2019-06-05T10:30:36Z">2019-06-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E3%80%8A%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E3%80%8B/" itemprop="url" rel="index"><span itemprop="name">《七周七语言》</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2019/06/05/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Ruby/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/06/05/七周七语言之-Ruby/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>最近突然有兴趣翻开了队友从队里順来的一本书Bruce.A.Tate的《七周七语言 理解多种编程范式》，正好实训划水无事可干，打算写一个系列，涉及Ruby Lo Prolog Scala Erlang Clojure Haskell,对他们的特性，编程模型做一个简要的理解。语法一笔带过，日后详细学习的日后再补上</p>
+</blockquote>
+<h1 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h1><ul>
+<li>环境：Archlinux</li>
+<li>编辑器：VsCode</li>
+<li><a target="_blank" rel="noopener" href="https://www.runoob.com/ruby/ruby-tutorial.html">菜鸟教程Ruby</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.ruby-lang.org/zh_cn/">Ruby官方中文文档</a></li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/06/05/%E4%B8%83%E5%91%A8%E4%B8%83%E8%AF%AD%E8%A8%80%E4%B9%8B-Ruby/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/15/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><span class="page-number current">16</span><a class="page-number" href="/page/17/">17</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/17/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/15/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><span class="page-number current">16</span><a class="page-number" href="/page/17/">17</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/17/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -796,7 +810,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-count">125</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -853,12 +867,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">700k</span>
+    <span title="站点总字数">696k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">10:36</span>
+    <span title="站点阅读时长">10:33</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>

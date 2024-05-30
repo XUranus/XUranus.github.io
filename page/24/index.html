@@ -129,7 +129,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">127</span></a>
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">125</span></a>
 
   </li>
         <li class="menu-item menu-item-plan">
@@ -202,208 +202,6 @@
 
           <div class="content index posts-expand">
             
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2018/01/01/SQL%E6%B3%A8%E5%85%A5%E5%88%9D%E6%8E%A2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="To be a Rustacean">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/01/01/SQL%E6%B3%A8%E5%85%A5%E5%88%9D%E6%8E%A2/" class="post-title-link" itemprop="url">SQL注入初探</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-12-31 18:51:50" itemprop="dateCreated datePublished" datetime="2017-12-31T18:51:50Z">2017-12-31</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2018/01/01/SQL%E6%B3%A8%E5%85%A5%E5%88%9D%E6%8E%A2/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/01/01/SQL注入初探/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>3.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="SQL注入"><a href="#SQL注入" class="headerlink" title="SQL注入"></a>SQL注入</h2><p>所谓SQL注入，就是通过把SQL命令插入到Web表单提交或输入域名或页面请求的查询字符串，最终达到欺骗服务器执行恶意的SQL命令。</p>
-<h2 id="发现"><a href="#发现" class="headerlink" title="发现"></a>发现</h2><p>在<a target="_blank" rel="noopener" href="http://mathe.neu.edu.cn/">NEUMathe</a>的登陆表单内输入了‘，没有正常的显示登陆失败，而是弹出以下界面:</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">### Error querying database. Cause: com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near at line 2 ### The error may exist in ssm/mapper/StudentMapperCustom.xml ### The error may involve ssm.mapper.StudentMapperCustom.checkStudentExits-Inline ### The error occurred while setting parameters ### SQL: SELECT * FROM Student WHERE Code = and Pwd =</span><br></pre></td></tr></table></figure>
-<p>很明显，这是数据库错误的提示信息，注意到这一行，<br><code>SELECT * FROM Student WHERE Code =  and Pwd =</code><br>服务器把单引号传入sql语句中导致这句查询执行错误，于是，找到注入点，输入<code>2016xxxx&#39; or &#39;1&#39;=&#39;1</code>,此时，原来正常的语句由<code>select * from student where code = &#39;2016xxxx&#39; and pwd = &#39;xxxx&#39;</code>变<br>成了<code>select * from student where code = &#39;2016xxxx&#39; or &#39;1&#39;=&#39;1&#39; and pwd = &#39;xxxx&#39;</code>，点击登陆，居然能成功登陆，pwd密码项被or后面一个恒等式架空了，于是这个语句恒为真，即可以登陆任何人的&gt;账号。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/01/01/SQL%E6%B3%A8%E5%85%A5%E5%88%9D%E6%8E%A2/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2017/12/25/Laravel%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
-      <meta itemprop="name" content="XUranus">
-      <meta itemprop="description" content="To be a Rustacean">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XUranus">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/12/25/Laravel%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" class="post-title-link" itemprop="url">Laravel环境搭建</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-12-24 16:36:38" itemprop="dateCreated datePublished" datetime="2017-12-24T16:36:38Z">2017-12-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus：</span>
-    
-    <a title="disqus" href="/2017/12/25/Laravel%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/12/25/Laravel环境搭建/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-              <span>466</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="以centos为例"><a href="#以centos为例" class="headerlink" title="以centos为例"></a>以centos为例</h2><ol>
-<li>安装composer<br><code>wget https://dl.laravel-china.org/composer.phar -O /usr/local/bin/composer</code><br><code>chmod a+x /usr/local/bin/composer</code><br><code>composer global require &quot;laravel/installer&quot;</code>  </li>
-<li>查看版本<br><code>composer -v</code></li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2017/12/25/Laravel%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
       
   
   
@@ -696,10 +494,224 @@
   
   
 
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2017/10/12/ss%E5%8D%87%E7%BA%A7ssr/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="To be a Rustacean">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/10/12/ss%E5%8D%87%E7%BA%A7ssr/" class="post-title-link" itemprop="url">ss升级ssr</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-10-11 22:30:59" itemprop="dateCreated datePublished" datetime="2017-10-11T22:30:59Z">2017-10-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-09-05 12:51:13" itemprop="dateModified" datetime="2021-09-05T12:51:13Z">2021-09-05</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/10/12/ss%E5%8D%87%E7%BA%A7ssr/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/10/12/ss升级ssr/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>1.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Shadowsocks-不安全"><a href="#Shadowsocks-不安全" class="headerlink" title="Shadowsocks 不安全"></a>Shadowsocks 不安全</h2><p>深圳正在利用精准SS协议识别技术查禁VPN上网,查到有使用VPN行为就停宽带，写了保证书才给恢复宽带。运营商直接从源头监控你网络接入的情况。任何浏览的网址和数据都被监控，翻墙的事情也就显而易见。</p>
+<h2 id="SSR-成为新宠"><a href="#SSR-成为新宠" class="headerlink" title="SSR 成为新宠"></a>SSR 成为新宠</h2><p>SSR版本的出现，改变了SS单纯的TCP发包模式，利用UDP和TCP转换，将协议流量特征降到最低，同时混淆及自定义协议接口，将流量变成隐性且不易察觉，特别是后期redirect参数，甚至可以将Twitter的流量伪装成bing的流量发包传输，整体来说SSR版本后期定制性不可小觑。</p>
+<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><p>全能代理，同一端口支持socks4/socks4a/socks5/http<br>节点统计，包括延迟、连接数、当前下载速度、最高速度、出错率等等<br>连接管理，随时断开指定节点的连接，或修改节点后自动断开<br>协议转换，把UDP包封装于TCP里发送<br>多重代理，通过设置前置socks5/http代理，可达到任意重代理<br>协议插件，支持自定义协议和协议混淆</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/10/12/ss%E5%8D%87%E7%BA%A7ssr/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://xuranus.github.io/2017/10/09/Git%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/assets/venti-4-genshin-impact-usagif.gif">
+      <meta itemprop="name" content="XUranus">
+      <meta itemprop="description" content="To be a Rustacean">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XUranus">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2017/10/09/Git%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/" class="post-title-link" itemprop="url">Git使用入门</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-10-08 20:02:26" itemprop="dateCreated datePublished" datetime="2017-10-08T20:02:26Z">2017-10-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-07-09 06:53:00" itemprop="dateModified" datetime="2022-07-09T06:53:00Z">2022-07-09</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/2017/10/09/Git%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/10/09/Git使用入门/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+              <span>13k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+              <span>12 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>本文主要是复现一遍<a target="_blank" rel="noopener" href="https://www.liaoxuefeng.com/wiki/896043488029600">廖雪峰的Git教程</a>中的操作，初学Git强烈建议阅读这篇教程！</p>
+</blockquote>
+<h2 id="安装与配置"><a href="#安装与配置" class="headerlink" title="安装与配置"></a>安装与配置</h2><h3 id="安装Git"><a href="#安装Git" class="headerlink" title="安装Git"></a>安装Git</h3><ol>
+<li><p>Linux下的安装:</p>
+<ul>
+<li>ArchLinux: <code>sudo pacman -S git</code></li>
+<li>Debian: <code>sudo apt-get install git</code></li>
+<li>特别老的Linux: <code>sudo apt install git-core</code></li>
+</ul>
+</li>
+<li><p>Win/Mac的安装可以去<a target="_blank" rel="noopener" href="https://git-scm.com/">Git官网</a>下载安装包。</p>
+</li>
+</ol>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>安装完成后，还需要进一步设置，首先配置用户名邮箱：<br><code>git config --global user.name &quot;your name</code><br><code>git config --global user.email &quot;email@example.com</code></p>
+<p><code>--global</code>参数表示全局配置：你这台机器上所有的Git仓库都会使用这个配置。</p>
+<p>对于全局配置Git将其保存在Linux的<code>$HOME/.gitconfig</code>以及Windows的<code>%GIT%/etc/gitconfig</code>下，而具体项目的Git配置则位于项目的<code>.git/config</code>下。可以直接在配置文件中查看和修改当前Git的配置。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/10/09/Git%E4%BD%BF%E7%94%A8%E5%85%A5%E9%97%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/23/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><span class="page-number current">24</span><a class="page-number" href="/page/25/">25</a><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/25/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/23/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><span class="page-number current">24</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/25/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -767,7 +779,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">127</span>
+          <span class="site-state-item-count">125</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -824,12 +836,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">700k</span>
+    <span title="站点总字数">696k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">10:36</span>
+    <span title="站点阅读时长">10:33</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
   </div>
